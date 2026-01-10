@@ -23,9 +23,14 @@ import NotFound from "./pages/NotFound";
 import Login from "./pages/panel/Login";
 import PanelDashboard from "./pages/panel/Dashboard";
 import PanelServices from "./pages/panel/Services";
+import ServiceDetail from "./pages/panel/ServiceDetail";
+import ServiceUpgrade from "./pages/panel/ServiceUpgrade";
 import PanelOrders from "./pages/panel/Orders";
 import PanelInvoices from "./pages/panel/Invoices";
+import InvoiceDetail from "./pages/panel/InvoiceDetail";
 import PanelTickets from "./pages/panel/Tickets";
+import NewTicket from "./pages/panel/NewTicket";
+import TicketDetail from "./pages/panel/TicketDetail";
 import PanelProfile from "./pages/panel/Profile";
 import PanelAPI from "./pages/panel/APISettings";
 // Admin Pages
@@ -66,9 +71,14 @@ const App = () => (
             {/* Client Panel (Protected) */}
             <Route path="/panel" element={<ProtectedRoute><PanelDashboard /></ProtectedRoute>} />
             <Route path="/panel/services" element={<ProtectedRoute><PanelServices /></ProtectedRoute>} />
+            <Route path="/panel/services/:id" element={<ProtectedRoute><ServiceDetail /></ProtectedRoute>} />
+            <Route path="/panel/services/:id/upgrade" element={<ProtectedRoute><ServiceUpgrade /></ProtectedRoute>} />
             <Route path="/panel/orders" element={<ProtectedRoute><PanelOrders /></ProtectedRoute>} />
             <Route path="/panel/invoices" element={<ProtectedRoute><PanelInvoices /></ProtectedRoute>} />
+            <Route path="/panel/invoices/:id" element={<ProtectedRoute><InvoiceDetail /></ProtectedRoute>} />
             <Route path="/panel/tickets" element={<ProtectedRoute><PanelTickets /></ProtectedRoute>} />
+            <Route path="/panel/tickets/new" element={<ProtectedRoute><NewTicket /></ProtectedRoute>} />
+            <Route path="/panel/tickets/:id" element={<ProtectedRoute><TicketDetail /></ProtectedRoute>} />
             <Route path="/panel/profile" element={<ProtectedRoute><PanelProfile /></ProtectedRoute>} />
             <Route path="/panel/api" element={<ProtectedRoute><PanelAPI /></ProtectedRoute>} />
             

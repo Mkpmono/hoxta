@@ -1,27 +1,108 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Plus, MessageSquare, X, Send } from "lucide-react";
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { Plus, Search, Filter } from "lucide-react";
+import { Link } from "react-router-dom";
 import { PanelLayout } from "@/components/panel/PanelLayout";
-import { mockTickets, Ticket } from "@/lib/mockData";
+import { TableRowSkeleton } from "@/components/ui/LoadingSkeleton";
+import { whmcsClient } from "@/services/whmcsClient";
+import { toast } from "sonner";
+
+interface Ticket {
+  id: string;
+  subject: string;
+  department: string;
+  status: string;
+  priority: string;
+  lastReply: string;
+}
 
 export default function PanelTickets() {
-  const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
-  const [showNewTicket, setShowNewTicket] = useState(false);
+  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
 
-  const clientTickets = mockTickets.filter(t => t.clientId === "1");
+  useEffect(() => {
+    loadTickets();
+  }, []);
+
+  const loadTickets = async () => {
+    try {
+      setLoading(true);
+      const data = await whmcsClient.getTickets();
+      setTickets(data || []);
+    } catch (error) {
+      toast.error("Failed to load tickets");
+      setTickets([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredTickets = tickets.filter(ticket => {
+    const matchesSearch = !searchQuery || 
+      (ticket.subject?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+       ticket.id?.toLowerCase().includes(searchQuery.toLowerCase()));
+    const matchesStatus = statusFilter === "all" || ticket.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  const getStatusBadge = (status: string) => {
+    const statusClasses: Record<string, string> = {
+      open: "bg-yellow-500/20 text-yellow-400",
+      answered: "bg-green-500/20 text-green-400",
+      "customer-reply": "bg-primary/20 text-primary",
+      closed: "bg-muted text-muted-foreground",
+    };
+    return statusClasses[status] || "bg-muted text-muted-foreground";
+  };
+
+  const getPriorityBadge = (priority: string) => {
+    const priorityClasses: Record<string, string> = {
+      high: "bg-red-500/20 text-red-400",
+      medium: "bg-yellow-500/20 text-yellow-400",
+      low: "bg-muted text-muted-foreground",
+    };
+    return priorityClasses[priority] || "bg-muted text-muted-foreground";
+  };
 
   return (
     <PanelLayout>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-foreground">Support Tickets</h1>
-          <button
-            onClick={() => setShowNewTicket(true)}
-            className="btn-glow flex items-center gap-2 text-sm py-2"
-          >
+          <Link to="/panel/tickets/new" className="btn-glow flex items-center gap-2 text-sm py-2">
             <Plus className="w-4 h-4" />
             New Ticket
-          </button>
+          </Link>
+        </div>
+
+        {/* Search and Filter */}
+        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder="Search tickets..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 rounded-lg bg-muted/50 border border-border focus:border-primary focus:outline-none text-foreground"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <Filter className="w-4 h-4 text-muted-foreground" />
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="px-4 py-2 rounded-lg bg-muted/50 border border-border focus:border-primary focus:outline-none text-foreground"
+            >
+              <option value="all">All Status</option>
+              <option value="open">Open</option>
+              <option value="answered">Answered</option>
+              <option value="customer-reply">Customer Reply</option>
+              <option value="closed">Closed</option>
+            </select>
+          </div>
         </div>
         
         <div className="glass-card overflow-hidden">
@@ -38,140 +119,53 @@ export default function PanelTickets() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/50">
-                {clientTickets.map((ticket) => (
-                  <tr
-                    key={ticket.id}
-                    onClick={() => setSelectedTicket(ticket)}
-                    className="hover:bg-muted/20 transition-colors cursor-pointer"
-                  >
-                    <td className="px-4 py-3 text-sm font-mono text-primary">{ticket.id}</td>
-                    <td className="px-4 py-3 text-sm text-foreground">{ticket.subject}</td>
-                    <td className="px-4 py-3 text-sm text-muted-foreground">{ticket.department}</td>
-                    <td className="px-4 py-3">
-                      <span className={`px-2 py-1 text-xs rounded-full ${
-                        ticket.status === "open" ? "bg-yellow-500/20 text-yellow-400" :
-                        ticket.status === "answered" ? "bg-green-500/20 text-green-400" :
-                        ticket.status === "customer-reply" ? "bg-primary/20 text-primary" :
-                        "bg-muted text-muted-foreground"
-                      }`}>
-                        {ticket.status}
-                      </span>
+                {loading ? (
+                  <>
+                    <TableRowSkeleton columns={6} />
+                    <TableRowSkeleton columns={6} />
+                    <TableRowSkeleton columns={6} />
+                  </>
+                ) : filteredTickets.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">
+                      No tickets found
                     </td>
-                    <td className="px-4 py-3">
-                      <span className={`px-2 py-1 text-xs rounded-full ${
-                        ticket.priority === "high" ? "bg-red-500/20 text-red-400" :
-                        ticket.priority === "medium" ? "bg-yellow-500/20 text-yellow-400" :
-                        "bg-muted text-muted-foreground"
-                      }`}>
-                        {ticket.priority}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-sm text-muted-foreground">{ticket.lastReply}</td>
                   </tr>
-                ))}
+                ) : (
+                  filteredTickets.map((ticket) => (
+                    <tr
+                      key={ticket.id}
+                      className="hover:bg-muted/20 transition-colors cursor-pointer"
+                    >
+                      <td className="px-4 py-3">
+                        <Link to={`/panel/tickets/${ticket.id}`} className="text-sm font-mono text-primary hover:underline">
+                          {ticket.id}
+                        </Link>
+                      </td>
+                      <td className="px-4 py-3">
+                        <Link to={`/panel/tickets/${ticket.id}`} className="text-sm text-foreground hover:text-primary">
+                          {ticket.subject}
+                        </Link>
+                      </td>
+                      <td className="px-4 py-3 text-sm text-muted-foreground">{ticket.department}</td>
+                      <td className="px-4 py-3">
+                        <span className={`px-2 py-1 text-xs rounded-full ${getStatusBadge(ticket.status)}`}>
+                          {ticket.status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className={`px-2 py-1 text-xs rounded-full ${getPriorityBadge(ticket.priority)}`}>
+                          {ticket.priority}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-sm text-muted-foreground">{ticket.lastReply}</td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
         </div>
-
-        {/* Ticket Detail Modal */}
-        <AnimatePresence>
-          {selectedTicket && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-              onClick={() => setSelectedTicket(null)}
-            >
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                onClick={(e) => e.stopPropagation()}
-                className="w-full max-w-2xl max-h-[80vh] overflow-hidden glass-card"
-              >
-                <div className="flex items-center justify-between p-4 border-b border-border/50">
-                  <div>
-                    <h2 className="font-semibold text-foreground">{selectedTicket.subject}</h2>
-                    <p className="text-sm text-muted-foreground">{selectedTicket.id} • {selectedTicket.department}</p>
-                  </div>
-                  <button onClick={() => setSelectedTicket(null)} className="p-2 hover:bg-muted rounded-lg">
-                    <X className="w-5 h-5 text-muted-foreground" />
-                  </button>
-                </div>
-                <div className="p-4 max-h-96 overflow-y-auto space-y-4">
-                  {selectedTicket.messages?.map((msg, i) => (
-                    <div key={i} className={`p-4 rounded-lg ${msg.sender === "Support Team" ? "bg-primary/10 ml-8" : "bg-muted/50 mr-8"}`}>
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-foreground">{msg.sender}</span>
-                        <span className="text-xs text-muted-foreground">{msg.date}</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{msg.message}</p>
-                    </div>
-                  ))}
-                </div>
-                <div className="p-4 border-t border-border/50">
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      placeholder="Type your reply..."
-                      className="flex-1 px-4 py-2 rounded-lg bg-muted/50 border border-border focus:border-primary focus:outline-none text-foreground"
-                    />
-                    <button className="btn-glow px-4 py-2">
-                      <Send className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* New Ticket Modal */}
-        <AnimatePresence>
-          {showNewTicket && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-              onClick={() => setShowNewTicket(false)}
-            >
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                onClick={(e) => e.stopPropagation()}
-                className="w-full max-w-lg glass-card p-6"
-              >
-                <h2 className="text-xl font-semibold text-foreground mb-4">New Support Ticket</h2>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-1">Department</label>
-                    <select className="w-full px-4 py-2 rounded-lg bg-muted/50 border border-border focus:border-primary focus:outline-none text-foreground">
-                      <option>Technical Support</option>
-                      <option>Sales</option>
-                      <option>Billing</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-1">Subject</label>
-                    <input type="text" className="w-full px-4 py-2 rounded-lg bg-muted/50 border border-border focus:border-primary focus:outline-none text-foreground" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-1">Message</label>
-                    <textarea rows={4} className="w-full px-4 py-2 rounded-lg bg-muted/50 border border-border focus:border-primary focus:outline-none text-foreground resize-none" />
-                  </div>
-                  <div className="flex gap-3 justify-end">
-                    <button onClick={() => setShowNewTicket(false)} className="btn-outline py-2 px-4">Cancel</button>
-                    <button className="btn-glow py-2 px-4">Submit Ticket</button>
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </motion.div>
     </PanelLayout>
   );
