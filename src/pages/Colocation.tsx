@@ -222,8 +222,7 @@ export default function Colocation() {
       <FinalCTA
         title="Ready to Colocate?"
         subtitle="Contact our team to discuss your colocation requirements and get a custom quote."
-        ctaText="Contact Sales"
-        ctaHref="/contact?service=colocation"
+        primaryCTA={{ text: "Contact Sales", href: "/contact?service=colocation" }}
       />
     </Layout>
   );

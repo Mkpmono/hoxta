@@ -28,12 +28,12 @@ const menuItems: MenuItemProps[] = [
   {
     label: "Game Servers",
     items: [
-      { title: "Minecraft", subtitle: "Java & Bedrock servers", icon: <Gamepad2 className="w-5 h-5" />, href: "/game-servers?game=minecraft" },
-      { title: "RedM", subtitle: "Red Dead Redemption 2 servers", icon: <Gamepad2 className="w-5 h-5" />, href: "/game-servers?game=redm" },
-      { title: "Counter-Strike 2", subtitle: "Competitive CS2 servers", icon: <Gamepad2 className="w-5 h-5" />, href: "/game-servers?game=cs2" },
-      { title: "Rust", subtitle: "Survival game servers", icon: <Gamepad2 className="w-5 h-5" />, href: "/game-servers?game=rust" },
-      { title: "FiveM", subtitle: "GTA V roleplay servers", icon: <Gamepad2 className="w-5 h-5" />, href: "/game-servers?game=fivem" },
-      { title: "View More", subtitle: "Browse all games", icon: <Gamepad2 className="w-5 h-5" />, href: "/game-servers" },
+      { title: "All Games", subtitle: "Browse all game servers", icon: <Gamepad2 className="w-5 h-5" />, href: "/game-servers" },
+      { title: "Minecraft", subtitle: "Java & Bedrock servers", icon: <Gamepad2 className="w-5 h-5" />, href: "/game-servers/minecraft" },
+      { title: "FiveM", subtitle: "GTA V roleplay servers", icon: <Gamepad2 className="w-5 h-5" />, href: "/game-servers/fivem" },
+      { title: "Counter-Strike 2", subtitle: "Competitive CS2 servers", icon: <Gamepad2 className="w-5 h-5" />, href: "/game-servers/cs2" },
+      { title: "Rust", subtitle: "Survival game servers", icon: <Gamepad2 className="w-5 h-5" />, href: "/game-servers/rust" },
+      { title: "Palworld", subtitle: "Monster-catching survival", icon: <Gamepad2 className="w-5 h-5" />, href: "/game-servers/palworld" },
     ],
   },
   {
