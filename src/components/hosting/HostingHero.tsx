@@ -1,12 +1,12 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight, Sparkles } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, ReactNode } from "react";
 
 interface HostingHeroProps {
   badge?: string;
-  headline: string;
-  highlightedText: string;
+  headline: ReactNode;
+  highlightedText?: string;
   description: string;
   promotion?: {
     text: string;
@@ -123,8 +123,8 @@ export function HostingHero({
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight"
           >
-            {headline}{" "}
-            <span className="text-gradient">{highlightedText}</span>
+            {headline}
+            {highlightedText && <>{" "}<span className="text-gradient">{highlightedText}</span></>}
           </motion.h1>
 
           {/* Description */}

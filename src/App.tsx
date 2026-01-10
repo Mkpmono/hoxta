@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import WebHosting from "./pages/WebHosting";
 import ResellerHosting from "./pages/ResellerHosting";
 import GameServers from "./pages/GameServers";
+import GameServerDetail from "./pages/GameServerDetail";
 import VPS from "./pages/VPS";
 import Dedicated from "./pages/Dedicated";
 import DDoSProtection from "./pages/DDoSProtection";
@@ -19,6 +20,10 @@ import Contact from "./pages/Contact";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
+// More Hosting Pages
+import Colocation from "./pages/Colocation";
+import TeamSpeak from "./pages/TeamSpeak";
+import DiscordBot from "./pages/DiscordBot";
 // Panel Pages
 import Login from "./pages/panel/Login";
 import PanelDashboard from "./pages/panel/Dashboard";
@@ -55,6 +60,7 @@ const App = () => (
             <Route path="/web-hosting" element={<WebHosting />} />
             <Route path="/reseller-hosting" element={<ResellerHosting />} />
             <Route path="/game-servers" element={<GameServers />} />
+            <Route path="/game-servers/:gameSlug" element={<GameServerDetail />} />
             <Route path="/vps" element={<VPS />} />
             <Route path="/dedicated" element={<Dedicated />} />
             <Route path="/ddos-protection" element={<DDoSProtection />} />
@@ -64,6 +70,10 @@ const App = () => (
             <Route path="/contact" element={<Contact />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
+            {/* More Hosting Routes */}
+            <Route path="/colocation" element={<Colocation />} />
+            <Route path="/teamspeak" element={<TeamSpeak />} />
+            <Route path="/discord-bot" element={<DiscordBot />} />
             
             {/* Auth */}
             <Route path="/panel/login" element={<Login />} />
