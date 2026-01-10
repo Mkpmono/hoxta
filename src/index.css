@@ -190,10 +190,16 @@
     font-family: 'JetBrains Mono', 'Fira Code', monospace;
   }
 
-  /* Dropdown animation */
-  .dropdown-enter {
-    animation: dropdownEnter 0.2s ease-out forwards;
+  /* Hidden scrollbar */
+  .console-scroll-hide {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
+  .console-scroll-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Dropdown animation */
 
   .dropdown-exit {
     animation: dropdownExit 0.15s ease-in forwards;

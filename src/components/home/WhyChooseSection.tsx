@@ -1,6 +1,8 @@
 import { useRef, useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { Headphones, Cpu, HardDrive, Wifi, Shield, Clock } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
+import { Headphones, Cpu, HardDrive, Wifi, Shield, Zap, MessageSquare } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const features = [
   {
@@ -8,7 +10,7 @@ const features = [
     title: "Customer Support",
     description: "Răspuns mediu sub 15 minute. Ingineri 24/7, prin ticket & chat, cu ghidare pas cu pas în troubleshooting.",
     stats: "Media pe ultimele 30 zile",
-    link: "Deschide un ticket",
+    showTicketCTA: true,
   },
   {
     icon: Cpu,
@@ -32,8 +34,14 @@ const features = [
   {
     icon: Shield,
     title: "DDoS Protection",
-    description: "Advanced scrubbing 24/7 rules & game proofing.",
+    description: "Advanced scrubbing 24/7 rules & game proofing. Multi-layer protection keeps your services online.",
     ddosUI: true,
+  },
+  {
+    icon: Zap,
+    title: "Instant Setup",
+    description: "Get your server deployed in under 60 seconds. Automated provisioning with pre-configured templates for all popular games and services.",
+    instantUI: true,
   },
 ];
 
@@ -176,16 +184,119 @@ function NetworkCard() {
 function DDoSCard() {
   return (
     <div className="mt-4 flex items-center justify-center">
-      <motion.div
-        className="w-16 h-16 rounded-full border-2 border-primary/30 flex items-center justify-center"
-        animate={{ scale: [1, 1.1, 1] }}
-        transition={{ duration: 2, repeat: Infinity }}
-      >
-        <Shield className="w-8 h-8 text-primary" />
-      </motion.div>
-      <div className="ml-4 text-sm text-primary hover:underline cursor-pointer">
-        Always-on scrubbing 24/7, rules & more!
+      <div className="relative">
+        <motion.div
+          className="w-20 h-20 rounded-full border-2 border-primary/30 flex items-center justify-center"
+          animate={{ scale: [1, 1.1, 1] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          <Shield className="w-10 h-10 text-primary" />
+        </motion.div>
+        {/* Pulse rings */}
+        <motion.div
+          className="absolute inset-0 rounded-full border border-primary/20"
+          animate={{ scale: [1, 1.5], opacity: [0.5, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        />
+        <motion.div
+          className="absolute inset-0 rounded-full border border-primary/20"
+          animate={{ scale: [1, 1.5], opacity: [0.5, 0] }}
+          transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+        />
       </div>
+      <div className="ml-4 text-sm text-primary hover:underline cursor-pointer">
+        Always-on scrubbing 24/7
+      </div>
+    </div>
+  );
+}
+
+function InstantSetupCard() {
+  const [progress, setProgress] = useState(0);
+  const [showCheck, setShowCheck] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setProgress(100);
+      setTimeout(() => setShowCheck(true), 500);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <div className="mt-4">
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-sm text-muted-foreground">Server Deployment</span>
+        <motion.span
+          className="text-sm font-medium text-primary"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          {showCheck ? "✓ Complete" : `${progress}%`}
+        </motion.span>
+      </div>
+      <div className="h-2 bg-muted rounded-full overflow-hidden mb-3">
+        <motion.div
+          className="h-full bg-gradient-to-r from-primary to-primary/60 rounded-full"
+          initial={{ width: 0 }}
+          whileInView={{ width: "100%" }}
+          transition={{ duration: 1.5, ease: "easeOut" }}
+          viewport={{ once: true }}
+        />
+      </div>
+      <div className="flex justify-between text-xs text-muted-foreground">
+        <span>Auto-configured</span>
+        <span className="text-primary font-medium">&lt; 60 seconds</span>
+      </div>
+    </div>
+  );
+}
+
+function NetworkBackground() {
+  const prefersReducedMotion = useReducedMotion();
+  
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* Grid pattern */}
+      <div 
+        className="absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage: `
+            linear-gradient(hsl(var(--primary)) 1px, transparent 1px),
+            linear-gradient(90deg, hsl(var(--primary)) 1px, transparent 1px)
+          `,
+          backgroundSize: '60px 60px',
+        }}
+      />
+      
+      {/* Animated nodes */}
+      {!prefersReducedMotion && (
+        <>
+          {[...Array(6)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-2 h-2 bg-primary/20 rounded-full"
+              style={{
+                left: `${15 + i * 15}%`,
+                top: `${20 + (i % 3) * 25}%`,
+              }}
+              animate={{
+                opacity: [0.2, 0.6, 0.2],
+                scale: [1, 1.5, 1],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                delay: i * 0.5,
+              }}
+            />
+          ))}
+        </>
+      )}
+      
+      {/* Glow spots */}
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-[100px]" />
+      <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-primary/3 rounded-full blur-[80px]" />
     </div>
   );
 }
@@ -194,8 +305,10 @@ export function WhyChooseSection() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   return (
-    <section className="py-20 md:py-32 relative">
-      <div className="container mx-auto px-4 md:px-6">
+    <section className="py-20 md:py-32 relative overflow-hidden">
+      <NetworkBackground />
+      
+      <div className="container mx-auto px-4 md:px-6 relative z-10">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -213,8 +326,11 @@ export function WhyChooseSection() {
           </p>
         </motion.div>
 
-        {/* Feature Cards */}
-        <div ref={containerRef} className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Feature Cards - Symmetric 3x2 Grid */}
+        <div 
+          ref={containerRef} 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
           {features.map((feature, index) => (
             <motion.div
               key={index}
@@ -222,15 +338,23 @@ export function WhyChooseSection() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="glass-card-hover p-6"
+              whileHover={{ 
+                y: -6, 
+                transition: { duration: 0.2 } 
+              }}
+              className="glass-card p-6 transition-all duration-300 hover:border-primary/30 hover:shadow-[0_8px_40px_rgba(25,195,255,0.12)]"
             >
               <div className="flex items-start gap-4 mb-4">
-                <div className="p-2 rounded-lg bg-primary/10">
+                <motion.div 
+                  className="p-2.5 rounded-xl bg-primary/10 border border-primary/20"
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  transition={{ duration: 0.2 }}
+                >
                   <feature.icon className="w-5 h-5 text-primary" />
-                </div>
+                </motion.div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-foreground mb-1">{feature.title}</h3>
-                  <p className="text-sm text-muted-foreground">{feature.description}</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
                 </div>
               </div>
 
@@ -248,11 +372,20 @@ export function WhyChooseSection() {
               {feature.storageUI && <StorageCard />}
               {feature.networkUI && <NetworkCard />}
               {feature.ddosUI && <DDoSCard />}
+              {feature.instantUI && <InstantSetupCard />}
 
-              {feature.link && (
-                <a href="/contact" className="inline-block mt-4 text-sm text-primary hover:underline">
-                  {feature.link}
-                </a>
+              {feature.showTicketCTA && (
+                <div className="mt-4">
+                  <Link to="/panel/tickets/new">
+                    <Button 
+                      className="w-full btn-glow group"
+                      size="sm"
+                    >
+                      <MessageSquare className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
+                      Deschide un ticket
+                    </Button>
+                  </Link>
+                </div>
               )}
             </motion.div>
           ))}
