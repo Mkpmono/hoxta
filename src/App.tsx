@@ -26,6 +26,7 @@ import TeamSpeak from "./pages/TeamSpeak";
 import DiscordBot from "./pages/DiscordBot";
 import KnowledgeBase from "./pages/KnowledgeBase";
 import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 // Panel Pages
 import Login from "./pages/panel/Login";
 import PanelDashboard from "./pages/panel/Dashboard";
@@ -80,7 +81,7 @@ const App = () => (
             <Route path="/knowledge-base/:categoryId" element={<KnowledgeBase />} />
             <Route path="/knowledge-base/:categoryId/:articleId" element={<KnowledgeBase />} />
             <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:postId" element={<Blog />} />
+            <Route path="/blog/:postId" element={<BlogPost />} />
             
             {/* Auth */}
             <Route path="/panel/login" element={<Login />} />

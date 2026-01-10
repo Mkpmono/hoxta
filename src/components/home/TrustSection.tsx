@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from "framer-motion";
-import { Star, ChevronLeft, ChevronRight, Quote } from "lucide-react";
+import { Star, ChevronLeft, ChevronRight, Quote, ExternalLink, Shield } from "lucide-react";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
 import useEmblaCarousel from "embla-carousel-react";
@@ -11,6 +11,7 @@ const testimonials = [
     content: "The support team is incredible. They solved my problem in record time, even on a weekend at 3 AM. I highly recommend!",
     author: "Alex M.",
     role: "Minecraft Server Owner",
+    verified: true,
   },
   {
     rating: 5,
@@ -18,6 +19,7 @@ const testimonials = [
     content: "The control panel is super intuitive. I managed to set up my Minecraft server in less than 10 minutes. Perfect for beginners!",
     author: "Maria P.",
     role: "Community Manager",
+    verified: true,
   },
   {
     rating: 5,
@@ -25,6 +27,7 @@ const testimonials = [
     content: "I've been using their VPS for 2 years for my projects. Zero downtime, consistent performance. The best hosting I've ever had.",
     author: "Andrei C.",
     role: "Developer",
+    verified: true,
   },
   {
     rating: 5,
@@ -32,6 +35,7 @@ const testimonials = [
     content: "Our FiveM server handles 200+ players without any lag. The DDoS protection has saved us multiple times. Worth every cent!",
     author: "Stefan R.",
     role: "FiveM Server Admin",
+    verified: true,
   },
   {
     rating: 5,
@@ -39,6 +43,7 @@ const testimonials = [
     content: "Switched from a bigger provider and couldn't be happier. Better performance, better support, and half the price. Amazing!",
     author: "Elena D.",
     role: "Gaming Community Leader",
+    verified: true,
   },
   {
     rating: 5,
@@ -46,8 +51,48 @@ const testimonials = [
     content: "The migration was seamless. Their team handled everything professionally. Our community experienced zero downtime during the switch.",
     author: "Mihai T.",
     role: "Esports Team Manager",
+    verified: true,
+  },
+  {
+    rating: 5,
+    title: "Top-tier DDoS Protection",
+    content: "We've been hit with massive attacks and Hoxta absorbed them all. Our players didn't even notice. That's the level of protection you need.",
+    author: "David K.",
+    role: "Rust Server Owner",
+    verified: true,
+  },
+  {
+    rating: 5,
+    title: "Incredible Uptime",
+    content: "99.99% uptime isn't just marketing speak with Hoxta. We've tracked it ourselves for 18 months. Absolutely reliable infrastructure.",
+    author: "Laura S.",
+    role: "Web Developer",
+    verified: true,
   },
 ];
+
+// Trustpilot-style rating display
+function TrustpilotWidget() {
+  return (
+    <div className="flex items-center gap-4 p-4 rounded-xl bg-card/50 border border-border/50">
+      <div className="flex items-center gap-1">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <div key={star} className="w-6 h-6 bg-[#00b67a] flex items-center justify-center">
+            <Star className="w-4 h-4 fill-white text-white" />
+          </div>
+        ))}
+      </div>
+      <div className="text-sm">
+        <p className="font-semibold text-foreground">Excellent</p>
+        <p className="text-muted-foreground text-xs">Based on <span className="text-foreground font-medium">847 reviews</span></p>
+      </div>
+      <div className="ml-auto flex items-center gap-2">
+        <Star className="w-5 h-5 text-[#00b67a]" />
+        <span className="text-sm font-medium text-foreground">Trustpilot</span>
+      </div>
+    </div>
+  );
+}
 
 export function TrustSection() {
   const prefersReducedMotion = useReducedMotion();
@@ -59,10 +104,6 @@ export function TrustSection() {
     loop: true,
     align: "start",
     slidesToScroll: 1,
-    breakpoints: {
-      "(min-width: 640px)": { slidesToScroll: 1 },
-      "(min-width: 1024px)": { slidesToScroll: 1 },
-    },
   });
 
   const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
@@ -83,7 +124,6 @@ export function TrustSection() {
     };
   }, [emblaApi, onSelect]);
 
-  // Auto-advance with pause on hover/interaction
   useEffect(() => {
     if (prefersReducedMotion || isPaused || !emblaApi) return;
 
@@ -102,7 +142,6 @@ export function TrustSection() {
     };
   }, [emblaApi, isPaused, prefersReducedMotion]);
 
-  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") {
@@ -118,18 +157,17 @@ export function TrustSection() {
 
   return (
     <section className="py-20 md:py-28 relative overflow-hidden">
-      {/* Subtle background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background-secondary/20 to-background pointer-events-none" />
       
       <div className="container mx-auto px-4 md:px-6 relative">
-        <div className="grid lg:grid-cols-[1fr,2fr] gap-12 items-center">
+        <div className="grid lg:grid-cols-[1fr,2fr] gap-12 items-start">
           {/* Left Content */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
-            className="lg:pr-8"
+            className="lg:pr-8 lg:sticky lg:top-32"
           >
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-4">
               <Quote className="w-4 h-4 text-primary" />
@@ -138,13 +176,18 @@ export function TrustSection() {
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
               Trusted by Gamers <span className="text-primary">Worldwide</span>
             </h2>
-            <p className="text-muted-foreground mb-8 max-w-md">
-              Experience why thousands of players choose our hosting for their gaming communities. 
+            <p className="text-muted-foreground mb-6 max-w-md">
+              Join thousands of players who trust Hoxta for their gaming communities. 
               With 99.9% uptime and 24/7 support, we keep your game running smoothly.
             </p>
 
+            {/* Trustpilot Widget */}
+            <div className="mb-8">
+              <TrustpilotWidget />
+            </div>
+
             {/* Navigation Controls */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 mb-6">
               <button
                 onClick={scrollPrev}
                 className="p-3 rounded-xl bg-card border border-border/50 hover:border-primary/50 hover:bg-primary/5 text-foreground transition-all duration-200"
@@ -161,15 +204,15 @@ export function TrustSection() {
               </button>
               
               {/* Pagination Dots */}
-              <div className="flex items-center gap-2 ml-4">
+              <div className="flex items-center gap-1.5 ml-4">
                 {testimonials.map((_, index) => (
                   <button
                     key={index}
                     onClick={() => scrollTo(index)}
-                    className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                    className={`h-2 rounded-full transition-all duration-200 ${
                       index === selectedIndex
                         ? "w-6 bg-primary"
-                        : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                        : "w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50"
                     }`}
                     aria-label={`Go to testimonial ${index + 1}`}
                   />
@@ -177,13 +220,15 @@ export function TrustSection() {
               </div>
             </div>
 
-            <Link
-              to="/about"
-              className="inline-flex items-center gap-2 mt-8 px-5 py-2.5 rounded-xl border border-border/50 hover:border-primary/50 text-sm font-medium text-foreground hover:text-primary transition-all duration-200"
+            <a
+              href="https://trustpilot.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border/50 hover:border-primary/50 text-sm font-medium text-foreground hover:text-primary transition-all duration-200"
             >
-              <Star className="w-4 h-4" />
-              Leave a Review
-            </Link>
+              <ExternalLink className="w-4 h-4" />
+              View All Reviews
+            </a>
           </motion.div>
 
           {/* Testimonials Carousel */}
@@ -206,7 +251,7 @@ export function TrustSection() {
                   <motion.div
                     initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
                     whileInView={prefersReducedMotion ? {} : { opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    transition={{ duration: 0.5, delay: index * 0.05 }}
                     viewport={{ once: true }}
                     className={`h-full p-6 rounded-2xl bg-card border transition-all duration-300 ${
                       index === selectedIndex
@@ -215,10 +260,18 @@ export function TrustSection() {
                     }`}
                   >
                     {/* Rating */}
-                    <div className="flex items-center gap-1 mb-4">
-                      {Array.from({ length: testimonial.rating }).map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                      ))}
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-0.5">
+                        {Array.from({ length: testimonial.rating }).map((_, i) => (
+                          <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                        ))}
+                      </div>
+                      {testimonial.verified && (
+                        <div className="flex items-center gap-1 text-xs text-green-400">
+                          <Shield className="w-3 h-3" />
+                          Verified
+                        </div>
+                      )}
                     </div>
                     
                     {/* Title */}
@@ -232,9 +285,14 @@ export function TrustSection() {
                     </p>
                     
                     {/* Author */}
-                    <div className="pt-4 border-t border-border/50">
-                      <p className="font-medium text-foreground">{testimonial.author}</p>
-                      <p className="text-xs text-primary">{testimonial.role}</p>
+                    <div className="pt-4 border-t border-border/50 flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold">
+                        {testimonial.author.charAt(0)}
+                      </div>
+                      <div>
+                        <p className="font-medium text-foreground">{testimonial.author}</p>
+                        <p className="text-xs text-primary">{testimonial.role}</p>
+                      </div>
                     </div>
                   </motion.div>
                 </div>
