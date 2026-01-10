@@ -75,7 +75,7 @@ export function HeroConsole() {
         {/* Console Content */}
         <div
           ref={scrollRef}
-          className="p-4 h-52 overflow-y-auto font-mono text-sm space-y-2 scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent"
+          className="console-scroll-hide p-4 h-52 overflow-y-auto font-mono text-sm space-y-2"
         >
           {consoleLines.slice(0, visibleLines).map((line, index) => (
             <motion.div
