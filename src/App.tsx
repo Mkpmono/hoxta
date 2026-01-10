@@ -69,25 +69,26 @@ const App = () => (
             <Route path="/panel/login" element={<Login />} />
             
             {/* Client Panel (Protected) */}
-            <Route path="/panel" element={<ProtectedRoute><PanelDashboard /></ProtectedRoute>} />
-            <Route path="/panel/services" element={<ProtectedRoute><PanelServices /></ProtectedRoute>} />
-            <Route path="/panel/services/:id" element={<ProtectedRoute><ServiceDetail /></ProtectedRoute>} />
-            <Route path="/panel/services/:id/upgrade" element={<ProtectedRoute><ServiceUpgrade /></ProtectedRoute>} />
-            <Route path="/panel/orders" element={<ProtectedRoute><PanelOrders /></ProtectedRoute>} />
-            <Route path="/panel/invoices" element={<ProtectedRoute><PanelInvoices /></ProtectedRoute>} />
-            <Route path="/panel/invoices/:id" element={<ProtectedRoute><InvoiceDetail /></ProtectedRoute>} />
-            <Route path="/panel/tickets" element={<ProtectedRoute><PanelTickets /></ProtectedRoute>} />
-            <Route path="/panel/tickets/new" element={<ProtectedRoute><NewTicket /></ProtectedRoute>} />
-            <Route path="/panel/tickets/:id" element={<ProtectedRoute><TicketDetail /></ProtectedRoute>} />
-            <Route path="/panel/profile" element={<ProtectedRoute><PanelProfile /></ProtectedRoute>} />
-            <Route path="/panel/api" element={<ProtectedRoute><PanelAPI /></ProtectedRoute>} />
+            <Route path="/panel" element={<ProtectedRoute allowedRoles={["client", "admin", "owner"]}><PanelDashboard /></ProtectedRoute>} />
+            <Route path="/panel/services" element={<ProtectedRoute allowedRoles={["client", "admin", "owner"]}><PanelServices /></ProtectedRoute>} />
+            <Route path="/panel/services/:id" element={<ProtectedRoute allowedRoles={["client", "admin", "owner"]}><ServiceDetail /></ProtectedRoute>} />
+            <Route path="/panel/services/:id/upgrade" element={<ProtectedRoute allowedRoles={["client", "admin", "owner"]}><ServiceUpgrade /></ProtectedRoute>} />
+            <Route path="/panel/orders" element={<ProtectedRoute allowedRoles={["client", "admin", "owner"]}><PanelOrders /></ProtectedRoute>} />
+            <Route path="/panel/invoices" element={<ProtectedRoute allowedRoles={["client", "admin", "owner"]}><PanelInvoices /></ProtectedRoute>} />
+            <Route path="/panel/invoices/:id" element={<ProtectedRoute allowedRoles={["client", "admin", "owner"]}><InvoiceDetail /></ProtectedRoute>} />
+            <Route path="/panel/tickets" element={<ProtectedRoute allowedRoles={["client", "admin", "owner"]}><PanelTickets /></ProtectedRoute>} />
+            <Route path="/panel/tickets/new" element={<ProtectedRoute allowedRoles={["client", "admin", "owner"]}><NewTicket /></ProtectedRoute>} />
+            <Route path="/panel/tickets/:id" element={<ProtectedRoute allowedRoles={["client", "admin", "owner"]}><TicketDetail /></ProtectedRoute>} />
+            <Route path="/panel/profile" element={<ProtectedRoute allowedRoles={["client", "admin", "owner"]}><PanelProfile /></ProtectedRoute>} />
+            {/* API Settings - Owner only, dev mode only (enforced in ProtectedRoute) */}
+            <Route path="/panel/api" element={<ProtectedRoute allowedRoles={["owner"]} requireOwner><PanelAPI /></ProtectedRoute>} />
             
-            {/* Admin Panel (Protected - Admin Only) */}
-            <Route path="/admin" element={<ProtectedRoute allowedRoles={["admin"]}><AdminDashboard /></ProtectedRoute>} />
-            <Route path="/admin/orders" element={<ProtectedRoute allowedRoles={["admin"]}><AdminOrders /></ProtectedRoute>} />
-            <Route path="/admin/tickets" element={<ProtectedRoute allowedRoles={["admin"]}><AdminTickets /></ProtectedRoute>} />
-            <Route path="/admin/clients" element={<ProtectedRoute allowedRoles={["admin"]}><AdminClients /></ProtectedRoute>} />
-            <Route path="/admin/settings" element={<ProtectedRoute allowedRoles={["admin"]}><AdminSettings /></ProtectedRoute>} />
+            {/* Admin Panel (Protected - Admin & Owner) */}
+            <Route path="/admin" element={<ProtectedRoute allowedRoles={["admin", "owner"]}><AdminDashboard /></ProtectedRoute>} />
+            <Route path="/admin/orders" element={<ProtectedRoute allowedRoles={["admin", "owner"]}><AdminOrders /></ProtectedRoute>} />
+            <Route path="/admin/tickets" element={<ProtectedRoute allowedRoles={["admin", "owner"]}><AdminTickets /></ProtectedRoute>} />
+            <Route path="/admin/clients" element={<ProtectedRoute allowedRoles={["admin", "owner"]}><AdminClients /></ProtectedRoute>} />
+            <Route path="/admin/settings" element={<ProtectedRoute allowedRoles={["admin", "owner"]}><AdminSettings /></ProtectedRoute>} />
             
             <Route path="*" element={<NotFound />} />
           </Routes>

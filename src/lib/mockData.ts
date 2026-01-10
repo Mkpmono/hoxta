@@ -4,7 +4,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: "client" | "admin";
+  role: "client" | "admin" | "owner";
 }
 
 export interface Service {
@@ -62,11 +62,13 @@ export interface Client {
 export const demoUsers: User[] = [
   { id: "1", email: "client@demo.hoxta", name: "Demo Client", role: "client" },
   { id: "2", email: "admin@demo.hoxta", name: "Demo Admin", role: "admin" },
+  { id: "3", email: "owner@demo.hoxta", name: "Demo Owner", role: "owner" },
 ];
 
 export const demoCredentials = {
   client: { email: "client@demo.hoxta", password: "Demo1234!" },
   admin: { email: "admin@demo.hoxta", password: "Demo1234!" },
+  owner: { email: "owner@demo.hoxta", password: "Demo1234!" },
 };
 
 export const mockServices: Service[] = [

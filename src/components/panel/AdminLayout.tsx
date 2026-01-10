@@ -6,13 +6,14 @@ import {
   ShoppingCart,
   MessageSquare,
   Users,
-  Settings,
+  Palette,
   LogOut,
   Menu,
   X,
   Bell,
   ChevronDown,
   Shield,
+  User,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -20,12 +21,13 @@ interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
+// Admin nav items - Clean, no WHMCS/API config
 const adminNavItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/admin" },
   { icon: ShoppingCart, label: "Orders", href: "/admin/orders" },
   { icon: MessageSquare, label: "Tickets", href: "/admin/tickets" },
   { icon: Users, label: "Clients", href: "/admin/clients" },
-  { icon: Settings, label: "Settings", href: "/admin/settings" },
+  { icon: Palette, label: "Brand & UI Settings", href: "/admin/settings" },
 ];
 
 export function AdminLayout({ children }: AdminLayoutProps) {
@@ -38,6 +40,18 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const handleLogout = () => {
     logout();
     navigate("/panel/login");
+  };
+
+  // Get role display text
+  const getRoleDisplay = () => {
+    switch (session.user?.role) {
+      case "owner":
+        return "Owner";
+      case "admin":
+        return "Administrator";
+      default:
+        return "User";
+    }
   };
 
   return (
@@ -103,7 +117,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
               to="/panel"
               className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all"
             >
-              <Shield className="w-4 h-4" />
+              <User className="w-4 h-4" />
               Client View
             </Link>
           </div>
@@ -116,7 +130,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-foreground truncate">{session.user?.name}</p>
-                <p className="text-xs text-primary truncate">Administrator</p>
+                <p className="text-xs text-primary truncate">{getRoleDisplay()}</p>
               </div>
             </div>
             <button
@@ -174,8 +188,8 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                       onClick={() => setUserMenuOpen(false)}
                       className="flex items-center gap-2 px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50"
                     >
-                      <Settings className="w-4 h-4" />
-                      Settings
+                      <Palette className="w-4 h-4" />
+                      Brand & UI Settings
                     </Link>
                     <hr className="my-2 border-border/50" />
                     <button

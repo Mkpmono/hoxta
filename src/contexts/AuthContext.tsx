@@ -9,7 +9,7 @@ interface AuthSession {
 interface AuthContextType {
   session: AuthSession;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
-  loginAsDemo: (role: "client" | "admin") => void;
+  loginAsDemo: (role: "client" | "admin" | "owner") => void;
   logout: () => void;
   isLoading: boolean;
 }
@@ -68,10 +68,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     }
 
+    if (email === demoCredentials.owner.email && password === demoCredentials.owner.password) {
+      const user = demoUsers.find((u) => u.email === email);
+      if (user) {
+        setSession({ isAuthenticated: true, user });
+        return { success: true };
+      }
+    }
+
     return { success: false, error: "Invalid email or password" };
   };
 
-  const loginAsDemo = (role: "client" | "admin") => {
+  const loginAsDemo = (role: "client" | "admin" | "owner") => {
     const user = demoUsers.find((u) => u.role === role);
     if (user) {
       setSession({ isAuthenticated: true, user });

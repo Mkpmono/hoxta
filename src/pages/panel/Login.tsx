@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Mail, Lock, Eye, EyeOff, User, Shield, AlertCircle } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, User, Shield, AlertCircle, Crown } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { WaveBackground } from "@/components/ui/WaveBackground";
 import { Link } from "react-router-dom";
@@ -29,7 +29,9 @@ export default function Login() {
 
     if (result.success) {
       // Determine where to redirect based on credentials
-      if (email === "admin@demo.hoxta") {
+      if (email === "owner@demo.hoxta") {
+        navigate("/admin", { replace: true });
+      } else if (email === "admin@demo.hoxta") {
         navigate("/admin", { replace: true });
       } else {
         navigate(from, { replace: true });
@@ -41,9 +43,9 @@ export default function Login() {
     setIsLoading(false);
   };
 
-  const handleDemoLogin = (role: "client" | "admin") => {
+  const handleDemoLogin = (role: "client" | "admin" | "owner") => {
     loginAsDemo(role);
-    if (role === "admin") {
+    if (role === "admin" || role === "owner") {
       navigate("/admin", { replace: true });
     } else {
       navigate("/panel", { replace: true });
@@ -154,20 +156,27 @@ export default function Login() {
           {/* Demo Login Buttons */}
           <div className="mt-6 pt-6 border-t border-border/50">
             <p className="text-xs text-muted-foreground text-center mb-4">Quick demo access</p>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-2">
               <button
                 onClick={() => handleDemoLogin("client")}
-                className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-muted/50 border border-border hover:border-primary/50 text-foreground text-sm font-medium transition-all hover:bg-muted"
+                className="flex flex-col items-center justify-center gap-1 px-3 py-2.5 rounded-lg bg-muted/50 border border-border hover:border-primary/50 text-foreground text-xs font-medium transition-all hover:bg-muted"
               >
                 <User className="w-4 h-4 text-primary" />
-                Demo Client
+                Client
               </button>
               <button
                 onClick={() => handleDemoLogin("admin")}
-                className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-muted/50 border border-border hover:border-primary/50 text-foreground text-sm font-medium transition-all hover:bg-muted"
+                className="flex flex-col items-center justify-center gap-1 px-3 py-2.5 rounded-lg bg-muted/50 border border-border hover:border-primary/50 text-foreground text-xs font-medium transition-all hover:bg-muted"
               >
                 <Shield className="w-4 h-4 text-primary" />
-                Demo Admin
+                Admin
+              </button>
+              <button
+                onClick={() => handleDemoLogin("owner")}
+                className="flex flex-col items-center justify-center gap-1 px-3 py-2.5 rounded-lg bg-muted/50 border border-border hover:border-yellow-500/50 text-foreground text-xs font-medium transition-all hover:bg-muted"
+              >
+                <Crown className="w-4 h-4 text-yellow-500" />
+                Owner
               </button>
             </div>
           </div>

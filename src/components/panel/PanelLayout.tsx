@@ -8,7 +8,6 @@ import {
   FileText,
   MessageSquare,
   User,
-  Settings,
   LogOut,
   Menu,
   X,
@@ -21,6 +20,7 @@ interface PanelLayoutProps {
   children: React.ReactNode;
 }
 
+// Client nav items - NO API Settings for regular clients
 const clientNavItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/panel" },
   { icon: Server, label: "Services", href: "/panel/services" },
@@ -28,7 +28,6 @@ const clientNavItems = [
   { icon: FileText, label: "Invoices", href: "/panel/invoices" },
   { icon: MessageSquare, label: "Tickets", href: "/panel/tickets" },
   { icon: User, label: "Profile", href: "/panel/profile" },
-  { icon: Settings, label: "API Settings", href: "/panel/api" },
 ];
 
 export function PanelLayout({ children }: PanelLayoutProps) {
@@ -167,14 +166,6 @@ export function PanelLayout({ children }: PanelLayoutProps) {
                     >
                       <User className="w-4 h-4" />
                       Profile
-                    </Link>
-                    <Link
-                      to="/panel/api"
-                      onClick={() => setUserMenuOpen(false)}
-                      className="flex items-center gap-2 px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                    >
-                      <Settings className="w-4 h-4" />
-                      API Settings
                     </Link>
                     <hr className="my-2 border-border/50" />
                     <button
