@@ -4,6 +4,8 @@ $pageDescription = 'The page you are looking for could not be found.';
 $currentPage = '404';
 require_once __DIR__.'/partials/head.php';
 require_once __DIR__.'/partials/header.php';
+// Use BASE_URL for links
+$base = isset($BASE_URL) ? $BASE_URL : '';
 ?>
 
 <!-- 404 Section -->
@@ -22,10 +24,10 @@ require_once __DIR__.'/partials/header.php';
             <p>Oops! The page you're looking for seems to have been moved, deleted, or never existed. Let's get you back on track.</p>
             
             <div class="error-actions">
-                <a href="index.php" class="btn btn-primary btn-lg">
+                <a href="<?php echo $base; ?>/" class="btn-glow btn-large">
                     <span>← Back to Home</span>
                 </a>
-                <a href="contact.php" class="btn btn-outline btn-lg">
+                <a href="<?php echo $base; ?>/contact.php" class="btn-outline btn-large">
                     <span>Contact Support</span>
                 </a>
             </div>
@@ -33,19 +35,19 @@ require_once __DIR__.'/partials/header.php';
             <div class="error-suggestions">
                 <h3>Popular Destinations</h3>
                 <div class="suggestion-grid">
-                    <a href="web-hosting.php" class="suggestion-card">
+                    <a href="<?php echo $base; ?>/web-hosting.php" class="suggestion-card">
                         <span class="suggestion-icon">🌐</span>
                         <span>Web Hosting</span>
                     </a>
-                    <a href="vps-hosting.php" class="suggestion-card">
+                    <a href="<?php echo $base; ?>/vps-hosting.php" class="suggestion-card">
                         <span class="suggestion-icon">🖥️</span>
                         <span>VPS Hosting</span>
                     </a>
-                    <a href="dedicated-servers.php" class="suggestion-card">
+                    <a href="<?php echo $base; ?>/dedicated-servers.php" class="suggestion-card">
                         <span class="suggestion-icon">🖧</span>
                         <span>Dedicated</span>
                     </a>
-                    <a href="game-servers.php" class="suggestion-card">
+                    <a href="<?php echo $base; ?>/game-servers.php" class="suggestion-card">
                         <span class="suggestion-icon">🎮</span>
                         <span>Game Servers</span>
                     </a>
