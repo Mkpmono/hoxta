@@ -1,0 +1,10 @@
+export { HostingHero } from './HostingHero';
+export { TrustBar } from './TrustBar';
+export { PricingPlans, type Plan, type PlanFeature } from './PricingPlans';
+export { FeatureGrid, type Feature } from './FeatureGrid';
+export { ContentSection } from './ContentSection';
+export { HowItWorks } from './HowItWorks';
+export { GlobalInfrastructure } from './GlobalInfrastructure';
+export { PlanComparison } from './PlanComparison';
+export { FAQAccordion, type FAQItem } from './FAQAccordion';
+export { FinalCTA } from './FinalCTA';

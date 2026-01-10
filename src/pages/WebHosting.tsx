@@ -1,115 +1,125 @@
 import { Layout } from "@/components/layout/Layout";
-import { motion } from "framer-motion";
-import { Check, Globe, Zap, Shield, Headphones } from "lucide-react";
-import { Link } from "react-router-dom";
-
-const plans = [
-  {
-    name: "Starter",
-    price: 2.99,
-    features: ["1 Website", "5GB SSD Storage", "Unlimited Bandwidth", "Free SSL Certificate", "24/7 Support"],
-    popular: false,
-  },
-  {
-    name: "Professional",
-    price: 6.99,
-    features: ["Unlimited Websites", "25GB NVMe Storage", "Unlimited Bandwidth", "Free SSL & CDN", "Daily Backups", "Priority Support"],
-    popular: true,
-  },
-  {
-    name: "Business",
-    price: 12.99,
-    features: ["Unlimited Websites", "100GB NVMe Storage", "Unlimited Bandwidth", "Free SSL & CDN", "Daily Backups", "Dedicated IP", "White-label"],
-    popular: false,
-  },
-];
+import {
+  HostingHero,
+  TrustBar,
+  PricingPlans,
+  FeatureGrid,
+  ContentSection,
+  HowItWorks,
+  GlobalInfrastructure,
+  PlanComparison,
+  FAQAccordion,
+  FinalCTA,
+} from "@/components/hosting";
+import {
+  webHostingPlans,
+  webHostingFeatures,
+  webHostingFAQs,
+  webHostingComparison,
+} from "@/data/hostingData";
+import { Globe, Zap, Shield } from "lucide-react";
 
 export default function WebHosting() {
   return (
     <Layout>
-      <section className="py-20 md:py-32">
-        <div className="container mx-auto px-4 md:px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-16"
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary mb-6">
-              <Globe className="w-4 h-4" />
-              <span className="text-sm font-medium">Web Hosting</span>
-            </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
-              Fast & Reliable <span className="text-gradient">Web Hosting</span>
-            </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Launch your website with lightning-fast NVMe storage, free SSL, and enterprise-grade security.
-            </p>
-          </motion.div>
+      {/* Hero Section */}
+      <HostingHero
+        badge="Web Hosting"
+        headline="Lightning-Fast"
+        highlightedText="Web Hosting"
+        description="Launch your website with blazing-fast NVMe storage, free SSL certificates, and enterprise-grade security. From personal blogs to business sites, we've got you covered."
+        promotion={{
+          text: "New Year Sale",
+          discount: "Up to 70% OFF",
+          endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        }}
+        primaryCTA={{ text: "Get Started", href: "#pricing" }}
+        secondaryCTA={{ text: "Compare Plans", href: "#comparison" }}
+      />
 
-          <div className="grid md:grid-cols-3 gap-6 mb-16">
-            {plans.map((plan, index) => (
-              <motion.div
-                key={plan.name}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className={`glass-card p-6 relative ${plan.popular ? "border-primary/50 shadow-glow" : ""}`}
-              >
-                {plan.popular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-primary text-primary-foreground text-xs font-bold rounded-full">
-                    MOST POPULAR
-                  </div>
-                )}
-                <h3 className="text-xl font-semibold text-foreground mb-2">{plan.name}</h3>
-                <div className="flex items-baseline gap-1 mb-6">
-                  <span className="text-4xl font-bold text-foreground">${plan.price}</span>
-                  <span className="text-muted-foreground">/month</span>
-                </div>
-                <ul className="space-y-3 mb-8">
-                  {plan.features.map((feature) => (
-                    <li key={feature} className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Check className="w-4 h-4 text-primary" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-                <Link
-                  to="/contact"
-                  className={`block w-full py-3 text-center rounded-lg font-medium transition-colors ${
-                    plan.popular ? "btn-glow" : "btn-outline"
-                  }`}
-                >
-                  Get Started
-                </Link>
-              </motion.div>
-            ))}
-          </div>
+      {/* Trust Bar */}
+      <TrustBar />
 
-          <div className="grid md:grid-cols-4 gap-6">
-            {[
-              { icon: Zap, title: "Instant Setup", desc: "Your site live in minutes" },
-              { icon: Shield, title: "DDoS Protection", desc: "Enterprise-grade security" },
-              { icon: Globe, title: "Free SSL", desc: "Secure all your domains" },
-              { icon: Headphones, title: "24/7 Support", desc: "Expert help anytime" },
-            ].map((item, index) => (
-              <motion.div
-                key={item.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
-                className="text-center"
-              >
-                <div className="w-12 h-12 mx-auto mb-4 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <item.icon className="w-6 h-6 text-primary" />
-                </div>
-                <h4 className="font-semibold text-foreground mb-1">{item.title}</h4>
-                <p className="text-sm text-muted-foreground">{item.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Pricing Plans */}
+      <PricingPlans
+        title="Web Hosting Plans"
+        subtitle="Powerful hosting solutions for every website. All plans include free SSL, daily backups, and 24/7 support."
+        plans={webHostingPlans}
+      />
+
+      {/* Why Choose Section */}
+      <FeatureGrid
+        title="Why Choose Hoxta Web Hosting"
+        subtitle="Enterprise-grade infrastructure with premium features included in every plan."
+        features={webHostingFeatures}
+      />
+
+      {/* Content Section - What is Web Hosting */}
+      <ContentSection
+        title="What is Web Hosting?"
+        description="Web hosting is the foundation of your online presence. It's the service that stores your website files on secure servers and makes them accessible to visitors around the world, 24 hours a day, 7 days a week."
+        points={[
+          "Store your website files, images, and databases securely",
+          "Ensure your site is always online and accessible globally",
+          "Get professional email addresses with your domain",
+          "Scale resources as your website grows",
+        ]}
+        icon={Globe}
+      />
+
+      {/* Content Section - Performance */}
+      <ContentSection
+        title="Unmatched Performance"
+        description="Our hosting infrastructure is built for speed. With NVMe SSD storage, LiteSpeed web servers, and optimized caching, your website loads in milliseconds, improving user experience and search rankings."
+        points={[
+          "NVMe SSDs deliver 10x faster speeds than traditional storage",
+          "LiteSpeed web server with built-in caching technology",
+          "Global CDN integration for worldwide fast delivery",
+          "HTTP/3 and QUIC protocol support for modern performance",
+        ]}
+        icon={Zap}
+        reverse
+      />
+
+      {/* Content Section - Security */}
+      <ContentSection
+        title="Enterprise Security"
+        description="Security isn't optional – it's essential. Every hosting account is protected by multiple layers of security, from DDoS protection to malware scanning, ensuring your website and visitors stay safe."
+        points={[
+          "Free SSL certificates for all domains",
+          "Enterprise-grade DDoS mitigation",
+          "Real-time malware scanning and removal",
+          "Automated daily backups with easy restore",
+        ]}
+        icon={Shield}
+      />
+
+      {/* How It Works */}
+      <HowItWorks />
+
+      {/* Global Infrastructure */}
+      <GlobalInfrastructure />
+
+      {/* Plan Comparison */}
+      <PlanComparison
+        title="Compare Web Hosting Plans"
+        subtitle="See exactly what's included in each plan to find your perfect match."
+        plans={webHostingComparison.plans}
+        categories={webHostingComparison.categories}
+      />
+
+      {/* FAQ Section */}
+      <FAQAccordion
+        title="Web Hosting FAQ"
+        subtitle="Got questions about web hosting? We've got answers."
+        items={webHostingFAQs}
+      />
+
+      {/* Final CTA */}
+      <FinalCTA
+        title="Ready to Launch Your Website?"
+        subtitle="Join thousands of website owners who trust Hoxta for reliable, fast, and secure web hosting."
+      />
     </Layout>
   );
 }
