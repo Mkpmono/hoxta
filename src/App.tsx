@@ -20,6 +20,11 @@ import Contact from "./pages/Contact";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
+// Order Flow Pages
+import Order from "./pages/Order";
+import Checkout from "./pages/Checkout";
+import CheckoutSuccess from "./pages/CheckoutSuccess";
+import CheckoutFailed from "./pages/CheckoutFailed";
 // More Hosting Pages
 import Colocation from "./pages/Colocation";
 import TeamSpeak from "./pages/TeamSpeak";
@@ -73,6 +78,11 @@ const App = () => (
             <Route path="/contact" element={<Contact />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
+            {/* Order Flow */}
+            <Route path="/order" element={<Order />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/checkout/success" element={<CheckoutSuccess />} />
+            <Route path="/checkout/failed" element={<CheckoutFailed />} />
             {/* More Hosting Routes */}
             <Route path="/colocation" element={<Colocation />} />
             <Route path="/teamspeak" element={<TeamSpeak />} />
