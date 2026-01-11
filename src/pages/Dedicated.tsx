@@ -114,7 +114,7 @@ export default function Dedicated() {
   const navigate = useNavigate();
 
   const handleOrderServer = (serverId: string) => {
-    navigate(`/order?product=dedicated&plan=${serverId}&billing=monthly`);
+    navigate(`/checkout?product=dedicated&plan=${serverId}&billing=monthly`);
   };
 
   return (

@@ -2,11 +2,18 @@ import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Layout } from "@/components/layout/Layout";
-import { CheckoutStepper, checkoutSteps, PlanSelector, OrderSummary } from "@/components/checkout";
-import { getProductBySlug, BillingCycle } from "@/data/products";
-import { createOrderSession } from "@/services/orderService";
+import { CheckoutStepper, PlanSelector } from "@/components/checkout";
+import { getProductBySlug, BillingCycle, allProducts } from "@/data/products";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
+// Full checkout steps for plan selection
+const orderSteps = [
+  { id: "plan", label: "Select Plan" },
+  { id: "details", label: "Your Details" },
+  { id: "payment", label: "Payment" },
+  { id: "done", label: "Complete" },
+];
 
 export default function Order() {
   const [searchParams] = useSearchParams();
@@ -18,11 +25,11 @@ export default function Order() {
   
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(initialPlan);
   const [billingCycle, setBillingCycle] = useState<BillingCycle>(initialBilling);
-  const [isLoading, setIsLoading] = useState(false);
   
   const product = getProductBySlug(productSlug);
   const selectedPlan = product?.plans.find((p) => p.id === selectedPlanId);
   
+  // Auto-select popular plan if none specified
   useEffect(() => {
     if (product && !selectedPlanId) {
       const popular = product.plans.find((p) => p.popular);
@@ -34,25 +41,33 @@ export default function Order() {
     return (
       <Layout>
         <div className="container py-20 text-center">
-          <h1 className="text-2xl font-bold">Product not found</h1>
-          <Button onClick={() => navigate("/")} className="mt-4">Go Home</Button>
+          <h1 className="text-2xl font-bold mb-4">Product not found</h1>
+          <p className="text-muted-foreground mb-6">
+            The product "{productSlug}" doesn't exist. Please select a valid product.
+          </p>
+          <div className="flex flex-wrap gap-3 justify-center">
+            {allProducts.slice(0, 5).map((p) => (
+              <Button 
+                key={p.slug} 
+                variant="outline" 
+                onClick={() => navigate(`/order?product=${p.slug}`)}
+              >
+                {p.name}
+              </Button>
+            ))}
+          </div>
+          <Button onClick={() => navigate("/")} className="mt-6">
+            Go Home
+          </Button>
         </div>
       </Layout>
     );
   }
   
-  const handleContinue = async () => {
+  // Direct navigate to checkout with selected plan
+  const handleContinue = () => {
     if (!selectedPlan) return;
-    setIsLoading(true);
-    
-    try {
-      const session = await createOrderSession(productSlug, selectedPlan, billingCycle);
-      navigate(`/checkout?session=${session.sessionId}`);
-    } catch (error) {
-      console.error("Failed to create order session:", error);
-    } finally {
-      setIsLoading(false);
-    }
+    navigate(`/checkout?product=${productSlug}&plan=${selectedPlan.id}&billing=${billingCycle}`);
   };
   
   return (
@@ -79,7 +94,7 @@ export default function Order() {
           </motion.div>
           
           {/* Stepper */}
-          <CheckoutStepper steps={checkoutSteps} currentStep={0} className="max-w-2xl mx-auto mb-12" />
+          <CheckoutStepper steps={orderSteps} currentStep={0} className="max-w-2xl mx-auto mb-12" />
           
           {/* Plan Selection */}
           <PlanSelector
