@@ -14,9 +14,9 @@ export function GameCard({ game, index }: GameCardProps) {
   const handleOrderNow = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    // Navigate to order page with the game product and default first plan
+    // Navigate directly to checkout with the game product and default first plan
     const planId = `${game.slug}-starter`;
-    navigate(`/order?product=${game.slug}&plan=${planId}&billing=monthly`);
+    navigate(`/checkout?product=${game.slug}&plan=${planId}&billing=monthly`);
   };
 
   return (

@@ -30,7 +30,7 @@ interface PricingPlansProps {
   productSlug?: string; // Default product slug if not set on individual plans
 }
 
-function generateOrderUrl(plan: Plan, productSlug: string | undefined, isYearly: boolean): string {
+function generateCheckoutUrl(plan: Plan, productSlug: string | undefined, isYearly: boolean): string {
   const slug = plan.productSlug || productSlug;
   const billing = isYearly ? "annually" : "monthly";
   
@@ -38,10 +38,12 @@ function generateOrderUrl(plan: Plan, productSlug: string | undefined, isYearly:
     return plan.cta.href;
   }
   
+  // Route directly to checkout when we have all params
   if (slug && plan.id) {
-    return `/order?product=${slug}&plan=${plan.id}&billing=${billing}`;
+    return `/checkout?product=${slug}&plan=${plan.id}&billing=${billing}`;
   }
   
+  // Fallback to order page for plan selection
   if (slug) {
     return `/order?product=${slug}&billing=${billing}`;
   }
@@ -160,7 +162,7 @@ export function PricingPlans({
                 </ul>
 
                 <Link
-                  to={generateOrderUrl(plan, productSlug, isYearly)}
+                  to={generateCheckoutUrl(plan, productSlug, isYearly)}
                   className={`block w-full py-3 text-center rounded-lg font-medium transition-all ${
                     plan.popular
                       ? "btn-glow"
