@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Server, ExternalLink, Settings } from "lucide-react";
+import { Server, ExternalLink, Settings, Loader2 } from "lucide-react";
 import { PanelLayout } from "@/components/panel/PanelLayout";
 import { MockModeBanner } from "@/components/panel/MockModeBanner";
 import { ServiceCardSkeleton } from "@/components/ui/LoadingSkeleton";
-import { whmcsClient, Service } from "@/services/whmcsClient";
+import { apiClient, Service } from "@/services/apiClient";
 import { toast } from "@/hooks/use-toast";
 
 export default function PanelServices() {
@@ -15,8 +15,12 @@ export default function PanelServices() {
   useEffect(() => {
     async function fetchServices() {
       try {
-        const data = await whmcsClient.getServices();
-        setServices(data);
+        const result = await apiClient.getServices();
+        if (result.error) {
+          toast({ title: "Error", description: result.error, variant: "destructive" });
+        } else {
+          setServices(result.data?.services || []);
+        }
       } catch (error) {
         toast({ title: "Error", description: "Failed to load services", variant: "destructive" });
       } finally {

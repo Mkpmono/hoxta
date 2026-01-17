@@ -1,18 +1,12 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Package } from "lucide-react";
+import { Package, ShoppingCart } from "lucide-react";
+import { Link } from "react-router-dom";
 import { PanelLayout } from "@/components/panel/PanelLayout";
+import { MockModeBanner } from "@/components/panel/MockModeBanner";
 import { TableRowSkeleton } from "@/components/ui/LoadingSkeleton";
-import { whmcsClient } from "@/services/whmcsClient";
+import { apiClient, Order } from "@/services/apiClient";
 import { toast } from "sonner";
-
-interface Order {
-  id: string;
-  date: string;
-  product: string;
-  status: string;
-  total: number;
-}
 
 export default function PanelOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -25,8 +19,13 @@ export default function PanelOrders() {
   const loadOrders = async () => {
     try {
       setLoading(true);
-      const data = await whmcsClient.getOrders();
-      setOrders(data || []);
+      const result = await apiClient.getOrders();
+      if (result.error) {
+        toast.error(result.error);
+        setOrders([]);
+      } else {
+        setOrders(result.data?.orders || []);
+      }
     } catch (error) {
       toast.error("Failed to load orders");
       setOrders([]);
@@ -49,11 +48,18 @@ export default function PanelOrders() {
   return (
     <PanelLayout>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+        <MockModeBanner />
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-foreground">Orders</h1>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Package className="w-4 h-4" />
-            <span>{orders.length} orders</span>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Package className="w-4 h-4" />
+              <span>{orders.length} orders</span>
+            </div>
+            <Link to="/pricing" className="btn-glow flex items-center gap-2 text-sm py-2">
+              <ShoppingCart className="w-4 h-4" />
+              New Order
+            </Link>
           </div>
         </div>
         
@@ -67,18 +73,19 @@ export default function PanelOrders() {
                   <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Product</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Status</th>
                   <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground uppercase">Total</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground uppercase">Invoice</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/50">
                 {loading ? (
                   <>
-                    <TableRowSkeleton columns={5} />
-                    <TableRowSkeleton columns={5} />
-                    <TableRowSkeleton columns={5} />
+                    <TableRowSkeleton columns={6} />
+                    <TableRowSkeleton columns={6} />
+                    <TableRowSkeleton columns={6} />
                   </>
                 ) : orders.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
+                    <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">
                       No orders found
                     </td>
                   </tr>
@@ -95,6 +102,13 @@ export default function PanelOrders() {
                       </td>
                       <td className="px-4 py-3 text-sm text-foreground text-right">
                         ${(order.total ?? 0).toFixed(2)}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        {order.invoiceId && (
+                          <Link to={`/panel/invoices/${order.invoiceId}`} className="text-sm text-primary hover:underline">
+                            {order.invoiceId}
+                          </Link>
+                        )}
                       </td>
                     </tr>
                   ))

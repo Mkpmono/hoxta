@@ -5,7 +5,7 @@ import { Download, Eye } from "lucide-react";
 import { PanelLayout } from "@/components/panel/PanelLayout";
 import { MockModeBanner } from "@/components/panel/MockModeBanner";
 import { TableRowSkeleton } from "@/components/ui/LoadingSkeleton";
-import { whmcsClient, Invoice } from "@/services/whmcsClient";
+import { apiClient, Invoice } from "@/services/apiClient";
 import { toast } from "@/hooks/use-toast";
 
 export default function PanelInvoices() {
@@ -15,8 +15,12 @@ export default function PanelInvoices() {
   useEffect(() => {
     async function fetchInvoices() {
       try {
-        const data = await whmcsClient.getInvoices();
-        setInvoices(data);
+        const result = await apiClient.getInvoices();
+        if (result.error) {
+          toast({ title: "Error", description: result.error, variant: "destructive" });
+        } else {
+          setInvoices(result.data?.invoices || []);
+        }
       } catch (error) {
         toast({ title: "Error", description: "Failed to load invoices", variant: "destructive" });
       } finally {
@@ -28,8 +32,9 @@ export default function PanelInvoices() {
 
   const handlePayNow = async (invoiceId: string) => {
     try {
-      const result = await whmcsClient.getInvoicePayLink(invoiceId);
-      if (result.url) window.open(result.url, "_blank");
+      const result = await apiClient.getInvoicePayLink(invoiceId);
+      if (result.data?.url) window.open(result.data.url, "_blank");
+      else toast({ title: "Error", description: "Failed to get payment link", variant: "destructive" });
     } catch (error) {
       toast({ title: "Error", description: "Failed to get payment link", variant: "destructive" });
     }

@@ -1,1 +1,22 @@
 project_id = "atbxfycxmlannqpgrule"
+
+[functions.whmcs-auth]
+verify_jwt = false
+
+[functions.whmcs-orders]
+verify_jwt = false
+
+[functions.whmcs-services]
+verify_jwt = false
+
+[functions.whmcs-invoices]
+verify_jwt = false
+
+[functions.whmcs-tickets]
+verify_jwt = false
+
+[functions.payments]
+verify_jwt = false
+
+[functions.webhooks]
+verify_jwt = false

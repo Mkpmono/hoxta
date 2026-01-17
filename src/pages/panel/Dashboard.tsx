@@ -1,20 +1,104 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Server, ShoppingCart, FileText, MessageSquare, AlertCircle, CheckCircle, Clock } from "lucide-react";
+import { Server, ShoppingCart, FileText, MessageSquare, AlertCircle, CheckCircle, Clock, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { PanelLayout } from "@/components/panel/PanelLayout";
-import { mockServices, mockOrders, mockInvoices, mockTickets } from "@/lib/mockData";
+import { MockModeBanner } from "@/components/panel/MockModeBanner";
+import { apiClient, Service, Order, Invoice, Ticket } from "@/services/apiClient";
 
-const stats = [
-  { icon: Server, label: "Active Services", value: mockServices.filter(s => s.status === "active").length, color: "text-green-400" },
-  { icon: ShoppingCart, label: "Pending Orders", value: mockOrders.filter(o => o.status === "pending").length, color: "text-yellow-400" },
-  { icon: FileText, label: "Unpaid Invoices", value: mockInvoices.filter(i => i.status === "unpaid" || i.status === "overdue").length, color: "text-red-400" },
-  { icon: MessageSquare, label: "Open Tickets", value: mockTickets.filter(t => t.status === "open" || t.status === "customer-reply").length, color: "text-primary" },
-];
+interface DashboardData {
+  services: Service[];
+  orders: Order[];
+  invoices: Invoice[];
+  tickets: Ticket[];
+}
 
 export default function PanelDashboard() {
+  const [data, setData] = useState<DashboardData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [servicesRes, ordersRes, invoicesRes, ticketsRes] = await Promise.all([
+          apiClient.getServices(),
+          apiClient.getOrders(),
+          apiClient.getInvoices(),
+          apiClient.getTickets()
+        ]);
+
+        setData({
+          services: servicesRes.data?.services || [],
+          orders: ordersRes.data?.orders || [],
+          invoices: invoicesRes.data?.invoices || [],
+          tickets: ticketsRes.data?.tickets || []
+        });
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load dashboard');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <PanelLayout>
+        <MockModeBanner />
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </PanelLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <PanelLayout>
+        <MockModeBanner />
+        <div className="flex items-center justify-center h-64 text-destructive">
+          <AlertCircle className="w-6 h-6 mr-2" />
+          {error}
+        </div>
+      </PanelLayout>
+    );
+  }
+
+  const stats = [
+    { 
+      icon: Server, 
+      label: "Active Services", 
+      value: data?.services.filter(s => s.status === "active").length || 0, 
+      color: "text-green-400" 
+    },
+    { 
+      icon: ShoppingCart, 
+      label: "Pending Orders", 
+      value: data?.orders.filter(o => o.status === "pending").length || 0, 
+      color: "text-yellow-400" 
+    },
+    { 
+      icon: FileText, 
+      label: "Unpaid Invoices", 
+      value: data?.invoices.filter(i => i.status === "unpaid" || i.status === "overdue").length || 0, 
+      color: "text-red-400" 
+    },
+    { 
+      icon: MessageSquare, 
+      label: "Open Tickets", 
+      value: data?.tickets.filter(t => t.status === "open" || t.status === "customer-reply").length || 0, 
+      color: "text-primary" 
+    },
+  ];
+
   return (
     <PanelLayout>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+        <MockModeBanner />
         <h1 className="text-2xl font-bold text-foreground mb-6">Dashboard</h1>
 
         {/* Stats Grid */}
@@ -48,7 +132,7 @@ export default function PanelDashboard() {
               <Link to="/panel/services" className="text-sm text-primary hover:underline">View all</Link>
             </div>
             <div className="space-y-3">
-              {mockServices.slice(0, 3).map((service) => (
+              {data?.services.slice(0, 3).map((service) => (
                 <div key={service.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
                   <div>
                     <p className="font-medium text-foreground">{service.name}</p>
@@ -63,6 +147,9 @@ export default function PanelDashboard() {
                   </span>
                 </div>
               ))}
+              {(!data?.services || data.services.length === 0) && (
+                <p className="text-muted-foreground text-sm text-center py-4">No services found</p>
+              )}
             </div>
           </div>
 
@@ -73,7 +160,7 @@ export default function PanelDashboard() {
               <Link to="/panel/tickets" className="text-sm text-primary hover:underline">View all</Link>
             </div>
             <div className="space-y-3">
-              {mockTickets.filter(t => t.clientId === "1").slice(0, 3).map((ticket) => (
+              {data?.tickets.slice(0, 3).map((ticket) => (
                 <div key={ticket.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
                   <div className="flex items-center gap-3">
                     {ticket.status === "open" ? <AlertCircle className="w-4 h-4 text-yellow-400" /> :
@@ -93,6 +180,9 @@ export default function PanelDashboard() {
                   </span>
                 </div>
               ))}
+              {(!data?.tickets || data.tickets.length === 0) && (
+                <p className="text-muted-foreground text-sm text-center py-4">No tickets found</p>
+              )}
             </div>
           </div>
         </div>
