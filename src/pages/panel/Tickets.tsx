@@ -3,18 +3,10 @@ import { motion } from "framer-motion";
 import { Plus, Search, Filter } from "lucide-react";
 import { Link } from "react-router-dom";
 import { PanelLayout } from "@/components/panel/PanelLayout";
+import { MockModeBanner } from "@/components/panel/MockModeBanner";
 import { TableRowSkeleton } from "@/components/ui/LoadingSkeleton";
-import { whmcsClient } from "@/services/whmcsClient";
+import { apiClient, Ticket } from "@/services/apiClient";
 import { toast } from "sonner";
-
-interface Ticket {
-  id: string;
-  subject: string;
-  department: string;
-  status: string;
-  priority: string;
-  lastReply: string;
-}
 
 export default function PanelTickets() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
@@ -29,8 +21,13 @@ export default function PanelTickets() {
   const loadTickets = async () => {
     try {
       setLoading(true);
-      const data = await whmcsClient.getTickets();
-      setTickets(data || []);
+      const result = await apiClient.getTickets();
+      if (result.error) {
+        toast.error(result.error);
+        setTickets([]);
+      } else {
+        setTickets(result.data?.tickets || []);
+      }
     } catch (error) {
       toast.error("Failed to load tickets");
       setTickets([]);
@@ -69,6 +66,7 @@ export default function PanelTickets() {
   return (
     <PanelLayout>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+        <MockModeBanner />
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-foreground">Support Tickets</h1>
           <Link to="/panel/tickets/new" className="btn-glow flex items-center gap-2 text-sm py-2">
