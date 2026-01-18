@@ -126,17 +126,18 @@ Deno.serve(async (req) => {
 
     // GET /list - Get all orders
     if ((path === '/list' || path === '') && req.method === 'GET') {
-      if (MOCK_MODE) {
-        return new Response(
-          JSON.stringify({ orders: mockOrders, mockMode: true }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-
+      // Require authentication for all modes
       if (!session) {
         return new Response(
           JSON.stringify({ error: 'Authentication required' }),
           { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      if (MOCK_MODE) {
+        return new Response(
+          JSON.stringify({ orders: mockOrders, mockMode: true }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 

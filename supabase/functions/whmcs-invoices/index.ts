@@ -21,6 +21,14 @@ Deno.serve(async (req) => {
     if ((path === '/list' || path === '' || path === '/') && req.method === 'GET') {
       const status = url.searchParams.get('status');
       
+      // Require authentication for all modes
+      if (!session) {
+        return new Response(
+          JSON.stringify({ error: 'Authentication required' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
       if (MOCK_MODE) {
         let invoices = mockInvoices;
         if (status) {
@@ -29,13 +37,6 @@ Deno.serve(async (req) => {
         return new Response(
           JSON.stringify({ invoices, mockMode: true }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-
-      if (!session) {
-        return new Response(
-          JSON.stringify({ error: 'Authentication required' }),
-          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
@@ -52,18 +53,19 @@ Deno.serve(async (req) => {
     if (invoiceMatch && req.method === 'GET') {
       const invoiceId = parseInt(invoiceMatch[1]);
       
+      // Require authentication for all modes
+      if (!session) {
+        return new Response(
+          JSON.stringify({ error: 'Authentication required' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
       if (MOCK_MODE) {
         const invoice = mockInvoices.find(inv => inv.id === `INV-00${invoiceId}`) || mockInvoices[0];
         return new Response(
           JSON.stringify({ ...invoice, mockMode: true }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-
-      if (!session) {
-        return new Response(
-          JSON.stringify({ error: 'Authentication required' }),
-          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
@@ -77,6 +79,14 @@ Deno.serve(async (req) => {
     // POST /:id/paylink - Generate payment link
     const paylinkMatch = path.match(/^\/(\d+)\/paylink$/);
     if (paylinkMatch && req.method === 'POST') {
+      // Require authentication
+      if (!session) {
+        return new Response(
+          JSON.stringify({ error: 'Authentication required' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
       const invoiceId = paylinkMatch[1];
       const { gateway } = await req.json();
 
