@@ -19,17 +19,18 @@ Deno.serve(async (req) => {
   try {
     // GET /list or GET / - List all services
     if ((path === '/list' || path === '' || path === '/') && req.method === 'GET') {
-      if (MOCK_MODE) {
-        return new Response(
-          JSON.stringify({ services: mockServices, mockMode: true }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-
+      // Require authentication for all modes (mock returns demo data for valid sessions)
       if (!session) {
         return new Response(
           JSON.stringify({ error: 'Authentication required' }),
           { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      if (MOCK_MODE) {
+        return new Response(
+          JSON.stringify({ services: mockServices, mockMode: true }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
@@ -46,6 +47,14 @@ Deno.serve(async (req) => {
     if (serviceMatch && req.method === 'GET') {
       const serviceId = parseInt(serviceMatch[1]);
       
+      // Require authentication for all modes
+      if (!session) {
+        return new Response(
+          JSON.stringify({ error: 'Authentication required' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
       if (MOCK_MODE) {
         const service = mockServices.find(s => s.id === String(serviceId)) || mockServices[0];
         return new Response(
@@ -58,13 +67,6 @@ Deno.serve(async (req) => {
             mockMode: true 
           }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-
-      if (!session) {
-        return new Response(
-          JSON.stringify({ error: 'Authentication required' }),
-          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
@@ -87,6 +89,14 @@ Deno.serve(async (req) => {
     // POST /:id/cancel - Request cancellation
     const cancelMatch = path.match(/^\/(\d+)\/cancel$/);
     if (cancelMatch && req.method === 'POST') {
+      // Require authentication
+      if (!session) {
+        return new Response(
+          JSON.stringify({ error: 'Authentication required' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
       const serviceId = cancelMatch[1];
       const { type, reason } = await req.json();
 
@@ -112,6 +122,14 @@ Deno.serve(async (req) => {
     // POST /:id/upgrade - Request upgrade
     const upgradeMatch = path.match(/^\/(\d+)\/upgrade$/);
     if (upgradeMatch && req.method === 'POST') {
+      // Require authentication
+      if (!session) {
+        return new Response(
+          JSON.stringify({ error: 'Authentication required' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
       const serviceId = upgradeMatch[1];
       const { upgradeOptionId } = await req.json();
 
@@ -136,6 +154,14 @@ Deno.serve(async (req) => {
     // GET /:id/upgrades - Get available upgrades
     const upgradesMatch = path.match(/^\/(\d+)\/upgrades$/);
     if (upgradesMatch && req.method === 'GET') {
+      // Require authentication
+      if (!session) {
+        return new Response(
+          JSON.stringify({ error: 'Authentication required' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
       if (MOCK_MODE) {
         return new Response(
           JSON.stringify({ 

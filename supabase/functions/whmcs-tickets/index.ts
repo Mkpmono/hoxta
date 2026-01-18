@@ -21,6 +21,14 @@ Deno.serve(async (req) => {
     if ((path === '/list' || path === '' || path === '/') && req.method === 'GET') {
       const status = url.searchParams.get('status');
       
+      // Require authentication for all modes
+      if (!session) {
+        return new Response(
+          JSON.stringify({ error: 'Authentication required' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
       if (MOCK_MODE) {
         let tickets = mockTickets;
         if (status) {
@@ -29,13 +37,6 @@ Deno.serve(async (req) => {
         return new Response(
           JSON.stringify({ tickets, mockMode: true }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-
-      if (!session) {
-        return new Response(
-          JSON.stringify({ error: 'Authentication required' }),
-          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
@@ -49,6 +50,14 @@ Deno.serve(async (req) => {
 
     // POST /new - Create new ticket
     if (path === '/new' && req.method === 'POST') {
+      // Require authentication for all modes
+      if (!session) {
+        return new Response(
+          JSON.stringify({ error: 'Authentication required' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
       const { departmentId, subject, message, priority, relatedServiceId } = await req.json();
 
       if (!departmentId || !subject || !message) {
@@ -67,13 +76,6 @@ Deno.serve(async (req) => {
             mockMode: true 
           }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-
-      if (!session) {
-        return new Response(
-          JSON.stringify({ error: 'Authentication required' }),
-          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
@@ -103,18 +105,19 @@ Deno.serve(async (req) => {
     if (ticketMatch && req.method === 'GET') {
       const ticketId = ticketMatch[1];
       
+      // Require authentication for all modes
+      if (!session) {
+        return new Response(
+          JSON.stringify({ error: 'Authentication required' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
       if (MOCK_MODE) {
         const ticket = mockTickets.find(t => t.id === ticketId) || mockTickets[0];
         return new Response(
           JSON.stringify({ ...ticket, mockMode: true }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-
-      if (!session) {
-        return new Response(
-          JSON.stringify({ error: 'Authentication required' }),
-          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
@@ -129,6 +132,15 @@ Deno.serve(async (req) => {
     const replyMatch = path.match(/^\/([A-Za-z0-9-]+)\/reply$/);
     if (replyMatch && req.method === 'POST') {
       const ticketId = replyMatch[1];
+      
+      // Require authentication for all modes
+      if (!session) {
+        return new Response(
+          JSON.stringify({ error: 'Authentication required' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
       const { message } = await req.json();
 
       if (!message) {
@@ -146,13 +158,6 @@ Deno.serve(async (req) => {
             mockMode: true 
           }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-
-      if (!session) {
-        return new Response(
-          JSON.stringify({ error: 'Authentication required' }),
-          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 

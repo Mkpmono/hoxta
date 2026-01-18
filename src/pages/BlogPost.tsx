@@ -4,8 +4,9 @@ import { motion } from "framer-motion";
 import { Calendar, Clock, User, ArrowLeft, Tag, Share2, Twitter, Facebook, Linkedin, Copy, Check } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { toast } from "sonner";
+import DOMPurify from "dompurify";
 
 interface BlogPost {
   id: string;
@@ -642,17 +643,20 @@ export default function BlogPost() {
                   [&_td]:border [&_td]:border-border/50 [&_td]:p-2
                   [&>strong]:text-foreground [&>strong]:font-semibold"
                 dangerouslySetInnerHTML={{
-                  __html: post.content
-                    .replace(/^## (.+)$/gm, "<h2>$1</h2>")
-                    .replace(/^### (.+)$/gm, "<h3>$1</h3>")
-                    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-                    .replace(/\n- (.+)/g, "\n<li>$1</li>")
-                    .replace(/(<li>.*<\/li>\n?)+/g, "<ul>$&</ul>")
-                    .replace(/```(\w+)?\n([\s\S]*?)```/g, "<pre><code>$2</code></pre>")
-                    .replace(/`([^`]+)`/g, "<code>$1</code>")
-                    .replace(/\n\n/g, "</p><p>")
-                    .replace(/^\s*/, "<p>")
-                    .replace(/\s*$/, "</p>")
+                  __html: DOMPurify.sanitize(
+                    post.content
+                      .replace(/^## (.+)$/gm, "<h2>$1</h2>")
+                      .replace(/^### (.+)$/gm, "<h3>$1</h3>")
+                      .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+                      .replace(/\n- (.+)/g, "\n<li>$1</li>")
+                      .replace(/(<li>.*<\/li>\n?)+/g, "<ul>$&</ul>")
+                      .replace(/```(\w+)?\n([\s\S]*?)```/g, "<pre><code>$2</code></pre>")
+                      .replace(/`([^`]+)`/g, "<code>$1</code>")
+                      .replace(/\n\n/g, "</p><p>")
+                      .replace(/^\s*/, "<p>")
+                      .replace(/\s*$/, "</p>"),
+                    { ALLOWED_TAGS: ['h2', 'h3', 'p', 'strong', 'ul', 'ol', 'li', 'pre', 'code', 'blockquote', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'a', 'br'], ALLOWED_ATTR: ['href', 'target', 'rel'] }
+                  )
                 }}
               />
             </div>
