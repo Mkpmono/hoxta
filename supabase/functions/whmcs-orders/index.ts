@@ -1,6 +1,7 @@
-import { corsHeaders, handleCors } from '../_shared/cors.ts';
+import { getCorsHeaders, handleCors, createCorsResponse, createErrorResponse } from '../_shared/cors.ts';
 import { isWhmcsConfigured, addOrder, getOrders } from '../_shared/whmcs.ts';
 import { mockOrders, validateSession } from '../_shared/mock-data.ts';
+import { validateText, validateBillingCycle, validatePaymentMethod } from '../_shared/validation.ts';
 
 const MOCK_MODE = !isWhmcsConfigured();
 
@@ -41,6 +42,7 @@ const BILLING_CYCLE_MAP: Record<string, string> = {
   'monthly': 'monthly',
   'quarterly': 'quarterly',
   'annually': 'annually',
+  'yearly': 'annually',
 };
 
 Deno.serve(async (req) => {
@@ -50,7 +52,7 @@ Deno.serve(async (req) => {
   const url = new URL(req.url);
   const path = url.pathname.replace('/whmcs-orders', '');
 
-  // Auth check
+  // Auth check - required for all endpoints
   const authHeader = req.headers.get('Authorization');
   const token = authHeader?.replace('Bearer ', '');
   const session = token ? validateSession(token) : null;
@@ -58,106 +60,95 @@ Deno.serve(async (req) => {
   try {
     // POST /create - Create new order
     if (path === '/create' && req.method === 'POST') {
-      const { planId, billingCycle, paymentMethod } = await req.json();
-
-      if (!planId || !billingCycle) {
-        return new Response(
-          JSON.stringify({ error: 'Plan ID and billing cycle required' }),
-          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
+      let body;
+      try {
+        body = await req.json();
+      } catch {
+        return createErrorResponse(req, 'Invalid JSON body', 400);
       }
 
-      const whmcsPid = PRODUCT_MAP[planId];
+      const { planId, billingCycle, paymentMethod } = body;
+
+      // Validate planId
+      const planValidation = validateText(planId, 'Plan ID', { required: true, maxLength: 100 });
+      if (!planValidation.valid) {
+        return createErrorResponse(req, planValidation.error!, 400);
+      }
+
+      // Validate billing cycle
+      const billingValidation = validateBillingCycle(billingCycle);
+      if (!billingValidation.valid) {
+        return createErrorResponse(req, billingValidation.error!, 400);
+      }
+
+      // Validate payment method
+      const paymentValidation = validatePaymentMethod(paymentMethod);
+      if (!paymentValidation.valid) {
+        return createErrorResponse(req, paymentValidation.error!, 400);
+      }
+
+      // Check if plan exists in product map
+      const whmcsPid = PRODUCT_MAP[planValidation.sanitized as string];
       if (!whmcsPid) {
-        return new Response(
-          JSON.stringify({ error: `Unknown plan: ${planId}` }),
-          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
+        return createErrorResponse(req, `Unknown plan: ${planValidation.sanitized}`, 400);
       }
 
       if (MOCK_MODE) {
-        // Mock order creation
+        // Mock order creation - allow without auth in mock mode for testing
         const orderId = `ORD-${Date.now()}`;
         const invoiceId = `INV-${Date.now()}`;
-        return new Response(
-          JSON.stringify({
-            success: true,
-            orderId,
-            invoiceId,
-            productId: whmcsPid,
-            mockMode: true,
-          }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
+        return createCorsResponse(req, {
+          success: true,
+          orderId,
+          invoiceId,
+          productId: whmcsPid,
+          mockMode: true,
+        });
       }
 
-      // Real WHMCS order
+      // Real mode - require authentication
       if (!session) {
-        return new Response(
-          JSON.stringify({ error: 'Authentication required' }),
-          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
+        return createErrorResponse(req, 'Authentication required', 401);
       }
 
       const result = await addOrder({
         clientid: session.clientId,
         pid: whmcsPid,
-        billingcycle: BILLING_CYCLE_MAP[billingCycle] || 'monthly',
-        paymentmethod: paymentMethod || 'stripe',
+        billingcycle: BILLING_CYCLE_MAP[billingValidation.sanitized as string] || 'monthly',
+        paymentmethod: paymentValidation.sanitized as string,
       });
 
       if (result.result === 'success') {
-        return new Response(
-          JSON.stringify({
-            success: true,
-            orderId: result.orderid,
-            invoiceId: result.invoiceid,
-            productIds: result.productids,
-          }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
+        return createCorsResponse(req, {
+          success: true,
+          orderId: result.orderid,
+          invoiceId: result.invoiceid,
+          productIds: result.productids,
+        });
       }
 
-      return new Response(
-        JSON.stringify({ error: result.message || 'Order failed' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      return createErrorResponse(req, result.message || 'Order failed', 400);
     }
 
-    // GET /list - Get all orders
+    // GET /list - Get all orders (requires auth)
     if ((path === '/list' || path === '') && req.method === 'GET') {
       // Require authentication for all modes
       if (!session) {
-        return new Response(
-          JSON.stringify({ error: 'Authentication required' }),
-          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
+        return createErrorResponse(req, 'Authentication required', 401);
       }
 
       if (MOCK_MODE) {
-        return new Response(
-          JSON.stringify({ orders: mockOrders, mockMode: true }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
+        return createCorsResponse(req, { orders: mockOrders, mockMode: true });
       }
 
       const result = await getOrders(session.clientId);
-      return new Response(
-        JSON.stringify({ orders: result.orders || [] }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      return createCorsResponse(req, { orders: result.orders || [] });
     }
 
-    return new Response(
-      JSON.stringify({ error: 'Not found' }),
-      { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    return createErrorResponse(req, 'Not found', 404);
   } catch (error: unknown) {
     console.error('Orders error:', error);
     const message = error instanceof Error ? error.message : 'Internal server error';
-    return new Response(
-      JSON.stringify({ error: message }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    return createErrorResponse(req, message, 500);
   }
 });
