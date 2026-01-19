@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { Link } from "react-router-dom";
-import { Gamepad2, ChevronLeft, ChevronRight, Flame, Star, Sparkles } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Gamepad2, ChevronLeft, ChevronRight, Flame, Star, Sparkles, ShoppingCart } from "lucide-react";
 import { gameCoverImages } from "@/assets/games";
 
 interface Game {
@@ -12,6 +12,7 @@ interface Game {
   badge: string | null;
   badgeIcon: React.ReactNode;
   badgeColor: string;
+  planId: string; // First plan ID for direct checkout
 }
 
 const games: Game[] = [
@@ -19,10 +20,11 @@ const games: Game[] = [
     id: "minecraft",
     name: "Minecraft",
     image: gameCoverImages.minecraft,
-    price: 3.29,
+    price: 3.00,
     badge: "BESTSELLER",
     badgeIcon: <Star className="w-3 h-3" />,
     badgeColor: "from-amber-500 to-orange-500",
+    planId: "mc-starter",
   },
   {
     id: "fivem",
@@ -32,6 +34,7 @@ const games: Game[] = [
     badge: "POPULAR",
     badgeIcon: <Flame className="w-3 h-3" />,
     badgeColor: "from-red-500 to-pink-500",
+    planId: "fivem-starter",
   },
   {
     id: "rust",
@@ -41,24 +44,27 @@ const games: Game[] = [
     badge: "HOT",
     badgeIcon: <Flame className="w-3 h-3" />,
     badgeColor: "from-orange-500 to-red-500",
+    planId: "rust-starter",
   },
   {
     id: "cs2",
     name: "Counter-Strike 2",
     image: gameCoverImages.cs2,
-    price: 12.00,
+    price: 8.00,
     badge: null,
     badgeIcon: null,
     badgeColor: "",
+    planId: "cs2-starter",
   },
   {
     id: "palworld",
     name: "Palworld",
     image: gameCoverImages.palworld,
-    price: 15.00,
+    price: 12.00,
     badge: "NEW",
     badgeIcon: <Sparkles className="w-3 h-3" />,
     badgeColor: "from-primary to-cyan-400",
+    planId: "palworld-starter",
   },
   {
     id: "ark",
@@ -68,28 +74,32 @@ const games: Game[] = [
     badge: null,
     badgeIcon: null,
     badgeColor: "",
+    planId: "ark-starter",
   },
   {
     id: "valheim",
     name: "Valheim",
     image: gameCoverImages.valheim,
-    price: 10.00,
+    price: 6.00,
     badge: null,
     badgeIcon: null,
     badgeColor: "",
+    planId: "valheim-starter",
   },
   {
     id: "dayz",
     name: "DayZ",
     image: gameCoverImages.dayz,
-    price: 16.00,
+    price: 25.00,
     badge: null,
     badgeIcon: null,
     badgeColor: "",
+    planId: "dayz-starter",
   },
 ];
 
 export function ChooseGameSection() {
+  const navigate = useNavigate();
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annual">("monthly");
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -121,6 +131,13 @@ export function ChooseGameSection() {
         behavior: "smooth",
       });
     }
+  };
+
+  const handleOrderNow = (game: Game, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const billing = billingPeriod === "annual" ? "annually" : "monthly";
+    navigate(`/checkout?product=${game.id}&plan=${game.planId}&billing=${billing}`);
   };
 
   return (
@@ -225,50 +242,63 @@ export function ChooseGameSection() {
                 viewport={{ once: true }}
                 className="flex-shrink-0 w-[280px] snap-start"
               >
-                <Link
-                  to={`/game-servers/${game.id}`}
-                  className="group block relative rounded-2xl overflow-hidden bg-card border border-border/50 transition-all duration-300 hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1"
-                >
+                <div className="group block relative rounded-2xl overflow-hidden bg-card border border-border/50 transition-all duration-300 hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1">
                   {/* Image */}
-                  <div className="relative aspect-[4/3] overflow-hidden">
-                    <img
-                      src={game.image}
-                      alt={game.name}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-card via-card/20 to-transparent" />
-                    
-                    {/* Badge */}
-                    {game.badge && (
-                      <div className={`absolute top-3 left-3 px-2.5 py-1 rounded-lg text-xs font-bold text-white bg-gradient-to-r ${game.badgeColor} flex items-center gap-1 shadow-lg`}>
-                        {game.badgeIcon}
-                        {game.badge}
-                      </div>
-                    )}
+                  <Link to={`/game-servers/${game.id}`}>
+                    <div className="relative aspect-[4/3] overflow-hidden">
+                      <img
+                        src={game.image}
+                        alt={game.name}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-card via-card/20 to-transparent" />
+                      
+                      {/* Badge */}
+                      {game.badge && (
+                        <div className={`absolute top-3 left-3 px-2.5 py-1 rounded-lg text-xs font-bold text-white bg-gradient-to-r ${game.badgeColor} flex items-center gap-1 shadow-lg`}>
+                          {game.badgeIcon}
+                          {game.badge}
+                        </div>
+                      )}
 
-                    {/* Hover overlay glow */}
-                    <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors duration-300" />
-                  </div>
+                      {/* Hover overlay glow */}
+                      <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors duration-300" />
+                    </div>
+                  </Link>
 
                   {/* Content */}
                   <div className="p-5">
-                    <h3 className="font-semibold text-lg text-foreground mb-2 group-hover:text-primary transition-colors">
-                      {game.name}
-                    </h3>
+                    <Link to={`/game-servers/${game.id}`}>
+                      <h3 className="font-semibold text-lg text-foreground mb-2 group-hover:text-primary transition-colors">
+                        {game.name}
+                      </h3>
+                    </Link>
                     <div className="flex items-baseline gap-1.5 mb-4">
                       <span className="text-xs text-muted-foreground">from</span>
                       <span className="text-2xl font-bold text-primary">
-                        €{billingPeriod === "annual" ? (game.price * 0.8).toFixed(2) : game.price.toFixed(2)}
+                        ${billingPeriod === "annual" ? (game.price * 0.8).toFixed(2) : game.price.toFixed(2)}
                       </span>
                       <span className="text-xs text-muted-foreground">/ month</span>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-primary font-medium group-hover:underline">
-                        View Plans →
-                      </span>
+                    
+                    {/* Action Buttons */}
+                    <div className="flex gap-2">
+                      <Link
+                        to={`/game-servers/${game.id}`}
+                        className="flex-1 py-2.5 text-center rounded-lg text-sm font-medium btn-outline"
+                      >
+                        View Plans
+                      </Link>
+                      <button
+                        onClick={(e) => handleOrderNow(game, e)}
+                        className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-sm font-medium btn-glow"
+                      >
+                        <ShoppingCart className="w-3.5 h-3.5" />
+                        Order
+                      </button>
                     </div>
                   </div>
-                </Link>
+                </div>
               </motion.div>
             ))}
           </div>

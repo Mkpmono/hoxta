@@ -12,79 +12,19 @@ import {
   FinalCTA,
 } from "@/components/hosting";
 import { SEOHead, ServiceSchema, FAQSchema, OrganizationSchema } from "@/components/seo";
+import { discordBotProduct } from "@/data/products";
 
-const discordBotPlans = [
-  {
-    name: "Hobby",
-    description: "For personal bots",
-    monthlyPrice: 3,
-    yearlyPrice: 30,
-    popular: false,
-    features: [
-      { label: "Bot Instances", value: "1" },
-      { label: "RAM", value: "256MB" },
-      { label: "CPU", value: "Shared" },
-      { label: "Storage", value: "1GB SSD" },
-      { label: "Uptime", value: "99.5%" },
-      { label: "Auto-Restart", value: "✓" },
-    ],
-    cta: { text: "Get Started", href: "/contact?service=discord-bot&plan=hobby" },
-  },
-  {
-    name: "Standard",
-    description: "For growing bots",
-    monthlyPrice: 6,
-    yearlyPrice: 60,
-    popular: true,
-    features: [
-      { label: "Bot Instances", value: "2" },
-      { label: "RAM", value: "512MB" },
-      { label: "CPU", value: "1 vCore" },
-      { label: "Storage", value: "5GB SSD" },
-      { label: "Uptime", value: "99.9%" },
-      { label: "Auto-Restart", value: "✓" },
-      { label: "Custom Domain", value: "✓" },
-    ],
-    cta: { text: "Get Started", href: "/contact?service=discord-bot&plan=standard" },
-  },
-  {
-    name: "Professional",
-    description: "For popular bots",
-    monthlyPrice: 15,
-    yearlyPrice: 150,
-    popular: false,
-    features: [
-      { label: "Bot Instances", value: "5" },
-      { label: "RAM", value: "2GB" },
-      { label: "CPU", value: "2 vCores" },
-      { label: "Storage", value: "20GB NVMe" },
-      { label: "Uptime", value: "99.99%" },
-      { label: "Auto-Restart", value: "✓" },
-      { label: "Custom Domain", value: "✓" },
-      { label: "Priority Support", value: "✓" },
-    ],
-    cta: { text: "Get Started", href: "/contact?service=discord-bot&plan=professional" },
-  },
-  {
-    name: "Enterprise",
-    description: "For verified bots",
-    monthlyPrice: 35,
-    yearlyPrice: 350,
-    popular: false,
-    features: [
-      { label: "Bot Instances", value: "Unlimited" },
-      { label: "RAM", value: "8GB" },
-      { label: "CPU", value: "4 vCores" },
-      { label: "Storage", value: "100GB NVMe" },
-      { label: "Uptime", value: "99.99%" },
-      { label: "Auto-Restart", value: "✓" },
-      { label: "Custom Domain", value: "✓" },
-      { label: "Priority Support", value: "24/7" },
-      { label: "Sharding Support", value: "✓" },
-    ],
-    cta: { text: "Contact Sales", href: "/contact?service=discord-bot&plan=enterprise" },
-  },
-];
+// Convert product plans to PricingPlans format
+const discordBotPlans = discordBotProduct.plans.map((plan) => ({
+  id: plan.id,
+  productSlug: discordBotProduct.slug,
+  name: plan.name,
+  description: plan.description,
+  monthlyPrice: plan.pricing.monthly,
+  yearlyPrice: plan.pricing.annually,
+  popular: plan.popular,
+  features: plan.features,
+}));
 
 const discordBotFeatures = [
   {
@@ -181,6 +121,7 @@ export default function DiscordBot() {
           title="Discord Bot Hosting Plans"
           subtitle="From hobby projects to verified bots with millions of users."
           plans={discordBotPlans}
+          productSlug="discord-bot"
         />
       </div>
 
