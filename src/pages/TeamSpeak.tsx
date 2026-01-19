@@ -12,75 +12,19 @@ import {
   FinalCTA,
 } from "@/components/hosting";
 import { SEOHead, ServiceSchema, FAQSchema, OrganizationSchema } from "@/components/seo";
+import { teamspeakProduct } from "@/data/products";
 
-const teamspeakPlans = [
-  {
-    name: "Small",
-    description: "Perfect for small groups",
-    monthlyPrice: 3,
-    yearlyPrice: 30,
-    popular: false,
-    features: [
-      { label: "Slots", value: "15" },
-      { label: "Bandwidth", value: "Unlimited" },
-      { label: "DDoS Protection", value: "Included" },
-      { label: "Custom Banner", value: "✓" },
-      { label: "Backup", value: "Daily" },
-    ],
-    cta: { text: "Order Now", href: "/contact?service=teamspeak&plan=small" },
-  },
-  {
-    name: "Medium",
-    description: "Great for communities",
-    monthlyPrice: 6,
-    yearlyPrice: 60,
-    popular: true,
-    features: [
-      { label: "Slots", value: "50" },
-      { label: "Bandwidth", value: "Unlimited" },
-      { label: "DDoS Protection", value: "Included" },
-      { label: "Custom Banner", value: "✓" },
-      { label: "Backup", value: "Hourly" },
-      { label: "Priority Support", value: "✓" },
-    ],
-    cta: { text: "Order Now", href: "/contact?service=teamspeak&plan=medium" },
-  },
-  {
-    name: "Large",
-    description: "For gaming clans",
-    monthlyPrice: 12,
-    yearlyPrice: 120,
-    popular: false,
-    features: [
-      { label: "Slots", value: "150" },
-      { label: "Bandwidth", value: "Unlimited" },
-      { label: "DDoS Protection", value: "Included" },
-      { label: "Custom Banner", value: "✓" },
-      { label: "Backup", value: "Hourly" },
-      { label: "Priority Support", value: "✓" },
-      { label: "Custom Domain", value: "✓" },
-    ],
-    cta: { text: "Order Now", href: "/contact?service=teamspeak&plan=large" },
-  },
-  {
-    name: "Enterprise",
-    description: "Unlimited potential",
-    monthlyPrice: 25,
-    yearlyPrice: 250,
-    popular: false,
-    features: [
-      { label: "Slots", value: "512" },
-      { label: "Bandwidth", value: "Unlimited" },
-      { label: "DDoS Protection", value: "Premium" },
-      { label: "Custom Banner", value: "✓" },
-      { label: "Backup", value: "Real-time" },
-      { label: "Priority Support", value: "24/7" },
-      { label: "Custom Domain", value: "✓" },
-      { label: "White Label", value: "✓" },
-    ],
-    cta: { text: "Order Now", href: "/contact?service=teamspeak&plan=enterprise" },
-  },
-];
+// Convert product plans to PricingPlans format
+const teamspeakPlans = teamspeakProduct.plans.map((plan) => ({
+  id: plan.id,
+  productSlug: teamspeakProduct.slug,
+  name: plan.name,
+  description: plan.description,
+  monthlyPrice: plan.pricing.monthly,
+  yearlyPrice: plan.pricing.annually,
+  popular: plan.popular,
+  features: plan.features,
+}));
 
 const teamspeakFeatures = [
   {
@@ -177,6 +121,7 @@ export default function TeamSpeak() {
           title="TeamSpeak Server Plans"
           subtitle="Choose the perfect plan for your community size."
           plans={teamspeakPlans}
+          productSlug="teamspeak"
         />
       </div>
 

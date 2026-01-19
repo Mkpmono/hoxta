@@ -998,11 +998,240 @@ export const gameServerProducts: GameServerProduct[] = [
 // PRODUCT CATALOG HELPERS
 // ============================================
 
+// ============================================
+// COLOCATION PRODUCTS
+// ============================================
+
+export const colocationProduct: Product = {
+  id: "colocation",
+  slug: "colocation",
+  name: "Colocation",
+  category: "dedicated",
+  shortDescription: "Enterprise datacenter colocation services",
+  orderPageUrl: "/order",
+  plans: [
+    {
+      id: "colo-starter",
+      name: "Starter (1U)",
+      description: "1U rack space",
+      whmcs_pid: 701,
+      pricing: { monthly: 79, annually: 790/12 },
+      features: [
+        { label: "Rack Space", value: "1U" },
+        { label: "Power", value: "2A @ 120V" },
+        { label: "Bandwidth", value: "10TB" },
+        { label: "IP Addresses", value: "1 IPv4" },
+        { label: "Remote Hands", value: "1 hour/month" },
+        { label: "Network Port", value: "1 Gbps" },
+      ],
+    },
+    {
+      id: "colo-business",
+      name: "Business (10U)",
+      description: "Quarter rack",
+      popular: true,
+      whmcs_pid: 702,
+      pricing: { monthly: 299, annually: 2990/12 },
+      features: [
+        { label: "Rack Space", value: "10U" },
+        { label: "Power", value: "10A @ 120V" },
+        { label: "Bandwidth", value: "Unmetered" },
+        { label: "IP Addresses", value: "/28 IPv4 (16)" },
+        { label: "Remote Hands", value: "4 hours/month" },
+        { label: "Network Port", value: "10 Gbps" },
+      ],
+    },
+    {
+      id: "colo-enterprise",
+      name: "Enterprise (20U)",
+      description: "Half rack",
+      whmcs_pid: 703,
+      pricing: { monthly: 549, annually: 5490/12 },
+      features: [
+        { label: "Rack Space", value: "20U" },
+        { label: "Power", value: "20A @ 120V" },
+        { label: "Bandwidth", value: "Unmetered" },
+        { label: "IP Addresses", value: "/27 IPv4 (32)" },
+        { label: "Remote Hands", value: "8 hours/month" },
+        { label: "Network Port", value: "10 Gbps" },
+      ],
+    },
+    {
+      id: "colo-fullrack",
+      name: "Full Rack (42U)",
+      description: "Full cabinet",
+      whmcs_pid: 704,
+      pricing: { monthly: 999, annually: 9990/12 },
+      features: [
+        { label: "Rack Space", value: "42U" },
+        { label: "Power", value: "30A @ 208V" },
+        { label: "Bandwidth", value: "Unmetered" },
+        { label: "IP Addresses", value: "/26 IPv4 (64)" },
+        { label: "Remote Hands", value: "Unlimited" },
+        { label: "Network Port", value: "100 Gbps" },
+      ],
+    },
+  ],
+};
+
+// ============================================
+// TEAMSPEAK PRODUCTS
+// ============================================
+
+export const teamspeakProduct: Product = {
+  id: "teamspeak",
+  slug: "teamspeak",
+  name: "TeamSpeak Hosting",
+  category: "dedicated",
+  shortDescription: "Crystal clear voice server hosting",
+  orderPageUrl: "/order",
+  plans: [
+    {
+      id: "ts-small",
+      name: "Small",
+      description: "15 slots",
+      whmcs_pid: 711,
+      pricing: { monthly: 3, annually: 2.50 },
+      features: [
+        { label: "Slots", value: "15" },
+        { label: "Bandwidth", value: "Unlimited" },
+        { label: "DDoS Protection", value: true },
+        { label: "Custom Banner", value: true },
+        { label: "Daily Backups", value: true },
+      ],
+    },
+    {
+      id: "ts-medium",
+      name: "Medium",
+      description: "50 slots",
+      popular: true,
+      whmcs_pid: 712,
+      pricing: { monthly: 6, annually: 5 },
+      features: [
+        { label: "Slots", value: "50" },
+        { label: "Bandwidth", value: "Unlimited" },
+        { label: "DDoS Protection", value: true },
+        { label: "Custom Banner", value: true },
+        { label: "Hourly Backups", value: true },
+        { label: "Priority Support", value: true },
+      ],
+    },
+    {
+      id: "ts-large",
+      name: "Large",
+      description: "150 slots",
+      whmcs_pid: 713,
+      pricing: { monthly: 12, annually: 10 },
+      features: [
+        { label: "Slots", value: "150" },
+        { label: "Bandwidth", value: "Unlimited" },
+        { label: "DDoS Protection", value: true },
+        { label: "Custom Domain", value: true },
+        { label: "Hourly Backups", value: true },
+        { label: "Priority Support", value: true },
+      ],
+    },
+    {
+      id: "ts-enterprise",
+      name: "Enterprise",
+      description: "512 slots",
+      whmcs_pid: 714,
+      pricing: { monthly: 25, annually: 21 },
+      features: [
+        { label: "Slots", value: "512" },
+        { label: "Bandwidth", value: "Unlimited" },
+        { label: "Premium DDoS", value: true },
+        { label: "White Label", value: true },
+        { label: "Real-time Backups", value: true },
+        { label: "24/7 Priority Support", value: true },
+      ],
+    },
+  ],
+};
+
+// ============================================
+// DISCORD BOT PRODUCTS
+// ============================================
+
+export const discordBotProduct: Product = {
+  id: "discord-bot",
+  slug: "discord-bot",
+  name: "Discord Bot Hosting",
+  category: "dedicated",
+  shortDescription: "24/7 bot hosting with auto-restart",
+  orderPageUrl: "/order",
+  plans: [
+    {
+      id: "bot-hobby",
+      name: "Hobby",
+      description: "Personal bots",
+      whmcs_pid: 721,
+      pricing: { monthly: 3, annually: 2.50 },
+      features: [
+        { label: "Bot Instances", value: "1" },
+        { label: "RAM", value: "256MB" },
+        { label: "CPU", value: "Shared" },
+        { label: "Storage", value: "1GB SSD" },
+        { label: "Auto-Restart", value: true },
+      ],
+    },
+    {
+      id: "bot-standard",
+      name: "Standard",
+      description: "Growing bots",
+      popular: true,
+      whmcs_pid: 722,
+      pricing: { monthly: 6, annually: 5 },
+      features: [
+        { label: "Bot Instances", value: "2" },
+        { label: "RAM", value: "512MB" },
+        { label: "CPU", value: "1 vCore" },
+        { label: "Storage", value: "5GB SSD" },
+        { label: "Auto-Restart", value: true },
+        { label: "Custom Domain", value: true },
+      ],
+    },
+    {
+      id: "bot-professional",
+      name: "Professional",
+      description: "Popular bots",
+      whmcs_pid: 723,
+      pricing: { monthly: 15, annually: 12.50 },
+      features: [
+        { label: "Bot Instances", value: "5" },
+        { label: "RAM", value: "2GB" },
+        { label: "CPU", value: "2 vCores" },
+        { label: "Storage", value: "20GB NVMe" },
+        { label: "Auto-Restart", value: true },
+        { label: "Priority Support", value: true },
+      ],
+    },
+    {
+      id: "bot-enterprise",
+      name: "Enterprise",
+      description: "Verified bots",
+      whmcs_pid: 724,
+      pricing: { monthly: 35, annually: 29 },
+      features: [
+        { label: "Bot Instances", value: "Unlimited" },
+        { label: "RAM", value: "8GB" },
+        { label: "CPU", value: "4 vCores" },
+        { label: "Storage", value: "100GB NVMe" },
+        { label: "Sharding Support", value: true },
+        { label: "24/7 Priority Support", value: true },
+      ],
+    },
+  ],
+};
+
 export const allProducts: Product[] = [
   webHostingProduct,
   resellerHostingProduct,
   vpsHostingProduct,
   dedicatedServerProduct,
+  colocationProduct,
+  teamspeakProduct,
+  discordBotProduct,
   ...gameServerProducts,
 ];
 

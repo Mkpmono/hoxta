@@ -12,73 +12,19 @@ import {
   FinalCTA,
 } from "@/components/hosting";
 import { SEOHead, ServiceSchema, FAQSchema, OrganizationSchema } from "@/components/seo";
+import { colocationProduct } from "@/data/products";
 
-const colocationPlans = [
-  {
-    name: "Starter",
-    description: "1U Rack Space",
-    monthlyPrice: 79,
-    yearlyPrice: 790,
-    popular: false,
-    features: [
-      { label: "Rack Space", value: "1U" },
-      { label: "Power", value: "2A @ 120V" },
-      { label: "Bandwidth", value: "10TB" },
-      { label: "IP Addresses", value: "1 IPv4" },
-      { label: "Remote Hands", value: "1 hour/month" },
-      { label: "Network Port", value: "1 Gbps" },
-    ],
-    cta: { text: "Get Started", href: "/contact?service=colocation&plan=starter" },
-  },
-  {
-    name: "Business",
-    description: "Quarter Rack (10U)",
-    monthlyPrice: 299,
-    yearlyPrice: 2990,
-    popular: true,
-    features: [
-      { label: "Rack Space", value: "10U" },
-      { label: "Power", value: "10A @ 120V" },
-      { label: "Bandwidth", value: "Unmetered" },
-      { label: "IP Addresses", value: "/28 IPv4 (16)" },
-      { label: "Remote Hands", value: "4 hours/month" },
-      { label: "Network Port", value: "10 Gbps" },
-    ],
-    cta: { text: "Get Started", href: "/contact?service=colocation&plan=business" },
-  },
-  {
-    name: "Enterprise",
-    description: "Half Rack (20U)",
-    monthlyPrice: 549,
-    yearlyPrice: 5490,
-    popular: false,
-    features: [
-      { label: "Rack Space", value: "20U" },
-      { label: "Power", value: "20A @ 120V" },
-      { label: "Bandwidth", value: "Unmetered" },
-      { label: "IP Addresses", value: "/27 IPv4 (32)" },
-      { label: "Remote Hands", value: "8 hours/month" },
-      { label: "Network Port", value: "10 Gbps" },
-    ],
-    cta: { text: "Get Started", href: "/contact?service=colocation&plan=enterprise" },
-  },
-  {
-    name: "Full Rack",
-    description: "42U Full Cabinet",
-    monthlyPrice: 999,
-    yearlyPrice: 9990,
-    popular: false,
-    features: [
-      { label: "Rack Space", value: "42U" },
-      { label: "Power", value: "30A @ 208V" },
-      { label: "Bandwidth", value: "Unmetered" },
-      { label: "IP Addresses", value: "/26 IPv4 (64)" },
-      { label: "Remote Hands", value: "Unlimited" },
-      { label: "Network Port", value: "100 Gbps" },
-    ],
-    cta: { text: "Contact Sales", href: "/contact?service=colocation&plan=fullrack" },
-  },
-];
+// Convert product plans to PricingPlans format
+const colocationPlans = colocationProduct.plans.map((plan) => ({
+  id: plan.id,
+  productSlug: colocationProduct.slug,
+  name: plan.name,
+  description: plan.description,
+  monthlyPrice: plan.pricing.monthly,
+  yearlyPrice: plan.pricing.annually,
+  popular: plan.popular,
+  features: plan.features,
+}));
 
 const colocationFeatures = [
   {
@@ -175,6 +121,7 @@ export default function Colocation() {
           title="Colocation Plans"
           subtitle="From single servers to full racks, we have the space for your infrastructure."
           plans={colocationPlans}
+          productSlug="colocation"
         />
       </div>
 
