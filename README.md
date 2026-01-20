@@ -1,73 +1,40 @@
-# Welcome to your Lovable project
+# Hoxta Hosting Template
 
-## Project info
+Premium hosting template with React, TypeScript, and Tailwind CSS.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
-
-## How can I edit this code?
-
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+## Quick Start
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+npm install
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Self-Test Checklist
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Game Servers Order Now Flow
+1. Navigate to `/game-servers`
+2. Click **Order Now** on any game card (e.g., Minecraft, FiveM, Rust)
+3. ✅ Verify URL: `/checkout?category=games&product=<slug>&plan=<planId>&billing=monthly`
+4. ✅ Verify checkout starts at "Your Details" step (skips plan selection)
+5. Repeat for 3 different games
 
-**Use GitHub Codespaces**
+### i18n Language Switching
+1. Click the 🌐 language switcher in the navbar
+2. Switch between EN and RO
+3. ✅ Verify: All UI text updates instantly without page refresh
+4. ✅ Verify: Selection persists after page reload (stored in localStorage as `lang`)
+5. ✅ Verify: Works on both public pages and `/panel` pages
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Technologies
 
-## What technologies are used for this project?
+- Vite + React + TypeScript
+- Tailwind CSS + shadcn/ui
+- react-i18next for internationalization
+- Framer Motion for animations
+- Edge Functions (Supabase) for WHMCS API proxy
 
-This project is built with:
+## Architecture
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+- All WHMCS API calls go through Edge Functions (no PHP backend)
+- Product catalog in `src/data/products.ts`
+- i18n translations in `src/i18n/locales/{en,ro}/common.json`
