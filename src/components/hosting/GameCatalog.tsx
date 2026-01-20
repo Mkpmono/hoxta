@@ -1,10 +1,12 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Search, Filter, ChevronDown } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { GameCard } from "./GameCard";
 import { gameServers, gameCategories, gameSortOptions } from "@/data/gameServersData";
 
 export function GameCatalog() {
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortBy, setSortBy] = useState("popular");
@@ -51,6 +53,21 @@ export function GameCatalog() {
     return result;
   }, [searchQuery, selectedCategory, sortBy]);
 
+  // Translated category labels
+  const translatedCategories = gameCategories.map((cat) => ({
+    ...cat,
+    label: t(`categories.${cat.id}`),
+  }));
+
+  // Translated sort options
+  const translatedSortOptions = [
+    { id: "popular", label: t("common.popular") },
+    { id: "price-asc", label: t("common.priceLowHigh") },
+    { id: "price-desc", label: t("common.priceHighLow") },
+    { id: "name-asc", label: t("common.nameAZ") },
+    { id: "name-desc", label: t("common.nameZA") },
+  ];
+
   return (
     <section className="py-16 md:py-24">
       <div className="container mx-auto px-4 md:px-6">
@@ -65,7 +82,7 @@ export function GameCatalog() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <input
               type="text"
-              placeholder="Search your game..."
+              placeholder={t("common.searchGame")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-12 pr-4 py-4 rounded-2xl bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all text-lg"
@@ -82,7 +99,7 @@ export function GameCatalog() {
         >
           {/* Category Pills - Desktop */}
           <div className="hidden md:flex items-center gap-2">
-            {gameCategories.map((category) => (
+            {translatedCategories.map((category) => (
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(category.id)}
@@ -103,7 +120,7 @@ export function GameCatalog() {
             className="md:hidden flex items-center gap-2 px-4 py-2 rounded-lg bg-muted text-foreground"
           >
             <Filter className="w-4 h-4" />
-            Filters
+            {t("nav.filters")}
             <ChevronDown className={`w-4 h-4 transition-transform ${showFilters ? "rotate-180" : ""}`} />
           </button>
 
@@ -114,7 +131,7 @@ export function GameCatalog() {
               onChange={(e) => setSortBy(e.target.value)}
               className="appearance-none px-4 py-2 pr-10 rounded-lg bg-muted text-foreground border border-border focus:outline-none focus:border-primary/50 cursor-pointer"
             >
-              {gameSortOptions.map((option) => (
+              {translatedSortOptions.map((option) => (
                 <option key={option.id} value={option.id}>
                   {option.label}
                 </option>
@@ -132,7 +149,7 @@ export function GameCatalog() {
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden flex flex-wrap gap-2 mb-6"
           >
-            {gameCategories.map((category) => (
+            {translatedCategories.map((category) => (
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(category.id)}
@@ -150,7 +167,7 @@ export function GameCatalog() {
 
         {/* Results Count */}
         <p className="text-sm text-muted-foreground mb-6">
-          {filteredAndSortedGames.length} game{filteredAndSortedGames.length !== 1 ? "s" : ""} found
+          {t("common.gamesFound", { count: filteredAndSortedGames.length })}
         </p>
 
         {/* Game Grid */}
@@ -162,7 +179,7 @@ export function GameCatalog() {
           </div>
         ) : (
           <div className="text-center py-16">
-            <p className="text-lg text-muted-foreground mb-4">No games found matching your search.</p>
+            <p className="text-lg text-muted-foreground mb-4">{t("common.noResults")}</p>
             <button
               onClick={() => {
                 setSearchQuery("");
@@ -170,7 +187,7 @@ export function GameCatalog() {
               }}
               className="text-primary hover:underline"
             >
-              Clear filters
+              {t("buttons.clearFilters")}
             </button>
           </div>
         )}

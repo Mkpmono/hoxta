@@ -2,68 +2,71 @@ import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Globe, Server, Gamepad2, HardDrive, LifeBuoy, X, Menu } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 interface DropdownItem {
-  title: string;
-  subtitle: string;
+  titleKey: string;
+  subtitleKey: string;
   icon: React.ReactNode;
   href: string;
 }
 
 interface MenuItemProps {
-  label: string;
+  labelKey: string;
   items?: DropdownItem[];
   href?: string;
 }
 
 const menuItems: MenuItemProps[] = [
-  { label: "Home", href: "/" },
+  { labelKey: "nav.home", href: "/" },
   {
-    label: "Web",
+    labelKey: "nav.web",
     items: [
-      { title: "Web Hosting", subtitle: "Fast & reliable hosting for your websites", icon: <Globe className="w-5 h-5" />, href: "/web-hosting" },
-      { title: "Reseller Hosting", subtitle: "Start your own hosting business", icon: <Server className="w-5 h-5" />, href: "/reseller-hosting" },
+      { titleKey: "nav.webHosting", subtitleKey: "nav.webHostingDesc", icon: <Globe className="w-5 h-5" />, href: "/web-hosting" },
+      { titleKey: "nav.resellerHosting", subtitleKey: "nav.resellerHostingDesc", icon: <Server className="w-5 h-5" />, href: "/reseller-hosting" },
     ],
   },
   {
-    label: "Game Servers",
+    labelKey: "nav.games",
     items: [
-      { title: "All Games", subtitle: "Browse all game servers", icon: <Gamepad2 className="w-5 h-5" />, href: "/game-servers" },
-      { title: "Minecraft", subtitle: "Java & Bedrock servers", icon: <Gamepad2 className="w-5 h-5" />, href: "/game-servers/minecraft" },
-      { title: "FiveM", subtitle: "GTA V roleplay servers", icon: <Gamepad2 className="w-5 h-5" />, href: "/game-servers/fivem" },
-      { title: "Counter-Strike 2", subtitle: "Competitive CS2 servers", icon: <Gamepad2 className="w-5 h-5" />, href: "/game-servers/cs2" },
-      { title: "Rust", subtitle: "Survival game servers", icon: <Gamepad2 className="w-5 h-5" />, href: "/game-servers/rust" },
-      { title: "Palworld", subtitle: "Monster-catching survival", icon: <Gamepad2 className="w-5 h-5" />, href: "/game-servers/palworld" },
+      { titleKey: "nav.allGames", subtitleKey: "nav.allGamesDesc", icon: <Gamepad2 className="w-5 h-5" />, href: "/game-servers" },
+      { titleKey: "games.minecraft", subtitleKey: "games.minecraftDesc", icon: <Gamepad2 className="w-5 h-5" />, href: "/game-servers/minecraft" },
+      { titleKey: "games.fivem", subtitleKey: "games.fivemDesc", icon: <Gamepad2 className="w-5 h-5" />, href: "/game-servers/fivem" },
+      { titleKey: "games.cs2", subtitleKey: "games.cs2Desc", icon: <Gamepad2 className="w-5 h-5" />, href: "/game-servers/cs2" },
+      { titleKey: "games.rust", subtitleKey: "games.rustDesc", icon: <Gamepad2 className="w-5 h-5" />, href: "/game-servers/rust" },
+      { titleKey: "games.palworld", subtitleKey: "games.palworldDesc", icon: <Gamepad2 className="w-5 h-5" />, href: "/game-servers/palworld" },
     ],
   },
   {
-    label: "Server",
+    labelKey: "nav.server",
     items: [
-      { title: "VPS Hosting", subtitle: "Virtual private servers with full control", icon: <HardDrive className="w-5 h-5" />, href: "/vps" },
-      { title: "Dedicated Server", subtitle: "Enterprise-grade bare metal servers", icon: <Server className="w-5 h-5" />, href: "/dedicated" },
+      { titleKey: "nav.vpsHosting", subtitleKey: "nav.vpsHostingDesc", icon: <HardDrive className="w-5 h-5" />, href: "/vps" },
+      { titleKey: "nav.dedicatedServer", subtitleKey: "nav.dedicatedServerDesc", icon: <Server className="w-5 h-5" />, href: "/dedicated" },
     ],
   },
   {
-    label: "More Hosting",
+    labelKey: "nav.moreHosting",
     items: [
-      { title: "Discord Bot", subtitle: "Host your Discord bots 24/7", icon: <Server className="w-5 h-5" />, href: "/discord-bot" },
-      { title: "TeamSpeak Hosting", subtitle: "Crystal-clear voice servers", icon: <Server className="w-5 h-5" />, href: "/teamspeak" },
-      { title: "Colocation", subtitle: "Colocate your hardware", icon: <HardDrive className="w-5 h-5" />, href: "/colocation" },
+      { titleKey: "nav.discordBot", subtitleKey: "nav.discordBotDesc", icon: <Server className="w-5 h-5" />, href: "/discord-bot" },
+      { titleKey: "nav.teamspeak", subtitleKey: "nav.teamspeakDesc", icon: <Server className="w-5 h-5" />, href: "/teamspeak" },
+      { titleKey: "nav.colocation", subtitleKey: "nav.colocationDesc", icon: <HardDrive className="w-5 h-5" />, href: "/colocation" },
     ],
   },
   {
-    label: "Help & Info",
+    labelKey: "nav.helpInfo",
     items: [
-      { title: "About Us", subtitle: "Learn about Hoxta", icon: <LifeBuoy className="w-5 h-5" />, href: "/about" },
-      { title: "Contact Us", subtitle: "Get in touch with our team", icon: <LifeBuoy className="w-5 h-5" />, href: "/contact" },
-      { title: "Blog", subtitle: "News and updates", icon: <LifeBuoy className="w-5 h-5" />, href: "/blog" },
-      { title: "Terms of Service", subtitle: "Our terms and conditions", icon: <LifeBuoy className="w-5 h-5" />, href: "/terms" },
-      { title: "Privacy Policy", subtitle: "How we protect your data", icon: <LifeBuoy className="w-5 h-5" />, href: "/privacy" },
+      { titleKey: "nav.aboutUs", subtitleKey: "nav.aboutUsDesc", icon: <LifeBuoy className="w-5 h-5" />, href: "/about" },
+      { titleKey: "nav.contactUs", subtitleKey: "nav.contactUsDesc", icon: <LifeBuoy className="w-5 h-5" />, href: "/contact" },
+      { titleKey: "nav.blog", subtitleKey: "nav.blogDesc", icon: <LifeBuoy className="w-5 h-5" />, href: "/blog" },
+      { titleKey: "nav.terms", subtitleKey: "nav.termsDesc", icon: <LifeBuoy className="w-5 h-5" />, href: "/terms" },
+      { titleKey: "nav.privacy", subtitleKey: "nav.privacyDesc", icon: <LifeBuoy className="w-5 h-5" />, href: "/privacy" },
     ],
   },
 ];
 
 export function Header() {
+  const { t } = useTranslation();
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -129,19 +132,19 @@ export function Header() {
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-0.5">
             {menuItems.map((item) => (
-              <div key={item.label} className="relative">
+              <div key={item.labelKey} className="relative">
                 {item.items ? (
                   <button
-                    onClick={() => setActiveDropdown(activeDropdown === item.label ? null : item.label)}
+                    onClick={() => setActiveDropdown(activeDropdown === item.labelKey ? null : item.labelKey)}
                     className={`flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
-                      activeDropdown === item.label
+                      activeDropdown === item.labelKey
                         ? "text-primary"
                         : "text-foreground/70 hover:text-foreground"
                     }`}
                   >
-                    {item.label}
+                    {t(item.labelKey)}
                     <ChevronDown
-                      className={`w-3.5 h-3.5 transition-transform duration-200 ${activeDropdown === item.label ? "rotate-180" : ""}`}
+                      className={`w-3.5 h-3.5 transition-transform duration-200 ${activeDropdown === item.labelKey ? "rotate-180" : ""}`}
                     />
                   </button>
                 ) : (
@@ -153,20 +156,22 @@ export function Header() {
                         : "text-foreground/70 hover:text-foreground"
                     }`}
                   >
-                    {item.label}
+                    {t(item.labelKey)}
                   </Link>
                 )}
               </div>
             ))}
           </nav>
 
-          {/* Control Panel Button */}
-          <div className="flex items-center gap-4">
+          {/* Right side: Language switcher + Control Panel */}
+          <div className="flex items-center gap-2 md:gap-4">
+            <LanguageSwitcher />
+            
             <Link
               to="/panel"
               className="hidden md:flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 shadow-[0_0_20px_rgba(25,195,255,0.3)] hover:shadow-[0_0_30px_rgba(25,195,255,0.5)]"
             >
-              Control Panel
+              {t("nav.controlPanel")}
             </Link>
             
             {/* Mobile Menu Button */}
@@ -192,9 +197,9 @@ export function Header() {
           >
             <div className={`mx-auto bg-[#0c1a2a]/95 backdrop-blur-2xl rounded-2xl border border-primary/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)] overflow-hidden`}>
               <div className="p-4">
-                <div className={`grid gap-3 ${getGridCols(menuItems.find(m => m.label === activeDropdown)?.items?.length || 0)}`}>
+                <div className={`grid gap-3 ${getGridCols(menuItems.find(m => m.labelKey === activeDropdown)?.items?.length || 0)}`}>
                   {menuItems
-                    .find((m) => m.label === activeDropdown)
+                    .find((m) => m.labelKey === activeDropdown)
                     ?.items?.map((item, idx) => (
                       <Link
                         key={idx}
@@ -206,9 +211,9 @@ export function Header() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <h4 className="font-medium text-foreground text-sm group-hover:text-primary transition-colors">
-                            {item.title}
+                            {t(item.titleKey)}
                           </h4>
-                          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{item.subtitle}</p>
+                          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{t(item.subtitleKey)}</p>
                         </div>
                       </Link>
                     ))}
@@ -231,11 +236,11 @@ export function Header() {
           >
             <div className="container mx-auto px-4 py-4 space-y-2">
               {menuItems.map((item) => (
-                <div key={item.label}>
+                <div key={item.labelKey}>
                   {item.items ? (
                     <details className="group">
                       <summary className="flex items-center justify-between px-4 py-3 text-foreground cursor-pointer rounded-lg hover:bg-white/5">
-                        {item.label}
+                        {t(item.labelKey)}
                         <ChevronDown className="w-4 h-4 transition-transform group-open:rotate-180" />
                       </summary>
                       <div className="pl-4 mt-2 space-y-1">
@@ -245,7 +250,7 @@ export function Header() {
                             to={subItem.href}
                             className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground rounded-lg hover:bg-white/5"
                           >
-                            {subItem.title}
+                            {t(subItem.titleKey)}
                           </Link>
                         ))}
                       </div>
@@ -255,13 +260,13 @@ export function Header() {
                       to={item.href || "/"}
                       className="block px-4 py-3 text-foreground rounded-lg hover:bg-white/5"
                     >
-                      {item.label}
+                      {t(item.labelKey)}
                     </Link>
                   )}
                 </div>
               ))}
               <Link to="/panel" className="block w-full btn-glow text-center mt-4">
-                Control Panel
+                {t("nav.controlPanel")}
               </Link>
             </div>
           </motion.div>

@@ -1,22 +1,52 @@
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { Monitor, Apple, ShoppingCart, Eye } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import type { GameServer } from "@/data/gameServersData";
+import { gameServerProducts } from "@/data/products";
 
 interface GameCardProps {
   game: GameServer;
   index: number;
 }
 
+/**
+ * Get the default (popular or first) plan for a game product
+ */
+function getDefaultPlanForGame(gameSlug: string): { planId: string; productSlug: string } | null {
+  const product = gameServerProducts.find((p) => p.gameSlug === gameSlug || p.slug === gameSlug);
+  if (!product || product.plans.length === 0) {
+    return null;
+  }
+  
+  // Find popular plan, otherwise use first plan
+  const popularPlan = product.plans.find((p) => p.popular);
+  const defaultPlan = popularPlan || product.plans[0];
+  
+  return {
+    planId: defaultPlan.id,
+    productSlug: product.slug,
+  };
+}
+
 export function GameCard({ game, index }: GameCardProps) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleOrderNow = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    // Navigate directly to checkout with the game product and default first plan
-    const planId = `${game.slug}-starter`;
-    navigate(`/checkout?product=${game.slug}&plan=${planId}&billing=monthly`);
+    
+    // Get proper plan from products.ts
+    const planInfo = getDefaultPlanForGame(game.slug);
+    
+    if (planInfo) {
+      // Navigate to checkout with category=games and proper plan
+      navigate(`/checkout?category=games&product=${planInfo.productSlug}&plan=${planInfo.planId}&billing=monthly`);
+    } else {
+      // Fallback: go to game detail page
+      navigate(`/game-servers/${game.slug}`);
+    }
   };
 
   return (
@@ -40,7 +70,7 @@ export function GameCard({ game, index }: GameCardProps) {
             {/* Popular Badge */}
             {game.popular && (
               <div className="absolute top-3 left-3 px-2 py-1 rounded-full bg-primary/90 text-primary-foreground text-xs font-semibold">
-                Popular
+                {t("common.popular")}
               </div>
             )}
             
@@ -95,14 +125,14 @@ export function GameCard({ game, index }: GameCardProps) {
               className="flex-1 flex items-center justify-center gap-1.5 py-2 text-sm font-medium rounded-lg btn-outline"
             >
               <Eye className="w-3.5 h-3.5" />
-              View Plans
+              {t("buttons.viewPlans")}
             </Link>
             <button
               onClick={handleOrderNow}
               className="flex-1 flex items-center justify-center gap-1.5 py-2 text-sm font-medium rounded-lg btn-glow"
             >
               <ShoppingCart className="w-3.5 h-3.5" />
-              Order Now
+              {t("buttons.orderNow")}
             </button>
           </div>
         </div>
