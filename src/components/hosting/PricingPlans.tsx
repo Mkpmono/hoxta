@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -28,19 +29,30 @@ interface PricingPlansProps {
   subtitle?: string;
   plans: Plan[];
   productSlug?: string; // Default product slug if not set on individual plans
+  category?: string; // Category for checkout URL (e.g., "games")
 }
 
-function generateCheckoutUrl(plan: Plan, productSlug: string | undefined, isYearly: boolean): string {
+function generateCheckoutUrl(
+  plan: Plan, 
+  productSlug: string | undefined, 
+  isYearly: boolean,
+  category?: string
+): string {
   const slug = plan.productSlug || productSlug;
   const billing = isYearly ? "annually" : "monthly";
   
+  // If plan has a custom CTA href, update the billing param
   if (plan.cta?.href) {
-    return plan.cta.href;
+    // Update billing in the existing URL
+    const url = new URL(plan.cta.href, window.location.origin);
+    url.searchParams.set("billing", billing);
+    return url.pathname + url.search;
   }
   
   // Route directly to checkout when we have all params
   if (slug && plan.id) {
-    return `/checkout?product=${slug}&plan=${plan.id}&billing=${billing}`;
+    const categoryParam = category ? `category=${category}&` : "";
+    return `/checkout?${categoryParam}product=${slug}&plan=${plan.id}&billing=${billing}`;
   }
   
   // Fallback to order page for plan selection
@@ -56,7 +68,9 @@ export function PricingPlans({
   subtitle = "Flexible pricing for every need. All plans include our core features.",
   plans,
   productSlug,
+  category,
 }: PricingPlansProps) {
+  const { t } = useTranslation();
   const [isYearly, setIsYearly] = useState(true);
 
   return (
@@ -83,7 +97,7 @@ export function PricingPlans({
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              Monthly
+              {t("checkout.monthly")}
             </button>
             <button
               onClick={() => setIsYearly(true)}
@@ -93,7 +107,7 @@ export function PricingPlans({
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              Yearly
+              {t("checkout.annually")}
               <span className="px-2 py-0.5 rounded-full bg-green-500/20 text-green-400 text-xs font-bold">
                 Save 20%
               </span>
@@ -118,7 +132,7 @@ export function PricingPlans({
                 {plan.popular && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-primary text-primary-foreground text-xs font-bold rounded-full flex items-center gap-1">
                     <Zap className="w-3 h-3" />
-                    MOST POPULAR
+                    {t("common.popular").toUpperCase()}
                   </div>
                 )}
 
@@ -134,7 +148,7 @@ export function PricingPlans({
                     <span className="text-4xl font-bold text-foreground">
                       ${isYearly ? plan.yearlyPrice.toFixed(2) : plan.monthlyPrice.toFixed(2)}
                     </span>
-                    <span className="text-muted-foreground">/mo</span>
+                    <span className="text-muted-foreground">{t("common.perMonth")}</span>
                   </div>
                   {isYearly && (
                     <p className="text-sm text-muted-foreground mt-1">
@@ -162,14 +176,14 @@ export function PricingPlans({
                 </ul>
 
                 <Link
-                  to={generateCheckoutUrl(plan, productSlug, isYearly)}
+                  to={generateCheckoutUrl(plan, productSlug, isYearly, category)}
                   className={`block w-full py-3 text-center rounded-lg font-medium transition-all ${
                     plan.popular
                       ? "btn-glow"
                       : "btn-outline"
                   }`}
                 >
-                  {plan.cta?.text || "Order Now"}
+                  {plan.cta?.text || t("buttons.orderNow")}
                 </Link>
               </motion.div>
             ))}
