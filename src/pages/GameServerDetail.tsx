@@ -1,4 +1,5 @@
 import { useParams, Navigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Layout } from "@/components/layout/Layout";
 import { motion } from "framer-motion";
 import { Gamepad2, Shield, Zap, Globe, Settings, HardDrive, Clock, Check, Server } from "lucide-react";
@@ -16,17 +17,33 @@ import {
 } from "@/components/hosting";
 import { SEOHead, ServiceSchema, FAQSchema, OrganizationSchema } from "@/components/seo";
 
+// Helper to generate stable plan ID from game slug and plan name
+function generatePlanId(gameSlug: string, planName: string): string {
+  return `${gameSlug}-${planName.toLowerCase().replace(/\s+/g, "-")}`;
+}
+
+// Helper to get the default (popular or first) plan ID for a game
+export function getDefaultPlanForGame(gameSlug: string): string | null {
+  const game = gameServers.find((g) => g.slug === gameSlug);
+  if (!game || game.plans.length === 0) return null;
+  
+  const popularPlan = game.plans.find((p) => p.popular);
+  const selectedPlan = popularPlan || game.plans[0];
+  return generatePlanId(gameSlug, selectedPlan.name);
+}
+
 export default function GameServerDetail() {
   const { gameSlug } = useParams<{ gameSlug: string }>();
+  const { t } = useTranslation();
   const game = gameServers.find((g) => g.slug === gameSlug);
 
   if (!game) {
     return <Navigate to="/game-servers" replace />;
   }
 
-  // Convert game plans to pricing component format with proper order routing
+  // Convert game plans to pricing component format with proper checkout routing
   const plans = game.plans.map((plan, index) => {
-    const planId = `${game.slug}-${plan.name.toLowerCase().replace(/\s+/g, "-")}`;
+    const planId = generatePlanId(game.slug, plan.name);
     return {
       id: planId,
       productSlug: game.slug,
@@ -44,6 +61,11 @@ export default function GameServerDetail() {
         ...(plan.storage ? [{ label: "Storage", value: plan.storage }] : []),
         ...plan.features.map((f) => ({ label: f, value: "✓" })),
       ],
+      // CTA with proper checkout URL including category=games
+      cta: {
+        text: t("buttons.orderNow"),
+        href: `/checkout?category=games&product=${game.slug}&plan=${planId}&billing=monthly`,
+      },
     };
   });
 
@@ -81,8 +103,8 @@ export default function GameServerDetail() {
           </>
         }
         description={game.fullDescription}
-        primaryCTA={{ text: "Get Started", href: "#pricing" }}
-        secondaryCTA={{ text: "View Features", href: "#features" }}
+        primaryCTA={{ text: t("buttons.getStarted"), href: "#pricing" }}
+        secondaryCTA={{ text: t("buttons.viewPlans"), href: "#features" }}
       />
 
       {/* Key Benefits */}
@@ -111,12 +133,13 @@ export default function GameServerDetail() {
       {/* Trust Bar */}
       <TrustBar />
 
-      {/* Pricing Plans */}
+      {/* Pricing Plans - Pass productSlug for billing toggle URL generation */}
       <div id="pricing">
         <PricingPlans
           title={`${game.title} Server Plans`}
           subtitle={`Choose the perfect ${game.title} server plan for your community.`}
           plans={plans}
+          productSlug={game.slug}
         />
       </div>
 
