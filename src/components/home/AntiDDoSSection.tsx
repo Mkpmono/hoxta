@@ -1,16 +1,18 @@
 import { useEffect, useRef, useCallback } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import { Check } from "lucide-react";
 
 export function AntiDDoSSection() {
+  const { t } = useTranslation();
   const svgRef = useRef<SVGSVGElement>(null);
   const arcsRef = useRef<SVGGElement>(null);
   const prefersReducedMotion = useReducedMotion();
 
   const features = [
-    "400+ Gbps capacitate, always-on",
-    "Filtrare inteligentă & rate-limiting L7",
-    "Alertare instant & rapoarte",
+    t("sections.antiDdosCapacity"),
+    t("sections.antiDdosFiltering"),
+    t("sections.antiDdosAlerts"),
   ];
 
   // Generate arcs between threats
@@ -277,11 +279,10 @@ export function AntiDDoSSection() {
             {/* Content */}
             <div>
               <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                Anti-<span className="text-gradient">DDoS</span>
+                {t("sections.antiDdos")}
               </h2>
               <p className="text-muted-foreground mb-6 leading-relaxed">
-                Protecție multi-layer L3/L4/L7 cu scrubbing automat și monitorizare în timp real. 
-                Mitigăm volumetric, protocol și application-layer fără downtime.
+                {t("sections.antiDdosDesc")}
               </p>
 
               <ul className="space-y-3">

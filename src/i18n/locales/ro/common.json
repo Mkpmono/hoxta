@@ -43,20 +43,41 @@
     "submit": "Trimite",
     "cancel": "Anulează",
     "save": "Salvează",
+    "saveChanges": "Salvează Modificările",
     "delete": "Șterge",
     "edit": "Editează",
     "login": "Autentificare",
     "logout": "Deconectare",
+    "signIn": "Conectează-te",
+    "signingIn": "Se conectează...",
     "signup": "Înregistrare",
     "learnMore": "Află Mai Mult",
     "getStarted": "Începe Acum",
     "changePlan": "Schimbă Pachetul",
     "clearFilters": "Șterge filtrele",
     "createTicket": "Creează Tichet",
+    "submitTicket": "Trimite Tichetul",
+    "submitting": "Se trimite...",
     "reply": "Răspunde",
     "close": "Închide",
     "pay": "Plătește Acum",
-    "completeOrder": "Finalizează Comanda"
+    "completeOrder": "Finalizează Comanda",
+    "exploreServices": "Explorează Serviciile",
+    "contactSupport": "Contactează Suportul",
+    "browseGames": "Răsfoiește Serverele de Jocuri",
+    "talkToSales": "Vorbește cu Vânzările",
+    "comparePlans": "Compară Pachetele",
+    "newOrder": "Comandă Nouă",
+    "viewAll": "Vezi toate",
+    "backToWebsite": "Înapoi la site",
+    "tryAgain": "Încearcă Din Nou",
+    "contactSales": "Contactează Vânzările",
+    "forgotPassword": "Ai uitat parola?",
+    "rememberMe": "Ține-mă minte",
+    "changeAvatar": "Schimbă Avatar",
+    "updatePassword": "Actualizează Parola",
+    "testConnection": "Testează Conexiunea",
+    "testing": "Se testează..."
   },
   "checkout": {
     "title": "Finalizează Comanda",
@@ -81,13 +102,16 @@
     "loginToAutofill": "Autentifică-te pentru completare automată",
     "orContinueAsGuest": "Sau continuă ca invitat",
     "success": {
-      "title": "Comandă Finalizată!",
-      "message": "Comanda ta a fost plasată cu succes."
+      "title": "Plată Reușită!",
+      "message": "Mulțumim pentru comandă. Serviciul tău este în curs de activare și va fi gata în curând.",
+      "orderReference": "Referință Comandă"
     },
     "failed": {
       "title": "Plată Eșuată",
       "message": "A apărut o problemă la procesarea plății."
-    }
+    },
+    "goToPanel": "Mergi la Panoul de Control",
+    "viewInvoice": "Vezi Factura"
   },
   "panel": {
     "dashboard": {
@@ -96,7 +120,11 @@
       "activeServices": "Servicii Active",
       "openTickets": "Tichete Deschise",
       "pendingInvoices": "Facturi în Așteptare",
-      "recentActivity": "Activitate Recentă"
+      "pendingOrders": "Comenzi în Așteptare",
+      "unpaidInvoices": "Facturi Neplătite",
+      "recentActivity": "Activitate Recentă",
+      "yourServices": "Serviciile Tale",
+      "recentTickets": "Tichete Recente"
     },
     "services": {
       "title": "Serviciile Mele",
@@ -104,10 +132,13 @@
       "active": "Activ",
       "suspended": "Suspendat",
       "cancelled": "Anulat",
+      "terminated": "Terminat",
       "pending": "În Așteptare",
       "nextDue": "Următoarea Scadență",
       "manage": "Administrează",
-      "noServices": "Nu s-au găsit servicii"
+      "noServices": "Nu s-au găsit servicii",
+      "due": "Scadență",
+      "noIpAssigned": "Niciun IP atribuit"
     },
     "invoices": {
       "title": "Facturi",
@@ -120,12 +151,17 @@
       "unpaid": "Neplătită",
       "overdue": "Întârziată",
       "cancelled": "Anulată",
-      "noInvoices": "Nu s-au găsit facturi"
+      "refunded": "Rambursată",
+      "noInvoices": "Nu s-au găsit facturi",
+      "actions": "Acțiuni"
     },
     "tickets": {
       "title": "Tichete Suport",
       "newTicket": "Tichet Nou",
+      "newTicketTitle": "Tichet Suport Nou",
+      "newTicketSubtitle": "Trimite o nouă cerere de suport",
       "subject": "Subiect",
+      "subjectPlaceholder": "Descriere scurtă a problemei tale",
       "department": "Departament",
       "priority": "Prioritate",
       "status": "Status",
@@ -139,28 +175,65 @@
       "high": "Ridicată",
       "urgent": "Urgentă",
       "noTickets": "Nu s-au găsit tichete",
-      "message": "Mesaj"
+      "message": "Mesaj",
+      "messagePlaceholder": "Te rugăm să descrii problema în detaliu. Include mesajele de eroare, pașii pentru reproducere și ce ai încercat deja.",
+      "attachments": "Atașamente",
+      "attachmentsHint": "Trage și plasează fișierele aici, sau click pentru a răsfoi",
+      "maxFileSize": "Dimensiune maximă: 10MB",
+      "searchTickets": "Caută tichete...",
+      "allStatus": "Toate Statusurile",
+      "technicalSupport": "Suport Tehnic",
+      "sales": "Vânzări",
+      "billing": "Facturare",
+      "validationError": "Eroare de Validare",
+      "fillRequiredFields": "Te rugăm să completezi toate câmpurile obligatorii",
+      "ticketCreated": "Tichet Creat",
+      "ticketCreatedMsg": "Tichetul tău a fost creat. ID: {{id}}"
     },
     "orders": {
       "title": "Comenzi",
       "order": "Comandă",
+      "orderId": "ID Comandă",
       "product": "Produs",
       "status": "Status",
-      "noOrders": "Nu s-au găsit comenzi"
+      "noOrders": "Nu s-au găsit comenzi",
+      "ordersCount": "{{count}} comenzi",
+      "completed": "Finalizată",
+      "fraud": "Fraudă"
     },
     "profile": {
-      "title": "Profilul Meu",
+      "title": "Setări Profil",
       "personalInfo": "Informații Personale",
       "security": "Securitate",
-      "changePassword": "Schimbă Parola"
+      "changePassword": "Schimbă Parola",
+      "avatar": "Avatar",
+      "fullName": "Nume Complet",
+      "currentPassword": "Parola Curentă",
+      "newPassword": "Parola Nouă",
+      "confirmNewPassword": "Confirmă Parola"
     },
     "api": {
       "title": "Setări API",
       "connection": "Conexiune",
+      "whmcsConnection": "Conexiune WHMCS",
+      "configureCredentials": "Configurează credențialele API WHMCS (necesită configurare pe server)",
       "testConnection": "Testează Conexiunea",
       "mockMode": "Mod Simulare",
+      "mockModeActive": "Mod Simulare Activ",
+      "mockModeDesc": "Panoul folosește date simulate. Pentru a conecta la o instalare WHMCS live, configurează credențialele API pe server.",
+      "securityNotice": "Notificare de Securitate",
+      "securityDesc": "Credențialele API WHMCS (Identificator și Secret) trebuie stocate în siguranță pe server, nu în browser.",
+      "secureArchitecture": "Arhitectură Securizată",
+      "secureArchitectureDesc": "Toate apelurile API WHMCS sunt rutate prin endpoint-uri proxy interne. Frontend-ul nu comunică direct cu WHMCS.",
       "connected": "Conectat",
-      "disconnected": "Deconectat"
+      "disconnected": "Deconectat",
+      "connectionSuccess": "Conexiune reușită",
+      "connectionFailed": "Conexiune eșuată",
+      "whmcsApiUrl": "URL API WHMCS",
+      "apiIdentifier": "Identificator API",
+      "apiSecret": "Secret API",
+      "internalEndpoints": "Endpoint-uri API Interne",
+      "endpointsDesc": "Aceste endpoint-uri sunt folosite intern de panou. Când WHMCS este configurat pe server, acestea proxy-ază cererile către API-ul WHMCS."
     },
     "sidebar": {
       "dashboard": "Panou Principal",
@@ -171,16 +244,28 @@
       "profile": "Profil",
       "apiSettings": "Setări API",
       "logout": "Deconectare"
+    },
+    "login": {
+      "title": "Panou de Control",
+      "subtitle": "Conectează-te pentru a-ți administra serviciile",
+      "demoAccess": "Acces rapid demo",
+      "demoModeNotice": "Doar mod demo. Înlocuiește cu autentificare reală ulterior.",
+      "client": "Client",
+      "admin": "Admin",
+      "owner": "Proprietar"
     }
   },
   "forms": {
     "email": "Email",
+    "emailPlaceholder": "tu@exemplu.com",
     "password": "Parolă",
     "confirmPassword": "Confirmă Parola",
     "firstName": "Prenume",
     "lastName": "Nume",
     "company": "Nume Companie",
+    "companyPlaceholder": "Numele companiei tale",
     "phone": "Număr de Telefon",
+    "phonePlaceholder": "+40 123 456 789",
     "address": "Adresă",
     "address2": "Adresă Linia 2",
     "city": "Oraș",
@@ -189,7 +274,9 @@
     "country": "Țară",
     "taxId": "CUI/CIF",
     "optional": "(opțional)",
-    "required": "Obligatoriu"
+    "required": "Obligatoriu",
+    "name": "Nume",
+    "message": "Mesaj"
   },
   "errors": {
     "required": "Acest câmp este obligatoriu",
@@ -201,7 +288,15 @@
     "invalidCredentials": "Email sau parolă incorectă",
     "sessionExpired": "Sesiunea ta a expirat",
     "notFound": "Nu a fost găsit",
-    "unauthorized": "Acces neautorizat"
+    "unauthorized": "Acces neautorizat",
+    "failedToLoad": "Nu s-a putut încărca {{item}}",
+    "failedToLoadServices": "Nu s-au putut încărca serviciile",
+    "failedToLoadInvoices": "Nu s-au putut încărca facturile",
+    "failedToLoadTickets": "Nu s-au putut încărca tichetele",
+    "failedToLoadOrders": "Nu s-au putut încărca comenzile",
+    "failedToGetPaymentLink": "Nu s-a putut obține link-ul de plată",
+    "failedToCreateTicket": "Nu s-a putut crea tichetul",
+    "loginFailed": "Autentificare eșuată"
   },
   "common": {
     "loading": "Se încarcă...",
@@ -230,14 +325,27 @@
     "support247": "Suport 24/7",
     "globalLocations": "Locații Globale",
     "highPerformance": "Performanță Ridicată",
-    "easyManagement": "Administrare Ușoară"
+    "easyManagement": "Administrare Ușoară",
+    "noArticlesFound": "Nu s-au găsit articole care să corespundă criteriilor.",
+    "allRightsReserved": "Toate drepturile rezervate.",
+    "error": "Eroare",
+    "success": "Succes",
+    "id": "ID",
+    "total": "Total"
   },
   "hero": {
     "title": "Soluții Premium",
     "titleHighlight": "de Hosting",
-    "subtitle": "Servere de înaltă performanță cu uptime de 99.9%, protecție DDoS și suport expert 24/7.",
+    "headline": "Premium",
+    "headlineHighlight": "Jocuri, Web, VPS",
+    "headlineSuffix": "& Găzduire Server",
+    "subtitle": "Infrastructură de înaltă performanță pentru gameri, dezvoltatori și afaceri. De la Minecraft & FiveM la VPS personalizat & servere enterprise — alimentează următorul tău proiect cu noi.",
     "cta": "Începe Acum",
-    "viewPricing": "Vezi Prețurile"
+    "viewPricing": "Vezi Prețurile",
+    "premiumInfrastructure": "Infrastructură Premium",
+    "uptimeSla": "SLA Uptime",
+    "gbpsDdos": "Gbps DDoS",
+    "support": "Suport"
   },
   "sections": {
     "whyChoose": "De Ce Să Alegi Hoxta",
@@ -252,7 +360,48 @@
     "faqSubtitle": "Întrebări comune despre serviciile noastre",
     "trustedBy": "Încredere de mii de clienți",
     "readyToStart": "Gata să Începi?",
-    "readyToStartSubtitle": "Instalează serverul tău în mai puțin de 60 de secunde"
+    "readyToStartSubtitle": "Instalează serverul tău în mai puțin de 60 de secunde",
+    "infrastructureBuiltFor": "Infrastructură Construită pentru Performanță",
+    "enterpriseGradeHosting": "Găzduire de Nivel Enterprise",
+    "youCanRelyOn": "Pe Care Te Poți Baza",
+    "builtOnPremium": "Construită pe hardware premium cu sisteme redundante, acoperire globală și monitorizare proactivă. Infrastructura noastră este proiectată pentru sarcini de lucru solicitante care necesită uptime maxim.",
+    "uptimeSla": "SLA Uptime",
+    "globalLocations": "Locații Globale",
+    "gbpsNetwork": "Rețea Gbps",
+    "avgLatency": "Latență Medie",
+    "enterpriseHardware": "Hardware Enterprise",
+    "enterpriseHardwareDesc": "Procesoare Intel Xeon & AMD EPYC, RAM ECC și sisteme de alimentare redundante în datacentere Tier III+.",
+    "nvmeStorage": "Stocare NVMe",
+    "nvmeStorageDesc": "SSD-uri NVMe ultra-rapide cu protecție RAID oferind până la 7,000 MB/s viteze de citire și latență sub-milisecundă.",
+    "globalNetworkDesc": "12+ locații strategice la nivel mondial cu peering direct la ISP-uri majori, asigurând rutare optimă și latență minimă.",
+    "ddosProtection": "Protecție DDoS",
+    "ddosProtectionDesc": "Mitigare multi-layer cu capacitate de scrubbing 2.5 Tbps+. Filtre specifice jocurilor și detectare instantă a amenințărilor.",
+    "instantDeployment": "Implementare Instantă",
+    "instantDeploymentDesc": "Provizionare automatizată cu instalări one-click. Serverul tău este live în sub 60 de secunde cu template-uri preconfigurate.",
+    "expertSupport": "Suport Expert 24/7",
+    "expertSupportDesc": "Ingineri certificați disponibili non-stop. Timp mediu de răspuns sub 15 minute pentru tichete prioritare.",
+    "soc2Compliant": "Conform SOC 2",
+    "monitoring247": "Monitorizare 24/7",
+    "tierIiiDc": "DC Tier III+",
+    "iso27001": "ISO 27001",
+    "getStarted": "Începe Acum",
+    "noCardRequired": "Fără card de credit • Instalare instantă • Suport 24/7",
+    "testimonials": "Testimoniale",
+    "trustedByGamers": "Încrederea Gamerilor",
+    "worldwide": "din Întreaga Lume",
+    "joinThousands": "Alătură-te miilor de jucători care au încredere în Hoxta pentru comunitățile lor de gaming. Cu 99.9% uptime și suport 24/7, menținem jocul tău în funcțiune fără probleme.",
+    "viewAllReviews": "Vezi Toate Recenziile",
+    "antiDdos": "Anti-DDoS",
+    "antiDdosDesc": "Protecție multi-layer L3/L4/L7 cu scrubbing automat și monitorizare în timp real. Mitigăm atacuri volumetrice, de protocol și la nivel de aplicație fără downtime.",
+    "antiDdosCapacity": "Capacitate 400+ Gbps, mereu activă",
+    "antiDdosFiltering": "Filtrare L7 inteligentă & rate-limiting",
+    "antiDdosAlerts": "Alerte instant & raportare",
+    "browseAllGames": "Răsfoiește Toate Jocurile",
+    "noCreditCard": "Fără card de credit necesar",
+    "services": "Servicii",
+    "usefulLinks": "Linkuri Utile",
+    "company": "Companie",
+    "paymentMethods": "Metode de Plată"
   },
   "footer": {
     "company": "Companie",
@@ -266,13 +415,17 @@
     "dedicated": "Servere Dedicate",
     "gameServers": "Servere de Jocuri",
     "support": "Suport",
+    "support247": "Suport 24/7",
     "knowledgeBase": "Bază de Cunoștințe",
     "serverStatus": "Status Servere",
     "openTicket": "Deschide Tichet",
     "legal": "Legal",
     "termsOfService": "Termeni și Condiții",
     "privacyPolicy": "Politica de Confidențialitate",
-    "copyright": "© {{year}} Hoxta. Toate drepturile rezervate."
+    "copyright": "© {{year}} Hoxta. Toate drepturile rezervate.",
+    "terms": "Termeni",
+    "privacy": "Confidențialitate",
+    "status": "Status"
   },
   "games": {
     "minecraft": "Minecraft",
@@ -306,5 +459,73 @@
     "roleplay": "Roleplay",
     "mmo": "MMO",
     "other": "Altele"
+  },
+  "pages": {
+    "about": {
+      "title": "Despre",
+      "headline": "Despre Hoxta",
+      "subtitle": "Infrastructură premium de hosting pentru gameri, dezvoltatori și afaceri din întreaga lume.",
+      "ourMission": "Misiunea Noastră",
+      "missionText": "Să oferim cea mai fiabilă infrastructură de hosting de înaltă performanță care împuternicește gamerii și dezvoltatorii să construiască experiențe uimitoare fără să-și facă griji pentru servere.",
+      "activeCustomers": "Clienți Activi",
+      "uptimeSla": "SLA Uptime",
+      "dataCenters": "Centre de Date",
+      "expertSupport": "Suport Expert"
+    },
+    "pricing": {
+      "title": "Prețuri",
+      "subtitle": "Prețuri transparente pentru toate serviciile noastre. Vizitează paginile individuale ale produselor pentru planuri detaliate."
+    },
+    "status": {
+      "title": "Status Sistem",
+      "allOperational": "Toate Sistemele Funcționale",
+      "operational": "Funcțional"
+    },
+    "contact": {
+      "title": "Contactează-ne",
+      "subtitle": "Ia legătura cu echipa noastră",
+      "location": "Locație",
+      "supportHours": "Ore Suport",
+      "available247": "Disponibil 24/7",
+      "sendMessage": "Trimite Mesaj"
+    },
+    "blog": {
+      "title": "Blog",
+      "headline": "Sfaturi de Hosting &",
+      "headlineHighlight": "Tutoriale",
+      "subtitle": "Descoperă ghiduri, tutoriale și informații care te ajută să profiți la maximum de experiența ta de hosting."
+    },
+    "notFound": {
+      "connectionLost": "Conexiune Pierdută",
+      "title": "Rută Negăsită",
+      "subtitle": "Pagina pe care o cauți nu există sau a fost mutată. Hai să te readucem pe drumul cel bun.",
+      "goHome": "Înapoi Acasă",
+      "quickNav": "Navigare Rapidă",
+      "checkStatus": "Verifică statusul serverelor"
+    },
+    "terms": {
+      "title": "Termeni și Condiții",
+      "lastUpdated": "Ultima actualizare: Ianuarie 2026",
+      "acceptance": "Acceptarea Termenilor",
+      "acceptanceText": "Prin accesarea și utilizarea serviciilor Hoxta, ești de acord să fii obligat de acești Termeni și Condiții.",
+      "serviceDescription": "Descrierea Serviciului",
+      "serviceDescriptionText": "Hoxta oferă găzduire web, găzduire servere de jocuri, VPS și servicii de servere dedicate.",
+      "acceptableUse": "Utilizare Acceptabilă",
+      "acceptableUseText": "Ești de acord să nu folosești serviciile noastre în niciun scop ilegal sau neautorizat."
+    },
+    "privacy": {
+      "title": "Politica de Confidențialitate",
+      "lastUpdated": "Ultima actualizare: Ianuarie 2026",
+      "dataCollection": "Colectarea Datelor",
+      "dataCollectionText": "Colectăm informațiile pe care ni le furnizezi direct, cum ar fi atunci când creezi un cont sau contactezi suportul.",
+      "dataUsage": "Utilizarea Datelor",
+      "dataUsageText": "Folosim informațiile tale pentru a furniza, menține și îmbunătăți serviciile noastre.",
+      "dataSecurity": "Securitatea Datelor",
+      "dataSecurityText": "Implementăm măsuri de securitate adecvate pentru a proteja informațiile tale personale."
+    }
+  },
+  "mockMode": {
+    "banner": "Mod Simulare – WHMCS neconectat. Se folosesc date demo.",
+    "demoCredentials": "Demo: client@demo.hoxta / Demo1234!"
   }
 }
