@@ -43,20 +43,41 @@
     "submit": "Submit",
     "cancel": "Cancel",
     "save": "Save",
+    "saveChanges": "Save Changes",
     "delete": "Delete",
     "edit": "Edit",
     "login": "Login",
     "logout": "Logout",
+    "signIn": "Sign In",
+    "signingIn": "Signing in...",
     "signup": "Sign Up",
     "learnMore": "Learn More",
     "getStarted": "Get Started",
     "changePlan": "Change Plan",
     "clearFilters": "Clear filters",
     "createTicket": "Create Ticket",
+    "submitTicket": "Submit Ticket",
+    "submitting": "Submitting...",
     "reply": "Reply",
     "close": "Close",
     "pay": "Pay Now",
-    "completeOrder": "Complete Order"
+    "completeOrder": "Complete Order",
+    "exploreServices": "Explore Services",
+    "contactSupport": "Contact Support",
+    "browseGames": "Browse Game Servers",
+    "talkToSales": "Talk to Sales",
+    "comparePlans": "Compare Plans",
+    "newOrder": "New Order",
+    "viewAll": "View all",
+    "backToWebsite": "Back to website",
+    "tryAgain": "Try Again",
+    "contactSales": "Contact Sales",
+    "forgotPassword": "Forgot password?",
+    "rememberMe": "Remember me",
+    "changeAvatar": "Change Avatar",
+    "updatePassword": "Update Password",
+    "testConnection": "Test Connection",
+    "testing": "Testing..."
   },
   "checkout": {
     "title": "Complete Your Order",
@@ -81,13 +102,16 @@
     "loginToAutofill": "Login to autofill your details",
     "orContinueAsGuest": "Or continue as guest",
     "success": {
-      "title": "Order Complete!",
-      "message": "Your order has been successfully placed."
+      "title": "Payment Successful!",
+      "message": "Thank you for your order. Your service is being activated and will be ready shortly.",
+      "orderReference": "Order Reference"
     },
     "failed": {
       "title": "Payment Failed",
       "message": "There was an issue processing your payment."
-    }
+    },
+    "goToPanel": "Go to Client Panel",
+    "viewInvoice": "View Invoice"
   },
   "panel": {
     "dashboard": {
@@ -96,7 +120,11 @@
       "activeServices": "Active Services",
       "openTickets": "Open Tickets",
       "pendingInvoices": "Pending Invoices",
-      "recentActivity": "Recent Activity"
+      "pendingOrders": "Pending Orders",
+      "unpaidInvoices": "Unpaid Invoices",
+      "recentActivity": "Recent Activity",
+      "yourServices": "Your Services",
+      "recentTickets": "Recent Tickets"
     },
     "services": {
       "title": "My Services",
@@ -104,10 +132,13 @@
       "active": "Active",
       "suspended": "Suspended",
       "cancelled": "Cancelled",
+      "terminated": "Terminated",
       "pending": "Pending",
       "nextDue": "Next Due",
       "manage": "Manage",
-      "noServices": "No services found"
+      "noServices": "No services found",
+      "due": "Due",
+      "noIpAssigned": "No IP assigned"
     },
     "invoices": {
       "title": "Invoices",
@@ -120,12 +151,17 @@
       "unpaid": "Unpaid",
       "overdue": "Overdue",
       "cancelled": "Cancelled",
-      "noInvoices": "No invoices found"
+      "refunded": "Refunded",
+      "noInvoices": "No invoices found",
+      "actions": "Actions"
     },
     "tickets": {
       "title": "Support Tickets",
       "newTicket": "New Ticket",
+      "newTicketTitle": "New Support Ticket",
+      "newTicketSubtitle": "Submit a new support request",
       "subject": "Subject",
+      "subjectPlaceholder": "Brief description of your issue",
       "department": "Department",
       "priority": "Priority",
       "status": "Status",
@@ -139,28 +175,65 @@
       "high": "High",
       "urgent": "Urgent",
       "noTickets": "No tickets found",
-      "message": "Message"
+      "message": "Message",
+      "messagePlaceholder": "Please describe your issue in detail. Include any error messages, steps to reproduce, and what you've already tried.",
+      "attachments": "Attachments",
+      "attachmentsHint": "Drag and drop files here, or click to browse",
+      "maxFileSize": "Max file size: 10MB",
+      "searchTickets": "Search tickets...",
+      "allStatus": "All Status",
+      "technicalSupport": "Technical Support",
+      "sales": "Sales",
+      "billing": "Billing",
+      "validationError": "Validation Error",
+      "fillRequiredFields": "Please fill in all required fields",
+      "ticketCreated": "Ticket Created",
+      "ticketCreatedMsg": "Your ticket has been created. ID: {{id}}"
     },
     "orders": {
       "title": "Orders",
       "order": "Order",
+      "orderId": "Order ID",
       "product": "Product",
       "status": "Status",
-      "noOrders": "No orders found"
+      "noOrders": "No orders found",
+      "ordersCount": "{{count}} orders",
+      "completed": "Completed",
+      "fraud": "Fraud"
     },
     "profile": {
-      "title": "My Profile",
+      "title": "Profile Settings",
       "personalInfo": "Personal Information",
       "security": "Security",
-      "changePassword": "Change Password"
+      "changePassword": "Change Password",
+      "avatar": "Avatar",
+      "fullName": "Full Name",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmNewPassword": "Confirm Password"
     },
     "api": {
       "title": "API Settings",
       "connection": "Connection",
+      "whmcsConnection": "WHMCS Connection",
+      "configureCredentials": "Configure your WHMCS API credentials (server-side required)",
       "testConnection": "Test Connection",
       "mockMode": "Mock Mode",
+      "mockModeActive": "Mock Mode Active",
+      "mockModeDesc": "The panel is currently using simulated data. To connect to a live WHMCS installation, configure your API credentials on the server side.",
+      "securityNotice": "Security Notice",
+      "securityDesc": "WHMCS API credentials (Identifier and Secret) must be stored securely on the server, not in the browser. This configuration UI is for reference only.",
+      "secureArchitecture": "Secure Architecture",
+      "secureArchitectureDesc": "All WHMCS API calls are routed through internal proxy endpoints. The frontend never communicates directly with WHMCS.",
       "connected": "Connected",
-      "disconnected": "Disconnected"
+      "disconnected": "Disconnected",
+      "connectionSuccess": "Connection successful",
+      "connectionFailed": "Connection failed",
+      "whmcsApiUrl": "WHMCS API URL",
+      "apiIdentifier": "API Identifier",
+      "apiSecret": "API Secret",
+      "internalEndpoints": "Internal API Endpoints",
+      "endpointsDesc": "These endpoints are used internally by the panel. When WHMCS is configured on the server, they proxy requests to the WHMCS API."
     },
     "sidebar": {
       "dashboard": "Dashboard",
@@ -171,16 +244,28 @@
       "profile": "Profile",
       "apiSettings": "API Settings",
       "logout": "Logout"
+    },
+    "login": {
+      "title": "Control Panel",
+      "subtitle": "Sign in to manage your services",
+      "demoAccess": "Quick demo access",
+      "demoModeNotice": "Demo mode only. Replace with real authentication later.",
+      "client": "Client",
+      "admin": "Admin",
+      "owner": "Owner"
     }
   },
   "forms": {
     "email": "Email",
+    "emailPlaceholder": "you@example.com",
     "password": "Password",
     "confirmPassword": "Confirm Password",
     "firstName": "First Name",
     "lastName": "Last Name",
     "company": "Company Name",
+    "companyPlaceholder": "Your company name",
     "phone": "Phone Number",
+    "phonePlaceholder": "+40 123 456 789",
     "address": "Address",
     "address2": "Address Line 2",
     "city": "City",
@@ -189,7 +274,9 @@
     "country": "Country",
     "taxId": "VAT/Tax ID",
     "optional": "(optional)",
-    "required": "Required"
+    "required": "Required",
+    "name": "Name",
+    "message": "Message"
   },
   "errors": {
     "required": "This field is required",
@@ -201,7 +288,15 @@
     "invalidCredentials": "Invalid email or password",
     "sessionExpired": "Your session has expired",
     "notFound": "Not found",
-    "unauthorized": "Unauthorized access"
+    "unauthorized": "Unauthorized access",
+    "failedToLoad": "Failed to load {{item}}",
+    "failedToLoadServices": "Failed to load services",
+    "failedToLoadInvoices": "Failed to load invoices",
+    "failedToLoadTickets": "Failed to load tickets",
+    "failedToLoadOrders": "Failed to load orders",
+    "failedToGetPaymentLink": "Failed to get payment link",
+    "failedToCreateTicket": "Failed to create ticket",
+    "loginFailed": "Login failed"
   },
   "common": {
     "loading": "Loading...",
@@ -230,14 +325,27 @@
     "support247": "24/7 Support",
     "globalLocations": "Global Locations",
     "highPerformance": "High Performance",
-    "easyManagement": "Easy Management"
+    "easyManagement": "Easy Management",
+    "noArticlesFound": "No articles found matching your criteria.",
+    "allRightsReserved": "All rights reserved.",
+    "error": "Error",
+    "success": "Success",
+    "id": "ID",
+    "total": "Total"
   },
   "hero": {
     "title": "Premium Hosting",
     "titleHighlight": "Solutions",
-    "subtitle": "High-performance servers with 99.9% uptime, DDoS protection, and 24/7 expert support.",
+    "headline": "Premium",
+    "headlineHighlight": "Game, Web, VPS",
+    "headlineSuffix": "& Server Hosting",
+    "subtitle": "High-performance infrastructure for gamers, developers, and businesses. From Minecraft & FiveM to custom VPS & enterprise servers — power your next project with us.",
     "cta": "Get Started",
-    "viewPricing": "View Pricing"
+    "viewPricing": "View Pricing",
+    "premiumInfrastructure": "Premium Infrastructure",
+    "uptimeSla": "Uptime SLA",
+    "gbpsDdos": "Gbps DDoS",
+    "support": "Support"
   },
   "sections": {
     "whyChoose": "Why Choose Hoxta",
@@ -252,7 +360,48 @@
     "faqSubtitle": "Common questions about our services",
     "trustedBy": "Trusted by thousands of customers",
     "readyToStart": "Ready to Get Started?",
-    "readyToStartSubtitle": "Deploy your server in under 60 seconds"
+    "readyToStartSubtitle": "Deploy your server in under 60 seconds",
+    "infrastructureBuiltFor": "Infrastructure Built for Performance",
+    "enterpriseGradeHosting": "Enterprise-Grade Hosting",
+    "youCanRelyOn": "You Can Rely On",
+    "builtOnPremium": "Built on premium hardware with redundant systems, global reach, and proactive monitoring. Our infrastructure is designed for demanding workloads that require maximum uptime.",
+    "uptimeSla": "Uptime SLA",
+    "globalLocations": "Global Locations",
+    "gbpsNetwork": "Gbps Network",
+    "avgLatency": "Avg Latency",
+    "enterpriseHardware": "Enterprise Hardware",
+    "enterpriseHardwareDesc": "Intel Xeon & AMD EPYC processors, ECC RAM, and redundant power systems in Tier III+ datacenters.",
+    "nvmeStorage": "NVMe Storage",
+    "nvmeStorageDesc": "Ultra-fast NVMe SSDs with RAID protection delivering up to 7,000 MB/s read speeds and sub-millisecond latency.",
+    "globalNetworkDesc": "12+ strategic locations worldwide with direct peering to major ISPs, ensuring optimal routing and minimal latency.",
+    "ddosProtection": "DDoS Protection",
+    "ddosProtectionDesc": "Multi-layer mitigation with 2.5 Tbps+ scrubbing capacity. Game-specific filters and instant threat detection.",
+    "instantDeployment": "Instant Deployment",
+    "instantDeploymentDesc": "Automated provisioning with one-click installs. Your server is live in under 60 seconds with pre-configured templates.",
+    "expertSupport": "24/7 Expert Support",
+    "expertSupportDesc": "Certified engineers available around the clock. Average response time under 15 minutes for priority tickets.",
+    "soc2Compliant": "SOC 2 Compliant",
+    "monitoring247": "24/7 Monitoring",
+    "tierIiiDc": "Tier III+ DC",
+    "iso27001": "ISO 27001",
+    "getStarted": "Get Started",
+    "noCardRequired": "No credit card required • Instant setup • 24/7 support",
+    "testimonials": "Testimonials",
+    "trustedByGamers": "Trusted by Gamers",
+    "worldwide": "Worldwide",
+    "joinThousands": "Join thousands of players who trust Hoxta for their gaming communities. With 99.9% uptime and 24/7 support, we keep your game running smoothly.",
+    "viewAllReviews": "View All Reviews",
+    "antiDdos": "Anti-DDoS",
+    "antiDdosDesc": "Multi-layer L3/L4/L7 protection with automatic scrubbing and real-time monitoring. We mitigate volumetric, protocol, and application-layer attacks without downtime.",
+    "antiDdosCapacity": "400+ Gbps capacity, always-on",
+    "antiDdosFiltering": "Intelligent L7 filtering & rate-limiting",
+    "antiDdosAlerts": "Instant alerts & reporting",
+    "browseAllGames": "Browse All Games",
+    "noCreditCard": "No credit card required",
+    "services": "Services",
+    "usefulLinks": "Useful Links",
+    "company": "Company",
+    "paymentMethods": "Payment Methods"
   },
   "footer": {
     "company": "Company",
@@ -266,13 +415,17 @@
     "dedicated": "Dedicated Servers",
     "gameServers": "Game Servers",
     "support": "Support",
+    "support247": "24/7 Support",
     "knowledgeBase": "Knowledge Base",
     "serverStatus": "Server Status",
     "openTicket": "Open Ticket",
     "legal": "Legal",
     "termsOfService": "Terms of Service",
     "privacyPolicy": "Privacy Policy",
-    "copyright": "© {{year}} Hoxta. All rights reserved."
+    "copyright": "© {{year}} Hoxta. All rights reserved.",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "status": "Status"
   },
   "games": {
     "minecraft": "Minecraft",
@@ -306,5 +459,73 @@
     "roleplay": "Roleplay",
     "mmo": "MMO",
     "other": "Other"
+  },
+  "pages": {
+    "about": {
+      "title": "About",
+      "headline": "About Hoxta",
+      "subtitle": "Premium hosting infrastructure for gamers, developers, and businesses worldwide.",
+      "ourMission": "Our Mission",
+      "missionText": "To provide the most reliable, high-performance hosting infrastructure that empowers gamers and developers to build amazing experiences without worrying about their servers.",
+      "activeCustomers": "Active Customers",
+      "uptimeSla": "Uptime SLA",
+      "dataCenters": "Data Centers",
+      "expertSupport": "Expert Support"
+    },
+    "pricing": {
+      "title": "Pricing",
+      "subtitle": "Transparent pricing for all our services. Visit individual product pages for detailed plans."
+    },
+    "status": {
+      "title": "System Status",
+      "allOperational": "All Systems Operational",
+      "operational": "Operational"
+    },
+    "contact": {
+      "title": "Contact Us",
+      "subtitle": "Get in touch with our team",
+      "location": "Location",
+      "supportHours": "Support Hours",
+      "available247": "24/7 Available",
+      "sendMessage": "Send Message"
+    },
+    "blog": {
+      "title": "Blog",
+      "headline": "Hosting Tips &",
+      "headlineHighlight": "Tutorials",
+      "subtitle": "Discover guides, tutorials, and insights to help you get the most out of your hosting experience."
+    },
+    "notFound": {
+      "connectionLost": "Connection Lost",
+      "title": "Route Not Found",
+      "subtitle": "The page you're looking for doesn't exist or has been moved. Let's get you back on track.",
+      "goHome": "Return to Home",
+      "quickNav": "Quick Navigation",
+      "checkStatus": "Check server status"
+    },
+    "terms": {
+      "title": "Terms of Service",
+      "lastUpdated": "Last updated: January 2026",
+      "acceptance": "Acceptance of Terms",
+      "acceptanceText": "By accessing and using Hoxta services, you agree to be bound by these Terms of Service.",
+      "serviceDescription": "Service Description",
+      "serviceDescriptionText": "Hoxta provides web hosting, game server hosting, VPS, and dedicated server services.",
+      "acceptableUse": "Acceptable Use",
+      "acceptableUseText": "You agree not to use our services for any illegal or unauthorized purpose."
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "lastUpdated": "Last updated: January 2026",
+      "dataCollection": "Data Collection",
+      "dataCollectionText": "We collect information you provide directly to us, such as when you create an account or contact support.",
+      "dataUsage": "Data Usage",
+      "dataUsageText": "We use your information to provide, maintain, and improve our services.",
+      "dataSecurity": "Data Security",
+      "dataSecurityText": "We implement appropriate security measures to protect your personal information."
+    }
+  },
+  "mockMode": {
+    "banner": "Mock Mode – WHMCS not connected. Using demo data.",
+    "demoCredentials": "Demo: client@demo.hoxta / Demo1234!"
   }
 }

@@ -1,31 +1,7 @@
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { brand } from "@/config/brand";
 import { MapPin, Clock, MessageCircle, Twitter, Github, Youtube, Instagram } from "lucide-react";
-
-const footerLinks = {
-  services: [
-    { label: "MC Hosting", href: "/game-servers/minecraft" },
-    { label: "Rust", href: "/game-servers/rust" },
-    { label: "FiveM", href: "/game-servers/fivem" },
-    { label: "VPS", href: "/vps" },
-    { label: "Web Hosting", href: "/web-hosting" },
-    { label: "DDoS Protection", href: "/ddos-protection" },
-  ],
-  usefulLinks: [
-    { label: "Pricing", href: "/pricing" },
-    { label: "Status", href: "/status" },
-    { label: "Knowledge Base", href: "/knowledge-base" },
-    { label: "Community", href: brand.socials.discord },
-    { label: "Terms", href: "/terms" },
-    { label: "Privacy", href: "/privacy" },
-  ],
-  company: [
-    { label: "About", href: "/about" },
-    { label: "Careers", href: "/careers" },
-    { label: "Blog", href: "/blog" },
-    { label: "Contact", href: "/contact" },
-  ],
-};
 
 // Payment method icons as SVG components for clean, themed display
 const PaymentIcons = {
@@ -100,13 +76,40 @@ const paymentMethods = [
 ];
 
 export function Footer() {
+  const { t } = useTranslation();
+  
+  const footerLinks = {
+    services: [
+      { label: t("games.minecraft"), href: "/game-servers/minecraft" },
+      { label: t("games.rust"), href: "/game-servers/rust" },
+      { label: t("games.fivem"), href: "/game-servers/fivem" },
+      { label: t("nav.vpsHosting"), href: "/vps" },
+      { label: t("nav.webHosting"), href: "/web-hosting" },
+      { label: t("common.ddosProtection"), href: "/ddos-protection" },
+    ],
+    usefulLinks: [
+      { label: t("pages.pricing.title"), href: "/pricing" },
+      { label: t("footer.status"), href: "/status" },
+      { label: t("footer.knowledgeBase"), href: "/knowledge-base" },
+      { label: t("footer.contact"), href: "/contact" },
+      { label: t("footer.terms"), href: "/terms" },
+      { label: t("footer.privacy"), href: "/privacy" },
+    ],
+    company: [
+      { label: t("footer.aboutUs"), href: "/about" },
+      { label: t("footer.careers"), href: "/careers" },
+      { label: t("footer.blog"), href: "/blog" },
+      { label: t("footer.contact"), href: "/contact" },
+    ],
+  };
+
   return (
     <footer className="relative bg-background-secondary border-t border-border/50">
       <div className="container mx-auto px-4 md:px-6 py-12 md:py-16">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 lg:gap-12">
           {/* Services */}
           <div>
-            <h4 className="font-semibold text-foreground mb-4">Services</h4>
+            <h4 className="font-semibold text-foreground mb-4">{t("sections.services")}</h4>
             <ul className="space-y-2">
               {footerLinks.services.map((link) => (
                 <li key={link.label}>
@@ -123,7 +126,7 @@ export function Footer() {
 
           {/* Useful Links */}
           <div>
-            <h4 className="font-semibold text-foreground mb-4">Useful Links</h4>
+            <h4 className="font-semibold text-foreground mb-4">{t("sections.usefulLinks")}</h4>
             <ul className="space-y-2">
               {footerLinks.usefulLinks.map((link) => (
                 <li key={link.label}>
@@ -140,7 +143,7 @@ export function Footer() {
 
           {/* Company */}
           <div>
-            <h4 className="font-semibold text-foreground mb-4">Company</h4>
+            <h4 className="font-semibold text-foreground mb-4">{t("sections.company")}</h4>
             <ul className="space-y-2">
               {footerLinks.company.map((link) => (
                 <li key={link.label}>
@@ -170,13 +173,13 @@ export function Footer() {
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Clock className="w-4 h-4 text-primary" />
-                <span>24/7 Support</span>
+                <span>{t("footer.support247")}</span>
               </div>
             </div>
 
             {/* Payment Methods */}
             <div className="mb-6">
-              <h5 className="text-sm font-medium text-foreground mb-3">Payment Methods</h5>
+              <h5 className="text-sm font-medium text-foreground mb-3">{t("sections.paymentMethods")}</h5>
               <div className="flex flex-wrap items-center gap-2">
                 {paymentMethods.map((method) => (
                   <div
@@ -187,7 +190,6 @@ export function Footer() {
                     <div className="opacity-70 group-hover:opacity-100 transition-opacity">
                       <method.Icon />
                     </div>
-                    {/* Glow effect on hover */}
                     <div className="absolute inset-0 rounded opacity-0 group-hover:opacity-100 transition-opacity bg-primary/5 blur-sm -z-10" />
                   </div>
                 ))}
@@ -248,17 +250,17 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="mt-12 pt-6 border-t border-border/50 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} {brand.name}. All rights reserved.
+            © {new Date().getFullYear()} {brand.name}. {t("common.allRightsReserved")}
           </p>
           <div className="flex items-center gap-6">
             <Link to="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-              Terms
+              {t("footer.terms")}
             </Link>
             <Link to="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-              Privacy
+              {t("footer.privacy")}
             </Link>
             <Link to="/status" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-              Status
+              {t("footer.status")}
             </Link>
           </div>
         </div>
