@@ -1,23 +1,23 @@
 import { useState, useEffect, useMemo } from "react";
-import { useSearchParams, useNavigate, Link } from "react-router-dom";
+import { useSearchParams, useNavigate, Navigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Layout } from "@/components/layout/Layout";
-import { CheckoutStepper, OrderSummary, CustomerForm, PaymentMethods } from "@/components/checkout";
-import { getProductBySlug, BillingCycle, PaymentMethodId, ProductPlan } from "@/data/products";
+import { CheckoutStepper, OrderSummary, CustomerForm, PaymentMethods, PlanSelector } from "@/components/checkout";
+import { getProductBySlug, BillingCycle, PaymentMethodId } from "@/data/products";
 import { createOrderSession, updateOrderCustomer, processPayment, OrderSession } from "@/services/orderService";
 import { CustomerData } from "@/components/checkout/CustomerForm";
 import { Loader2, ArrowLeft, Edit3 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 
-// Checkout steps when plan is preselected (skip step 1)
+type CheckoutStepId = "plan" | "details" | "payment";
+
 const directCheckoutSteps = [
   { id: "details", label: "Your Details" },
   { id: "payment", label: "Payment" },
   { id: "done", label: "Complete" },
 ];
 
-// Full steps when coming from browse
 const fullCheckoutSteps = [
   { id: "plan", label: "Select Plan" },
   { id: "details", label: "Your Details" },
@@ -30,16 +30,25 @@ export default function Checkout() {
   const navigate = useNavigate();
   
   // URL params for direct checkout
+  const category = searchParams.get("category");
   const productSlug = searchParams.get("product");
   const planId = searchParams.get("plan");
   const billingParam = searchParams.get("billing") as BillingCycle | null;
   const sessionId = searchParams.get("session");
   
   const [session, setSession] = useState<OrderSession | null>(null);
-  const [step, setStep] = useState<"details" | "payment">("details");
+  const [step, setStep] = useState<CheckoutStepId>("details");
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState<PaymentMethodId | null>(null);
+
+  // Used when we need to show Step 1 (Plan selection) inside /checkout
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
+  const [selectedBillingCycle, setSelectedBillingCycle] = useState<BillingCycle>(
+    billingParam === "monthly" || billingParam === "quarterly" || billingParam === "annually"
+      ? billingParam
+      : "monthly"
+  );
   
   // Validate and get product/plan from URL params
   const { product, plan, billingCycle, isValidDirectCheckout } = useMemo(() => {
@@ -67,16 +76,26 @@ export default function Checkout() {
   // Initialize session on mount
   useEffect(() => {
     const initSession = async () => {
+      // Re-initialize cleanly whenever URL/session changes
+      setIsLoading(true);
+      setSession(null);
+
       // Case 1: Direct checkout with valid params
       if (isValidDirectCheckout && product && plan) {
         try {
           const newSession = await createOrderSession(productSlug!, plan, billingCycle);
           setSession(newSession);
+          setStep("details");
           setIsLoading(false);
         } catch (error) {
           console.error("Failed to create order session:", error);
           toast.error("Failed to initialize checkout");
-          navigate(`/order?product=${productSlug}`);
+          // Never send game users back to /order (Step 1). Fallback to the game page.
+          if (category === "games" && productSlug) {
+            navigate(`/game-servers/${productSlug}`);
+          } else {
+            navigate(`/order?product=${productSlug}`);
+          }
         }
         return;
       }
@@ -93,6 +112,7 @@ export default function Checkout() {
           const sessionPlan = sessionProduct?.plans.find((p) => p.id === existingSession.planId);
           
           if (sessionProduct && sessionPlan) {
+            setStep("details");
             setIsLoading(false);
             return;
           }
@@ -103,17 +123,39 @@ export default function Checkout() {
         return;
       }
       
-      // Case 3: Invalid params - redirect to order page
+      // Case 3: Missing/invalid params
+      // If we at least have a valid product slug, show Step 1 inside /checkout.
       if (productSlug) {
-        toast.error("Invalid plan selected");
-        navigate(`/order?product=${productSlug}`);
+        const foundProduct = getProductBySlug(productSlug);
+
+        if (foundProduct) {
+          setSelectedBillingCycle(billingCycle);
+          setSelectedPlanId(null);
+          setStep("plan");
+          setIsLoading(false);
+          return;
+        }
+
+        // Invalid product
+        toast.error("Invalid product selected");
+        if (category === "games") {
+          navigate("/game-servers");
+        } else {
+          navigate("/order");
+        }
+        return;
+      }
+
+      // No product
+      if (category === "games") {
+        navigate("/game-servers");
       } else {
         navigate("/order");
       }
     };
     
     initSession();
-  }, [isValidDirectCheckout, product, plan, productSlug, billingCycle, sessionId, navigate]);
+  }, [isValidDirectCheckout, product, plan, productSlug, billingCycle, sessionId, navigate, category]);
   
   // Get current product/plan (either from URL or session)
   const currentProduct = useMemo(() => {
@@ -137,7 +179,89 @@ export default function Checkout() {
   }, [billingCycle, session]);
   
   // Loading state
-  if (isLoading || !session || !currentProduct || !currentPlan) {
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="min-h-screen flex items-center justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </Layout>
+    );
+  }
+
+  // Plan selection step inside /checkout (only shown when URL params are missing/invalid)
+  if (step === "plan") {
+    const productForSelection = productSlug ? getProductBySlug(productSlug) : null;
+
+    if (!productForSelection) {
+      // Safety: if product is missing, bounce to browse.
+      return <Navigate to={category === "games" ? "/game-servers" : "/order"} replace />;
+    }
+
+    // Auto-select popular plan in this mode as well
+    const effectiveSelectedPlanId =
+      selectedPlanId ||
+      productForSelection.plans.find((p) => p.popular)?.id ||
+      productForSelection.plans[0]?.id ||
+      null;
+
+    const steps = fullCheckoutSteps;
+    const currentStepIndex = 0;
+
+    const handleContinueFromPlan = async () => {
+      const planToUse = productForSelection.plans.find((p) => p.id === effectiveSelectedPlanId);
+      if (!planToUse) return;
+
+      // Navigate to canonical /checkout URL with product+plan+billing (and category when present)
+      const categoryParam = category ? `category=${encodeURIComponent(category)}&` : "";
+      navigate(
+        `/checkout?${categoryParam}product=${encodeURIComponent(productForSelection.slug)}&plan=${encodeURIComponent(
+          planToUse.id
+        )}&billing=${encodeURIComponent(selectedBillingCycle)}`
+      );
+    };
+
+    return (
+      <Layout>
+        <div className="min-h-screen py-12">
+          <div className="container">
+            <Button variant="ghost" onClick={() => navigate(-1)} className="mb-6">
+              <ArrowLeft className="w-4 h-4 mr-2" /> Back
+            </Button>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center mb-12"
+            >
+              <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                Order {productForSelection.name}
+              </h1>
+              <p className="text-muted-foreground max-w-2xl mx-auto">{productForSelection.shortDescription}</p>
+            </motion.div>
+
+            <CheckoutStepper
+              steps={steps}
+              currentStep={currentStepIndex}
+              className="max-w-2xl mx-auto mb-12"
+            />
+
+            <PlanSelector
+              product={productForSelection}
+              selectedPlanId={effectiveSelectedPlanId}
+              selectedBillingCycle={selectedBillingCycle}
+              onPlanSelect={(id) => setSelectedPlanId(id)}
+              onBillingCycleChange={setSelectedBillingCycle}
+              onContinue={handleContinueFromPlan}
+            />
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  // Details/payment steps require a valid session + product + plan
+  if (!session || !currentProduct || !currentPlan) {
     return (
       <Layout>
         <div className="min-h-screen flex items-center justify-center">
@@ -175,12 +299,9 @@ export default function Checkout() {
     }
   };
   
-  // Use direct steps (skip plan selection step)
+  // Use direct steps (plan is preselected)
   const steps = directCheckoutSteps;
   const currentStepIndex = step === "details" ? 0 : 1;
-  
-  // Build change plan URL
-  const changePlanUrl = `/order?product=${currentProduct.slug}&plan=${currentPlan.id}&billing=${currentBillingCycle}`;
   
   return (
     <Layout>
@@ -191,13 +312,18 @@ export default function Checkout() {
             <Button variant="ghost" onClick={() => navigate(-1)}>
               <ArrowLeft className="w-4 h-4 mr-2" /> Back
             </Button>
-            <Link
-              to={changePlanUrl}
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedPlanId(currentPlan.id);
+                setSelectedBillingCycle(currentBillingCycle);
+                setStep("plan");
+              }}
               className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
             >
               <Edit3 className="w-4 h-4" />
               Change Plan
-            </Link>
+            </button>
           </div>
           
           {/* Header */}
@@ -229,8 +355,8 @@ export default function Checkout() {
                 >
                   {step === "details" && (
                     <>
-                      <h2 className="text-2xl font-bold text-foreground mb-6">Your Details</h2>
-                      <CustomerForm onSubmit={handleCustomerSubmit} isLoading={isProcessing} />
+                        <h2 className="text-2xl font-bold text-foreground mb-6">Your Details</h2>
+                        <CustomerForm onSubmit={handleCustomerSubmit} isLoading={isProcessing} />
                     </>
                   )}
                   

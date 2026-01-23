@@ -137,7 +137,7 @@ export function ChooseGameSection() {
     e.preventDefault();
     e.stopPropagation();
     const billing = billingPeriod === "annual" ? "annually" : "monthly";
-    navigate(`/checkout?product=${game.id}&plan=${game.planId}&billing=${billing}`);
+    navigate(`/checkout?category=games&product=${game.id}&plan=${game.planId}&billing=${billing}`);
   };
 
   return (
