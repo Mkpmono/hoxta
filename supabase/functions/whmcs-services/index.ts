@@ -56,7 +56,7 @@ Deno.serve(async (req) => {
         });
       }
 
-      const result = await getClientsProductDetails(serviceId) as { products?: { product?: unknown[] } };
+      const result = await getClientsProductDetails(session.clientId, serviceId) as { products?: { product?: unknown[] } };
       const product = result.products?.product?.[0];
       
       if (!product) {

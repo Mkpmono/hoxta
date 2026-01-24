@@ -1,49 +1,40 @@
-import { getCorsHeaders, handleCors, createCorsResponse, createErrorResponse } from '../_shared/cors.ts';
+/**
+ * WHMCS Orders Edge Function
+ * Handles order creation with authentication via httpOnly cookies
+ * 
+ * Endpoints:
+ * POST /create - Create new order (requires auth)
+ * GET /list - Get all orders (requires auth)
+ * GET /:orderId - Get order details (requires auth)
+ */
+
+import { handleCors, createCorsResponse, createErrorResponse } from '../_shared/cors.ts';
 import { isWhmcsConfigured, addOrder, getOrders } from '../_shared/whmcs.ts';
-import { mockOrders, validateSession } from '../_shared/mock-data.ts';
+import { mockOrders } from '../_shared/mock-data.ts';
 import { validateText, validateBillingCycle, validatePaymentMethod } from '../_shared/validation.ts';
+import { validateSession, getTokenFromRequest, SessionData } from '../_shared/jwt.ts';
+import { rateLimit } from '../_shared/rate-limit.ts';
+import { PRODUCT_MAP, BILLING_CYCLE_MAP, getWhmcsPid, isValidPlanId } from '../_shared/products.ts';
 
 const MOCK_MODE = !isWhmcsConfigured();
 
-// Product ID mapping (from products.ts)
-const PRODUCT_MAP: Record<string, number> = {
-  'web-starter': 101,
-  'web-professional': 102,
-  'web-business': 103,
-  'web-enterprise': 104,
-  'reseller-starter': 201,
-  'reseller-business': 202,
-  'reseller-pro': 203,
-  'reseller-enterprise': 204,
-  'vps-basic': 301,
-  'vps-standard': 302,
-  'vps-advanced': 303,
-  'vps-enterprise': 304,
-  'dedicated-starter': 401,
-  'dedicated-business': 402,
-  'dedicated-enterprise': 403,
-  // Game servers
-  'mc-starter': 501,
-  'mc-standard': 502,
-  'mc-premium': 503,
-  'mc-enterprise': 504,
-  'fivem-starter': 511,
-  'fivem-standard': 512,
-  'fivem-premium': 513,
-  'fivem-enterprise': 514,
-  'rust-starter': 521,
-  'rust-standard': 522,
-  'rust-premium': 523,
-  'rust-enterprise': 524,
-  // Add more as needed
-};
+/**
+ * Require authentication middleware
+ */
+async function requireAuth(req: Request): Promise<SessionData | Response> {
+  const token = getTokenFromRequest(req);
+  
+  if (!token) {
+    return createErrorResponse(req, 'Authentication required', 401);
+  }
 
-const BILLING_CYCLE_MAP: Record<string, string> = {
-  'monthly': 'monthly',
-  'quarterly': 'quarterly',
-  'annually': 'annually',
-  'yearly': 'annually',
-};
+  const session = await validateSession(token);
+  if (!session) {
+    return createErrorResponse(req, 'Session expired or invalid', 401);
+  }
+
+  return session;
+}
 
 Deno.serve(async (req) => {
   const corsResponse = handleCors(req);
@@ -52,14 +43,29 @@ Deno.serve(async (req) => {
   const url = new URL(req.url);
   const path = url.pathname.replace('/whmcs-orders', '');
 
-  // Auth check - required for all endpoints
-  const authHeader = req.headers.get('Authorization');
-  const token = authHeader?.replace('Bearer ', '');
-  const session = token ? validateSession(token) : null;
-
   try {
+    // ============================================
     // POST /create - Create new order
+    // ============================================
     if (path === '/create' && req.method === 'POST') {
+      // Rate limit order endpoints
+      const rateLimitResponse = rateLimit(req, 'order');
+      if (rateLimitResponse) return rateLimitResponse;
+
+      // In mock mode, allow orders without auth for testing
+      let session: SessionData | null = null;
+      if (!MOCK_MODE) {
+        const authResult = await requireAuth(req);
+        if (authResult instanceof Response) return authResult;
+        session = authResult;
+      } else {
+        // Try to get session for mock mode (optional)
+        const token = getTokenFromRequest(req);
+        if (token) {
+          session = await validateSession(token);
+        }
+      }
+
       let body;
       try {
         body = await req.json();
@@ -67,12 +73,25 @@ Deno.serve(async (req) => {
         return createErrorResponse(req, 'Invalid JSON body', 400);
       }
 
-      const { planId, billingCycle, paymentMethod } = body;
+      const { 
+        planId, 
+        billingCycle, 
+        paymentMethod,
+        // Customer data for guest checkout (mock mode only)
+        customer,
+      } = body;
 
       // Validate planId
       const planValidation = validateText(planId, 'Plan ID', { required: true, maxLength: 100 });
       if (!planValidation.valid) {
         return createErrorResponse(req, planValidation.error!, 400);
+      }
+
+      const sanitizedPlanId = planValidation.sanitized as string;
+
+      // Check if plan exists in product catalog
+      if (!isValidPlanId(sanitizedPlanId)) {
+        return createErrorResponse(req, `Unknown plan: ${sanitizedPlanId}`, 400);
       }
 
       // Validate billing cycle
@@ -87,33 +106,35 @@ Deno.serve(async (req) => {
         return createErrorResponse(req, paymentValidation.error!, 400);
       }
 
-      // Check if plan exists in product map
-      const whmcsPid = PRODUCT_MAP[planValidation.sanitized as string];
-      if (!whmcsPid) {
-        return createErrorResponse(req, `Unknown plan: ${planValidation.sanitized}`, 400);
-      }
+      const whmcsPid = getWhmcsPid(sanitizedPlanId);
+      const productInfo = PRODUCT_MAP[sanitizedPlanId];
 
       if (MOCK_MODE) {
-        // Mock order creation - allow without auth in mock mode for testing
-        const orderId = `ORD-${Date.now()}`;
+        // Mock order creation
+        const orderId = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
         const invoiceId = `INV-${Date.now()}`;
+        
         return createCorsResponse(req, {
           success: true,
           orderId,
           invoiceId,
           productId: whmcsPid,
+          productName: productInfo?.name,
+          billingCycle: billingValidation.sanitized,
+          paymentMethod: paymentValidation.sanitized,
+          clientId: session?.clientId || 1,
           mockMode: true,
         });
       }
 
-      // Real mode - require authentication
+      // Real WHMCS order - requires authenticated session
       if (!session) {
-        return createErrorResponse(req, 'Authentication required', 401);
+        return createErrorResponse(req, 'Authentication required for orders', 401);
       }
 
       const result = await addOrder({
         clientid: session.clientId,
-        pid: whmcsPid,
+        pid: whmcsPid!,
         billingcycle: BILLING_CYCLE_MAP[billingValidation.sanitized as string] || 'monthly',
         paymentmethod: paymentValidation.sanitized as string,
       });
@@ -124,25 +145,58 @@ Deno.serve(async (req) => {
           orderId: result.orderid,
           invoiceId: result.invoiceid,
           productIds: result.productids,
+          productName: productInfo?.name,
         });
       }
 
-      return createErrorResponse(req, result.message || 'Order failed', 400);
+      return createErrorResponse(req, result.message || 'Order creation failed', 400);
     }
 
-    // GET /list - Get all orders (requires auth)
+    // ============================================
+    // GET /list - Get all orders for client
+    // ============================================
     if ((path === '/list' || path === '') && req.method === 'GET') {
-      // Require authentication for all modes
-      if (!session) {
-        return createErrorResponse(req, 'Authentication required', 401);
-      }
+      const authResult = await requireAuth(req);
+      if (authResult instanceof Response) return authResult;
+      const session = authResult;
 
       if (MOCK_MODE) {
-        return createCorsResponse(req, { orders: mockOrders, mockMode: true });
+        return createCorsResponse(req, { 
+          orders: mockOrders,
+          mockMode: true,
+        });
       }
 
       const result = await getOrders(session.clientId);
-      return createCorsResponse(req, { orders: result.orders || [] });
+      return createCorsResponse(req, { 
+        orders: result.orders || [],
+      });
+    }
+
+    // ============================================
+    // GET /:orderId - Get single order details
+    // ============================================
+    const orderIdMatch = path.match(/^\/([A-Z0-9-]+)$/i);
+    if (orderIdMatch && req.method === 'GET') {
+      const authResult = await requireAuth(req);
+      if (authResult instanceof Response) return authResult;
+      const session = authResult;
+
+      const orderId = orderIdMatch[1];
+
+      if (MOCK_MODE) {
+        const order = mockOrders.find(o => o.id === orderId);
+        if (!order) {
+          return createErrorResponse(req, 'Order not found', 404);
+        }
+        return createCorsResponse(req, { 
+          order,
+          mockMode: true,
+        });
+      }
+
+      // In real mode, would call WHMCS GetOrder
+      return createErrorResponse(req, 'Order details not implemented', 501);
     }
 
     return createErrorResponse(req, 'Not found', 404);

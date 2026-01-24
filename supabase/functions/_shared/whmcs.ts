@@ -93,6 +93,7 @@ export interface AddClientParams {
   country: string;
   phonenumber?: string;
   password2: string;
+  companyname?: string;
 }
 
 export interface AddClientResult {
@@ -140,8 +141,8 @@ export async function getClientsProducts(clientId: number): Promise<WhmcsRespons
   return callWhmcsApi('GetClientsProducts', { clientid: clientId });
 }
 
-export async function getClientsProductDetails(serviceId: number): Promise<WhmcsResponse> {
-  return callWhmcsApi('GetClientsProducts', { serviceid: serviceId });
+export async function getClientsProductDetails(clientId: number, serviceId: number): Promise<WhmcsResponse> {
+  return callWhmcsApi('GetClientsProducts', { clientid: clientId, serviceid: serviceId });
 }
 
 export async function moduleCommand(serviceId: number, command: string): Promise<WhmcsResponse> {
@@ -183,7 +184,7 @@ export async function getTickets(clientId: number, status?: string): Promise<Whm
   return callWhmcsApi('GetTickets', params);
 }
 
-export async function getTicket(ticketId: number): Promise<WhmcsResponse> {
+export async function getTicket(ticketId: number | string): Promise<WhmcsResponse> {
   return callWhmcsApi('GetTicket', { ticketid: ticketId });
 }
 
