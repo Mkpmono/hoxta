@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Clock, Globe, Gauge, Zap } from "lucide-react";
 
@@ -9,92 +9,189 @@ const kpis = [
   { icon: <Zap className="w-6 h-6" />, value: "<10", label: "Time to Mitigate", suffix: "s" },
 ];
 
-// Abstract network map visualization
-function NetworkMap() {
-  const [mounted, setMounted] = useState(false);
+// Real datacenter/scrubbing center locations
+const datacenters = [
+  { id: "ams", name: "Amsterdam", capacity: "400 Gbps", type: "scrubbing", x: 48, y: 32, features: "L3/L4/L7" },
+  { id: "fra", name: "Frankfurt", capacity: "350 Gbps", type: "scrubbing", x: 52, y: 38, features: "L3/L4/L7" },
+  { id: "lon", name: "London", capacity: "300 Gbps", type: "datacenter", x: 42, y: 35, features: "L3/L4" },
+  { id: "par", name: "Paris", capacity: "250 Gbps", type: "datacenter", x: 45, y: 42, features: "L3/L4" },
+  { id: "nyc", name: "New York", capacity: "500 Gbps", type: "scrubbing", x: 22, y: 40, features: "L3/L4/L7" },
+  { id: "lax", name: "Los Angeles", capacity: "350 Gbps", type: "datacenter", x: 12, y: 45, features: "L3/L4" },
+  { id: "sgp", name: "Singapore", capacity: "300 Gbps", type: "scrubbing", x: 78, y: 58, features: "L3/L4/L7" },
+  { id: "syd", name: "Sydney", capacity: "200 Gbps", type: "datacenter", x: 88, y: 75, features: "L3/L4" },
+  { id: "tok", name: "Tokyo", capacity: "400 Gbps", type: "scrubbing", x: 85, y: 38, features: "L3/L4/L7" },
+  { id: "mia", name: "Miami", capacity: "200 Gbps", type: "datacenter", x: 24, y: 52, features: "L3/L4" },
+];
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+// Traffic routes between datacenters
+const routes = [
+  { from: "ams", to: "fra" },
+  { from: "ams", to: "lon" },
+  { from: "lon", to: "par" },
+  { from: "fra", to: "par" },
+  { from: "lon", to: "nyc" },
+  { from: "nyc", to: "lax" },
+  { from: "nyc", to: "mia" },
+  { from: "fra", to: "sgp" },
+  { from: "sgp", to: "tok" },
+  { from: "sgp", to: "syd" },
+  { from: "tok", to: "lax" },
+];
 
-  // Generate random points for network nodes
-  const nodes = Array.from({ length: 28 }, (_, i) => ({
-    x: 10 + Math.random() * 80,
-    y: 15 + Math.random() * 70,
-    delay: i * 0.05,
-  }));
+function InfrastructureMap() {
+  const [hoveredNode, setHoveredNode] = useState<string | null>(null);
+  const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
 
-  // Generate connections between nearby nodes
-  const connections: { x1: number; y1: number; x2: number; y2: number }[] = [];
-  nodes.forEach((node, i) => {
-    nodes.slice(i + 1, i + 4).forEach((other) => {
-      const distance = Math.sqrt(Math.pow(node.x - other.x, 2) + Math.pow(node.y - other.y, 2));
-      if (distance < 25) {
-        connections.push({ x1: node.x, y1: node.y, x2: other.x, y2: other.y });
-      }
-    });
-  });
+  const getNode = (id: string) => datacenters.find((d) => d.id === id);
+
+  const handleMouseEnter = (dc: typeof datacenters[0], e: React.MouseEvent) => {
+    setHoveredNode(dc.id);
+    const rect = e.currentTarget.getBoundingClientRect();
+    const container = e.currentTarget.closest('.infrastructure-map')?.getBoundingClientRect();
+    if (container) {
+      setTooltipPos({
+        x: rect.left - container.left + rect.width / 2,
+        y: rect.top - container.top - 10,
+      });
+    }
+  };
 
   return (
-    <div className="relative w-full h-48 md:h-64 rounded-2xl overflow-hidden bg-card/30 border border-border/30">
+    <div className="infrastructure-map relative w-full h-64 md:h-80 rounded-2xl overflow-hidden bg-card/30 border border-border/30">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10" />
 
-      {/* SVG network */}
-      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-        {/* Connections */}
-        {mounted &&
-          connections.map((conn, i) => (
-            <motion.line
-              key={i}
-              x1={`${conn.x1}%`}
-              y1={`${conn.y1}%`}
-              x2={`${conn.x2}%`}
-              y2={`${conn.y2}%`}
-              stroke="currentColor"
-              strokeWidth="0.2"
-              className="text-primary/30"
-              initial={{ pathLength: 0, opacity: 0 }}
-              animate={{ pathLength: 1, opacity: 1 }}
-              transition={{ duration: 1, delay: i * 0.02 }}
-            />
-          ))}
-
-        {/* Nodes */}
-        {mounted &&
-          nodes.map((node, i) => (
-            <motion.circle
-              key={i}
-              cx={`${node.x}%`}
-              cy={`${node.y}%`}
-              r="1"
-              className="fill-primary"
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.3, delay: node.delay }}
-            />
-          ))}
+      {/* Grid pattern */}
+      <svg className="absolute inset-0 w-full h-full opacity-20" preserveAspectRatio="none">
+        <defs>
+          <pattern id="infra-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-primary/30" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#infra-grid)" />
       </svg>
 
-      {/* Animated pulse on a random node */}
-      <motion.div
-        className="absolute w-4 h-4 rounded-full bg-primary/50"
-        style={{ left: "45%", top: "35%" }}
-        animate={{
-          scale: [1, 2, 1],
-          opacity: [0.5, 0, 0.5],
-        }}
-        transition={{
-          duration: 2,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-      />
+      {/* SVG for routes and nodes */}
+      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <defs>
+          {/* Animated gradient for traffic routes */}
+          <linearGradient id="route-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.1" />
+            <stop offset="50%" stopColor="hsl(var(--primary))" stopOpacity="0.6" />
+            <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.1" />
+          </linearGradient>
+        </defs>
+
+        {/* Traffic routes - animated thick lines */}
+        {routes.map((route, i) => {
+          const from = getNode(route.from);
+          const to = getNode(route.to);
+          if (!from || !to) return null;
+
+          return (
+            <motion.line
+              key={`${route.from}-${route.to}`}
+              x1={`${from.x}%`}
+              y1={`${from.y}%`}
+              x2={`${to.x}%`}
+              y2={`${to.y}%`}
+              stroke="url(#route-gradient)"
+              strokeWidth="0.4"
+              initial={{ pathLength: 0, opacity: 0 }}
+              animate={{ pathLength: 1, opacity: 1 }}
+              transition={{ duration: 1.5, delay: i * 0.1, ease: "easeOut" }}
+            />
+          );
+        })}
+      </svg>
+
+      {/* Datacenter nodes */}
+      {datacenters.map((dc, index) => (
+        <motion.div
+          key={dc.id}
+          className="absolute cursor-pointer group"
+          style={{ left: `${dc.x}%`, top: `${dc.y}%`, transform: "translate(-50%, -50%)" }}
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.5 + index * 0.05 }}
+          onMouseEnter={(e) => handleMouseEnter(dc, e)}
+          onMouseLeave={() => setHoveredNode(null)}
+        >
+          {/* Outer pulse ring for scrubbing centers */}
+          {dc.type === "scrubbing" && (
+            <motion.div
+              className="absolute inset-0 rounded-full bg-primary/30"
+              style={{ width: 24, height: 24, margin: -6 }}
+              animate={{
+                scale: [1, 1.8, 1],
+                opacity: [0.4, 0, 0.4],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: index * 0.2,
+              }}
+            />
+          )}
+
+          {/* Main node */}
+          <div
+            className={`relative rounded-full transition-all duration-300 ${
+              dc.type === "scrubbing"
+                ? "w-3 h-3 md:w-4 md:h-4 bg-primary shadow-[0_0_12px_hsl(var(--primary)/0.6)]"
+                : "w-2 h-2 md:w-3 md:h-3 bg-primary/70 shadow-[0_0_8px_hsl(var(--primary)/0.4)]"
+            } ${hoveredNode === dc.id ? "scale-150" : ""}`}
+          />
+        </motion.div>
+      ))}
+
+      {/* Tooltip */}
+      {hoveredNode && (
+        <motion.div
+          className="absolute z-20 pointer-events-none"
+          style={{ left: tooltipPos.x, top: tooltipPos.y }}
+          initial={{ opacity: 0, y: 5 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 5 }}
+        >
+          <div className="glass-card px-3 py-2 -translate-x-1/2 -translate-y-full mb-2 text-center whitespace-nowrap">
+            <div className="text-sm font-semibold text-foreground">
+              {getNode(hoveredNode)?.name}
+            </div>
+            <div className="text-xs text-primary font-medium">
+              {getNode(hoveredNode)?.capacity}
+            </div>
+            <div className="text-xs text-muted-foreground">
+              {getNode(hoveredNode)?.features}
+            </div>
+            {/* Arrow */}
+            <div className="absolute left-1/2 -bottom-1 -translate-x-1/2 w-2 h-2 rotate-45 bg-card border-r border-b border-border/30" />
+          </div>
+        </motion.div>
+      )}
 
       {/* Legend */}
-      <div className="absolute bottom-3 left-3 flex items-center gap-2 text-xs text-muted-foreground">
-        <div className="w-2 h-2 rounded-full bg-primary" />
-        <span>Scrubbing Centers</span>
+      <div className="absolute bottom-3 left-3 flex items-center gap-4 text-xs text-muted-foreground">
+        <div className="flex items-center gap-1.5">
+          <div className="w-3 h-3 rounded-full bg-primary shadow-[0_0_8px_hsl(var(--primary)/0.5)]" />
+          <span>Scrubbing Center</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <div className="w-2 h-2 rounded-full bg-primary/70" />
+          <span>Datacenter</span>
+        </div>
+      </div>
+
+      {/* Region labels */}
+      <div className="absolute top-3 left-[15%] text-[10px] text-muted-foreground/50 uppercase tracking-wider">
+        Americas
+      </div>
+      <div className="absolute top-3 left-[45%] text-[10px] text-muted-foreground/50 uppercase tracking-wider">
+        Europe
+      </div>
+      <div className="absolute top-3 left-[80%] text-[10px] text-muted-foreground/50 uppercase tracking-wider">
+        Asia Pacific
       </div>
     </div>
   );
@@ -142,13 +239,13 @@ export function SlaNetwork() {
             ))}
           </div>
 
-          {/* Network map */}
+          {/* Infrastructure map */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <NetworkMap />
+            <InfrastructureMap />
           </motion.div>
         </div>
       </div>
