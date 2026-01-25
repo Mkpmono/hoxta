@@ -524,6 +524,39 @@
       "dataSecurityText": "We implement appropriate security measures to protect your personal information."
     }
   },
+  "ddos": {
+    "infrastructure": {
+      "title": "Global Network & SLA",
+      "subtitle": "Enterprise-grade infrastructure with guaranteed performance and reliability.",
+      "kpis": {
+        "uptimeSla": "Uptime SLA",
+        "anycastPops": "Anycast POPs",
+        "latencyImpact": "Latency Impact",
+        "mitigationTime": "Time to Mitigate"
+      },
+      "legend": {
+        "scrubbingCenter": "Scrubbing Center",
+        "datacenter": "Datacenter"
+      },
+      "regions": {
+        "americas": "Americas",
+        "europe": "Europe",
+        "asiaPacific": "Asia Pacific"
+      },
+      "locations": {
+        "amsterdam": "Amsterdam",
+        "frankfurt": "Frankfurt",
+        "london": "London",
+        "paris": "Paris",
+        "newYork": "New York",
+        "losAngeles": "Los Angeles",
+        "singapore": "Singapore",
+        "sydney": "Sydney",
+        "tokyo": "Tokyo",
+        "miami": "Miami"
+      }
+    }
+  },
   "mockMode": {
     "banner": "Mock Mode – WHMCS not connected. Using demo data.",
     "demoCredentials": "Demo: client@demo.hoxta / Demo1234!"
