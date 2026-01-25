@@ -1,6 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Clock, Globe, Gauge, Zap } from "lucide-react";
+
+interface SlaNetworkProps {
+  /** Disable the infrastructure map rendering */
+  disabled?: boolean;
+  /** Show only KPIs without the map */
+  showMapOnly?: boolean;
+}
 
 const kpis = [
   { icon: <Clock className="w-6 h-6" />, value: "99.99%", label: "Uptime SLA", suffix: "" },
@@ -38,9 +45,22 @@ const routes = [
   { from: "tok", to: "lax" },
 ];
 
-function InfrastructureMap() {
+function InfrastructureMap({ onUnmount }: { onUnmount?: () => void }) {
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
+  const [isMounted, setIsMounted] = useState(true);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    setIsMounted(true);
+    return () => {
+      setIsMounted(false);
+      onUnmount?.();
+    };
+  }, [onUnmount]);
+
+  // Don't render if unmounted
+  if (!isMounted) return null;
 
   const getNode = (id: string) => datacenters.find((d) => d.id === id);
 
@@ -197,7 +217,17 @@ function InfrastructureMap() {
   );
 }
 
-export function SlaNetwork() {
+export function SlaNetwork({ disabled = false, showMapOnly = false }: SlaNetworkProps = {}) {
+  const [mapMounted, setMapMounted] = useState(!disabled);
+
+  // Handle disabled prop changes
+  useEffect(() => {
+    setMapMounted(!disabled);
+  }, [disabled]);
+
+  // If completely disabled, don't render
+  if (disabled && showMapOnly) return null;
+
   return (
     <section className="py-20 md:py-28 bg-gradient-to-b from-transparent via-primary/5 to-transparent">
       <div className="container mx-auto px-4 md:px-6">
@@ -239,14 +269,16 @@ export function SlaNetwork() {
             ))}
           </div>
 
-          {/* Infrastructure map */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <InfrastructureMap />
-          </motion.div>
+          {/* Infrastructure map - only rendered when enabled */}
+          {mapMounted && (
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              <InfrastructureMap onUnmount={() => setMapMounted(false)} />
+            </motion.div>
+          )}
         </div>
       </div>
     </section>
