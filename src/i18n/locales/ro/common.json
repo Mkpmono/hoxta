@@ -524,6 +524,39 @@
       "dataSecurityText": "Implementăm măsuri de securitate adecvate pentru a proteja informațiile tale personale."
     }
   },
+  "ddos": {
+    "infrastructure": {
+      "title": "Rețea Globală & SLA",
+      "subtitle": "Infrastructură de nivel enterprise cu performanță și fiabilitate garantate.",
+      "kpis": {
+        "uptimeSla": "SLA Uptime",
+        "anycastPops": "Noduri Anycast",
+        "latencyImpact": "Impact Latență",
+        "mitigationTime": "Timp de Mitigare"
+      },
+      "legend": {
+        "scrubbingCenter": "Centru de Curățare",
+        "datacenter": "Centru de Date"
+      },
+      "regions": {
+        "americas": "Americi",
+        "europe": "Europa",
+        "asiaPacific": "Asia Pacific"
+      },
+      "locations": {
+        "amsterdam": "Amsterdam",
+        "frankfurt": "Frankfurt",
+        "london": "Londra",
+        "paris": "Paris",
+        "newYork": "New York",
+        "losAngeles": "Los Angeles",
+        "singapore": "Singapore",
+        "sydney": "Sydney",
+        "tokyo": "Tokyo",
+        "miami": "Miami"
+      }
+    }
+  },
   "mockMode": {
     "banner": "Mod Simulare – WHMCS neconectat. Se folosesc date demo.",
     "demoCredentials": "Demo: client@demo.hoxta / Demo1234!"

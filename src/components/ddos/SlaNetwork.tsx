@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Clock, Globe, Gauge, Zap } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface SlaNetworkProps {
   /** Disable the infrastructure map rendering */
@@ -9,25 +10,26 @@ interface SlaNetworkProps {
   showMapOnly?: boolean;
 }
 
-const kpis = [
-  { icon: <Clock className="w-6 h-6" />, value: "99.99%", label: "Uptime SLA", suffix: "" },
-  { icon: <Globe className="w-6 h-6" />, value: 28, label: "Anycast POPs", suffix: "+" },
-  { icon: <Gauge className="w-6 h-6" />, value: "<1", label: "Latency Impact", suffix: "ms" },
-  { icon: <Zap className="w-6 h-6" />, value: "<10", label: "Time to Mitigate", suffix: "s" },
+// KPI data - labels will be translated in component
+const kpiData = [
+  { icon: <Clock className="w-6 h-6" />, value: "99.99%", labelKey: "uptimeSla", suffix: "" },
+  { icon: <Globe className="w-6 h-6" />, value: 28, labelKey: "anycastPops", suffix: "+" },
+  { icon: <Gauge className="w-6 h-6" />, value: "<1", labelKey: "latencyImpact", suffix: "ms" },
+  { icon: <Zap className="w-6 h-6" />, value: "<10", labelKey: "mitigationTime", suffix: "s" },
 ];
 
-// Real datacenter/scrubbing center locations
+// Real datacenter/scrubbing center locations - names are translation keys
 const datacenters = [
-  { id: "ams", name: "Amsterdam", capacity: "400 Gbps", type: "scrubbing", x: 48, y: 32, features: "L3/L4/L7" },
-  { id: "fra", name: "Frankfurt", capacity: "350 Gbps", type: "scrubbing", x: 52, y: 38, features: "L3/L4/L7" },
-  { id: "lon", name: "London", capacity: "300 Gbps", type: "datacenter", x: 42, y: 35, features: "L3/L4" },
-  { id: "par", name: "Paris", capacity: "250 Gbps", type: "datacenter", x: 45, y: 42, features: "L3/L4" },
-  { id: "nyc", name: "New York", capacity: "500 Gbps", type: "scrubbing", x: 22, y: 40, features: "L3/L4/L7" },
-  { id: "lax", name: "Los Angeles", capacity: "350 Gbps", type: "datacenter", x: 12, y: 45, features: "L3/L4" },
-  { id: "sgp", name: "Singapore", capacity: "300 Gbps", type: "scrubbing", x: 78, y: 58, features: "L3/L4/L7" },
-  { id: "syd", name: "Sydney", capacity: "200 Gbps", type: "datacenter", x: 88, y: 75, features: "L3/L4" },
-  { id: "tok", name: "Tokyo", capacity: "400 Gbps", type: "scrubbing", x: 85, y: 38, features: "L3/L4/L7" },
-  { id: "mia", name: "Miami", capacity: "200 Gbps", type: "datacenter", x: 24, y: 52, features: "L3/L4" },
+  { id: "ams", nameKey: "amsterdam", capacity: "400 Gbps", type: "scrubbing", x: 48, y: 32, features: "L3/L4/L7" },
+  { id: "fra", nameKey: "frankfurt", capacity: "350 Gbps", type: "scrubbing", x: 52, y: 38, features: "L3/L4/L7" },
+  { id: "lon", nameKey: "london", capacity: "300 Gbps", type: "datacenter", x: 42, y: 35, features: "L3/L4" },
+  { id: "par", nameKey: "paris", capacity: "250 Gbps", type: "datacenter", x: 45, y: 42, features: "L3/L4" },
+  { id: "nyc", nameKey: "newYork", capacity: "500 Gbps", type: "scrubbing", x: 22, y: 40, features: "L3/L4/L7" },
+  { id: "lax", nameKey: "losAngeles", capacity: "350 Gbps", type: "datacenter", x: 12, y: 45, features: "L3/L4" },
+  { id: "sgp", nameKey: "singapore", capacity: "300 Gbps", type: "scrubbing", x: 78, y: 58, features: "L3/L4/L7" },
+  { id: "syd", nameKey: "sydney", capacity: "200 Gbps", type: "datacenter", x: 88, y: 75, features: "L3/L4" },
+  { id: "tok", nameKey: "tokyo", capacity: "400 Gbps", type: "scrubbing", x: 85, y: 38, features: "L3/L4/L7" },
+  { id: "mia", nameKey: "miami", capacity: "200 Gbps", type: "datacenter", x: 24, y: 52, features: "L3/L4" },
 ];
 
 // Traffic routes between datacenters
@@ -46,6 +48,7 @@ const routes = [
 ];
 
 function InfrastructureMap({ onUnmount }: { onUnmount?: () => void }) {
+  const { t } = useTranslation();
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
   const [isMounted, setIsMounted] = useState(true);
@@ -63,6 +66,7 @@ function InfrastructureMap({ onUnmount }: { onUnmount?: () => void }) {
   if (!isMounted) return null;
 
   const getNode = (id: string) => datacenters.find((d) => d.id === id);
+  const getNodeName = (nameKey: string) => t(`ddos.infrastructure.locations.${nameKey}`);
 
   const handleMouseEnter = (dc: typeof datacenters[0], e: React.MouseEvent) => {
     setHoveredNode(dc.id);
@@ -177,7 +181,7 @@ function InfrastructureMap({ onUnmount }: { onUnmount?: () => void }) {
         >
           <div className="glass-card px-3 py-2 -translate-x-1/2 -translate-y-full mb-2 text-center whitespace-nowrap">
             <div className="text-sm font-semibold text-foreground">
-              {getNode(hoveredNode)?.name}
+              {getNode(hoveredNode) && getNodeName(getNode(hoveredNode)!.nameKey)}
             </div>
             <div className="text-xs text-primary font-medium">
               {getNode(hoveredNode)?.capacity}
@@ -195,29 +199,30 @@ function InfrastructureMap({ onUnmount }: { onUnmount?: () => void }) {
       <div className="absolute bottom-3 left-3 flex items-center gap-4 text-xs text-muted-foreground">
         <div className="flex items-center gap-1.5">
           <div className="w-3 h-3 rounded-full bg-primary shadow-[0_0_8px_hsl(var(--primary)/0.5)]" />
-          <span>Scrubbing Center</span>
+          <span>{t("ddos.infrastructure.legend.scrubbingCenter")}</span>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="w-2 h-2 rounded-full bg-primary/70" />
-          <span>Datacenter</span>
+          <span>{t("ddos.infrastructure.legend.datacenter")}</span>
         </div>
       </div>
 
       {/* Region labels */}
       <div className="absolute top-3 left-[15%] text-[10px] text-muted-foreground/50 uppercase tracking-wider">
-        Americas
+        {t("ddos.infrastructure.regions.americas")}
       </div>
       <div className="absolute top-3 left-[45%] text-[10px] text-muted-foreground/50 uppercase tracking-wider">
-        Europe
+        {t("ddos.infrastructure.regions.europe")}
       </div>
       <div className="absolute top-3 left-[80%] text-[10px] text-muted-foreground/50 uppercase tracking-wider">
-        Asia Pacific
+        {t("ddos.infrastructure.regions.asiaPacific")}
       </div>
     </div>
   );
 }
 
 export function SlaNetwork({ disabled = false, showMapOnly = false }: SlaNetworkProps = {}) {
+  const { t } = useTranslation();
   const [mapMounted, setMapMounted] = useState(!disabled);
 
   // Handle disabled prop changes
@@ -238,19 +243,19 @@ export function SlaNetwork({ disabled = false, showMapOnly = false }: SlaNetwork
           className="text-center mb-12"
         >
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Global Network & SLA
+            {t("ddos.infrastructure.title")}
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Enterprise-grade infrastructure with guaranteed performance and reliability.
+            {t("ddos.infrastructure.subtitle")}
           </p>
         </motion.div>
 
         <div className="max-w-5xl mx-auto">
           {/* KPI blocks */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-            {kpis.map((kpi, index) => (
+            {kpiData.map((kpi, index) => (
               <motion.div
-                key={kpi.label}
+                key={kpi.labelKey}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -264,7 +269,9 @@ export function SlaNetwork({ disabled = false, showMapOnly = false }: SlaNetwork
                   {typeof kpi.value === "number" ? kpi.value : kpi.value}
                   {kpi.suffix}
                 </div>
-                <div className="text-sm text-muted-foreground mt-1">{kpi.label}</div>
+                <div className="text-sm text-muted-foreground mt-1">
+                  {t(`ddos.infrastructure.kpis.${kpi.labelKey}`)}
+                </div>
               </motion.div>
             ))}
           </div>
