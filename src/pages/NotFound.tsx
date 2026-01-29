@@ -1,169 +1,35 @@
 import { useLocation, Link } from "react-router-dom";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { 
   Home, 
-  Server, 
   Gamepad2, 
   Globe, 
   HardDrive, 
   Headphones, 
   Activity,
   ArrowRight,
-  ExternalLink
+  ExternalLink,
+  Server
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 // Quick navigation links
 const quickLinks = [
   { label: "Game Servers", href: "/game-servers", icon: Gamepad2 },
-  { label: "VPS Hosting", href: "/vps-hosting", icon: Server },
+  { label: "VPS Hosting", href: "/vps", icon: Server },
   { label: "Web Hosting", href: "/web-hosting", icon: Globe },
-  { label: "Dedicated Servers", href: "/dedicated-servers", icon: HardDrive },
+  { label: "Dedicated Servers", href: "/dedicated", icon: HardDrive },
   { label: "Server Status", href: "/status", icon: Activity },
 ];
 
-// Animated network background
-function NetworkBackground() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const prefersReducedMotion = useReducedMotion();
-  const animationRef = useRef<number>(0);
-  const nodesRef = useRef<Array<{
-    x: number;
-    y: number;
-    vx: number;
-    vy: number;
-    radius: number;
-    opacity: number;
-    pulsePhase: number;
-  }>>([]);
-  const initializedRef = useRef(false);
-
-  useEffect(() => {
-    if (prefersReducedMotion) return;
-
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const resize = () => {
-      const rect = canvas.getBoundingClientRect();
-      canvas.width = rect.width * 2;
-      canvas.height = rect.height * 2;
-      ctx.scale(2, 2);
-    };
-
-    const createNodes = () => {
-      const rect = canvas.getBoundingClientRect();
-      const count = Math.min(40, Math.floor((rect.width * rect.height) / 15000));
-      nodesRef.current = [];
-      
-      for (let i = 0; i < count; i++) {
-        nodesRef.current.push({
-          x: Math.random() * rect.width,
-          y: Math.random() * rect.height,
-          vx: (Math.random() - 0.5) * 0.2,
-          vy: (Math.random() - 0.5) * 0.2,
-          radius: Math.random() * 2 + 1,
-          opacity: Math.random() * 0.5 + 0.2,
-          pulsePhase: Math.random() * Math.PI * 2,
-        });
-      }
-    };
-
-    const draw = () => {
-      const rect = canvas.getBoundingClientRect();
-      ctx.clearRect(0, 0, rect.width, rect.height);
-      const nodes = nodesRef.current;
-      const time = Date.now() * 0.001;
-
-      // Draw connections first (so nodes appear on top)
-      nodes.forEach((n1, i) => {
-        nodes.slice(i + 1).forEach((n2) => {
-          const dx = n1.x - n2.x;
-          const dy = n1.y - n2.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          
-          if (distance < 150) {
-            const opacity = 0.15 * (1 - distance / 150);
-            ctx.beginPath();
-            ctx.moveTo(n1.x, n1.y);
-            ctx.lineTo(n2.x, n2.y);
-            ctx.strokeStyle = `rgba(25, 195, 255, ${opacity})`;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-          }
-        });
-      });
-
-      // Draw nodes with pulsing effect
-      nodes.forEach((node) => {
-        const pulse = Math.sin(time * 2 + node.pulsePhase) * 0.3 + 0.7;
-        const currentOpacity = node.opacity * pulse;
-        const currentRadius = node.radius * (0.8 + pulse * 0.4);
-
-        // Outer glow
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, currentRadius * 3, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(25, 195, 255, ${currentOpacity * 0.1})`;
-        ctx.fill();
-
-        // Core node
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, currentRadius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(25, 195, 255, ${currentOpacity})`;
-        ctx.fill();
-
-        // Update position
-        node.x += node.vx;
-        node.y += node.vy;
-
-        // Bounce off edges
-        if (node.x < 0 || node.x > rect.width) node.vx *= -1;
-        if (node.y < 0 || node.y > rect.height) node.vy *= -1;
-      });
-
-      animationRef.current = requestAnimationFrame(draw);
-    };
-
-    if (!initializedRef.current) {
-      resize();
-      createNodes();
-      initializedRef.current = true;
-    }
-    draw();
-
-    const handleResize = () => {
-      resize();
-      const rect = canvas.getBoundingClientRect();
-      const expectedCount = Math.min(40, Math.floor((rect.width * rect.height) / 15000));
-      if (Math.abs(nodesRef.current.length - expectedCount) > 5) {
-        createNodes();
-      }
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      cancelAnimationFrame(animationRef.current);
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [prefersReducedMotion]);
-
-  if (prefersReducedMotion) {
-    return (
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 pointer-events-none" />
-    );
-  }
-
+// Static background - NO animated network dots/lines
+function StaticBackground() {
   return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 w-full h-full pointer-events-none"
-      style={{ opacity: 0.8 }}
-    />
+    <div className="absolute inset-0 pointer-events-none">
+      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[150px]" />
+      <div className="absolute bottom-1/3 right-1/4 w-[400px] h-[400px] bg-destructive/5 rounded-full blur-[120px]" />
+    </div>
   );
 }
 
@@ -177,13 +43,11 @@ const NotFound = () => {
 
   return (
     <div className="relative min-h-screen bg-background flex items-center justify-center overflow-hidden">
-      {/* Animated network background */}
-      <NetworkBackground />
+      {/* Static background - no network dots/lines */}
+      <StaticBackground />
       
       {/* Gradient overlays */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-transparent to-background pointer-events-none" />
-      <div className="absolute top-1/3 left-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[150px] pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-primary/3 rounded-full blur-[120px] pointer-events-none" />
       
       <div className="container mx-auto px-4 py-16 relative z-10">
         <div className="max-w-3xl mx-auto text-center">

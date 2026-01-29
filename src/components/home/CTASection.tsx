@@ -1,7 +1,6 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { MessageSquare, Book, Mail, ArrowRight, Zap, Headphones, FileText } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { MessageSquare, Book, Mail, ArrowRight, Zap, Headphones } from "lucide-react";
 
 const ctaCards = [
   {
@@ -33,148 +32,16 @@ const ctaCards = [
   },
 ];
 
-// REGRESSION FIX: The previous canvas background caused full-screen flicker on some GPUs
-// due to layout-thrashing getBoundingClientRect() on every frame + repeated ctx.scale()
-// without resetting transforms during resize. We now use a ResizeObserver, cache bounds,
-// reset transforms on resize, and guarantee a single RAF loop.
-function AnimatedBackground({ enabled = true }: { enabled?: boolean }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const prefersReducedMotion = useReducedMotion();
-  const particlesRef = useRef<
-    Array<{ x: number; y: number; vx: number; vy: number; radius: number; opacity: number }>
-  >([]);
-  const animationRef = useRef<number>(0);
-  const sizeRef = useRef({ width: 0, height: 0, dpr: 1 });
-
-  useEffect(() => {
-    if (!enabled || prefersReducedMotion) return;
-
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext("2d", { alpha: true });
-    if (!ctx) return;
-
-    const createParticles = () => {
-      const { width, height } = sizeRef.current;
-      const count = Math.min(28, Math.floor((width * height) / 22000));
-      const next: typeof particlesRef.current = [];
-
-      for (let i = 0; i < count; i++) {
-        next.push({
-          x: Math.random() * width,
-          y: Math.random() * height,
-          vx: (Math.random() - 0.5) * 0.25,
-          vy: (Math.random() - 0.5) * 0.25,
-          radius: Math.random() * 1.5 + 0.6,
-          opacity: Math.random() * 0.35 + 0.1,
-        });
-      }
-
-      particlesRef.current = next;
-    };
-
-    const setCanvasSize = (width: number, height: number) => {
-      const dpr = Math.min(2, window.devicePixelRatio || 1);
-      sizeRef.current = { width, height, dpr };
-
-      canvas.width = Math.max(1, Math.floor(width * dpr));
-      canvas.height = Math.max(1, Math.floor(height * dpr));
-
-      // Important: reset transform before applying DPR scaling
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.scale(dpr, dpr);
-    };
-
-    const draw = () => {
-      const { width, height } = sizeRef.current;
-      if (width <= 0 || height <= 0) {
-        animationRef.current = requestAnimationFrame(draw);
-        return;
-      }
-
-      ctx.clearRect(0, 0, width, height);
-      const particles = particlesRef.current;
-
-      // Connections
-      for (let i = 0; i < particles.length; i++) {
-        const p1 = particles[i];
-        for (let j = i + 1; j < particles.length; j++) {
-          const p2 = particles[j];
-          const dx = p1.x - p2.x;
-          const dy = p1.y - p2.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          if (distance < 120) {
-            ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `rgba(25, 195, 255, ${0.09 * (1 - distance / 120)})`;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-          }
-        }
-      }
-
-      // Particles
-      for (const p of particles) {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(25, 195, 255, ${p.opacity})`;
-        ctx.fill();
-
-        p.x += p.vx;
-        p.y += p.vy;
-        if (p.x < 0 || p.x > width) p.vx *= -1;
-        if (p.y < 0 || p.y > height) p.vy *= -1;
-      }
-
-      animationRef.current = requestAnimationFrame(draw);
-    };
-
-    // Observe element size without reading layout on every frame
-    const ro = new ResizeObserver((entries) => {
-      const entry = entries[0];
-      if (!entry) return;
-
-      const cr = entry.contentRect;
-      const nextW = Math.floor(cr.width);
-      const nextH = Math.floor(cr.height);
-      const { width: prevW, height: prevH } = sizeRef.current;
-
-      if (nextW !== prevW || nextH !== prevH) {
-        setCanvasSize(nextW, nextH);
-        createParticles();
-      }
-    });
-
-    ro.observe(canvas);
-
-    // Prime size immediately
-    const rect = canvas.getBoundingClientRect();
-    setCanvasSize(Math.floor(rect.width), Math.floor(rect.height));
-    createParticles();
-
-    cancelAnimationFrame(animationRef.current);
-    animationRef.current = requestAnimationFrame(draw);
-
-    return () => {
-      ro.disconnect();
-      cancelAnimationFrame(animationRef.current);
-    };
-  }, [enabled, prefersReducedMotion]);
-
-  if (!enabled || prefersReducedMotion) {
-    return (
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 pointer-events-none" />
-    );
-  }
-
+// REMOVED: The animated canvas network background has been removed.
+// This was causing visual confusion with the DDoS-specific infrastructure map.
+// Now using a simple static gradient background instead.
+function StaticBackground() {
   return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 w-full h-full pointer-events-none"
-      style={{ opacity: 0.55 }}
-    />
+    <div className="absolute inset-0 pointer-events-none">
+      {/* Subtle gradient glow - no dots/lines/network animation */}
+      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[150px]" />
+      <div className="absolute bottom-1/4 right-1/3 w-[400px] h-[400px] bg-primary/3 rounded-full blur-[120px]" />
+    </div>
   );
 }
 
@@ -183,17 +50,15 @@ export function CTASection() {
 
   // Diagnostic switches (safe in production):
   // - ?disableCta=1 to disable the whole section
-  // - ?ctaBg=0 to disable the animated background layer
   const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
   const disableCta = params?.get("disableCta") === "1";
-  const enableBg = params?.get("ctaBg") !== "0";
 
   if (disableCta) return null;
 
   return (
     <section className="py-20 md:py-28 relative overflow-hidden">
-      {/* Animated Background */}
-      <AnimatedBackground enabled={enableBg} />
+      {/* Static Background - no network dots/lines */}
+      <StaticBackground />
       
       {/* Gradient overlays */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-transparent to-background pointer-events-none" />
