@@ -42,60 +42,25 @@ export function GlobalInfrastructure({
         </motion.div>
 
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Static World Map Illustration - NO animated dots/lines */}
+          {/* Abstract visual (NO dots/lines/canvas/svg-map) */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.98 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="relative aspect-video"
+            className="relative aspect-video rounded-2xl border border-border/50 overflow-hidden bg-gradient-to-br from-primary/10 via-transparent to-primary/5"
           >
-            {/* Clean background */}
-            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/10 via-transparent to-primary/5 border border-border/50" />
-            
-            {/* Simple grid pattern - NO animated dots */}
-            <div className="absolute inset-0 opacity-20">
-              <svg className="w-full h-full" viewBox="0 0 400 200">
-                <defs>
-                  <pattern id="staticGrid" width="40" height="40" patternUnits="userSpaceOnUse">
-                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-primary/20" />
-                  </pattern>
-                </defs>
-                <rect width="100%" height="100%" fill="url(#staticGrid)" />
-              </svg>
-            </div>
+            {/* Soft glows */}
+            <div className="absolute -top-16 -left-16 w-72 h-72 rounded-full bg-primary/10 blur-[80px]" />
+            <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-primary/10 blur-[90px]" />
 
-            {/* Static datacenter indicators - NO animation loop, just simple markers */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="relative w-full h-full max-w-md">
-                {/* Static location markers */}
-                {[
-                  { x: "20%", y: "40%", label: "NYC" },
-                  { x: "45%", y: "32%", label: "LON" },
-                  { x: "50%", y: "35%", label: "AMS" },
-                  { x: "55%", y: "38%", label: "FRA" },
-                  { x: "80%", y: "48%", label: "SIN" },
-                  { x: "88%", y: "68%", label: "SYD" },
-                ].map((pos, i) => (
-                  <motion.div
-                    key={i}
-                    className="absolute"
-                    style={{ left: pos.x, top: pos.y }}
-                    initial={{ scale: 0 }}
-                    whileInView={{ scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.3, delay: i * 0.1 }}
-                  >
-                    <div className="relative group">
-                      <div className="w-3 h-3 rounded-full bg-primary" />
-                      {/* Tooltip on hover - NOT animated continuously */}
-                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity px-2 py-1 bg-card border border-border rounded text-xs whitespace-nowrap">
-                        {pos.label}
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
+            {/* Subtle layered panels */}
+            <div className="absolute inset-6 rounded-xl bg-card/20 border border-border/30" />
+            <div className="absolute inset-10 rounded-xl bg-card/10 border border-border/20" />
+
+            {/* Minimal text badge */}
+            <div className="absolute bottom-6 left-6 px-3 py-1.5 rounded-full bg-background/40 border border-border/40 text-xs text-muted-foreground">
+              Global coverage • low latency
             </div>
           </motion.div>
 

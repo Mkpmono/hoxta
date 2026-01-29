@@ -7,7 +7,6 @@ import {
   DdosPlans,
   MonitoringPreview,
   UseCasesGrid,
-  SlaNetwork,
   DdosFaq,
   DdosFinalCta,
 } from "@/components/ddos";
@@ -38,9 +37,6 @@ export default function DDoSProtection() {
 
       {/* Use Cases Grid */}
       <UseCasesGrid />
-
-      {/* SLA & Network Map */}
-      <SlaNetwork />
 
       {/* FAQ Accordion */}
       <DdosFaq />
