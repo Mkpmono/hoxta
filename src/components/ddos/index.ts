@@ -4,6 +4,5 @@ export { ProtectionTabs } from "./ProtectionTabs";
 export { DdosPlans } from "./DdosPlans";
 export { MonitoringPreview } from "./MonitoringPreview";
 export { UseCasesGrid } from "./UseCasesGrid";
-export { SlaNetwork } from "./SlaNetwork";
 export { DdosFaq } from "./DdosFaq";
 export { DdosFinalCta } from "./DdosFinalCta";
