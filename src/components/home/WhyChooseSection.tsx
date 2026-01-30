@@ -81,56 +81,12 @@ function InfrastructureStats() {
   );
 }
 
-// Infrastructure Grid Background
-function InfrastructureBackground() {
-  const prefersReducedMotion = useReducedMotion();
-  
+// Local section accent (static, non-network)
+function SectionGlow() {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {/* Hexagonal grid pattern */}
-      <svg className="absolute inset-0 w-full h-full opacity-[0.04]">
-        <defs>
-          <pattern id="hex-grid" width="60" height="52" patternUnits="userSpaceOnUse">
-            <path 
-              d="M30 0 L60 15 L60 37 L30 52 L0 37 L0 15 Z" 
-              fill="none" 
-              stroke="hsl(var(--primary))" 
-              strokeWidth="0.5"
-            />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#hex-grid)" />
-      </svg>
-
-      {/* Animated data streams */}
-      {!prefersReducedMotion && (
-        <>
-          {[...Array(5)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-px bg-gradient-to-b from-transparent via-primary/30 to-transparent"
-              style={{
-                left: `${10 + i * 20}%`,
-                height: '100%',
-              }}
-              animate={{
-                opacity: [0, 0.5, 0],
-                scaleY: [0, 1, 0],
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                delay: i * 0.6,
-                ease: "easeInOut",
-              }}
-            />
-          ))}
-        </>
-      )}
-      
-      {/* Glow effects */}
-      <div className="absolute top-1/3 left-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[150px]" />
-      <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-primary/3 rounded-full blur-[120px]" />
+      <div className="absolute top-1/3 left-1/4 w-[520px] h-[520px] bg-primary/5 rounded-full blur-[160px]" />
+      <div className="absolute bottom-1/4 right-1/5 w-[420px] h-[420px] bg-primary/4 rounded-full blur-[140px]" />
     </div>
   );
 }
@@ -230,7 +186,7 @@ export function WhyChooseSection() {
 
   return (
     <section className="py-24 md:py-32 relative overflow-hidden">
-      <InfrastructureBackground />
+      <SectionGlow />
       
       <div className="container mx-auto px-4 md:px-6 relative z-10">
         {/* Header */}

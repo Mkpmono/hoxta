@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Shield, Clock, Server, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
-import { WaveBackground } from "@/components/ui/WaveBackground";
+import { StaticBackground } from "@/components/ui/StaticBackground";
 
 export function DdosHero() {
   const trustBadges = [
@@ -12,31 +12,7 @@ export function DdosHero() {
 
   return (
     <section className="relative min-h-[80vh] flex items-center overflow-hidden">
-      <WaveBackground />
-      
-      {/* Animated mesh background */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/30 via-transparent to-transparent" />
-        {[...Array(20)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-primary/40 rounded-full"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              opacity: [0.2, 0.8, 0.2],
-              scale: [1, 1.5, 1],
-            }}
-            transition={{
-              duration: 2 + Math.random() * 2,
-              repeat: Infinity,
-              delay: Math.random() * 2,
-            }}
-          />
-        ))}
-      </div>
+      <StaticBackground />
 
       <div className="container relative mx-auto px-4 md:px-6 py-20 md:py-32">
         <motion.div
