@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Mail, Lock, Eye, EyeOff, User, Shield, AlertCircle, Crown } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { WaveBackground } from "@/components/ui/WaveBackground";
+import { StaticBackground } from "@/components/ui/StaticBackground";
 import { Link } from "react-router-dom";
 
 export default function Login() {
@@ -54,7 +54,7 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
-      <WaveBackground />
+      <StaticBackground />
       
       <motion.div
         initial={{ opacity: 0, y: 20 }}
