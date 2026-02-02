@@ -25,6 +25,23 @@ npm run dev
 4. ✅ Verify: Selection persists after page reload (stored in localStorage as `lang`)
 5. ✅ Verify: Works on both public pages and `/panel` pages
 
+### Register Page Flow
+1. Navigate to `/register`
+2. ✅ Verify: "New Customer" tab shows full registration form with WHMCS-compatible fields
+3. ✅ Verify: "Existing Customer" tab links to `/panel/login`
+4. Fill in required fields (firstname, lastname, email, password, phone, address1, city, postcode, country)
+5. Check "I agree to Terms & Conditions"
+6. Submit form
+7. ✅ On success: redirects to `/panel` and shows toast "Account Created"
+8. ✅ On error: shows inline error message from API
+
+### Register → Checkout Flow
+1. Navigate to `/checkout?category=games&product=minecraft&plan=standard&billing=monthly`
+2. Click "Sign Up" or navigate to `/register?category=games&product=minecraft&plan=standard&billing=monthly`
+3. Complete registration
+4. ✅ Verify: After success, redirects back to checkout with params preserved
+5. ✅ Verify: `/api/auth/me` returns profile data after registration
+
 ## Technologies
 
 - Vite + React + TypeScript

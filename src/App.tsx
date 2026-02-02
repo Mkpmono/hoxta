@@ -34,6 +34,7 @@ import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 // Panel Pages
 import Login from "./pages/panel/Login";
+import Register from "./pages/panel/Register";
 import PanelDashboard from "./pages/panel/Dashboard";
 import PanelServices from "./pages/panel/Services";
 import ServiceDetail from "./pages/panel/ServiceDetail";
@@ -95,6 +96,7 @@ const App = () => (
             
             {/* Auth */}
             <Route path="/panel/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
             
             {/* Client Panel (Protected) */}
             <Route path="/panel" element={<ProtectedRoute allowedRoles={["client", "admin", "owner"]}><PanelDashboard /></ProtectedRoute>} />

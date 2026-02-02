@@ -27,6 +27,12 @@ interface AuthContextType {
     lastName: string;
     companyName?: string;
     phone?: string;
+    address1?: string;
+    address2?: string;
+    city?: string;
+    state?: string;
+    postcode?: string;
+    country?: string;
   }) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   isLoading: boolean;
@@ -171,6 +177,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     lastName: string;
     companyName?: string;
     phone?: string;
+    address1?: string;
+    address2?: string;
+    city?: string;
+    state?: string;
+    postcode?: string;
+    country?: string;
   }): Promise<{ success: boolean; error?: string }> => {
     try {
       const result = await apiClient.register(data);
