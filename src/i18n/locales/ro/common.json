@@ -560,5 +560,29 @@
   "mockMode": {
     "banner": "Mod Simulare – WHMCS neconectat. Se folosesc date demo.",
     "demoCredentials": "Demo: client@demo.hoxta / Demo1234!"
+  },
+  "register": {
+    "title": "Creează Cont",
+    "subtitle": "Înregistrează-te pentru a începe cu Hoxta",
+    "createAccount": "Creează Cont",
+    "creating": "Se creează contul...",
+    "success": "Cont Creat",
+    "successMessage": "Bine ai venit la Hoxta! Contul tău a fost creat cu succes.",
+    "failed": "Înregistrarea a eșuat. Te rugăm să încerci din nou.",
+    "alreadyHaveAccount": "Ai deja un cont?",
+    "loginToManage": "Conectează-te pentru a-ți accesa serviciile și a-ți administra contul.",
+    "agreeToTerms": "Sunt de acord cu",
+    "termsLink": "Termenii și Condițiile",
+    "errors": {
+      "firstnameRequired": "Prenumele este obligatoriu",
+      "lastnameRequired": "Numele este obligatoriu",
+      "passwordRequired": "Parola este obligatorie",
+      "phoneRequired": "Numărul de telefon este obligatoriu",
+      "addressRequired": "Adresa este obligatorie",
+      "cityRequired": "Orașul este obligatoriu",
+      "postcodeRequired": "Codul poștal este obligatoriu",
+      "countryRequired": "Țara este obligatorie",
+      "termsRequired": "Trebuie să accepți Termenii și Condițiile"
+    }
   }
 }

@@ -560,5 +560,29 @@
   "mockMode": {
     "banner": "Mock Mode – WHMCS not connected. Using demo data.",
     "demoCredentials": "Demo: client@demo.hoxta / Demo1234!"
+  },
+  "register": {
+    "title": "Create Account",
+    "subtitle": "Register to get started with Hoxta",
+    "createAccount": "Create Account",
+    "creating": "Creating account...",
+    "success": "Account Created",
+    "successMessage": "Welcome to Hoxta! Your account has been created successfully.",
+    "failed": "Registration failed. Please try again.",
+    "alreadyHaveAccount": "Already have an account?",
+    "loginToManage": "Sign in to access your services and manage your account.",
+    "agreeToTerms": "I agree to the",
+    "termsLink": "Terms & Conditions",
+    "errors": {
+      "firstnameRequired": "First name is required",
+      "lastnameRequired": "Last name is required",
+      "passwordRequired": "Password is required",
+      "phoneRequired": "Phone number is required",
+      "addressRequired": "Address is required",
+      "cityRequired": "City is required",
+      "postcodeRequired": "Postal code is required",
+      "countryRequired": "Country is required",
+      "termsRequired": "You must agree to the Terms & Conditions"
+    }
   }
 }

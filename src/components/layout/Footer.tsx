@@ -105,10 +105,6 @@ export function Footer() {
 
   return (
     <footer className="relative bg-background-secondary border-t border-border/50">
-      {/* TEMP DEBUG BUILD LABEL (remove after confirmation) */}
-      <div className="absolute right-3 top-3 text-[10px] tracking-wider text-muted-foreground/70 select-none">
-        BUILD: network-bg-removed-v2
-      </div>
       <div className="container mx-auto px-4 md:px-6 py-12 md:py-16">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 lg:gap-12">
           {/* Services */}

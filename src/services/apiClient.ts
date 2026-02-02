@@ -150,6 +150,7 @@ export async function register(data: {
   lastName: string;
   companyName?: string;
   address1?: string;
+  address2?: string;
   city?: string;
   state?: string;
   postcode?: string;
