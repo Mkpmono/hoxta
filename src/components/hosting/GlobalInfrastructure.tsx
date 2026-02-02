@@ -1,37 +1,28 @@
 import { motion } from "framer-motion";
-import { MapPin, Zap, Globe, Shield, Server, Cpu, Network } from "lucide-react";
-
-interface DataCenter {
-  name: string;
-  location: string;
-  code: string;
-}
+import { MapPin, Zap, Globe, Shield, Server, Cpu, Network, RefreshCw, Activity } from "lucide-react";
 
 interface GlobalInfrastructureProps {
   title?: string;
   subtitle?: string;
-  dataCenters?: DataCenter[];
 }
 
-const defaultDataCenters: DataCenter[] = [
-  { name: "New York", location: "United States", code: "US" },
-  { name: "Amsterdam", location: "Netherlands", code: "NL" },
-  { name: "Frankfurt", location: "Germany", code: "DE" },
-  { name: "London", location: "United Kingdom", code: "GB" },
-  { name: "Singapore", location: "Singapore", code: "SG" },
-  { name: "Sydney", location: "Australia", code: "AU" },
+const infrastructureCapabilities = [
+  { icon: Network, text: "Anycast Network Architecture" },
+  { icon: Cpu, text: "Enterprise-grade NVMe nodes" },
+  { icon: RefreshCw, text: "Automated failover & redundancy" },
+  { icon: Server, text: "Tier III+ datacenter standards" },
+  { icon: Activity, text: "Instant provisioning" },
 ];
 
 const networkHighlights = [
-  { icon: Network, text: "Anycast DNS for instant routing" },
-  { icon: Cpu, text: "NVMe SSD storage on all nodes" },
-  { icon: Server, text: "Instant provisioning under 60s" },
+  { icon: Zap, text: "Low latency by design" },
+  { icon: Shield, text: "Built-in DDoS protection" },
+  { icon: Globe, text: "Scalable on demand" },
 ];
 
 export function GlobalInfrastructure({
   title = "Global Infrastructure",
-  subtitle = "Deploy closer to your users with our worldwide network of enterprise-grade data centers.",
-  dataCenters = defaultDataCenters,
+  subtitle = "Enterprise-grade infrastructure built for performance, reliability, and scale.",
 }: GlobalInfrastructureProps) {
   const stats = [
     { icon: MapPin, value: "6+", label: "Data Centers" },
@@ -54,9 +45,9 @@ export function GlobalInfrastructure({
           <p className="text-muted-foreground max-w-2xl mx-auto">{subtitle}</p>
         </motion.div>
 
-        {/* Clean 2-column layout: Locations left, KPIs + Highlights right */}
+        {/* Clean 2-column layout: Capabilities left, KPIs + Highlights right */}
         <div className="grid lg:grid-cols-2 gap-6">
-          {/* Left: Available Locations */}
+          {/* Left: Infrastructure Capabilities */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -64,27 +55,24 @@ export function GlobalInfrastructure({
             transition={{ duration: 0.5 }}
             className="glass-card p-6 md:p-8"
           >
-            <h3 className="text-xl font-semibold text-foreground mb-6">Available Locations</h3>
-            <div className="grid grid-cols-2 gap-4">
-              {dataCenters.map((dc, index) => (
-                <motion.div
+            <h3 className="text-xl font-semibold text-foreground mb-6">Infrastructure Capabilities</h3>
+            <ul className="space-y-4">
+              {infrastructureCapabilities.map((item, index) => (
+                <motion.li
                   key={index}
                   initial={{ opacity: 0, x: -10 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.3, delay: index * 0.05 }}
-                  className="flex items-center gap-3 p-3 rounded-lg bg-background/30 border border-border/30 hover:border-primary/30 transition-colors"
+                  className="flex items-center gap-4 p-3 rounded-lg bg-background/30 border border-border/30 hover:border-primary/30 transition-colors"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-                    {dc.code}
+                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <item.icon className="w-5 h-5 text-primary" />
                   </div>
-                  <div>
-                    <div className="font-medium text-foreground">{dc.name}</div>
-                    <div className="text-xs text-muted-foreground">{dc.location}</div>
-                  </div>
-                </motion.div>
+                  <span className="font-medium text-foreground">{item.text}</span>
+                </motion.li>
               ))}
-            </div>
+            </ul>
           </motion.div>
 
           {/* Right: KPIs + Network Highlights */}
