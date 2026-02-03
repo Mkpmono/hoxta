@@ -5,27 +5,27 @@ const steps = [
   {
     icon: <Search className="w-6 h-6" />,
     title: "Detection",
-    description: "Traffic analyzed in real-time using ML-based anomaly detection.",
+    description: "We analyze your traffic in real-time to spot threats instantly.",
   },
   {
     icon: <Filter className="w-6 h-6" />,
     title: "Classification",
-    description: "Attack vectors identified and categorized within milliseconds.",
+    description: "Attack types are identified and sorted within milliseconds.",
   },
   {
     icon: <Trash2 className="w-6 h-6" />,
     title: "Scrubbing",
-    description: "Malicious traffic filtered at edge POPs before reaching origin.",
+    description: "Bad traffic is filtered at the edge before it reaches your server.",
   },
   {
     icon: <Workflow className="w-6 h-6" />,
     title: "Clean Pipe",
-    description: "Only legitimate traffic forwarded to your infrastructure.",
+    description: "Only legitimate traffic gets through to your infrastructure.",
   },
   {
     icon: <BarChart3 className="w-6 h-6" />,
     title: "Reporting",
-    description: "Full attack analytics and insights delivered in real-time.",
+    description: "Get full attack analytics and insights in real-time.",
   },
 ];
 
@@ -43,7 +43,7 @@ export function DdosHowItWorks() {
             How It Works
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Our 5-stage mitigation pipeline protects your infrastructure from Layer 3/4/7 attacks.
+            Our 5-step process stops L3/L4/L7 attacks before they reach you.
           </p>
         </motion.div>
 

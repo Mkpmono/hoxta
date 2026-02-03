@@ -26,7 +26,7 @@ const defaultGuarantees = [
 // FIX: Added forwardRef to prevent React warning about refs on function components
 export const FinalCTA = forwardRef<HTMLElement, FinalCTAProps>(function FinalCTA({
   title = "Ready to Get Started?",
-  subtitle = "Join thousands of satisfied customers who trust Hoxta for their hosting needs. Experience the difference of premium hosting.",
+  subtitle = "Join thousands of happy customers who trust Hoxta for their hosting. See the difference yourself.",
   primaryCTA = { text: "Get Started Now", href: "#pricing" },
   secondaryCTA = { text: "Contact Sales", href: "/contact" },
   guarantees = defaultGuarantees,

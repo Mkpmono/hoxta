@@ -59,12 +59,12 @@ const dedicatedFeatures = [
   {
     icon: Shield,
     title: "DDoS Protection",
-    description: "Enterprise-grade protection up to 1Tbps included with every server.",
+    description: "Up to 1Tbps protection included with every server.",
   },
   {
     icon: Gauge,
     title: "Maximum Performance",
-    description: "No resource sharing means consistent, predictable performance.",
+    description: "No resource sharing means consistent, predictable power.",
   },
   {
     icon: Lock,
@@ -79,7 +79,7 @@ const dedicatedFeatures = [
   {
     icon: Wifi,
     title: "Premium Network",
-    description: "1Gbps dedicated port with premium transit and low latency.",
+    description: "1Gbps dedicated port with premium routing and low latency.",
   },
 ];
 
@@ -136,9 +136,9 @@ export default function Dedicated() {
       {/* Hero */}
       <HostingHero
         badge="Dedicated Servers"
-        headline="Enterprise"
+        headline="Powerful"
         highlightedText="Dedicated Servers"
-        description="Bare metal servers with full hardware control, maximum performance, and enterprise-grade infrastructure. No sharing, no compromises."
+        description="Bare metal servers with full hardware control and maximum performance. No sharing, no compromises."
         promotion={{
           text: "Enterprise Deal",
           discount: "Free Setup + First Month 50% OFF",
@@ -257,26 +257,26 @@ export default function Dedicated() {
       {/* Feature Grid */}
       <FeatureGrid
         title="Why Choose Hoxta Dedicated Servers"
-        subtitle="Enterprise-grade bare metal with premium features included."
+        subtitle="Bare metal with premium features included."
         features={dedicatedFeatures}
       />
 
       {/* Content Sections */}
       <ContentSection
         title="What is a Dedicated Server?"
-        description="A dedicated server provides you with an entire physical machine exclusively for your use. Unlike VPS or shared hosting, you get 100% of the hardware resources with no virtualization layer, delivering maximum performance and complete control."
+        description="A dedicated server gives you an entire physical machine just for you. Unlike VPS or shared hosting, you get 100% of the hardware with no virtualization — maximum performance and full control."
         points={[
           "Full physical server exclusively for you",
-          "No CPU or RAM sharing with other users",
-          "Maximum I/O performance with direct hardware access",
+          "No CPU or RAM sharing",
+          "Maximum I/O with direct hardware access",
           "Complete OS and software customization",
         ]}
         icon={Server}
       />
 
       <ContentSection
-        title="Enterprise Performance"
-        description="Our dedicated servers are built with enterprise-grade components from Intel and AMD, delivering consistent performance for the most demanding workloads."
+        title="Top-Tier Performance"
+        description="Our servers run on the latest Intel and AMD hardware for consistent performance on demanding workloads."
         points={[
           "Latest Intel Xeon and AMD EPYC processors",
           "ECC RAM for data integrity",
@@ -303,7 +303,7 @@ export default function Dedicated() {
       {/* Final CTA */}
       <FinalCTA
         title="Ready for Dedicated Power?"
-        subtitle="Deploy your enterprise-grade dedicated server today with 24/7 expert support."
+        subtitle="Deploy your dedicated server today with 24/7 expert support."
       />
     </Layout>
   );

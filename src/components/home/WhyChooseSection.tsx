@@ -95,38 +95,38 @@ function SectionGlow() {
 const infrastructureFeatures = [
   {
     icon: Server,
-    title: "Enterprise Hardware",
-    description: "Intel Xeon & AMD EPYC processors, ECC RAM, and redundant power systems in Tier III+ datacenters.",
+    title: "Premium Hardware",
+    description: "Intel Xeon & AMD EPYC processors with ECC RAM and redundant power in Tier III+ datacenters.",
     highlight: "99.99% Uptime",
   },
   {
     icon: HardDrive,
     title: "NVMe Storage",
-    description: "Ultra-fast NVMe SSDs with RAID protection delivering up to 7,000 MB/s read speeds and sub-millisecond latency.",
+    description: "Ultra-fast NVMe SSDs with RAID — up to 7,000 MB/s reads and sub-millisecond latency.",
     highlight: "7,000 MB/s",
   },
   {
     icon: Globe,
     title: "Global Network",
-    description: "12+ strategic locations worldwide with direct peering to major ISPs, ensuring optimal routing and minimal latency.",
+    description: "12+ locations worldwide with direct peering to major ISPs for low latency everywhere.",
     highlight: "12+ Locations",
   },
   {
     icon: Shield,
     title: "DDoS Protection",
-    description: "Multi-layer mitigation with 2.5 Tbps+ scrubbing capacity. Game-specific filters and instant threat detection.",
+    description: "Multi-layer protection with 2.5 Tbps+ capacity. Game-specific filters and instant threat detection.",
     highlight: "2.5 Tbps+",
   },
   {
     icon: Zap,
-    title: "Instant Deployment",
-    description: "Automated provisioning with one-click installs. Your server is live in under 60 seconds with pre-configured templates.",
+    title: "Instant Setup",
+    description: "One-click installs with automated provisioning. Your server is live in under 60 seconds.",
     highlight: "< 60 Seconds",
   },
   {
     icon: Headphones,
-    title: "24/7 Expert Support",
-    description: "Certified engineers available around the clock. Average response time under 15 minutes for priority tickets.",
+    title: "24/7 Support",
+    description: "Our engineers are available around the clock. Average response under 15 minutes.",
     highlight: "< 15 Min Response",
   },
 ];
@@ -205,16 +205,16 @@ export function WhyChooseSection() {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6"
           >
             <Server className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium text-primary">Infrastructure Built for Performance</span>
+            <span className="text-sm font-medium text-primary">Built for Performance</span>
           </motion.div>
           
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6">
-            Enterprise-Grade Hosting
-            <span className="block text-primary mt-2">You Can Rely On</span>
+            Reliable Hosting
+            <span className="block text-primary mt-2">You Can Count On</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Built on premium hardware with redundant systems, global reach, and proactive monitoring. 
-            Our infrastructure is designed for demanding workloads that require maximum uptime.
+            Premium hardware, global coverage, and proactive monitoring —
+            designed for demanding workloads that need maximum uptime.
           </p>
         </motion.div>
 

@@ -23,7 +23,7 @@ const plans: DdosPlan[] = [
     name: "Standard",
     icon: <Shield className="w-6 h-6" />,
     price: 49,
-    description: "Essential protection for small projects",
+    description: "Solid protection for smaller projects",
     limits: { gbps: "50 Gbps", pps: "10M pps", ips: "1 IP" },
     features: [
       { label: "L3/L4 Protection", included: true },
@@ -41,7 +41,7 @@ const plans: DdosPlan[] = [
     name: "Advanced",
     icon: <Zap className="w-6 h-6" />,
     price: 149,
-    description: "Full-stack protection for growing businesses",
+    description: "Complete protection for growing businesses",
     limits: { gbps: "200 Gbps", pps: "50M pps", ips: "5 IPs" },
     features: [
       { label: "L3/L4 Protection", included: true },
@@ -60,7 +60,7 @@ const plans: DdosPlan[] = [
     name: "Enterprise",
     icon: <Crown className="w-6 h-6" />,
     price: 499,
-    description: "Mission-critical infrastructure protection",
+    description: "Maximum protection for mission-critical systems",
     limits: { gbps: "500+ Gbps", pps: "100M+ pps", ips: "Unlimited" },
     features: [
       { label: "L3/L4 Protection", included: true },
@@ -100,7 +100,7 @@ export function DdosPlans() {
             Protection Plans
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Choose the level of protection that matches your infrastructure needs.
+            Pick the protection level that fits your needs. Upgrade anytime.
           </p>
         </motion.div>
 

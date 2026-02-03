@@ -85,78 +85,78 @@ export const webHostingPlans: Plan[] = [
 export const webHostingFeatures: Feature[] = [
   {
     icon: Zap,
-    title: "NVMe Performance",
-    description: "Ultra-fast NVMe SSD storage delivers up to 10x faster read/write speeds than traditional SSDs.",
+    title: "NVMe Speed",
+    description: "Ultra-fast NVMe storage delivers up to 10x faster read/write than standard SSDs.",
   },
   {
     icon: Gauge,
     title: "LiteSpeed Cache",
-    description: "Built-in LiteSpeed caching accelerates your WordPress and PHP sites automatically.",
+    description: "Built-in caching accelerates WordPress and PHP sites automatically.",
   },
   {
     icon: Shield,
     title: "DDoS Protection",
-    description: "Enterprise-grade protection shields your site from volumetric and application-layer attacks.",
+    description: "Multi-layer protection shields your site from volumetric and app-layer attacks.",
   },
   {
     icon: Lock,
     title: "Free SSL Certificates",
-    description: "Automatic SSL installation secures all your domains with HTTPS encryption.",
+    description: "Automatic SSL secures all your domains with HTTPS.",
   },
   {
     icon: RefreshCw,
     title: "Daily Backups",
-    description: "Automated daily backups with one-click restore ensure your data is always safe.",
+    description: "Automated backups with one-click restore keep your data safe.",
   },
   {
     icon: Globe,
     title: "Global CDN",
-    description: "Content delivery network with edge locations worldwide for faster load times.",
+    description: "Content delivery network with edge locations worldwide for faster loads.",
   },
   {
     icon: Headphones,
-    title: "24/7 Expert Support",
-    description: "Real human support available around the clock via live chat, phone, and tickets.",
+    title: "24/7 Support",
+    description: "Real human support via live chat, phone, and tickets — around the clock.",
   },
   {
     icon: Server,
     title: "99.9% Uptime SLA",
-    description: "Industry-leading uptime guarantee backed by our service level agreement.",
+    description: "Industry-leading uptime backed by our service agreement.",
   },
 ];
 
 export const webHostingFAQs: FAQItem[] = [
   {
     question: "What is web hosting and do I need it?",
-    answer: "Web hosting is a service that allows you to publish your website on the internet. When you create a website, the files need to be stored on a server that's connected to the internet 24/7. Our web hosting provides this server space, along with all the tools and support you need to run your website successfully.",
+    answer: "Web hosting lets you publish your website on the internet. Your files are stored on a server that's online 24/7. We provide the server space, tools, and support you need to run your site successfully.",
   },
   {
     question: "Can I transfer my existing website to Hoxta?",
-    answer: "Absolutely! We offer free website migration for all new customers. Our expert migration team will transfer your website, emails, and databases from your current host with zero downtime. Just submit a migration request after signing up, and we'll handle everything.",
+    answer: "Yes! We offer free migration for all new customers. Our team will move your website, emails, and databases with zero downtime. Just submit a migration request after signing up.",
   },
   {
     question: "What control panel do you use?",
-    answer: "We use cPanel, the industry-standard control panel that makes managing your hosting account easy. With cPanel, you can manage your files, databases, email accounts, domains, and more through an intuitive web interface.",
+    answer: "We use cPanel — the industry-standard panel that makes managing your hosting easy. Handle files, databases, emails, and domains through a simple web interface.",
   },
   {
     question: "Do you offer a money-back guarantee?",
-    answer: "Yes! We offer a 30-day money-back guarantee on all hosting plans. If you're not completely satisfied with our service within the first 30 days, we'll refund your payment in full, no questions asked.",
+    answer: "Yes! We offer a 30-day money-back guarantee on all hosting plans. Not satisfied? Get a full refund, no questions asked.",
   },
   {
     question: "How many websites can I host?",
-    answer: "It depends on your plan. Our Starter plan allows 1 website, while Professional, Business, and Enterprise plans allow unlimited websites. Each plan also comes with different storage allocations to accommodate your needs.",
+    answer: "It depends on your plan. Starter allows 1 site, while Professional, Business, and Enterprise allow unlimited. Each plan has different storage to fit your needs.",
   },
   {
     question: "Is SSL included with my hosting?",
-    answer: "Yes! All our hosting plans include free SSL certificates for all your domains. SSL certificates are automatically installed and renewed, ensuring your websites are always secured with HTTPS.",
+    answer: "Yes! All plans include free SSL for all your domains. SSL is installed and renewed automatically, keeping your sites secure with HTTPS.",
   },
   {
     question: "What is NVMe storage?",
-    answer: "NVMe (Non-Volatile Memory Express) is the latest and fastest type of SSD storage available. It's up to 10 times faster than traditional SATA SSDs, which means faster website loading times, quicker database queries, and better overall performance.",
+    answer: "NVMe is the fastest SSD storage available — up to 10x faster than standard SSDs. This means faster site loading, quicker database queries, and better overall performance.",
   },
   {
     question: "Do you support WordPress?",
-    answer: "Absolutely! Our hosting is fully optimized for WordPress with one-click installation, automatic updates, LiteSpeed caching, and specialized WordPress support. We also offer managed WordPress features on our higher-tier plans.",
+    answer: "Absolutely! Our hosting is optimized for WordPress with one-click install, auto-updates, LiteSpeed caching, and specialized support. Higher-tier plans include managed WordPress features.",
   },
 ];
 

@@ -54,8 +54,8 @@ export function DdosFinalCta() {
               transition={{ delay: 0.2 }}
               className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8"
             >
-              Join thousands of businesses that trust Hoxta to keep their infrastructure online.
-              Get protected in minutes with our always-on DDoS mitigation.
+              Thousands of businesses trust Hoxta to keep them online.
+              Get protected in minutes with always-on DDoS mitigation.
             </motion.p>
 
             {/* CTAs */}

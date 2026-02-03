@@ -43,7 +43,7 @@ export default function WebHosting() {
         badge="Web Hosting"
         headline="Lightning-Fast"
         highlightedText="Web Hosting"
-        description="Launch your website with blazing-fast NVMe storage, free SSL certificates, and enterprise-grade security. From personal blogs to business sites, we've got you covered."
+        description="Launch your website with blazing-fast NVMe storage, free SSL, and built-in security. From personal blogs to business sites — we've got you covered."
         promotion={{
           text: "New Year Sale",
           discount: "Up to 70% OFF",
@@ -59,7 +59,7 @@ export default function WebHosting() {
       {/* Pricing Plans */}
       <PricingPlans
         title="Web Hosting Plans"
-        subtitle="Powerful hosting solutions for every website. All plans include free SSL, daily backups, and 24/7 support."
+        subtitle="Powerful hosting for every website. All plans include free SSL, daily backups, and 24/7 support."
         plans={webHostingPlans}
         productSlug="web-hosting"
       />
@@ -67,17 +67,17 @@ export default function WebHosting() {
       {/* Why Choose Section */}
       <FeatureGrid
         title="Why Choose Hoxta Web Hosting"
-        subtitle="Enterprise-grade infrastructure with premium features included in every plan."
+        subtitle="Premium features included with every plan."
         features={webHostingFeatures}
       />
 
       {/* Content Section - What is Web Hosting */}
       <ContentSection
         title="What is Web Hosting?"
-        description="Web hosting is the foundation of your online presence. It's the service that stores your website files on secure servers and makes them accessible to visitors around the world, 24 hours a day, 7 days a week."
+        description="Web hosting is the home for your website. It stores your files on secure servers and makes your site accessible to visitors around the world, 24/7."
         points={[
           "Store your website files, images, and databases securely",
-          "Ensure your site is always online and accessible globally",
+          "Keep your site online and accessible globally",
           "Get professional email addresses with your domain",
           "Scale resources as your website grows",
         ]}
@@ -86,13 +86,13 @@ export default function WebHosting() {
 
       {/* Content Section - Performance */}
       <ContentSection
-        title="Unmatched Performance"
-        description="Our hosting infrastructure is built for speed. With NVMe SSD storage, LiteSpeed web servers, and optimized caching, your website loads in milliseconds, improving user experience and search rankings."
+        title="Blazing-Fast Performance"
+        description="Our hosting is built for speed. NVMe storage, LiteSpeed servers, and smart caching make your site load in milliseconds — helping both user experience and search rankings."
         points={[
-          "NVMe SSDs deliver 10x faster speeds than traditional storage",
-          "LiteSpeed web server with built-in caching technology",
-          "Global CDN integration for worldwide fast delivery",
-          "HTTP/3 and QUIC protocol support for modern performance",
+          "NVMe SSDs deliver 10x faster speeds than standard storage",
+          "LiteSpeed server with built-in caching",
+          "Global CDN for fast delivery worldwide",
+          "HTTP/3 and QUIC protocol support",
         ]}
         icon={Zap}
         reverse
@@ -100,11 +100,11 @@ export default function WebHosting() {
 
       {/* Content Section - Security */}
       <ContentSection
-        title="Enterprise Security"
-        description="Security isn't optional – it's essential. Every hosting account is protected by multiple layers of security, from DDoS protection to malware scanning, ensuring your website and visitors stay safe."
+        title="Built-in Security"
+        description="Security is essential — not optional. Every account is protected by multiple layers: DDoS protection, malware scanning, and free SSL certificates."
         points={[
           "Free SSL certificates for all domains",
-          "Enterprise-grade DDoS mitigation",
+          "DDoS mitigation included",
           "Real-time malware scanning and removal",
           "Automated daily backups with easy restore",
         ]}

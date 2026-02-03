@@ -6,7 +6,7 @@ const ctaCards = [
   {
     icon: Headphones,
     title: "24/7 Support",
-    description: "Expert help whenever you need it. Average response time under 5 minutes.",
+    description: "Real help whenever you need it. We usually respond in under 5 minutes.",
     link: "/panel/tickets/new",
     linkText: "Open a Ticket",
     gradient: "from-blue-500/20 to-cyan-500/20",
@@ -15,7 +15,7 @@ const ctaCards = [
   {
     icon: Book,
     title: "Knowledge Base",
-    description: "Tutorials, guides, and troubleshooting articles for self-service help.",
+    description: "Tutorials, guides, and troubleshooting articles for quick self-service help.",
     link: "/knowledge-base",
     linkText: "Browse Articles",
     gradient: "from-purple-500/20 to-pink-500/20",
@@ -24,7 +24,7 @@ const ctaCards = [
   {
     icon: Mail,
     title: "Custom Solutions",
-    description: "Need something specific? Let's discuss your requirements.",
+    description: "Need something specific? Let's chat about your requirements.",
     link: "/contact",
     linkText: "Contact Sales",
     gradient: "from-amber-500/20 to-orange-500/20",
@@ -80,8 +80,7 @@ export function CTASection() {
             Ready to <span className="text-primary">Level Up</span> Your Hosting?
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-            Whether you have questions, need support, or want to discuss a custom solution, 
-            we're here to help you succeed.
+            Have questions or need a custom solution? We're here to help.
           </p>
         </motion.div>
 
