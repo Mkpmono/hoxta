@@ -40,8 +40,8 @@ export function DdosHero() {
 
           {/* Value proposition */}
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
-            Multi-layered DDoS protection that keeps your infrastructure online. 
-            Always-on mitigation with zero performance impact and real-time threat intelligence.
+            Powerful DDoS protection that keeps your services running.
+            Always-on mitigation with zero slowdown and real-time threat alerts.
           </p>
 
           {/* CTAs */}

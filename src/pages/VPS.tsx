@@ -41,9 +41,9 @@ export default function VPS() {
       {/* Hero Section */}
       <HostingHero
         badge="VPS Hosting"
-        headline="High-Performance"
+        headline="Powerful"
         highlightedText="VPS Hosting"
-        description="Virtual private servers with dedicated resources, full root access, and enterprise-grade infrastructure. Scale instantly with guaranteed performance."
+        description="Virtual servers with dedicated resources, full root access, and reliable performance. Scale instantly as you grow."
         promotion={{
           text: "Launch Promo",
           discount: "25% OFF First 3 Months",
@@ -59,7 +59,7 @@ export default function VPS() {
       {/* Pricing Plans */}
       <PricingPlans
         title="VPS Hosting Plans"
-        subtitle="Dedicated resources that are never shared or oversold. All plans include root access, DDoS protection, and 24/7 support."
+        subtitle="Dedicated resources that are never shared. All plans include root access, DDoS protection, and 24/7 support."
         plans={vpsHostingPlans}
         productSlug="vps"
       />
@@ -67,19 +67,19 @@ export default function VPS() {
       {/* Why Choose Section */}
       <FeatureGrid
         title="Why Choose Hoxta VPS"
-        subtitle="Enterprise-grade virtual servers built for performance and reliability."
+        subtitle="Reliable virtual servers built for performance."
         features={vpsHostingFeatures}
       />
 
       {/* Content Section - What is VPS */}
       <ContentSection
         title="What is VPS Hosting?"
-        description="A Virtual Private Server (VPS) gives you dedicated resources within a virtualized environment. Unlike shared hosting, your CPU, RAM, and storage are guaranteed and not affected by other users on the same physical server."
+        description="A Virtual Private Server gives you dedicated resources in a virtualized environment. Unlike shared hosting, your CPU, RAM, and storage are guaranteed — not affected by other users."
         points={[
-          "Guaranteed CPU cores and RAM allocation",
+          "Guaranteed CPU cores and RAM",
           "Isolated environment from other users",
           "Full root access for complete control",
-          "Ideal for growing websites and applications",
+          "Ideal for growing websites and apps",
         ]}
         icon={Server}
       />
@@ -87,11 +87,11 @@ export default function VPS() {
       {/* Content Section - Performance */}
       <ContentSection
         title="Blazing-Fast Performance"
-        description="Our VPS infrastructure is built on enterprise-grade hardware with NVMe SSD storage, delivering exceptional I/O performance for demanding applications and databases."
+        description="Our VPS runs on top-tier hardware with NVMe storage, delivering great I/O for demanding apps and databases."
         points={[
-          "Latest-gen Intel Xeon and AMD EPYC processors",
-          "Pure NVMe SSD storage for maximum speed",
-          "High-bandwidth network with low latency",
+          "Latest Intel Xeon and AMD EPYC processors",
+          "Pure NVMe SSD storage for speed",
+          "High-bandwidth, low-latency network",
           "Instant resource scaling when needed",
         ]}
         icon={Gauge}
@@ -114,11 +114,11 @@ export default function VPS() {
       {/* Content Section - Scalability */}
       <ContentSection
         title="Scale On Demand"
-        description="Start with what you need today and scale instantly as your requirements grow. Upgrade CPU, RAM, or storage without migration or downtime."
+        description="Start with what you need and scale instantly as you grow. Upgrade CPU, RAM, or storage without migration or downtime."
         points={[
           "Instant resource upgrades",
           "No migration required",
-          "Predictable, transparent pricing",
+          "Predictable pricing",
           "Pay only for what you use",
         ]}
         icon={Cpu}
@@ -141,8 +141,8 @@ export default function VPS() {
 
       {/* Cross-sell: Dedicated */}
       <CrossSellBlock
-        headline="For Mission-Critical Workloads"
-        description="Need maximum performance and complete hardware control? Dedicated servers offer full hardware isolation with no virtualization overhead."
+        headline="Need Even More Power?"
+        description="For maximum performance and full hardware control, dedicated servers offer complete isolation with no virtualization overhead."
         benefits={["Full hardware control", "No shared resources", "Maximum performance"]}
         ctaText="View Dedicated Servers"
         ctaHref="/dedicated-servers"
@@ -159,7 +159,7 @@ export default function VPS() {
       {/* Final CTA */}
       <FinalCTA
         title="Ready to Deploy Your VPS?"
-        subtitle="Get started in minutes with our high-performance virtual servers. 24/7 support included."
+        subtitle="Get started in minutes with reliable virtual servers. 24/7 support included."
       />
     </Layout>
   );
