@@ -254,6 +254,495 @@ const gamesData = {
             { question: 'Can I use Valheim Plus?', answer: 'Yes! Valheim Plus is fully supported and can be installed with one click from our control panel.' },
             { question: 'How do I transfer my world?', answer: 'Simply upload your world files via FTP or our file manager. We provide easy instructions for the process.' }
         ]
+    },
+    // ============================================
+    // NEW GAMES
+    // ============================================
+    metin2: {
+        id: 'metin2',
+        slug: 'metin2',
+        title: 'Metin2',
+        coverImage: '/assets/img/games/metin2-cover.jpg',
+        pricingDisplay: '$0.40/slot',
+        priceValue: 0.40,
+        pricingUnit: 'slot',
+        shortDescription: 'Classic MMORPG private servers',
+        fullDescription: 'Host your own Metin2 private server with our optimized hosting. Perfect for custom content, unique events, and building your own MMORPG community.',
+        tags: ['MMORPG', 'Private Server', 'Custom Content', 'PvP'],
+        category: 'mmo',
+        popular: false,
+        heroPoints: [
+            'Pre-configured server files',
+            'MySQL database included',
+            'Custom content support',
+            'DDoS protection included'
+        ],
+        features: [
+            'Full database access',
+            'Custom client support',
+            'Event scheduler',
+            'Admin tools included',
+            'Automatic backups',
+            'MySQL optimization',
+            'Low-latency network',
+            '24/7 uptime'
+        ],
+        plans: [
+            { name: 'Starter', slots: 100, ram: '4GB', storage: '40GB NVMe', price: 15.00, features: ['100 players', 'Basic setup', 'Daily backups'] },
+            { name: 'Standard', slots: 300, ram: '8GB', storage: '80GB NVMe', price: 30.00, popular: true, features: ['300 players', 'Full customization', 'Hourly backups'] },
+            { name: 'Premium', slots: 500, ram: '16GB', storage: '150GB NVMe', price: 55.00, features: ['500 players', 'Priority support', 'All features'] },
+            { name: 'Enterprise', slots: 1000, ram: '32GB', storage: '300GB NVMe', price: 95.00, features: ['1000+ players', 'Dedicated resources', 'Custom configs'] }
+        ],
+        faqs: [
+            { question: 'Can I use my own server files?', answer: 'Yes! You can upload your own Metin2 server files or use our pre-configured templates.' },
+            { question: 'Is a database included?', answer: 'Absolutely. Every Metin2 server includes a MySQL database with phpMyAdmin access.' },
+            { question: 'Do you support custom clients?', answer: 'Yes, we support all custom clients and content modifications.' }
+        ]
+    },
+    cs16: {
+        id: 'cs16',
+        slug: 'cs16',
+        title: 'Counter-Strike 1.6',
+        coverImage: '/assets/img/games/cs16-cover.jpg',
+        pricingDisplay: '$0.30/slot',
+        priceValue: 0.30,
+        pricingUnit: 'slot',
+        shortDescription: 'Classic CS 1.6 servers',
+        fullDescription: 'Keep the legend alive with Counter-Strike 1.6 servers. Perfect for nostalgic gameplay, public servers, and competitive matches.',
+        tags: ['Classic', 'FPS', 'Competitive', 'Mods'],
+        category: 'fps',
+        popular: false,
+        heroPoints: [
+            'AMX Mod X support',
+            'Anti-cheat ready',
+            'Custom maps & skins',
+            'Low ping guaranteed'
+        ],
+        features: [
+            'AMX Mod X pre-installed',
+            'Custom map support',
+            'HLTV broadcasting',
+            'Anti-cheat integration',
+            'RCON access',
+            'Automatic restarts',
+            'FastDL included',
+            'Low-latency network'
+        ],
+        plans: [
+            { name: 'Public', slots: 16, storage: '10GB NVMe', price: 4.00, features: ['16 slots', 'AMX Mod X', 'FastDL'] },
+            { name: 'Community', slots: 24, storage: '15GB NVMe', price: 6.00, popular: true, features: ['24 slots', 'Custom mods', 'HLTV ready'] },
+            { name: 'Competitive', slots: 32, storage: '20GB NVMe', price: 9.00, features: ['32 slots', 'Anti-cheat', 'Priority support'] }
+        ],
+        faqs: [
+            { question: 'Do you support AMX Mod X?', answer: 'Yes! AMX Mod X comes pre-installed with popular plugins ready to use.' },
+            { question: 'Can I add custom maps and skins?', answer: 'Absolutely. Upload custom content via FTP and use FastDL for quick downloads.' },
+            { question: 'Is HLTV supported?', answer: 'Yes, you can enable HLTV for match broadcasting and demo recording.' }
+        ]
+    },
+    'farming-simulator-25': {
+        id: 'farmingsim25',
+        slug: 'farming-simulator-25',
+        title: 'Farming Simulator 25',
+        coverImage: '/assets/img/games/farmingsim25-cover.jpg',
+        pricingDisplay: '$0.70/slot',
+        priceValue: 0.70,
+        pricingUnit: 'slot',
+        shortDescription: 'Multiplayer farming servers',
+        fullDescription: 'Build your farming empire together. Host dedicated Farming Simulator 25 servers for seamless multiplayer farming with friends and community.',
+        tags: ['Simulation', 'Multiplayer', 'Mods', 'Co-op'],
+        category: 'other',
+        popular: true,
+        badge: 'NEW',
+        heroPoints: [
+            'Mod support included',
+            'Save game management',
+            'Easy configuration',
+            'Crossplay compatible'
+        ],
+        features: [
+            'Full mod support',
+            'Save file management',
+            'Server configuration GUI',
+            'Automatic updates',
+            'Password protection',
+            'Admin controls',
+            'Backup management',
+            '24/7 uptime'
+        ],
+        plans: [
+            { name: 'Farm', slots: 8, ram: '4GB', storage: '30GB NVMe', price: 10.00, features: ['8 players', 'Mods supported', 'Daily backups'] },
+            { name: 'Ranch', slots: 16, ram: '8GB', storage: '60GB NVMe', price: 18.00, popular: true, features: ['16 players', 'Full mod support', 'Hourly backups'] },
+            { name: 'Estate', slots: 32, ram: '16GB', storage: '120GB NVMe', price: 35.00, features: ['32 players', 'Priority support', 'All features'] }
+        ],
+        faqs: [
+            { question: 'Can I install mods?', answer: 'Yes! Full mod support is included. Upload mods via FTP or our file manager.' },
+            { question: 'How do I transfer my save game?', answer: 'Simply upload your save files via FTP to continue your farm on our servers.' },
+            { question: 'Is crossplay supported?', answer: 'Yes, our servers support crossplay between PC platforms.' }
+        ]
+    },
+    terraria: {
+        id: 'terraria',
+        slug: 'terraria',
+        title: 'Terraria',
+        coverImage: '/assets/img/games/terraria-cover.jpg',
+        pricingDisplay: '$0.35/slot',
+        priceValue: 0.35,
+        pricingUnit: 'slot',
+        shortDescription: '2D sandbox adventure servers',
+        fullDescription: 'Explore, build, and fight together in Terraria. Our dedicated servers offer smooth gameplay for your adventures with friends.',
+        tags: ['Sandbox', 'Adventure', 'Co-op', 'Mods'],
+        category: 'sandbox',
+        popular: true,
+        heroPoints: [
+            'tModLoader support',
+            'World management',
+            'Journey Mode compatible',
+            'Easy server commands'
+        ],
+        features: [
+            'tModLoader support',
+            'World file management',
+            'Console commands',
+            'Automatic backups',
+            'Password protection',
+            'Player whitelist',
+            'Automatic updates',
+            'Low-latency network'
+        ],
+        plans: [
+            { name: 'Small World', slots: 8, ram: '2GB', storage: '10GB NVMe', price: 4.00, features: ['8 players', 'Any world size', 'Daily backups'] },
+            { name: 'Medium World', slots: 16, ram: '4GB', storage: '20GB NVMe', price: 7.00, popular: true, features: ['16 players', 'tModLoader', 'Hourly backups'] },
+            { name: 'Large World', slots: 32, ram: '8GB', storage: '40GB NVMe', price: 12.00, features: ['32 players', 'Full mod support', 'Priority support'] }
+        ],
+        faqs: [
+            { question: 'Do you support tModLoader?', answer: 'Yes! tModLoader is fully supported for modded Terraria gameplay.' },
+            { question: 'Can I upload my existing world?', answer: 'Absolutely. Upload your world files via FTP to continue your adventure.' },
+            { question: 'Is Journey Mode supported?', answer: 'Yes, all game modes including Journey Mode are supported.' }
+        ]
+    },
+    unturned: {
+        id: 'unturned',
+        slug: 'unturned',
+        title: 'Unturned',
+        coverImage: '/assets/img/games/unturned-cover.jpg',
+        pricingDisplay: '$0.25/slot',
+        priceValue: 0.25,
+        pricingUnit: 'slot',
+        shortDescription: 'Free-to-play survival servers',
+        fullDescription: 'Survive the zombie apocalypse in this popular free-to-play game. Host custom Unturned servers with full mod and plugin support.',
+        tags: ['Survival', 'Zombies', 'Free-to-Play', 'Mods'],
+        category: 'survival',
+        popular: false,
+        heroPoints: [
+            'Rocket mod support',
+            'Custom maps',
+            'Workshop integration',
+            'Economy plugins'
+        ],
+        features: [
+            'Rocket mod framework',
+            'Steam Workshop mods',
+            'Custom maps',
+            'Economy plugins',
+            'Vehicle spawns',
+            'Automatic backups',
+            'RCON access',
+            'Low-latency network'
+        ],
+        plans: [
+            { name: 'Starter', slots: 16, storage: '15GB NVMe', price: 4.00, features: ['16 slots', 'Rocket mods', 'Daily backups'] },
+            { name: 'Standard', slots: 24, storage: '25GB NVMe', price: 6.00, popular: true, features: ['24 slots', 'Workshop maps', 'Hourly backups'] },
+            { name: 'Premium', slots: 48, storage: '50GB NVMe', price: 10.00, features: ['48 slots', 'Full customization', 'Priority support'] }
+        ],
+        faqs: [
+            { question: 'Do you support Rocket mods?', answer: 'Yes! Rocket mod framework is pre-installed with plugin support.' },
+            { question: 'Can I use Workshop maps?', answer: 'Absolutely. Steam Workshop integration makes adding custom maps easy.' },
+            { question: 'Are economy plugins supported?', answer: 'Yes, all popular economy and shop plugins are fully supported.' }
+        ]
+    },
+    enshrouded: {
+        id: 'enshrouded',
+        slug: 'enshrouded',
+        title: 'Enshrouded',
+        coverImage: '/assets/img/games/enshrouded-cover.jpg',
+        pricingDisplay: '$0.80/slot',
+        priceValue: 0.80,
+        pricingUnit: 'slot',
+        shortDescription: 'Survival action RPG servers',
+        fullDescription: 'Explore the mysterious lands of Enshrouded with friends. Our dedicated servers provide the performance needed for smooth co-op gameplay.',
+        tags: ['Survival', 'RPG', 'Co-op', 'Building'],
+        category: 'survival',
+        popular: true,
+        badge: 'NEW',
+        heroPoints: [
+            'Easy save management',
+            'World configuration',
+            'Automatic updates',
+            'Low-latency hosting'
+        ],
+        features: [
+            'World save management',
+            'Server configuration',
+            'Password protection',
+            'Automatic updates',
+            'Admin commands',
+            'Backup management',
+            'Performance tuned',
+            '24/7 uptime'
+        ],
+        plans: [
+            { name: 'Squad', slots: 8, ram: '8GB', storage: '30GB NVMe', price: 12.00, features: ['8 players', 'Easy setup', 'Daily backups'] },
+            { name: 'Guild', slots: 16, ram: '16GB', storage: '60GB NVMe', price: 22.00, popular: true, features: ['16 players', 'Custom settings', 'Hourly backups'] }
+        ],
+        faqs: [
+            { question: 'How many players can join?', answer: 'Enshrouded currently supports up to 16 players on dedicated servers.' },
+            { question: 'Can I transfer my save?', answer: 'Yes! Upload your save files via FTP to continue your world on our servers.' },
+            { question: 'Are updates automatic?', answer: 'Yes, we automatically update your server when new game updates are released.' }
+        ]
+    },
+    'ark-ascended': {
+        id: 'ark-ascended',
+        slug: 'ark-ascended',
+        title: 'ARK: Survival Ascended',
+        coverImage: '/assets/img/games/ark-ascended-cover.jpg',
+        pricingDisplay: '$1.50/slot',
+        priceValue: 1.50,
+        pricingUnit: 'slot',
+        shortDescription: 'Next-gen ARK servers',
+        fullDescription: 'Experience ARK like never before with Survival Ascended. Our high-performance servers handle the demanding Unreal Engine 5 requirements.',
+        tags: ['Survival', 'Dinosaurs', 'Mods', 'UE5'],
+        category: 'survival',
+        popular: true,
+        badge: 'HOT',
+        heroPoints: [
+            'UE5 optimized hosting',
+            'Mod support via CurseForge',
+            'Cluster server support',
+            'Cross-platform play'
+        ],
+        features: [
+            'Unreal Engine 5 optimized',
+            'CurseForge mod support',
+            'Cluster configurations',
+            'Cross-platform ready',
+            'Automatic updates',
+            'Admin commands',
+            'Backup management',
+            'High-performance hardware'
+        ],
+        plans: [
+            { name: 'Starter', slots: 20, ram: '16GB', storage: '100GB NVMe', price: 30.00, features: ['20 slots', 'Any map', 'Basic mods'] },
+            { name: 'Standard', slots: 50, ram: '24GB', storage: '200GB NVMe', price: 55.00, popular: true, features: ['50 slots', 'Full mod support', 'Cluster ready'] },
+            { name: 'Premium', slots: 100, ram: '32GB', storage: '400GB NVMe', price: 95.00, features: ['100 slots', 'Multiple maps', 'Priority support'] },
+            { name: 'Cluster', slots: 'Unlimited', ram: '64GB+', storage: '1TB NVMe', price: 180.00, features: ['Full cluster', 'All maps', 'Dedicated resources'] }
+        ],
+        faqs: [
+            { question: 'How much RAM do I need?', answer: 'ARK: SA is very demanding. We recommend at least 16GB RAM for small servers, 24GB+ for modded.' },
+            { question: 'Are mods supported?', answer: 'Yes! We support CurseForge mods for ARK: Survival Ascended.' },
+            { question: 'Can I run a cluster?', answer: 'Absolutely. We support full cluster configurations for multi-map play.' }
+        ]
+    },
+    'among-us': {
+        id: 'amongus',
+        slug: 'among-us',
+        title: 'Among Us',
+        coverImage: '/assets/img/games/amongus-cover.jpg',
+        pricingDisplay: '$0.20/slot',
+        priceValue: 0.20,
+        pricingUnit: 'slot',
+        shortDescription: 'Private lobby hosting',
+        fullDescription: 'Host private Among Us lobbies for your community. Perfect for events, streams, and playing with friends without random interruptions.',
+        tags: ['Party', 'Social Deduction', 'Private', 'Mods'],
+        category: 'other',
+        popular: false,
+        heroPoints: [
+            'Private lobby hosting',
+            'Custom settings',
+            'Mod support available',
+            'Perfect for events'
+        ],
+        features: [
+            'Private lobbies',
+            'Custom game settings',
+            'Password protection',
+            'Low-latency connections',
+            'Event hosting',
+            'Mod compatibility',
+            'Easy administration',
+            '24/7 availability'
+        ],
+        plans: [
+            { name: 'Party', slots: 15, storage: '5GB NVMe', price: 3.00, features: ['15 players', 'Private lobby', 'Custom settings'] },
+            { name: 'Event', slots: 30, storage: '10GB NVMe', price: 5.00, popular: true, features: ['30 players', 'Multiple lobbies', 'Mod support'] }
+        ],
+        faqs: [
+            { question: 'How do private lobbies work?', answer: 'You get a dedicated lobby code that only your invited players can use.' },
+            { question: 'Are mods like Town of Us supported?', answer: 'Yes, mod support is available for enhanced gameplay experiences.' },
+            { question: 'Can I use this for streaming?', answer: 'Absolutely! Our servers are perfect for streamer events and content creation.' }
+        ]
+    },
+    ragemp: {
+        id: 'ragemp',
+        slug: 'ragemp',
+        title: 'RageMP',
+        coverImage: '/assets/img/games/ragemp-cover.jpg',
+        pricingDisplay: '$1.30/slot',
+        priceValue: 1.30,
+        pricingUnit: 'slot',
+        shortDescription: 'GTA V multiplayer mod servers',
+        fullDescription: 'Create your own GTA V multiplayer experience with RageMP. Full scripting support for roleplay, racing, and custom game modes.',
+        tags: ['GTA V', 'Roleplay', 'Multiplayer', 'Custom Scripts'],
+        category: 'roleplay',
+        popular: false,
+        heroPoints: [
+            'C# and JavaScript scripting',
+            'High player capacity',
+            'Custom game modes',
+            'Voice chat support'
+        ],
+        features: [
+            'C#/JS scripting',
+            'MySQL database',
+            'Voice chat ready',
+            'Custom game modes',
+            'High performance',
+            'Automatic backups',
+            'Full control panel',
+            'DDoS protection'
+        ],
+        plans: [
+            { name: 'Starter', slots: 50, cpu: '2 vCores', ram: '4GB', storage: '30GB NVMe', price: 25.00, features: ['50 slots', 'Basic scripts', 'Daily backups'] },
+            { name: 'Standard', slots: 100, cpu: '4 vCores', ram: '8GB', storage: '60GB NVMe', price: 45.00, popular: true, features: ['100 slots', 'Full scripting', 'Hourly backups'] },
+            { name: 'Premium', slots: 200, cpu: '6 vCores', ram: '16GB', storage: '120GB NVMe', price: 80.00, features: ['200 slots', 'Priority support', 'All features'] },
+            { name: 'Enterprise', slots: 500, cpu: '8 vCores', ram: '32GB', storage: '250GB NVMe', price: 150.00, features: ['500 slots', 'Maximum resources', 'Custom configs'] }
+        ],
+        faqs: [
+            { question: 'Which scripting languages are supported?', answer: 'RageMP supports C# and JavaScript for server-side scripting.' },
+            { question: 'Is voice chat included?', answer: 'Yes, RageMP has built-in voice chat support for immersive roleplay.' },
+            { question: 'How does this compare to FiveM?', answer: 'RageMP offers different scripting languages and some unique features. Both are great for GTA V multiplayer.' }
+        ]
+    },
+    samp: {
+        id: 'samp',
+        slug: 'samp',
+        title: 'SA-MP',
+        coverImage: '/assets/img/games/samp-cover.jpg',
+        pricingDisplay: '$0.25/slot',
+        priceValue: 0.25,
+        pricingUnit: 'slot',
+        shortDescription: 'GTA San Andreas multiplayer',
+        fullDescription: 'The original GTA multiplayer experience. Host SA-MP servers for classic roleplay, freeroam, and custom game modes.',
+        tags: ['GTA SA', 'Roleplay', 'Classic', 'Multiplayer'],
+        category: 'roleplay',
+        popular: false,
+        heroPoints: [
+            'Pawn scripting support',
+            'Classic RP experience',
+            'High player capacity',
+            'Low resource usage'
+        ],
+        features: [
+            'Pawn scripting',
+            'MySQL support',
+            'Custom game modes',
+            'Anti-cheat support',
+            'RCON access',
+            'Automatic backups',
+            'Low-latency network',
+            '24/7 uptime'
+        ],
+        plans: [
+            { name: 'Starter', slots: 50, storage: '10GB NVMe', price: 8.00, features: ['50 slots', 'Pawn scripts', 'Daily backups'] },
+            { name: 'Standard', slots: 100, storage: '20GB NVMe', price: 14.00, popular: true, features: ['100 slots', 'MySQL included', 'Hourly backups'] },
+            { name: 'Premium', slots: 200, storage: '40GB NVMe', price: 25.00, features: ['200 slots', 'Priority support', 'All features'] },
+            { name: 'Enterprise', slots: 500, storage: '80GB NVMe', price: 45.00, features: ['500 slots', 'Maximum resources', 'Custom configs'] }
+        ],
+        faqs: [
+            { question: 'Do you support Pawn scripting?', answer: 'Yes! Full Pawn scripting support for custom game modes and features.' },
+            { question: 'Can I run roleplay servers?', answer: 'Absolutely. SA-MP is perfect for classic GTA roleplay communities.' },
+            { question: 'Is MySQL included?', answer: 'Yes, MySQL database is included for player data and server persistence.' }
+        ]
+    },
+    'mta-sa': {
+        id: 'mtasa',
+        slug: 'mta-sa',
+        title: 'MTA: San Andreas',
+        coverImage: '/assets/img/games/mtasa-cover.jpg',
+        pricingDisplay: '$0.30/slot',
+        priceValue: 0.30,
+        pricingUnit: 'slot',
+        shortDescription: 'Multi Theft Auto servers',
+        fullDescription: 'The most advanced GTA San Andreas multiplayer platform. Host MTA:SA servers with powerful Lua scripting for any game mode.',
+        tags: ['GTA SA', 'Racing', 'Roleplay', 'Lua Scripting'],
+        category: 'roleplay',
+        popular: false,
+        heroPoints: [
+            'Lua scripting engine',
+            'Advanced sync technology',
+            'Custom resources',
+            'Built-in map editor'
+        ],
+        features: [
+            'Lua scripting',
+            'MySQL database',
+            'Custom resources',
+            'Map editor support',
+            'Anti-cheat included',
+            'Automatic backups',
+            'Resource management',
+            '24/7 uptime'
+        ],
+        plans: [
+            { name: 'Starter', slots: 50, storage: '15GB NVMe', price: 10.00, features: ['50 slots', 'Lua scripts', 'Daily backups'] },
+            { name: 'Standard', slots: 100, storage: '30GB NVMe', price: 18.00, popular: true, features: ['100 slots', 'MySQL included', 'Hourly backups'] },
+            { name: 'Premium', slots: 200, storage: '60GB NVMe', price: 32.00, features: ['200 slots', 'Priority support', 'All features'] },
+            { name: 'Enterprise', slots: 500, storage: '120GB NVMe', price: 55.00, features: ['500 slots', 'Maximum resources', 'Custom configs'] }
+        ],
+        faqs: [
+            { question: 'What scripting language does MTA use?', answer: 'MTA uses Lua for both server-side and client-side scripting.' },
+            { question: 'Is it good for racing servers?', answer: 'Yes! MTA is famous for its racing community and has excellent vehicle sync.' },
+            { question: 'How does it compare to SA-MP?', answer: 'MTA offers more advanced features and Lua scripting, while SA-MP uses Pawn. Both are great choices.' }
+        ]
+    },
+    'day-of-dragons': {
+        id: 'dayofdragons',
+        slug: 'day-of-dragons',
+        title: 'Day of Dragons',
+        coverImage: '/assets/img/games/dayofdragons-cover.jpg',
+        pricingDisplay: '$0.60/slot',
+        priceValue: 0.60,
+        pricingUnit: 'slot',
+        shortDescription: 'Dragon survival servers',
+        fullDescription: 'Fly as a dragon and survive in a fantasy world. Host your own Day of Dragons server for your dragon community.',
+        tags: ['Survival', 'Dragons', 'Multiplayer', 'Fantasy'],
+        category: 'survival',
+        popular: false,
+        heroPoints: [
+            'Easy server setup',
+            'Custom configurations',
+            'World management',
+            'Regular updates'
+        ],
+        features: [
+            'Server configuration',
+            'World management',
+            'Password protection',
+            'Automatic updates',
+            'Admin commands',
+            'Backup management',
+            'Performance optimized',
+            '24/7 uptime'
+        ],
+        plans: [
+            { name: 'Nest', slots: 20, ram: '4GB', storage: '20GB NVMe', price: 10.00, features: ['20 players', 'Easy setup', 'Daily backups'] },
+            { name: 'Clan', slots: 50, ram: '8GB', storage: '40GB NVMe', price: 22.00, popular: true, features: ['50 players', 'Custom settings', 'Hourly backups'] },
+            { name: 'Kingdom', slots: 100, ram: '16GB', storage: '80GB NVMe', price: 40.00, features: ['100 players', 'Priority support', 'All features'] }
+        ],
+        faqs: [
+            { question: 'How many players can join?', answer: 'Our plans support up to 100 players. Contact us for larger servers.' },
+            { question: 'Can I configure the server settings?', answer: 'Yes! Full access to server configuration via our control panel.' },
+            { question: 'Are updates automatic?', answer: 'Yes, we automatically update your server when new game updates are released.' }
+        ]
     }
 };
 

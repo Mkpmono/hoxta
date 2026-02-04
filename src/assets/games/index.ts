@@ -25,6 +25,19 @@ export const gameCoverImages: Record<string, string> = {
   palworld: palworldCover,
   '7-days-to-die': sevenDtdCover,
   'project-zomboid': projectZomboidCover,
+  // New games - using placeholder until actual cover images are added
+  metin2: '',
+  cs16: '',
+  farmingsim25: '',
+  terraria: '',
+  unturned: '',
+  enshrouded: '',
+  arkAscended: '',
+  amongus: '',
+  ragemp: '',
+  samp: '',
+  mtasa: '',
+  dayofdragons: '',
 };
 
 export {
