@@ -1,6 +1,7 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import { Monitor, Apple, ShoppingCart, Eye } from "lucide-react";
+import { Monitor, Apple, ShoppingCart, Eye, Gamepad2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { GameServer } from "@/data/gameServersData";
 import { gameServerProducts } from "@/data/products";
@@ -32,6 +33,7 @@ function getDefaultPlanForGame(gameSlug: string): { planId: string; productSlug:
 export function GameCard({ game, index }: GameCardProps) {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const [imageError, setImageError] = useState(false);
 
   const handleOrderNow = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -59,12 +61,20 @@ export function GameCard({ game, index }: GameCardProps) {
       <div className="glass-card overflow-hidden transition-all duration-300 hover:border-primary/40 hover:shadow-[0_8px_40px_rgba(25,195,255,0.15)] hover:-translate-y-1">
         {/* Image Container */}
         <Link to={`/game-servers/${game.slug}`}>
-          <div className="relative h-40 overflow-hidden">
-            <img
-              src={game.coverImage}
-              alt={game.title}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-            />
+          <div className="relative h-40 overflow-hidden bg-card">
+            {!imageError && game.coverImage ? (
+              <img
+                src={game.coverImage}
+                alt={game.title}
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                onError={() => setImageError(true)}
+              />
+            ) : (
+              <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5">
+                <Gamepad2 className="w-12 h-12 text-primary/60 mb-2" />
+                <span className="text-sm font-medium text-muted-foreground">{game.title}</span>
+              </div>
+            )}
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
             
             {/* Popular Badge */}
