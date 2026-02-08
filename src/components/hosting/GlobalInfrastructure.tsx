@@ -1,21 +1,18 @@
 import { motion } from "framer-motion";
 import { MapPin, Zap, Globe, Shield, Server, Cpu, Network, RefreshCw, Activity } from "lucide-react";
-import networkMapImage from "@/assets/network-map.png";
+import { NetworkMap } from "./NetworkMap";
 
 interface GlobalInfrastructureProps {
   title?: string;
   subtitle?: string;
 }
 
-const infrastructureCapabilities = [
+const networkHighlights = [
   { icon: Network, text: "Anycast Network Architecture" },
   { icon: Cpu, text: "Enterprise-grade NVMe nodes" },
   { icon: RefreshCw, text: "Automated failover & redundancy" },
   { icon: Server, text: "Tier III+ datacenter standards" },
   { icon: Activity, text: "Instant provisioning" },
-];
-
-const networkHighlights = [
   { icon: Zap, text: "Low latency by design" },
   { icon: Shield, text: "Built-in DDoS protection" },
   { icon: Globe, text: "Scalable on demand" },
@@ -46,124 +43,64 @@ export function GlobalInfrastructure({
           <p className="text-muted-foreground max-w-2xl mx-auto">{subtitle}</p>
         </motion.div>
 
-        {/* Network Map Visual */}
+        {/* Animated Network Map */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mb-12 relative"
+          className="mb-12"
         >
           <div className="glass-card p-4 md:p-6 overflow-hidden">
-            <div className="relative rounded-xl overflow-hidden">
-              <img 
-                src={networkMapImage} 
-                alt="Global Network Infrastructure Map" 
-                className="w-full h-auto object-cover rounded-lg"
-              />
-              {/* Overlay gradient for better integration */}
-              <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent pointer-events-none" />
-              
-              {/* Data center location indicators */}
-              <div className="absolute inset-0 pointer-events-none">
-                {/* Europe - Frankfurt */}
-                <div className="absolute top-[35%] left-[48%] animate-pulse">
-                  <div className="w-3 h-3 bg-primary rounded-full shadow-lg shadow-primary/50" />
-                </div>
-                {/* Europe - Amsterdam */}
-                <div className="absolute top-[32%] left-[46%] animate-pulse" style={{ animationDelay: '0.2s' }}>
-                  <div className="w-2.5 h-2.5 bg-primary rounded-full shadow-lg shadow-primary/50" />
-                </div>
-                {/* USA - East */}
-                <div className="absolute top-[38%] left-[22%] animate-pulse" style={{ animationDelay: '0.4s' }}>
-                  <div className="w-3 h-3 bg-primary rounded-full shadow-lg shadow-primary/50" />
-                </div>
-                {/* USA - West */}
-                <div className="absolute top-[40%] left-[15%] animate-pulse" style={{ animationDelay: '0.6s' }}>
-                  <div className="w-2.5 h-2.5 bg-primary rounded-full shadow-lg shadow-primary/50" />
-                </div>
-                {/* Asia - Singapore */}
-                <div className="absolute top-[55%] left-[75%] animate-pulse" style={{ animationDelay: '0.8s' }}>
-                  <div className="w-3 h-3 bg-primary rounded-full shadow-lg shadow-primary/50" />
-                </div>
-                {/* Australia */}
-                <div className="absolute top-[72%] left-[82%] animate-pulse" style={{ animationDelay: '1s' }}>
-                  <div className="w-2.5 h-2.5 bg-primary rounded-full shadow-lg shadow-primary/50" />
-                </div>
-              </div>
-            </div>
+            <NetworkMap />
           </div>
         </motion.div>
 
-        {/* Clean 2-column layout: Capabilities left, KPIs + Highlights right */}
+        {/* Stats + Features Grid */}
         <div className="grid lg:grid-cols-2 gap-6">
-          {/* Left: Infrastructure Capabilities */}
+          {/* Left: 2x2 KPI Grid */}
+          <div className="grid grid-cols-2 gap-4">
+            {stats.map((stat, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.1 }}
+                className="glass-card p-5 text-center"
+              >
+                <stat.icon className="w-5 h-5 text-primary mx-auto mb-2" />
+                <div className="text-2xl md:text-3xl font-bold text-foreground">{stat.value}</div>
+                <div className="text-xs text-muted-foreground">{stat.label}</div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Right: Network Highlights Grid */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="glass-card p-6 md:p-8"
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="glass-card p-6"
           >
-            <h3 className="text-xl font-semibold text-foreground mb-6">Infrastructure Capabilities</h3>
-            <ul className="space-y-4">
-              {infrastructureCapabilities.map((item, index) => (
-                <motion.li
+            <h3 className="text-lg font-semibold text-foreground mb-4">Infrastructure Capabilities</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {networkHighlights.map((item, index) => (
+                <motion.div
                   key={index}
                   initial={{ opacity: 0, x: -10 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                  className="flex items-center gap-4 p-3 rounded-lg bg-background/30 border border-border/30 hover:border-primary/30 transition-colors"
+                  transition={{ duration: 0.3, delay: 0.3 + index * 0.05 }}
+                  className="flex items-center gap-3 text-sm text-muted-foreground"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <item.icon className="w-5 h-5 text-primary" />
-                  </div>
-                  <span className="font-medium text-foreground">{item.text}</span>
-                </motion.li>
-              ))}
-            </ul>
-          </motion.div>
-
-          {/* Right: KPIs + Network Highlights */}
-          <div className="space-y-6">
-            {/* 2x2 KPI Grid */}
-            <div className="grid grid-cols-2 gap-4">
-              {stats.map((stat, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: index * 0.1 }}
-                  className="glass-card p-5 text-center"
-                >
-                  <stat.icon className="w-5 h-5 text-primary mx-auto mb-2" />
-                  <div className="text-2xl md:text-3xl font-bold text-foreground">{stat.value}</div>
-                  <div className="text-xs text-muted-foreground">{stat.label}</div>
+                  <item.icon className="w-4 h-4 text-primary flex-shrink-0" />
+                  <span>{item.text}</span>
                 </motion.div>
               ))}
             </div>
-
-            {/* Network Highlights */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="glass-card p-6"
-            >
-              <h3 className="text-lg font-semibold text-foreground mb-4">Network Highlights</h3>
-              <ul className="space-y-3">
-                {networkHighlights.map((item, index) => (
-                  <li key={index} className="flex items-center gap-3 text-sm text-muted-foreground">
-                    <item.icon className="w-4 h-4 text-primary flex-shrink-0" />
-                    <span>{item.text}</span>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
