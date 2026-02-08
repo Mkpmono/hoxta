@@ -5,6 +5,7 @@ export { FeatureGrid, type Feature } from './FeatureGrid';
 export { ContentSection } from './ContentSection';
 export { HowItWorks } from './HowItWorks';
 export { GlobalInfrastructure } from './GlobalInfrastructure';
+export { NetworkMap } from './NetworkMap';
 export { PlanComparison } from './PlanComparison';
 export { FAQAccordion, type FAQItem } from './FAQAccordion';
 export { FinalCTA } from './FinalCTA';
