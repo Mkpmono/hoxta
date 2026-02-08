@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { MapPin, Zap, Globe, Shield, Server, Cpu, Network, RefreshCw, Activity } from "lucide-react";
+import networkMapImage from "@/assets/network-map.png";
 
 interface GlobalInfrastructureProps {
   title?: string;
@@ -43,6 +44,55 @@ export function GlobalInfrastructure({
         >
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">{title}</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">{subtitle}</p>
+        </motion.div>
+
+        {/* Network Map Visual */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="mb-12 relative"
+        >
+          <div className="glass-card p-4 md:p-6 overflow-hidden">
+            <div className="relative rounded-xl overflow-hidden">
+              <img 
+                src={networkMapImage} 
+                alt="Global Network Infrastructure Map" 
+                className="w-full h-auto object-cover rounded-lg"
+              />
+              {/* Overlay gradient for better integration */}
+              <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent pointer-events-none" />
+              
+              {/* Data center location indicators */}
+              <div className="absolute inset-0 pointer-events-none">
+                {/* Europe - Frankfurt */}
+                <div className="absolute top-[35%] left-[48%] animate-pulse">
+                  <div className="w-3 h-3 bg-primary rounded-full shadow-lg shadow-primary/50" />
+                </div>
+                {/* Europe - Amsterdam */}
+                <div className="absolute top-[32%] left-[46%] animate-pulse" style={{ animationDelay: '0.2s' }}>
+                  <div className="w-2.5 h-2.5 bg-primary rounded-full shadow-lg shadow-primary/50" />
+                </div>
+                {/* USA - East */}
+                <div className="absolute top-[38%] left-[22%] animate-pulse" style={{ animationDelay: '0.4s' }}>
+                  <div className="w-3 h-3 bg-primary rounded-full shadow-lg shadow-primary/50" />
+                </div>
+                {/* USA - West */}
+                <div className="absolute top-[40%] left-[15%] animate-pulse" style={{ animationDelay: '0.6s' }}>
+                  <div className="w-2.5 h-2.5 bg-primary rounded-full shadow-lg shadow-primary/50" />
+                </div>
+                {/* Asia - Singapore */}
+                <div className="absolute top-[55%] left-[75%] animate-pulse" style={{ animationDelay: '0.8s' }}>
+                  <div className="w-3 h-3 bg-primary rounded-full shadow-lg shadow-primary/50" />
+                </div>
+                {/* Australia */}
+                <div className="absolute top-[72%] left-[82%] animate-pulse" style={{ animationDelay: '1s' }}>
+                  <div className="w-2.5 h-2.5 bg-primary rounded-full shadow-lg shadow-primary/50" />
+                </div>
+              </div>
+            </div>
+          </div>
         </motion.div>
 
         {/* Clean 2-column layout: Capabilities left, KPIs + Highlights right */}
