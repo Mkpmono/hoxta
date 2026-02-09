@@ -11,14 +11,14 @@ interface ServerLocation {
 }
 
 const serverLocations: ServerLocation[] = [
-  { id: "uk", name: "London", country: "UK", x: 46.5, y: 25, isPrimary: true },
-  { id: "nl", name: "Amsterdam", country: "Netherlands", x: 48.5, y: 23, isPrimary: true },
-  { id: "de", name: "Frankfurt", country: "Germany", x: 50.5, y: 26, isPrimary: true },
-  { id: "ro", name: "Bucharest", country: "Romania", x: 55, y: 30, isPrimary: true },
-  { id: "fr", name: "Paris", country: "France", x: 47.5, y: 28 },
-  { id: "us-east", name: "New York", country: "USA", x: 27, y: 32 },
-  { id: "us-west", name: "Los Angeles", country: "USA", x: 14, y: 36 },
-  { id: "sg", name: "Singapore", country: "Singapore", x: 76, y: 58 },
+  { id: "uk", name: "London", country: "UK", x: 47, y: 28, isPrimary: true },
+  { id: "nl", name: "Amsterdam", country: "Netherlands", x: 49, y: 26.5, isPrimary: true },
+  { id: "de", name: "Frankfurt", country: "Germany", x: 51, y: 29, isPrimary: true },
+  { id: "ro", name: "Bucharest", country: "Romania", x: 56, y: 31, isPrimary: true },
+  { id: "fr", name: "Paris", country: "France", x: 48, y: 31 },
+  { id: "us-east", name: "New York", country: "USA", x: 26, y: 33 },
+  { id: "us-west", name: "Los Angeles", country: "USA", x: 16, y: 37 },
+  { id: "sg", name: "Singapore", country: "Singapore", x: 77, y: 55 },
 ];
 
 const connections = [
