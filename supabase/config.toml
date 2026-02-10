@@ -20,3 +20,6 @@ verify_jwt = false
 
 [functions.webhooks]
 verify_jwt = false
+
+[functions.status-check]
+verify_jwt = false
