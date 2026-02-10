@@ -153,40 +153,6 @@ export default function Login() {
             </button>
           </form>
 
-          {/* Demo Login Buttons */}
-          <div className="mt-6 pt-6 border-t border-border/50">
-            <p className="text-xs text-muted-foreground text-center mb-4">Quick demo access</p>
-            <div className="grid grid-cols-3 gap-2">
-              <button
-                onClick={() => handleDemoLogin("client")}
-                className="flex flex-col items-center justify-center gap-1 px-3 py-2.5 rounded-lg bg-muted/50 border border-border hover:border-primary/50 text-foreground text-xs font-medium transition-all hover:bg-muted"
-              >
-                <User className="w-4 h-4 text-primary" />
-                Client
-              </button>
-              <button
-                onClick={() => handleDemoLogin("admin")}
-                className="flex flex-col items-center justify-center gap-1 px-3 py-2.5 rounded-lg bg-muted/50 border border-border hover:border-primary/50 text-foreground text-xs font-medium transition-all hover:bg-muted"
-              >
-                <Shield className="w-4 h-4 text-primary" />
-                Admin
-              </button>
-              <button
-                onClick={() => handleDemoLogin("owner")}
-                className="flex flex-col items-center justify-center gap-1 px-3 py-2.5 rounded-lg bg-muted/50 border border-border hover:border-yellow-500/50 text-foreground text-xs font-medium transition-all hover:bg-muted"
-              >
-                <Crown className="w-4 h-4 text-yellow-500" />
-                Owner
-              </button>
-            </div>
-          </div>
-
-          {/* Demo Mode Notice */}
-          <div className="mt-6 p-3 rounded-lg bg-primary/5 border border-primary/10">
-            <p className="text-xs text-center text-muted-foreground">
-              <span className="text-primary font-medium">Demo mode only.</span> Replace with real authentication later.
-            </p>
-          </div>
         </div>
 
         <p className="text-center text-sm text-muted-foreground mt-6">
