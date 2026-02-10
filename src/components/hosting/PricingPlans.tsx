@@ -77,11 +77,7 @@ export function PricingPlans({
     <section id="pricing" className="py-20 md:py-28">
       <div className="container mx-auto px-4 md:px-6">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+        <div
           className="text-center mb-12"
         >
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">{title}</h2>
@@ -113,7 +109,7 @@ export function PricingPlans({
               </span>
             </button>
           </div>
-        </motion.div>
+        </div>
 
         {/* Plans Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
@@ -121,10 +117,8 @@ export function PricingPlans({
             {plans.map((plan, index) => (
               <motion.div
                 key={plan.id || plan.name}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                initial={{ opacity: 1, y: 0 }}
+                animate={{ opacity: 1, y: 0 }}
                 className={`relative glass-card p-6 flex flex-col ${
                   plan.popular ? "border-primary/50 shadow-glow ring-1 ring-primary/20" : ""
                 }`}
