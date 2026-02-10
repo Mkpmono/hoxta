@@ -14,6 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
+      blog_posts: {
+        Row: {
+          author: string
+          author_role: string | null
+          category: string
+          content: string
+          created_at: string
+          excerpt: string | null
+          id: string
+          image_url: string | null
+          is_featured: boolean
+          is_published: boolean
+          read_time: string | null
+          slug: string
+          tags: string[] | null
+          title: string
+          updated_at: string
+          views: number
+        }
+        Insert: {
+          author?: string
+          author_role?: string | null
+          category?: string
+          content?: string
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean
+          is_published?: boolean
+          read_time?: string | null
+          slug: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+          views?: number
+        }
+        Update: {
+          author?: string
+          author_role?: string | null
+          category?: string
+          content?: string
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean
+          is_published?: boolean
+          read_time?: string | null
+          slug?: string
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+          views?: number
+        }
+        Relationships: []
+      }
       kb_articles: {
         Row: {
           category_id: string | null
@@ -21,6 +78,7 @@ export type Database = {
           created_at: string
           excerpt: string | null
           id: string
+          image_url: string | null
           is_featured: boolean
           is_published: boolean
           slug: string
@@ -34,6 +92,7 @@ export type Database = {
           created_at?: string
           excerpt?: string | null
           id?: string
+          image_url?: string | null
           is_featured?: boolean
           is_published?: boolean
           slug: string
@@ -47,6 +106,7 @@ export type Database = {
           created_at?: string
           excerpt?: string | null
           id?: string
+          image_url?: string | null
           is_featured?: boolean
           is_published?: boolean
           slug?: string
