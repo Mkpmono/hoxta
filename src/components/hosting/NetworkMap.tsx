@@ -15,42 +15,42 @@ const serverLocations: ServerLocation[] = [
   { id: "de", x: 51.5, y: 29, isPrimary: true },
   { id: "ro", x: 57, y: 32, isPrimary: true },
   // Europe edge
-  { id: "fr", x: 48, y: 31 },
-  { id: "es", x: 45, y: 35 },
+  { id: "fr", x: 48.5, y: 31 },
+  { id: "es", x: 46, y: 34 },
   { id: "it", x: 51, y: 33 },
   { id: "pl", x: 54, y: 26 },
   { id: "fi", x: 55, y: 20 },
-  { id: "se", x: 52, y: 22 },
-  { id: "no", x: 50, y: 22 },
-  { id: "pt", x: 43, y: 35 },
-  // North America
-  { id: "us-east", x: 26, y: 32 },
-  { id: "us-west", x: 15, y: 36 },
-  { id: "us-mid", x: 20, y: 36 },
-  { id: "us-chi", x: 22, y: 31 },
-  { id: "us-mia", x: 24, y: 40 },
-  { id: "ca", x: 24, y: 28 },
-  // Central & South America
-  { id: "mx", x: 18, y: 42 },
-  { id: "br", x: 32, y: 55 },
-  { id: "cl", x: 28, y: 58 },
-  // Asia
-  { id: "ae", x: 63, y: 38 },
-  { id: "il", x: 58, y: 35 },
-  { id: "in", x: 69, y: 42 },
-  { id: "in2", x: 71, y: 47 },
-  { id: "sg", x: 76, y: 50 },
-  { id: "hk", x: 80, y: 40 },
-  { id: "tw", x: 82, y: 38 },
-  { id: "jp", x: 85, y: 30 },
-  { id: "kr", x: 83, y: 30 },
-  // Oceania
-  { id: "au", x: 87, y: 58 },
-  { id: "nz", x: 91, y: 60 },
-  // Africa
-  { id: "ng", x: 49, y: 47 },
+  { id: "se", x: 52.5, y: 22 },
+  { id: "no", x: 50.5, y: 21 },
+  { id: "pt", x: 44, y: 34 },
+  // North America — shifted inland
+  { id: "us-east", x: 25, y: 32 },
+  { id: "us-west", x: 14, y: 35 },
+  { id: "us-mid", x: 19, y: 35 },
+  { id: "us-chi", x: 21, y: 31 },
+  { id: "us-mia", x: 23, y: 39 },
+  { id: "ca", x: 22, y: 28 },
+  // Central & South America — on land
+  { id: "mx", x: 17, y: 42 },
+  { id: "br", x: 34, y: 54 },
+  { id: "cl", x: 30, y: 57 },
+  // Middle East & Asia
+  { id: "ae", x: 63, y: 37 },
+  { id: "il", x: 58, y: 34 },
+  { id: "in", x: 69, y: 41 },
+  { id: "in2", x: 71, y: 46 },
+  { id: "sg", x: 75, y: 49 },
+  { id: "hk", x: 79, y: 39 },
+  { id: "tw", x: 81, y: 37 },
+  { id: "jp", x: 84, y: 30 },
+  { id: "kr", x: 82, y: 30 },
+  // Oceania — on land
+  { id: "au", x: 86, y: 57 },
+  { id: "nz", x: 92, y: 59 },
+  // Africa — on continent
+  { id: "ng", x: 50, y: 47 },
   { id: "ke", x: 58, y: 50 },
-  { id: "za", x: 54, y: 60 },
+  { id: "za", x: 55, y: 59 },
 ];
 
 const connections: [string, string][] = [
