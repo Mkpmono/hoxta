@@ -8,49 +8,51 @@ interface ServerLocation {
   isPrimary?: boolean;
 }
 
+// Coordinates in SVG viewBox 0-100 x, 0-50 y (matching 2:1 container)
+// Calibrated to equirectangular world map background
 const serverLocations: ServerLocation[] = [
-  // Primary DCs
-  { id: "uk", x: 47, y: 28, isPrimary: true },
-  { id: "nl", x: 49.5, y: 26, isPrimary: true },
-  { id: "de", x: 51.5, y: 29, isPrimary: true },
-  { id: "ro", x: 57, y: 32, isPrimary: true },
+  // Primary DCs — Europe
+  { id: "uk", x: 47, y: 13, isPrimary: true },
+  { id: "nl", x: 49, y: 12, isPrimary: true },
+  { id: "de", x: 51, y: 13.5, isPrimary: true },
+  { id: "ro", x: 56, y: 16, isPrimary: true },
   // Europe edge
-  { id: "fr", x: 48.5, y: 31 },
-  { id: "es", x: 46, y: 34 },
-  { id: "it", x: 51, y: 33 },
-  { id: "pl", x: 54, y: 26 },
-  { id: "fi", x: 55, y: 20 },
-  { id: "se", x: 52.5, y: 22 },
-  { id: "no", x: 50.5, y: 21 },
-  { id: "pt", x: 44, y: 34 },
-  // North America — shifted inland
-  { id: "us-east", x: 25, y: 32 },
-  { id: "us-west", x: 14, y: 35 },
-  { id: "us-mid", x: 19, y: 35 },
-  { id: "us-chi", x: 21, y: 31 },
-  { id: "us-mia", x: 23, y: 39 },
-  { id: "ca", x: 22, y: 28 },
-  // Central & South America — on land
-  { id: "mx", x: 17, y: 42 },
-  { id: "br", x: 34, y: 54 },
-  { id: "cl", x: 30, y: 57 },
+  { id: "fr", x: 48.5, y: 15 },
+  { id: "es", x: 46, y: 18 },
+  { id: "it", x: 51, y: 17 },
+  { id: "pl", x: 54, y: 12 },
+  { id: "fi", x: 55, y: 6 },
+  { id: "se", x: 52, y: 7.5 },
+  { id: "no", x: 50, y: 7 },
+  { id: "pt", x: 44, y: 18 },
+  // North America
+  { id: "us-east", x: 25, y: 16 },
+  { id: "us-west", x: 14, y: 18 },
+  { id: "us-mid", x: 19, y: 19 },
+  { id: "us-chi", x: 21, y: 16 },
+  { id: "us-mia", x: 23, y: 23 },
+  { id: "ca", x: 22, y: 14 },
+  // Central & South America
+  { id: "mx", x: 16, y: 26 },
+  { id: "br", x: 34, y: 38 },
+  { id: "cl", x: 29, y: 41 },
   // Middle East & Asia
-  { id: "ae", x: 63, y: 37 },
-  { id: "il", x: 58, y: 34 },
-  { id: "in", x: 69, y: 41 },
-  { id: "in2", x: 71, y: 46 },
-  { id: "sg", x: 75, y: 49 },
-  { id: "hk", x: 79, y: 39 },
-  { id: "tw", x: 81, y: 37 },
-  { id: "jp", x: 84, y: 30 },
-  { id: "kr", x: 82, y: 30 },
-  // Oceania — on land
-  { id: "au", x: 86, y: 57 },
-  { id: "nz", x: 92, y: 59 },
-  // Africa — on continent
-  { id: "ng", x: 50, y: 47 },
-  { id: "ke", x: 58, y: 50 },
-  { id: "za", x: 55, y: 59 },
+  { id: "ae", x: 63, y: 22 },
+  { id: "il", x: 58, y: 19 },
+  { id: "in", x: 69, y: 25 },
+  { id: "in2", x: 71, y: 30 },
+  { id: "sg", x: 75, y: 33 },
+  { id: "hk", x: 79, y: 24 },
+  { id: "tw", x: 81, y: 22 },
+  { id: "jp", x: 84, y: 15 },
+  { id: "kr", x: 82, y: 15 },
+  // Oceania
+  { id: "au", x: 87, y: 42 },
+  { id: "nz", x: 92, y: 44 },
+  // Africa
+  { id: "ng", x: 50, y: 30 },
+  { id: "ke", x: 58, y: 33 },
+  { id: "za", x: 55, y: 43 },
 ];
 
 const connections: [string, string][] = [
@@ -75,11 +77,10 @@ const connections: [string, string][] = [
   ["sg", "hk"], ["hk", "tw"], ["tw", "jp"], ["jp", "kr"], ["hk", "jp"],
   ["de", "ae"], ["ro", "ae"],
   // Oceania
-  ["sg", "au"], ["au", "nz"], ["nz", "au"],
+  ["sg", "au"], ["au", "nz"],
   // Cross-continental long hauls
   ["us-west", "jp"], ["us-west", "hk"],
-  ["ae", "za"], ["ke", "in"],
-  ["au", "nz"], ["sg", "kr"],
+  ["ae", "za"], ["ke", "in"], ["sg", "kr"],
 ];
 
 export function NetworkMap() {
@@ -96,16 +97,16 @@ export function NetworkMap() {
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.7)_100%)]" />
 
       <svg
-        viewBox="0 0 100 80"
+        viewBox="0 0 100 50"
         className="absolute inset-0 w-full h-full"
-        preserveAspectRatio="xMidYMid slice"
+        preserveAspectRatio="xMidYMid meet"
       >
         <defs>
           <clipPath id="mapClip">
-            <rect x="0" y="0" width="100" height="80" />
+            <rect x="0" y="0" width="100" height="50" />
           </clipPath>
           <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="0.35" result="b" />
+            <feGaussianBlur stdDeviation="0.25" result="b" />
             <feMerge>
               <feMergeNode in="b" />
               <feMergeNode in="SourceGraphic" />
@@ -127,7 +128,7 @@ export function NetworkMap() {
             const dx = t.x - f.x;
             const dy = t.y - f.y;
             const dist = Math.sqrt(dx * dx + dy * dy);
-            const curve = Math.min(dist * 0.2, 5);
+            const curve = Math.min(dist * 0.15, 3);
             const mx = (f.x + t.x) / 2;
             const my = (f.y + t.y) / 2 - curve;
             const pathD = `M${f.x},${f.y} Q${mx},${my} ${t.x},${t.y}`;
@@ -138,13 +139,13 @@ export function NetworkMap() {
                   d={pathD}
                   fill="none"
                   stroke="hsl(var(--primary))"
-                  strokeWidth="0.08"
-                  strokeOpacity="0.18"
+                  strokeWidth="0.06"
+                  strokeOpacity="0.2"
                   initial={{ pathLength: 0 }}
                   animate={{ pathLength: 1 }}
                   transition={{ duration: 1, delay: i * 0.04 }}
                 />
-                <circle r="0.15" fill="hsl(var(--primary))" opacity="0">
+                <circle r="0.1" fill="hsl(var(--primary))" opacity="0">
                   <animateMotion dur={`${3 + (i % 5)}s`} repeatCount="indefinite" path={pathD} />
                   <animate attributeName="opacity" values="0;0.6;0.6;0" dur={`${3 + (i % 5)}s`} repeatCount="indefinite" />
                 </circle>
@@ -157,19 +158,19 @@ export function NetworkMap() {
             <g key={loc.id}>
               {loc.isPrimary && (
                 <>
-                  <circle cx={loc.x} cy={loc.y} r="1" fill="none" stroke="hsl(var(--primary))" strokeWidth="0.06">
-                    <animate attributeName="r" values="0.6;2;0.6" dur="3s" repeatCount="indefinite" begin={`${i * 0.5}s`} />
+                  <circle cx={loc.x} cy={loc.y} r="0.8" fill="none" stroke="hsl(var(--primary))" strokeWidth="0.04">
+                    <animate attributeName="r" values="0.4;1.5;0.4" dur="3s" repeatCount="indefinite" begin={`${i * 0.5}s`} />
                     <animate attributeName="opacity" values="0.5;0;0.5" dur="3s" repeatCount="indefinite" begin={`${i * 0.5}s`} />
                   </circle>
-                  <circle cx={loc.x} cy={loc.y} r="0.4" fill="none" stroke="hsl(var(--primary))" strokeWidth="0.04">
-                    <animate attributeName="r" values="0.4;1.4;0.4" dur="3s" repeatCount="indefinite" begin={`${i * 0.5 + 0.6}s`} />
+                  <circle cx={loc.x} cy={loc.y} r="0.3" fill="none" stroke="hsl(var(--primary))" strokeWidth="0.03">
+                    <animate attributeName="r" values="0.3;1;0.3" dur="3s" repeatCount="indefinite" begin={`${i * 0.5 + 0.6}s`} />
                     <animate attributeName="opacity" values="0.3;0;0.3" dur="3s" repeatCount="indefinite" begin={`${i * 0.5 + 0.6}s`} />
                   </circle>
                 </>
               )}
               <motion.circle
                 cx={loc.x} cy={loc.y}
-                r={loc.isPrimary ? 1.2 : 0.5}
+                r={loc.isPrimary ? 0.8 : 0.35}
                 fill="url(#nodeGlow)"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -177,7 +178,7 @@ export function NetworkMap() {
               />
               <motion.circle
                 cx={loc.x} cy={loc.y}
-                r={loc.isPrimary ? 0.4 : 0.18}
+                r={loc.isPrimary ? 0.3 : 0.12}
                 fill="hsl(var(--primary))"
                 filter="url(#glow)"
                 initial={{ scale: 0, opacity: 0 }}
@@ -186,7 +187,7 @@ export function NetworkMap() {
               />
               <motion.circle
                 cx={loc.x} cy={loc.y}
-                r={loc.isPrimary ? 0.16 : 0.07}
+                r={loc.isPrimary ? 0.12 : 0.05}
                 fill="white"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 0.95 }}
