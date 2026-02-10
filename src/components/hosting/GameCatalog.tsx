@@ -3,17 +3,46 @@ import { motion } from "framer-motion";
 import { Search, Filter, ChevronDown } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { GameCard } from "./GameCard";
-import { gameServers, gameCategories, gameSortOptions } from "@/data/gameServersData";
+import { gameServers, gameCategories, gameSortOptions, GameServer } from "@/data/gameServersData";
+import { useGameServers } from "@/hooks/useGameServers";
 
 export function GameCatalog() {
   const { t } = useTranslation();
+  const { games: dbGames, loading: dbLoading } = useGameServers();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortBy, setSortBy] = useState("popular");
   const [showFilters, setShowFilters] = useState(false);
 
+  // Merge DB games (published) with static fallback
+  const allGames: GameServer[] = useMemo(() => {
+    if (dbGames.length > 0) {
+      // Map DB games to GameServer interface
+      return dbGames.filter(g => g.is_published).map(g => ({
+        id: g.slug,
+        slug: g.slug,
+        title: g.title,
+        coverImage: g.cover_image_url || "",
+        pricingDisplay: g.pricing_display,
+        priceValue: Number(g.price_value),
+        pricingUnit: g.pricing_unit as any,
+        shortDescription: g.short_description,
+        fullDescription: g.full_description,
+        tags: g.tags || [],
+        category: g.category as any,
+        os: g.os as any,
+        popular: g.popular,
+        features: g.features || [],
+        plans: g.plans || [],
+        faqs: g.faqs || [],
+        heroPoints: g.hero_points || [],
+      }));
+    }
+    return gameServers;
+  }, [dbGames]);
+
   const filteredAndSortedGames = useMemo(() => {
-    let result = [...gameServers];
+    let result = [...allGames];
 
     // Filter by search query
     if (searchQuery) {

@@ -71,6 +71,78 @@ export type Database = {
         }
         Relationships: []
       }
+      game_servers: {
+        Row: {
+          category: string
+          cover_image_url: string | null
+          created_at: string
+          faqs: Json
+          features: string[] | null
+          full_description: string
+          hero_points: string[] | null
+          id: string
+          is_published: boolean
+          os: string
+          plans: Json
+          popular: boolean
+          price_value: number
+          pricing_display: string
+          pricing_unit: string
+          short_description: string
+          slug: string
+          sort_order: number | null
+          tags: string[] | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          cover_image_url?: string | null
+          created_at?: string
+          faqs?: Json
+          features?: string[] | null
+          full_description?: string
+          hero_points?: string[] | null
+          id?: string
+          is_published?: boolean
+          os?: string
+          plans?: Json
+          popular?: boolean
+          price_value?: number
+          pricing_display?: string
+          pricing_unit?: string
+          short_description?: string
+          slug: string
+          sort_order?: number | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          cover_image_url?: string | null
+          created_at?: string
+          faqs?: Json
+          features?: string[] | null
+          full_description?: string
+          hero_points?: string[] | null
+          id?: string
+          is_published?: boolean
+          os?: string
+          plans?: Json
+          popular?: boolean
+          price_value?: number
+          pricing_display?: string
+          pricing_unit?: string
+          short_description?: string
+          slug?: string
+          sort_order?: number | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       kb_articles: {
         Row: {
           category_id: string | null

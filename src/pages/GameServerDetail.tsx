@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Gamepad2, Shield, Zap, Globe, Settings, HardDrive, Clock, Check, Server } from "lucide-react";
 import { gameServers } from "@/data/gameServersData";
 import { getProductBySlug, getPlanPrice } from "@/data/products";
+import { useGameServerBySlug } from "@/hooks/useGameServers";
 import {
   HostingHero,
   TrustBar,
@@ -21,32 +22,67 @@ import { SEOHead, ServiceSchema, FAQSchema, OrganizationSchema } from "@/compone
 export default function GameServerDetail() {
   const { gameSlug } = useParams<{ gameSlug: string }>();
   const { t } = useTranslation();
-  const game = gameServers.find((g) => g.slug === gameSlug);
+  const { game: dbGame, loading: dbLoading } = useGameServerBySlug(gameSlug);
+
+  // Try DB first, fallback to static
+  const staticGame = gameServers.find((g) => g.slug === gameSlug);
+
+  if (dbLoading) {
+    return <Layout><section className="pt-32 pb-20"><div className="container mx-auto px-4 text-center"><p className="text-muted-foreground">Loading...</p></div></section></Layout>;
+  }
+
+  // Build a unified game object from DB or static
+  const game = dbGame ? {
+    id: dbGame.slug,
+    slug: dbGame.slug,
+    title: dbGame.title,
+    coverImage: dbGame.cover_image_url || "",
+    pricingDisplay: dbGame.pricing_display,
+    priceValue: Number(dbGame.price_value),
+    pricingUnit: dbGame.pricing_unit as any,
+    shortDescription: dbGame.short_description,
+    fullDescription: dbGame.full_description,
+    tags: dbGame.tags || [],
+    category: dbGame.category as any,
+    os: dbGame.os as any,
+    popular: dbGame.popular,
+    features: dbGame.features || [],
+    plans: dbGame.plans || [],
+    faqs: dbGame.faqs || [],
+    heroPoints: dbGame.hero_points || [],
+  } : staticGame;
 
   if (!game) {
     return <Navigate to="/game-servers" replace />;
   }
 
-  // Canonical product + plans come ONLY from the unified product catalog
+  // Try products.ts for checkout-compatible plans, fallback to game's own plans
   const product = getProductBySlug(game.slug);
-  if (!product) {
-    return <Navigate to="/game-servers" replace />;
-  }
-
-  // Pricing plans built from product catalog plan IDs (critical for /checkout validation)
-  const plans = product.plans.map((p) => ({
-    id: p.id,
-    productSlug: product.slug,
-    name: p.name,
-    description: p.description,
-    monthlyPrice: getPlanPrice(p, "monthly"),
-    yearlyPrice: getPlanPrice(p, "annually"),
-    popular: p.popular || false,
-    features: p.features.map((f) => ({
-      label: f.label,
-      value: typeof f.value === "boolean" ? f.value : String(f.value),
-    })),
-  }));
+  
+  const plans = product
+    ? product.plans.map((p) => ({
+        id: p.id,
+        productSlug: product.slug,
+        name: p.name,
+        description: p.description,
+        monthlyPrice: getPlanPrice(p, "monthly"),
+        yearlyPrice: getPlanPrice(p, "annually"),
+        popular: p.popular || false,
+        features: p.features.map((f) => ({
+          label: f.label,
+          value: typeof f.value === "boolean" ? f.value : String(f.value),
+        })),
+      }))
+    : (game.plans || []).map((p: any, i: number) => ({
+        id: `${game.slug}-plan-${i}`,
+        productSlug: game.slug,
+        name: p.name || `Plan ${i + 1}`,
+        description: p.ram ? `${p.ram} RAM` : undefined,
+        monthlyPrice: p.price || 0,
+        yearlyPrice: (p.price || 0) * 10,
+        popular: p.popular || false,
+        features: (p.features || []).map((f: string) => ({ label: f, value: true })),
+      }));
 
   // Build feature grid from game features
   const featureIcons = [Settings, Shield, HardDrive, Clock, Zap, Globe, Server, Check];
