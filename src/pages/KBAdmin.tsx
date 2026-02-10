@@ -43,13 +43,23 @@ function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
-      toast.error(error.message);
+    if (isSignUp) {
+      const { error } = await supabase.auth.signUp({ email, password });
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success("Account created! Ask the site owner to grant you admin access.");
+      }
+    } else {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        toast.error(error.message);
+      }
     }
     setLoading(false);
   };
@@ -61,22 +71,28 @@ function AdminLogin() {
           <div className="glass-card p-8">
             <div className="flex items-center gap-3 mb-6">
               <ShieldAlert className="w-6 h-6 text-primary" />
-              <h1 className="text-2xl font-bold text-foreground">KB Admin Login</h1>
+              <h1 className="text-2xl font-bold text-foreground">{isSignUp ? "Create Admin Account" : "KB Admin Login"}</h1>
             </div>
-            <form onSubmit={handleLogin} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="text-sm text-muted-foreground mb-1 block">Email</label>
                 <Input type="email" value={email} onChange={e => setEmail(e.target.value)} required />
               </div>
               <div>
                 <label className="text-sm text-muted-foreground mb-1 block">Password</label>
-                <Input type="password" value={password} onChange={e => setPassword(e.target.value)} required />
+                <Input type="password" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} />
               </div>
               <Button type="submit" className="w-full btn-glow" disabled={loading}>
                 <LogIn className="w-4 h-4 mr-2" />
-                {loading ? "Logging in..." : "Log In"}
+                {loading ? "Please wait..." : isSignUp ? "Sign Up" : "Log In"}
               </Button>
             </form>
+            <button
+              onClick={() => setIsSignUp(!isSignUp)}
+              className="w-full text-center text-sm text-muted-foreground hover:text-primary mt-4 transition-colors"
+            >
+              {isSignUp ? "Already have an account? Log in" : "Need an account? Sign up"}
+            </button>
           </div>
         </div>
       </section>
