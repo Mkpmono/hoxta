@@ -4,44 +4,72 @@ import networkMapBg from "@/assets/network-map-bg.png";
 interface ServerLocation {
   id: string;
   name: string;
-  country: string;
-  x: number; // % from left
-  y: number; // % from top
+  x: number;
+  y: number;
   isPrimary?: boolean;
 }
 
-// Coordinates as percentages matching a standard equirectangular world map
-// The background image covers roughly: longitude -170 to 180, latitude 80N to 60S
 const serverLocations: ServerLocation[] = [
-  // Primary DCs — spread out in Europe
-  { id: "uk", name: "London", country: "UK", x: 47, y: 26, isPrimary: true },
-  { id: "nl", name: "Amsterdam", country: "Netherlands", x: 49.5, y: 24, isPrimary: true },
-  { id: "de", name: "Frankfurt", country: "Germany", x: 51.5, y: 27, isPrimary: true },
-  { id: "ro", name: "Bucharest", country: "Romania", x: 57, y: 30, isPrimary: true },
-  // Edge nodes — global
-  { id: "fr", name: "Paris", country: "France", x: 48, y: 29 },
-  { id: "es", name: "Madrid", country: "Spain", x: 45, y: 34 },
-  { id: "pl", name: "Warsaw", country: "Poland", x: 54, y: 24 },
-  { id: "fi", name: "Helsinki", country: "Finland", x: 55, y: 17 },
-  { id: "us-east", name: "New York", country: "USA", x: 26, y: 32 },
-  { id: "us-west", name: "Los Angeles", country: "USA", x: 14, y: 36 },
-  { id: "us-mid", name: "Dallas", country: "USA", x: 20, y: 36 },
-  { id: "br", name: "São Paulo", country: "Brazil", x: 31, y: 64 },
-  { id: "sg", name: "Singapore", country: "Singapore", x: 76, y: 54 },
-  { id: "jp", name: "Tokyo", country: "Japan", x: 85, y: 30 },
-  { id: "au", name: "Sydney", country: "Australia", x: 88, y: 70 },
-  { id: "in", name: "Mumbai", country: "India", x: 69, y: 42 },
-  { id: "za", name: "Cape Town", country: "S. Africa", x: 52, y: 70 },
-  { id: "ae", name: "Dubai", country: "UAE", x: 63, y: 38 },
+  // Primary DCs
+  { id: "uk", name: "London", x: 47, y: 26, isPrimary: true },
+  { id: "nl", name: "Amsterdam", x: 49.5, y: 24, isPrimary: true },
+  { id: "de", name: "Frankfurt", x: 51.5, y: 27, isPrimary: true },
+  { id: "ro", name: "Bucharest", x: 57, y: 30, isPrimary: true },
+  // Edge nodes — dense global coverage
+  { id: "fr", name: "Paris", x: 48, y: 29 },
+  { id: "es", name: "Madrid", x: 45, y: 34 },
+  { id: "it", name: "Milan", x: 51, y: 31 },
+  { id: "pl", name: "Warsaw", x: 54, y: 24 },
+  { id: "fi", name: "Helsinki", x: 55, y: 17 },
+  { id: "se", name: "Stockholm", x: 52, y: 19 },
+  { id: "no", name: "Oslo", x: 50, y: 19 },
+  { id: "pt", name: "Lisbon", x: 43, y: 34 },
+  { id: "us-east", name: "New York", x: 26, y: 32 },
+  { id: "us-west", name: "Los Angeles", x: 14, y: 36 },
+  { id: "us-mid", name: "Dallas", x: 20, y: 36 },
+  { id: "us-chi", name: "Chicago", x: 22, y: 30 },
+  { id: "us-mia", name: "Miami", x: 24, y: 40 },
+  { id: "ca", name: "Toronto", x: 24, y: 28 },
+  { id: "br", name: "São Paulo", x: 31, y: 64 },
+  { id: "cl", name: "Santiago", x: 27, y: 68 },
+  { id: "mx", name: "Mexico City", x: 18, y: 42 },
+  { id: "sg", name: "Singapore", x: 76, y: 54 },
+  { id: "jp", name: "Tokyo", x: 85, y: 30 },
+  { id: "kr", name: "Seoul", x: 83, y: 30 },
+  { id: "au", name: "Sydney", x: 88, y: 70 },
+  { id: "in", name: "Mumbai", x: 69, y: 42 },
+  { id: "in2", name: "Chennai", x: 71, y: 48 },
+  { id: "za", name: "Cape Town", x: 52, y: 70 },
+  { id: "ng", name: "Lagos", x: 49, y: 50 },
+  { id: "ke", name: "Nairobi", x: 58, y: 54 },
+  { id: "ae", name: "Dubai", x: 63, y: 38 },
+  { id: "il", name: "Tel Aviv", x: 58, y: 35 },
+  { id: "hk", name: "Hong Kong", x: 80, y: 40 },
+  { id: "tw", name: "Taipei", x: 82, y: 38 },
+  { id: "nz", name: "Auckland", x: 93, y: 72 },
 ];
 
 const connections: [string, string][] = [
+  // Europe mesh
   ["uk", "nl"], ["nl", "de"], ["de", "ro"], ["uk", "fr"], ["fr", "es"],
-  ["de", "pl"], ["pl", "fi"], ["nl", "fi"],
+  ["de", "pl"], ["pl", "fi"], ["nl", "fi"], ["fi", "se"], ["se", "no"],
+  ["no", "uk"], ["fr", "it"], ["it", "de"], ["es", "pt"], ["pl", "ro"],
+  ["ro", "il"], ["il", "ae"],
+  // North America mesh
   ["uk", "us-east"], ["us-east", "us-west"], ["us-east", "us-mid"],
-  ["us-east", "br"],
-  ["ro", "ae"], ["ae", "in"], ["in", "sg"], ["sg", "jp"], ["sg", "au"],
-  ["de", "ae"], ["br", "za"], ["ae", "za"],
+  ["us-east", "us-chi"], ["us-chi", "us-west"], ["us-east", "ca"],
+  ["us-mid", "us-mia"], ["us-mia", "mx"], ["us-west", "mx"],
+  // South America
+  ["us-mia", "br"], ["br", "cl"], ["mx", "br"],
+  // Africa
+  ["br", "za"], ["es", "ng"], ["ng", "ke"], ["ke", "za"], ["ae", "ke"],
+  // Middle East & Asia
+  ["ae", "in"], ["in", "in2"], ["in", "sg"], ["sg", "hk"],
+  ["hk", "tw"], ["tw", "jp"], ["jp", "kr"], ["hk", "jp"],
+  ["sg", "au"], ["au", "nz"],
+  // Cross-continental
+  ["de", "ae"], ["ro", "ae"], ["us-west", "jp"], ["us-west", "au"],
+  ["ae", "za"], ["sg", "in2"],
 ];
 
 export function NetworkMap() {
@@ -49,18 +77,14 @@ export function NetworkMap() {
 
   return (
     <div className="relative w-full aspect-[2/1] min-h-[300px] md:min-h-[420px] overflow-hidden rounded-xl bg-[#080c14]">
-      {/* Background map */}
       <img
         src={networkMapBg}
         alt=""
-        className="absolute inset-0 w-full h-full object-cover opacity-30"
+        className="absolute inset-0 w-full h-full object-cover opacity-20"
         loading="lazy"
       />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.7)_100%)]" />
 
-      {/* Vignette overlay */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(0,0,0,0.6)_100%)]" />
-
-      {/* Animated SVG overlay */}
       <svg
         viewBox="0 0 100 80"
         className="absolute inset-0 w-full h-full"
@@ -68,12 +92,16 @@ export function NetworkMap() {
       >
         <defs>
           <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="0.4" result="b" />
+            <feGaussianBlur stdDeviation="0.35" result="b" />
             <feMerge>
               <feMergeNode in="b" />
               <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
+          <radialGradient id="nodeGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.3" />
+            <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0" />
+          </radialGradient>
         </defs>
 
         {/* Connection lines */}
@@ -85,10 +113,9 @@ export function NetworkMap() {
           const dx = t.x - f.x;
           const dy = t.y - f.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          const curve = Math.min(dist * 0.25, 6);
+          const curve = Math.min(dist * 0.2, 5);
           const mx = (f.x + t.x) / 2;
           const my = (f.y + t.y) / 2 - curve;
-
           const pathD = `M${f.x},${f.y} Q${mx},${my} ${t.x},${t.y}`;
 
           return (
@@ -97,90 +124,81 @@ export function NetworkMap() {
                 d={pathD}
                 fill="none"
                 stroke="hsl(var(--primary))"
-                strokeWidth="0.1"
-                strokeOpacity="0.25"
+                strokeWidth="0.08"
+                strokeOpacity="0.18"
                 initial={{ pathLength: 0 }}
                 animate={{ pathLength: 1 }}
-                transition={{ duration: 1.2, delay: i * 0.06 }}
+                transition={{ duration: 1, delay: i * 0.04 }}
               />
-              {/* Pulse traveling along line */}
-              <circle r="0.2" fill="hsl(var(--primary))" opacity="0">
-                <animateMotion dur={`${4 + (i % 4)}s`} repeatCount="indefinite" path={pathD} />
-                <animate attributeName="opacity" values="0;0.7;0.7;0" dur={`${4 + (i % 4)}s`} repeatCount="indefinite" />
+              <circle r="0.15" fill="hsl(var(--primary))" opacity="0">
+                <animateMotion dur={`${3 + (i % 5)}s`} repeatCount="indefinite" path={pathD} />
+                <animate attributeName="opacity" values="0;0.6;0.6;0" dur={`${3 + (i % 5)}s`} repeatCount="indefinite" />
               </circle>
             </g>
           );
         })}
 
-        {/* Server nodes */}
+        {/* Nodes */}
         {serverLocations.map((loc, i) => (
           <g key={loc.id}>
-            {/* Pulse rings for primary */}
             {loc.isPrimary && (
               <>
-                <circle cx={loc.x} cy={loc.y} r="1" fill="none" stroke="hsl(var(--primary))" strokeWidth="0.08">
-                  <animate attributeName="r" values="0.8;2.5;0.8" dur="2.5s" repeatCount="indefinite" begin={`${i * 0.4}s`} />
-                  <animate attributeName="opacity" values="0.6;0;0.6" dur="2.5s" repeatCount="indefinite" begin={`${i * 0.4}s`} />
+                <circle cx={loc.x} cy={loc.y} r="1" fill="none" stroke="hsl(var(--primary))" strokeWidth="0.06">
+                  <animate attributeName="r" values="0.6;2;0.6" dur="3s" repeatCount="indefinite" begin={`${i * 0.5}s`} />
+                  <animate attributeName="opacity" values="0.5;0;0.5" dur="3s" repeatCount="indefinite" begin={`${i * 0.5}s`} />
                 </circle>
-                <circle cx={loc.x} cy={loc.y} r="0.5" fill="none" stroke="hsl(var(--primary))" strokeWidth="0.06">
-                  <animate attributeName="r" values="0.5;1.8;0.5" dur="2.5s" repeatCount="indefinite" begin={`${i * 0.4 + 0.5}s`} />
-                  <animate attributeName="opacity" values="0.4;0;0.4" dur="2.5s" repeatCount="indefinite" begin={`${i * 0.4 + 0.5}s`} />
+                <circle cx={loc.x} cy={loc.y} r="0.4" fill="none" stroke="hsl(var(--primary))" strokeWidth="0.04">
+                  <animate attributeName="r" values="0.4;1.4;0.4" dur="3s" repeatCount="indefinite" begin={`${i * 0.5 + 0.6}s`} />
+                  <animate attributeName="opacity" values="0.3;0;0.3" dur="3s" repeatCount="indefinite" begin={`${i * 0.5 + 0.6}s`} />
                 </circle>
               </>
             )}
-            {/* Glow */}
+            {/* Ambient glow */}
             <motion.circle
               cx={loc.x} cy={loc.y}
-              r={loc.isPrimary ? 0.9 : 0.45}
-              fill="hsl(var(--primary))"
-              fillOpacity={loc.isPrimary ? 0.12 : 0.08}
-              filter="url(#glow)"
+              r={loc.isPrimary ? 1.2 : 0.5}
+              fill="url(#nodeGlow)"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 + i * 0.04 }}
+              transition={{ duration: 0.6, delay: 0.2 + i * 0.03 }}
             />
-            {/* Core */}
+            {/* Core dot */}
             <motion.circle
               cx={loc.x} cy={loc.y}
-              r={loc.isPrimary ? 0.55 : 0.28}
+              r={loc.isPrimary ? 0.4 : 0.18}
               fill="hsl(var(--primary))"
               filter="url(#glow)"
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.4, delay: 0.3 + i * 0.04 }}
+              transition={{ duration: 0.4, delay: 0.3 + i * 0.03 }}
             />
-            {/* White center */}
+            {/* Bright center */}
             <motion.circle
               cx={loc.x} cy={loc.y}
-              r={loc.isPrimary ? 0.22 : 0.12}
+              r={loc.isPrimary ? 0.16 : 0.07}
               fill="white"
               initial={{ opacity: 0 }}
-              animate={{ opacity: 0.9 }}
-              transition={{ duration: 0.3, delay: 0.5 + i * 0.04 }}
+              animate={{ opacity: 0.95 }}
+              transition={{ duration: 0.3, delay: 0.5 + i * 0.03 }}
             />
           </g>
         ))}
       </svg>
 
-      {/* Labels */}
+      {/* Only city name labels for primary DCs — no country */}
       <div className="absolute inset-0 pointer-events-none">
         {serverLocations.filter(l => l.isPrimary).map((loc, i) => (
           <motion.div
             key={loc.id}
             className="absolute -translate-x-1/2"
-            style={{ left: `${loc.x}%`, top: `${loc.y + 3.5}%` }}
+            style={{ left: `${loc.x}%`, top: `${loc.y + 3.2}%` }}
             initial={{ opacity: 0, y: -3 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.8 + i * 0.12 }}
           >
-            <div className="flex flex-col items-center">
-              <span className="text-[8px] md:text-[11px] font-semibold text-primary drop-shadow-[0_0_4px_hsl(var(--primary)/0.5)] whitespace-nowrap">
-                {loc.name}
-              </span>
-              <span className="text-[6px] md:text-[9px] text-muted-foreground/70 whitespace-nowrap">
-                {loc.country}
-              </span>
-            </div>
+            <span className="text-[7px] md:text-[10px] font-medium text-primary/80 drop-shadow-[0_0_6px_hsl(var(--primary)/0.4)] whitespace-nowrap">
+              {loc.name}
+            </span>
           </motion.div>
         ))}
       </div>
@@ -194,11 +212,11 @@ export function NetworkMap() {
       >
         <div className="flex items-center gap-1.5">
           <div className="w-2 h-2 rounded-full bg-primary shadow-[0_0_6px_hsl(var(--primary)/0.5)]" />
-          <span className="text-[9px] md:text-[11px] text-muted-foreground/70">Primary DC</span>
+          <span className="text-[9px] md:text-[11px] text-muted-foreground/60">Primary DC</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-1.5 h-1.5 rounded-full bg-primary/50" />
-          <span className="text-[9px] md:text-[11px] text-muted-foreground/70">Edge Node</span>
+          <div className="w-1 h-1 rounded-full bg-primary/60" />
+          <span className="text-[9px] md:text-[11px] text-muted-foreground/60">Edge Node</span>
         </div>
       </motion.div>
     </div>
