@@ -14,55 +14,72 @@ const serverLocations: ServerLocation[] = [
   { id: "nl", x: 49.5, y: 26, isPrimary: true },
   { id: "de", x: 51.5, y: 29, isPrimary: true },
   { id: "ro", x: 57, y: 32, isPrimary: true },
-  // Edge nodes — all clamped within 5-95 x, 5-75 y
+  // Europe edge
   { id: "fr", x: 48, y: 31 },
-  { id: "es", x: 45, y: 36 },
+  { id: "es", x: 45, y: 35 },
   { id: "it", x: 51, y: 33 },
   { id: "pl", x: 54, y: 26 },
-  { id: "fi", x: 55, y: 19 },
-  { id: "se", x: 52, y: 21 },
-  { id: "no", x: 50, y: 21 },
-  { id: "pt", x: 43, y: 36 },
-  { id: "us-east", x: 26, y: 34 },
-  { id: "us-west", x: 15, y: 38 },
-  { id: "us-mid", x: 20, y: 38 },
-  { id: "us-chi", x: 22, y: 32 },
-  { id: "us-mia", x: 24, y: 42 },
-  { id: "ca", x: 24, y: 30 },
-  { id: "br", x: 31, y: 62 },
-  { id: "cl", x: 27, y: 66 },
-  { id: "mx", x: 18, y: 44 },
-  { id: "sg", x: 76, y: 54 },
-  { id: "jp", x: 84, y: 32 },
-  { id: "kr", x: 82, y: 32 },
-  { id: "au", x: 87, y: 68 },
-  { id: "in", x: 69, y: 44 },
-  { id: "in2", x: 71, y: 50 },
-  { id: "za", x: 52, y: 68 },
-  { id: "ng", x: 49, y: 50 },
-  { id: "ke", x: 58, y: 54 },
-  { id: "ae", x: 63, y: 40 },
-  { id: "il", x: 58, y: 37 },
-  { id: "hk", x: 80, y: 42 },
-  { id: "tw", x: 82, y: 40 },
-  { id: "nz", x: 90, y: 70 },
+  { id: "fi", x: 55, y: 20 },
+  { id: "se", x: 52, y: 22 },
+  { id: "no", x: 50, y: 22 },
+  { id: "pt", x: 43, y: 35 },
+  // North America
+  { id: "us-east", x: 26, y: 32 },
+  { id: "us-west", x: 15, y: 36 },
+  { id: "us-mid", x: 20, y: 36 },
+  { id: "us-chi", x: 22, y: 31 },
+  { id: "us-mia", x: 24, y: 40 },
+  { id: "ca", x: 24, y: 28 },
+  // Central & South America
+  { id: "mx", x: 18, y: 42 },
+  { id: "br", x: 32, y: 55 },
+  { id: "cl", x: 28, y: 58 },
+  // Asia
+  { id: "ae", x: 63, y: 38 },
+  { id: "il", x: 58, y: 35 },
+  { id: "in", x: 69, y: 42 },
+  { id: "in2", x: 71, y: 47 },
+  { id: "sg", x: 76, y: 50 },
+  { id: "hk", x: 80, y: 40 },
+  { id: "tw", x: 82, y: 38 },
+  { id: "jp", x: 85, y: 30 },
+  { id: "kr", x: 83, y: 30 },
+  // Oceania
+  { id: "au", x: 87, y: 58 },
+  { id: "nz", x: 91, y: 60 },
+  // Africa
+  { id: "ng", x: 49, y: 47 },
+  { id: "ke", x: 58, y: 50 },
+  { id: "za", x: 54, y: 60 },
 ];
 
 const connections: [string, string][] = [
+  // Europe mesh
   ["uk", "nl"], ["nl", "de"], ["de", "ro"], ["uk", "fr"], ["fr", "es"],
   ["de", "pl"], ["pl", "fi"], ["nl", "fi"], ["fi", "se"], ["se", "no"],
   ["no", "uk"], ["fr", "it"], ["it", "de"], ["es", "pt"], ["pl", "ro"],
   ["ro", "il"], ["il", "ae"],
-  ["uk", "us-east"], ["us-east", "us-west"], ["us-east", "us-mid"],
-  ["us-east", "us-chi"], ["us-chi", "us-west"], ["us-east", "ca"],
+  // Transatlantic
+  ["uk", "us-east"], ["pt", "us-east"],
+  // North America mesh
+  ["us-east", "us-west"], ["us-east", "us-mid"], ["us-east", "us-chi"],
+  ["us-chi", "us-west"], ["us-east", "ca"], ["ca", "us-chi"],
   ["us-mid", "us-mia"], ["us-mia", "mx"], ["us-west", "mx"],
-  ["us-mia", "br"], ["br", "cl"], ["mx", "br"],
-  ["br", "za"], ["es", "ng"], ["ng", "ke"], ["ke", "za"], ["ae", "ke"],
-  ["ae", "in"], ["in", "in2"], ["in", "sg"], ["sg", "hk"],
-  ["hk", "tw"], ["tw", "jp"], ["jp", "kr"], ["hk", "jp"],
-  ["sg", "au"], ["au", "nz"],
-  ["de", "ae"], ["ro", "ae"], ["us-west", "jp"],
-  ["ae", "za"], ["sg", "in2"],
+  // South America
+  ["us-mia", "br"], ["mx", "br"], ["br", "cl"],
+  // Africa
+  ["es", "ng"], ["ng", "ke"], ["ke", "za"], ["br", "za"], ["br", "ng"],
+  ["ae", "ke"], ["za", "cl"],
+  // Middle East & Asia
+  ["ae", "in"], ["in", "in2"], ["in", "sg"], ["in2", "sg"],
+  ["sg", "hk"], ["hk", "tw"], ["tw", "jp"], ["jp", "kr"], ["hk", "jp"],
+  ["de", "ae"], ["ro", "ae"],
+  // Oceania
+  ["sg", "au"], ["au", "nz"], ["nz", "au"],
+  // Cross-continental long hauls
+  ["us-west", "jp"], ["us-west", "hk"],
+  ["ae", "za"], ["ke", "in"],
+  ["au", "nz"], ["sg", "kr"],
 ];
 
 export function NetworkMap() {
