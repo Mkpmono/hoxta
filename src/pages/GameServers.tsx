@@ -1,6 +1,8 @@
 import { Layout } from "@/components/layout/Layout";
 import { motion } from "framer-motion";
-import { Gamepad2, Shield, Zap, Globe, Headphones, Cpu, Users } from "lucide-react";
+import { Gamepad2, Shield, Zap, Globe, Headphones, Cpu, Users, Plus, Settings } from "lucide-react";
+import { Link } from "react-router-dom";
+import { useKBAdmin } from "@/hooks/useKBAdmin";
 import { GameCatalog } from "@/components/hosting/GameCatalog";
 import {
   TrustBar,
@@ -72,6 +74,8 @@ const gameFAQs = [
 ];
 
 export default function GameServers() {
+  const { isAdmin } = useKBAdmin();
+
   return (
     <Layout>
       {/* SEO */}
@@ -112,6 +116,25 @@ export default function GameServers() {
               High-performance game servers with instant setup, DDoS protection, and 24/7 support. 
               Choose your game and start playing in minutes.
             </p>
+            {isAdmin && (
+              <div className="mt-6 flex justify-center gap-3">
+                <Link
+                  to="/game-admin"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-colors font-medium text-sm border border-primary/20"
+                >
+                  <Settings className="w-4 h-4" /> Manage Games
+                </Link>
+                <Link
+                  to="/game-admin"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl btn-glow font-medium text-sm"
+                  onClick={() => {
+                    // Will open editor in game-admin
+                  }}
+                >
+                  <Plus className="w-4 h-4" /> Add Game
+                </Link>
+              </div>
+            )}
           </motion.div>
         </div>
       </section>
