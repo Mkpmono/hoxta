@@ -16,6 +16,8 @@ function markdownToHtml(md: string): string {
     // bold & italic
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    // images (before links)
+    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="rounded-lg my-4 max-w-full" />')
     // inline code
     .replace(/`([^`]+)`/g, '<code class="px-1.5 py-0.5 bg-primary/10 text-primary rounded text-sm">$1</code>')
     // links
@@ -25,7 +27,7 @@ function markdownToHtml(md: string): string {
     // code blocks
     .replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre class="bg-black/30 border border-border/30 rounded-lg p-4 overflow-x-auto my-4"><code class="text-sm text-foreground/90">$2</code></pre>')
     // paragraphs (lines not already wrapped)
-    .replace(/^(?!<[hluop]|<li|<pre|<code)(.+)$/gm, '<p class="text-muted-foreground leading-relaxed mb-4">$1</p>')
+    .replace(/^(?!<[hluop]|<li|<pre|<code|<img)(.+)$/gm, '<p class="text-muted-foreground leading-relaxed mb-4">$1</p>')
     // wrap consecutive lis in ul
     .replace(/(<li[^>]*>.*?<\/li>\n?)+/g, '<ul class="space-y-1 my-4">$&</ul>');
   return html;
@@ -87,7 +89,10 @@ export default function KBArticle() {
     );
   }
 
-  const htmlContent = DOMPurify.sanitize(markdownToHtml(article.content));
+  const htmlContent = DOMPurify.sanitize(markdownToHtml(article.content), {
+    ALLOWED_TAGS: ['h1', 'h2', 'h3', 'p', 'strong', 'em', 'ul', 'li', 'pre', 'code', 'a', 'img'],
+    ALLOWED_ATTR: ['href', 'class', 'src', 'alt']
+  });
 
   return (
     <Layout>

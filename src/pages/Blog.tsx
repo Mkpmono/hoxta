@@ -1,109 +1,57 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Search, Calendar, Clock, ArrowRight, Tag, User, TrendingUp } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { supabase } from "@/integrations/supabase/client";
 
 interface BlogPost {
   id: string;
   title: string;
-  excerpt: string;
+  slug: string;
+  excerpt: string | null;
   category: string;
   author: string;
-  date: string;
-  readTime: string;
-  image: string;
-  featured?: boolean;
+  image_url: string | null;
   tags: string[];
+  is_featured: boolean;
+  read_time: string | null;
+  created_at: string;
 }
-
-const blogPosts: BlogPost[] = [
-  {
-    id: "optimize-minecraft-server",
-    title: "How to Optimize Your Minecraft Server for Maximum Performance",
-    excerpt: "Learn the best practices for configuring your Minecraft server to handle more players with less lag. From JVM flags to plugin optimization.",
-    category: "Tutorials",
-    author: "Alex Hosting",
-    date: "2026-01-08",
-    readTime: "8 min read",
-    image: "https://images.unsplash.com/photo-1587573088697-b4fa24c18962?w=800&h=400&fit=crop",
-    featured: true,
-    tags: ["Minecraft", "Performance", "Tutorial"],
-  },
-  {
-    id: "ddos-protection-guide",
-    title: "Understanding DDoS Attacks and How We Protect Your Server",
-    excerpt: "A comprehensive guide to DDoS attacks, their types, and how Hoxta's multi-layer protection keeps your services online 24/7.",
-    category: "Security",
-    author: "Security Team",
-    date: "2026-01-05",
-    readTime: "12 min read",
-    image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&h=400&fit=crop",
-    featured: true,
-    tags: ["DDoS", "Security", "Infrastructure"],
-  },
-  {
-    id: "fivem-server-setup",
-    title: "Complete FiveM Server Setup Guide for Beginners",
-    excerpt: "Step-by-step instructions to get your FiveM roleplay server up and running, including resource installation and configuration.",
-    category: "Tutorials",
-    author: "Game Team",
-    date: "2026-01-03",
-    readTime: "15 min read",
-    image: "https://images.unsplash.com/photo-1493711662062-fa541f7f55a4?w=800&h=400&fit=crop",
-    tags: ["FiveM", "GTA V", "Setup Guide"],
-  },
-  {
-    id: "new-frankfurt-datacenter",
-    title: "Announcing Our New Frankfurt Data Center",
-    excerpt: "We're excited to announce the opening of our new Frankfurt data center, bringing lower latency to Central European customers.",
-    category: "Company News",
-    author: "Hoxta Team",
-    date: "2025-12-28",
-    readTime: "4 min read",
-    image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&h=400&fit=crop",
-    tags: ["News", "Infrastructure", "Expansion"],
-  },
-  {
-    id: "vps-vs-dedicated",
-    title: "VPS vs Dedicated Server: Which One Do You Need?",
-    excerpt: "Compare VPS and dedicated servers to understand which hosting solution best fits your project requirements and budget.",
-    category: "Guides",
-    author: "Tech Team",
-    date: "2025-12-20",
-    readTime: "10 min read",
-    image: "https://images.unsplash.com/photo-1597852074816-d933c7d2b988?w=800&h=400&fit=crop",
-    tags: ["VPS", "Dedicated", "Comparison"],
-  },
-  {
-    id: "rust-server-wipes",
-    title: "Managing Rust Server Wipes: Best Practices",
-    excerpt: "Everything you need to know about Rust server wipes, including scheduling, announcements, and keeping your community engaged.",
-    category: "Tutorials",
-    author: "Game Team",
-    date: "2025-12-15",
-    readTime: "7 min read",
-    image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800&h=400&fit=crop",
-    tags: ["Rust", "Server Management", "Community"],
-  },
-];
-
-const categories = ["All", "Tutorials", "Security", "Company News", "Guides"];
 
 export default function Blog() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filteredPosts = blogPosts.filter((post) => {
+  useEffect(() => {
+    const fetchPosts = async () => {
+      const { data } = await supabase
+        .from("blog_posts")
+        .select("id, title, slug, excerpt, category, author, image_url, tags, is_featured, read_time, created_at")
+        .eq("is_published", true)
+        .order("created_at", { ascending: false });
+      if (data) setPosts(data as BlogPost[]);
+      setLoading(false);
+    };
+    fetchPosts();
+  }, []);
+
+  const categories = ["All", ...Array.from(new Set(posts.map(p => p.category)))];
+
+  const filteredPosts = posts.filter((post) => {
     const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
+      (post.excerpt || "").toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = activeCategory === "All" || post.category === activeCategory;
     return matchesSearch && matchesCategory;
   });
 
-  const featuredPosts = blogPosts.filter((post) => post.featured);
+  const featuredPosts = posts.filter((post) => post.is_featured);
+
+  const defaultImage = "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&h=400&fit=crop";
 
   return (
     <Layout>
@@ -162,8 +110,14 @@ export default function Blog() {
             </div>
           </motion.div>
 
+          {loading && (
+            <div className="text-center py-16">
+              <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full mx-auto" />
+            </div>
+          )}
+
           {/* Featured Posts */}
-          {activeCategory === "All" && searchQuery === "" && (
+          {!loading && activeCategory === "All" && searchQuery === "" && featuredPosts.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -175,39 +129,23 @@ export default function Blog() {
                 Featured Articles
               </h2>
               <div className="grid md:grid-cols-2 gap-6">
-                {featuredPosts.map((post, index) => (
+                {featuredPosts.map((post) => (
                   <Link
                     key={post.id}
-                    to={`/blog/${post.id}`}
+                    to={`/blog/${post.slug}`}
                     className="group relative overflow-hidden rounded-2xl bg-card border border-border/50 hover:border-primary/30 transition-all duration-300"
                   >
                     <div className="aspect-[2/1] overflow-hidden">
-                      <img
-                        src={post.image}
-                        alt={post.title}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
+                      <img src={post.image_url || defaultImage} alt={post.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                       <div className="absolute inset-0 bg-gradient-to-t from-card via-card/50 to-transparent" />
                     </div>
                     <div className="absolute bottom-0 left-0 right-0 p-6">
-                      <Badge className="mb-3 bg-primary/20 text-primary border-0">
-                        {post.category}
-                      </Badge>
-                      <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
-                        {post.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
-                        {post.excerpt}
-                      </p>
+                      <Badge className="mb-3 bg-primary/20 text-primary border-0">{post.category}</Badge>
+                      <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">{post.title}</h3>
+                      <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{post.excerpt}</p>
                       <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-3 h-3" />
-                          {new Date(post.date).toLocaleDateString()}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          {post.readTime}
-                        </span>
+                        <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{new Date(post.created_at).toLocaleDateString()}</span>
+                        <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{post.read_time || "5 min read"}</span>
                       </div>
                     </div>
                   </Link>
@@ -217,56 +155,37 @@ export default function Blog() {
           )}
 
           {/* All Posts Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredPosts.map((post, index) => (
-              <motion.div
-                key={post.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.05 }}
-              >
-                <Link
-                  to={`/blog/${post.id}`}
-                  className="group block h-full bg-card rounded-xl border border-border/50 overflow-hidden hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300"
-                >
-                  <div className="aspect-video overflow-hidden">
-                    <img
-                      src={post.image}
-                      alt={post.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  </div>
-                  <div className="p-5">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Badge variant="outline" className="text-xs border-border/50">
-                        {post.category}
-                      </Badge>
+          {!loading && (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredPosts.map((post, index) => (
+                <motion.div key={post.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: index * 0.05 }}>
+                  <Link
+                    to={`/blog/${post.slug}`}
+                    className="group block h-full bg-card rounded-xl border border-border/50 overflow-hidden hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300"
+                  >
+                    <div className="aspect-video overflow-hidden">
+                      <img src={post.image_url || defaultImage} alt={post.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                     </div>
-                    <h3 className="font-semibold text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2">
-                      {post.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
-                      {post.excerpt}
-                    </p>
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <div className="flex items-center gap-3">
-                        <span className="flex items-center gap-1">
-                          <User className="w-3 h-3" />
-                          {post.author}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          {post.readTime}
-                        </span>
+                    <div className="p-5">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Badge variant="outline" className="text-xs border-border/50">{post.category}</Badge>
+                      </div>
+                      <h3 className="font-semibold text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2">{post.title}</h3>
+                      <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{post.excerpt}</p>
+                      <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        <div className="flex items-center gap-3">
+                          <span className="flex items-center gap-1"><User className="w-3 h-3" />{post.author}</span>
+                          <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{post.read_time || "5 min read"}</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          )}
 
-          {filteredPosts.length === 0 && (
+          {!loading && filteredPosts.length === 0 && (
             <div className="text-center py-16">
               <p className="text-muted-foreground">No articles found matching your criteria.</p>
             </div>
@@ -280,18 +199,12 @@ export default function Blog() {
             viewport={{ once: true }}
             className="mt-16 p-8 rounded-2xl bg-gradient-to-br from-primary/10 via-card to-card border border-primary/20 text-center"
           >
-            <h3 className="text-2xl font-bold text-foreground mb-2">
-              Stay Updated
-            </h3>
+            <h3 className="text-2xl font-bold text-foreground mb-2">Stay Updated</h3>
             <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
               Get the latest hosting tips, tutorials, and company news delivered to your inbox.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 bg-background/50"
-              />
+              <Input type="email" placeholder="Enter your email" className="flex-1 bg-background/50" />
               <button className="px-6 py-2 rounded-lg bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-colors shadow-[0_0_20px_rgba(25,195,255,0.3)]">
                 Subscribe
               </button>

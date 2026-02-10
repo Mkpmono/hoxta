@@ -96,6 +96,7 @@ const App = () => (
             <Route path="/kb-admin" element={<KBAdmin />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:postId" element={<BlogPost />} />
+
             
             {/* Auth */}
             <Route path="/panel/login" element={<Login />} />
