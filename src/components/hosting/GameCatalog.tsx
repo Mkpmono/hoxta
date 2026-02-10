@@ -14,31 +14,34 @@ export function GameCatalog() {
   const [sortBy, setSortBy] = useState("popular");
   const [showFilters, setShowFilters] = useState(false);
 
-  // Merge DB games (published) with static fallback
+  // Merge DB games (published) with static data — DB takes priority by slug
   const allGames: GameServer[] = useMemo(() => {
-    if (dbGames.length > 0) {
-      // Map DB games to GameServer interface
-      return dbGames.filter(g => g.is_published).map(g => ({
-        id: g.slug,
-        slug: g.slug,
-        title: g.title,
-        coverImage: g.cover_image_url || "",
-        pricingDisplay: g.pricing_display,
-        priceValue: Number(g.price_value),
-        pricingUnit: g.pricing_unit as any,
-        shortDescription: g.short_description,
-        fullDescription: g.full_description,
-        tags: g.tags || [],
-        category: g.category as any,
-        os: g.os as any,
-        popular: g.popular,
-        features: g.features || [],
-        plans: g.plans || [],
-        faqs: g.faqs || [],
-        heroPoints: g.hero_points || [],
-      }));
-    }
-    return gameServers;
+    const dbPublished = dbGames.filter(g => g.is_published);
+    const dbMapped: GameServer[] = dbPublished.map(g => ({
+      id: g.slug,
+      slug: g.slug,
+      title: g.title,
+      coverImage: g.cover_image_url || "",
+      pricingDisplay: g.pricing_display,
+      priceValue: Number(g.price_value),
+      pricingUnit: g.pricing_unit as any,
+      shortDescription: g.short_description,
+      fullDescription: g.full_description,
+      tags: g.tags || [],
+      category: g.category as any,
+      os: g.os as any,
+      popular: g.popular,
+      features: g.features || [],
+      plans: g.plans || [],
+      faqs: g.faqs || [],
+      heroPoints: g.hero_points || [],
+    }));
+
+    // Add static games that are NOT in DB (by slug)
+    const dbSlugs = new Set(dbMapped.map(g => g.slug));
+    const staticOnly = gameServers.filter(g => !dbSlugs.has(g.slug));
+
+    return [...dbMapped, ...staticOnly];
   }, [dbGames]);
 
   const filteredAndSortedGames = useMemo(() => {
