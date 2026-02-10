@@ -1,11 +1,14 @@
 import { Layout } from "@/components/layout/Layout";
 import { motion } from "framer-motion";
 import { CheckCircle, AlertTriangle, XCircle, RefreshCw } from "lucide-react";
-import { useStatusMonitors, MonitorWithChecks } from "@/hooks/useStatusMonitors";
+import { useStatusMonitors, MonitorWithChecks, TimeRange } from "@/hooks/useStatusMonitors";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 const TIME_RANGES = [
+  { key: "1m", label: "1m" },
+  { key: "5m", label: "5m" },
+  { key: "15m", label: "15m" },
   { key: "30m", label: "30m" },
   { key: "1h", label: "1h" },
   { key: "6h", label: "6h" },
@@ -86,7 +89,7 @@ function MonitorCard({ monitor, timeRange }: { monitor: MonitorWithChecks; timeR
 }
 
 export default function Status() {
-  const [timeRange, setTimeRange] = useState<"30m" | "1h" | "6h" | "24h" | "7d" | "30d">("24h");
+  const [timeRange, setTimeRange] = useState<TimeRange>("24h");
   const { monitors, loading, lastUpdated, refetch } = useStatusMonitors(timeRange);
 
   // Group by category
