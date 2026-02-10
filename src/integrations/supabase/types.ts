@@ -229,6 +229,77 @@ export type Database = {
         }
         Relationships: []
       }
+      status_checks: {
+        Row: {
+          checked_at: string
+          id: string
+          monitor_id: string
+          response_time_ms: number | null
+          status: string
+        }
+        Insert: {
+          checked_at?: string
+          id?: string
+          monitor_id: string
+          response_time_ms?: number | null
+          status?: string
+        }
+        Update: {
+          checked_at?: string
+          id?: string
+          monitor_id?: string
+          response_time_ms?: number | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "status_checks_monitor_id_fkey"
+            columns: ["monitor_id"]
+            isOneToOne: false
+            referencedRelation: "status_monitors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      status_monitors: {
+        Row: {
+          category: string
+          check_interval_seconds: number
+          check_type: string
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          sort_order: number
+          updated_at: string
+          url: string | null
+        }
+        Insert: {
+          category?: string
+          check_interval_seconds?: number
+          check_type?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          sort_order?: number
+          updated_at?: string
+          url?: string | null
+        }
+        Update: {
+          category?: string
+          check_interval_seconds?: number
+          check_type?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          sort_order?: number
+          updated_at?: string
+          url?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
