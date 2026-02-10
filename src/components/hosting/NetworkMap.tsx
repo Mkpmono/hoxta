@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useIsMobile } from "@/hooks/use-mobile";
 import networkMapBg from "@/assets/network-map-bg.png";
 
 interface ServerLocation {
@@ -70,10 +71,20 @@ const connections: [string, string][] = [
 
 export function NetworkMap() {
   const [hovered, setHovered] = useState<string | null>(null);
+  const isMobile = useIsMobile();
   const getById = (id: string) => serverLocations.find(l => l.id === id);
 
+  const handleNodeInteraction = useCallback((id: string) => {
+    if (isMobile) {
+      setHovered(prev => prev === id ? null : id);
+    }
+  }, [isMobile]);
+
   return (
-    <div className="relative w-full aspect-[2/1] min-h-[300px] md:min-h-[420px] overflow-hidden rounded-xl bg-[#080c14]">
+    <div
+      className="relative w-full aspect-[2/1] min-h-[250px] md:min-h-[420px] overflow-hidden rounded-xl bg-[#080c14]"
+      onTouchStart={() => isMobile && setHovered(null)}
+    >
       <img
         src={networkMapBg}
         alt=""
@@ -164,14 +175,16 @@ export function NetworkMap() {
                 initial={{ opacity: 0 }} animate={{ opacity: 0.95 }}
                 transition={{ duration: 0.3, delay: 0.5 + i * 0.03 }}
               />
-              {/* Invisible hit area for hover */}
+              {/* Invisible hit area for hover/tap */}
               <circle
                 cx={loc.x} cy={loc.y}
-                r={loc.isPrimary ? 1.5 : 0.8}
+                r={loc.isPrimary ? 2 : 1.2}
                 fill="transparent"
                 className="cursor-pointer"
-                onMouseEnter={() => setHovered(loc.id)}
-                onMouseLeave={() => setHovered(null)}
+                onMouseEnter={() => !isMobile && setHovered(loc.id)}
+                onMouseLeave={() => !isMobile && setHovered(null)}
+                onClick={(e) => { e.stopPropagation(); handleNodeInteraction(loc.id); }}
+                onTouchEnd={(e) => { e.stopPropagation(); handleNodeInteraction(loc.id); }}
               />
             </g>
           ))}
