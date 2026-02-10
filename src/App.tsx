@@ -30,6 +30,8 @@ import Colocation from "./pages/Colocation";
 import TeamSpeak from "./pages/TeamSpeak";
 import DiscordBot from "./pages/DiscordBot";
 import KnowledgeBase from "./pages/KnowledgeBase";
+import KBArticle from "./pages/KBArticle";
+import KBAdmin from "./pages/KBAdmin";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 // Panel Pages
@@ -89,8 +91,9 @@ const App = () => (
             <Route path="/teamspeak" element={<TeamSpeak />} />
             <Route path="/discord-bot" element={<DiscordBot />} />
             <Route path="/knowledge-base" element={<KnowledgeBase />} />
-            <Route path="/knowledge-base/:categoryId" element={<KnowledgeBase />} />
-            <Route path="/knowledge-base/:categoryId/:articleId" element={<KnowledgeBase />} />
+            <Route path="/knowledge-base/:categorySlug" element={<KnowledgeBase />} />
+            <Route path="/knowledge-base/article/:articleSlug" element={<KBArticle />} />
+            <Route path="/kb-admin" element={<KBAdmin />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:postId" element={<BlogPost />} />
             
