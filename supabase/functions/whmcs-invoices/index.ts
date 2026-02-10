@@ -10,7 +10,17 @@ Deno.serve(async (req) => {
   if (corsResponse) return corsResponse;
 
   const url = new URL(req.url);
-  const path = url.pathname.replace('/whmcs-invoices', '');
+  let path = url.pathname.replace('/whmcs-invoices', '');
+
+  let bodyData: Record<string, unknown> | null = null;
+  if (req.method === 'POST') {
+    try {
+      bodyData = await req.json();
+      if (bodyData?.path && typeof bodyData.path === 'string') {
+        path = bodyData.path;
+      }
+    } catch { /* handled per-route */ }
+  }
 
   // Auth check
   const authHeader = req.headers.get('Authorization');

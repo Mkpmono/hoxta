@@ -38,27 +38,46 @@ Deno.serve(async (req) => {
   if (corsResponse) return corsResponse;
 
   const url = new URL(req.url);
-  const path = url.pathname.replace('/whmcs-auth', '');
   const origin = req.headers.get('Origin');
   const isSecure = origin?.startsWith('https://') || false;
+
+  // Determine path: from URL pathname or from body
+  let path = url.pathname.replace('/whmcs-auth', '');
+  let bodyData: Record<string, unknown> | null = null;
+
+  if (req.method === 'POST') {
+    try {
+      bodyData = await req.json();
+      // If path came in body (from supabase.functions.invoke), use it
+      if (bodyData?.path && typeof bodyData.path === 'string') {
+        path = bodyData.path;
+      }
+    } catch {
+      // Will handle below per-route
+    }
+  }
+
+  // For GET requests, try to read path from query params as fallback
+  if (req.method === 'GET') {
+    const queryPath = url.searchParams.get('path');
+    if (queryPath) path = queryPath;
+  }
 
   try {
     // ============================================
     // POST /login - Authenticate existing user
     // ============================================
-    if (path === '/login' && req.method === 'POST') {
+    if (path === '/login' && (req.method === 'POST' || bodyData)) {
       // Rate limit auth endpoints
       const rateLimitResponse = rateLimit(req, 'auth');
       if (rateLimitResponse) return rateLimitResponse;
 
-      let body;
-      try {
-        body = await req.json();
-      } catch {
+      const body = bodyData;
+      if (!body) {
         return createErrorResponse(req, 'Invalid JSON body', 400);
       }
 
-      const { email, password } = body;
+      const { email, password } = body as { email: string; password: string };
       
       // Validate inputs
       const emailValidation = validateEmail(email);
@@ -169,15 +188,13 @@ Deno.serve(async (req) => {
     // ============================================
     // POST /register - Register new client
     // ============================================
-    if (path === '/register' && req.method === 'POST') {
+    if (path === '/register' && (req.method === 'POST' || bodyData)) {
       // Rate limit auth endpoints
       const rateLimitResponse = rateLimit(req, 'auth');
       if (rateLimitResponse) return rateLimitResponse;
 
-      let body;
-      try {
-        body = await req.json();
-      } catch {
+      const body = bodyData;
+      if (!body) {
         return createErrorResponse(req, 'Invalid JSON body', 400);
       }
 
@@ -288,7 +305,7 @@ Deno.serve(async (req) => {
     // ============================================
     // POST /logout - Destroy session
     // ============================================
-    if (path === '/logout' && req.method === 'POST') {
+    if (path === '/logout' && (req.method === 'POST' || bodyData)) {
       const token = getTokenFromRequest(req);
       
       if (token) {
@@ -308,7 +325,7 @@ Deno.serve(async (req) => {
     // ============================================
     // GET /me - Get current session
     // ============================================
-    if (path === '/me' && req.method === 'GET') {
+    if (path === '/me') {
       const token = getTokenFromRequest(req);
       
       if (!token) {

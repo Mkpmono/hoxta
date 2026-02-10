@@ -10,7 +10,18 @@ Deno.serve(async (req) => {
   if (corsResponse) return corsResponse;
 
   const url = new URL(req.url);
-  const path = url.pathname.replace('/whmcs-services', '');
+  let path = url.pathname.replace('/whmcs-services', '');
+
+  // Extract path from body if sent via supabase.functions.invoke
+  let bodyData: Record<string, unknown> | null = null;
+  if (req.method === 'POST') {
+    try {
+      bodyData = await req.json();
+      if (bodyData?.path && typeof bodyData.path === 'string') {
+        path = bodyData.path;
+      }
+    } catch { /* handled per-route */ }
+  }
 
   // Auth check - required for all endpoints
   const authHeader = req.headers.get('Authorization');
