@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import {
-  Plus, Pencil, Trash2, Save, X, LogIn, ShieldAlert, Eye, EyeOff, Star, StarOff,
+  Plus, Pencil, Trash2, Save, X, LogIn, LogOut, ShieldAlert, Eye, EyeOff, Star, StarOff,
   ArrowLeft, Gamepad2, Image, Upload, GripVertical
 } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -22,12 +22,19 @@ function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) toast.error(error.message);
+    if (isSignUp) {
+      const { error } = await supabase.auth.signUp({ email, password });
+      if (error) toast.error(error.message);
+      else toast.success("Account created! Ask the site owner to grant you admin access.");
+    } else {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) toast.error(error.message);
+    }
     setLoading(false);
   };
 
@@ -38,7 +45,7 @@ function AdminLogin() {
           <div className="glass-card p-8">
             <div className="flex items-center gap-3 mb-6">
               <ShieldAlert className="w-6 h-6 text-primary" />
-              <h1 className="text-2xl font-bold text-foreground">Admin Login</h1>
+              <h1 className="text-2xl font-bold text-foreground">{isSignUp ? "Create Admin Account" : "Admin Login"}</h1>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
@@ -49,10 +56,37 @@ function AdminLogin() {
                 <label className="text-sm text-muted-foreground mb-1 block">Password</label>
                 <Input type="password" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} />
               </div>
-              <Button type="submit" className="w-full" disabled={loading}>
-                <LogIn className="w-4 h-4 mr-2" /> {loading ? "Loading..." : "Login"}
+              <Button type="submit" className="w-full btn-glow" disabled={loading}>
+                <LogIn className="w-4 h-4 mr-2" />
+                {loading ? "Please wait..." : isSignUp ? "Sign Up" : "Log In"}
               </Button>
             </form>
+            <button onClick={() => setIsSignUp(!isSignUp)} className="w-full text-center text-sm text-muted-foreground hover:text-primary mt-4 transition-colors">
+              {isSignUp ? "Already have an account? Log in" : "Need an account? Sign up"}
+            </button>
+          </div>
+          <p className="text-center text-sm text-muted-foreground mt-6">
+            <Link to="/game-servers" className="hover:text-primary transition-colors">← Back to Game Servers</Link>
+          </p>
+        </div>
+      </section>
+    </Layout>
+  );
+}
+
+function NoAccess() {
+  return (
+    <Layout>
+      <section className="pt-32 pb-20">
+        <div className="container mx-auto px-4 text-center">
+          <ShieldAlert className="w-16 h-16 text-destructive mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-foreground mb-2">Access Denied</h1>
+          <p className="text-muted-foreground mb-6">You don't have admin privileges.</p>
+          <div className="flex gap-3 justify-center">
+            <Link to="/game-servers"><Button variant="outline">Back to Game Servers</Button></Link>
+            <Button variant="ghost" onClick={() => supabase.auth.signOut()}>
+              <LogOut className="w-4 h-4 mr-2" /> Sign Out
+            </Button>
           </div>
         </div>
       </section>
@@ -364,7 +398,7 @@ function GameEditor({
 
 // ---- Main Page ----
 export default function GameAdmin() {
-  const { isAdmin, loading: authLoading } = useKBAdmin();
+  const { isAdmin, loading: authLoading, user } = useKBAdmin();
   const { games, loading: gamesLoading, refetch } = useGameServers();
   const [editing, setEditing] = useState<Partial<DBGameServer> | null>(null);
   const [saving, setSaving] = useState(false);
@@ -373,7 +407,8 @@ export default function GameAdmin() {
   if (authLoading) {
     return <Layout><section className="pt-32 pb-20"><div className="container mx-auto px-4 text-center"><p className="text-muted-foreground">Loading...</p></div></section></Layout>;
   }
-  if (!isAdmin) return <AdminLogin />;
+  if (!user) return <AdminLogin />;
+  if (!isAdmin) return <NoAccess />;
 
   const handleSave = async (data: any) => {
     setSaving(true);
@@ -433,10 +468,15 @@ export default function GameAdmin() {
       <section className="pt-28 pb-20">
         <div className="container mx-auto px-4 max-w-5xl">
           {/* Header */}
-          <div className="flex items-center gap-3 mb-8">
-            <Link to="/game-servers" className="text-muted-foreground hover:text-foreground"><ArrowLeft className="w-5 h-5" /></Link>
-            <Gamepad2 className="w-6 h-6 text-primary" />
-            <h1 className="text-2xl font-bold text-foreground">Game Server Manager</h1>
+          <div className="flex items-center justify-between gap-3 mb-8">
+            <div className="flex items-center gap-3">
+              <Link to="/game-servers" className="text-muted-foreground hover:text-foreground"><ArrowLeft className="w-5 h-5" /></Link>
+              <Gamepad2 className="w-6 h-6 text-primary" />
+              <h1 className="text-2xl font-bold text-foreground">Game Server Manager</h1>
+            </div>
+            <Button onClick={() => supabase.auth.signOut()} variant="ghost" size="sm" className="shrink-0">
+              <LogOut className="w-4 h-4" />
+            </Button>
           </div>
 
           {editing ? (
