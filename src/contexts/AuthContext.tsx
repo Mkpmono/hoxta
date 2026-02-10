@@ -19,7 +19,6 @@ interface AuthSession {
 interface AuthContextType {
   session: AuthSession;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
-  loginAsDemo: (role: "client" | "admin" | "owner") => void;
   register: (data: {
     email: string;
     password: string;
@@ -44,18 +43,6 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 const STORAGE_KEY = "hoxta_auth_session";
 
-// Demo users for mock mode
-const demoUsers = [
-  { id: "1", email: "client@demo.hoxta", name: "Demo Client", role: "client" as const },
-  { id: "2", email: "admin@demo.hoxta", name: "Demo Admin", role: "admin" as const },
-  { id: "3", email: "owner@demo.hoxta", name: "Demo Owner", role: "owner" as const },
-];
-
-const demoCredentials = {
-  client: { email: "client@demo.hoxta", password: "Demo1234!" },
-  admin: { email: "admin@demo.hoxta", password: "Demo1234!" },
-  owner: { email: "owner@demo.hoxta", password: "Demo1234!" },
-};
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<AuthSession>({ isAuthenticated: false, user: null, client: null });
@@ -117,31 +104,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback(async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     try {
-      // In mock mode, check demo credentials first
-      if (isMockMode()) {
-        if (email === demoCredentials.client.email && password === demoCredentials.client.password) {
-          const user = demoUsers.find((u) => u.email === email);
-          if (user) {
-            setSession({ isAuthenticated: true, user, client: null });
-            return { success: true };
-          }
-        }
-        if (email === demoCredentials.admin.email && password === demoCredentials.admin.password) {
-          const user = demoUsers.find((u) => u.email === email);
-          if (user) {
-            setSession({ isAuthenticated: true, user, client: null });
-            return { success: true };
-          }
-        }
-        if (email === demoCredentials.owner.email && password === demoCredentials.owner.password) {
-          const user = demoUsers.find((u) => u.email === email);
-          if (user) {
-            setSession({ isAuthenticated: true, user, client: null });
-            return { success: true };
-          }
-        }
-      }
-
       // Call backend login
       const result = await apiClient.login(email, password);
 
@@ -220,12 +182,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const loginAsDemo = useCallback((role: "client" | "admin" | "owner") => {
-    const user = demoUsers.find((u) => u.role === role);
-    if (user) {
-      setSession({ isAuthenticated: true, user, client: null });
-    }
-  }, []);
 
   const refreshSession = useCallback(async () => {
     if (!session.isAuthenticated) return;
@@ -246,8 +202,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return (
     <AuthContext.Provider value={{ 
       session, 
-      login, 
-      loginAsDemo,
+      login,
       register, 
       logout, 
       isLoading, 

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Mail, Lock, Eye, EyeOff, User, Shield, AlertCircle, Crown } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { StaticBackground } from "@/components/ui/StaticBackground";
 import { Link } from "react-router-dom";
@@ -14,7 +14,7 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const { login, loginAsDemo } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -28,14 +28,7 @@ export default function Login() {
     const result = await login(email, password);
 
     if (result.success) {
-      // Determine where to redirect based on credentials
-      if (email === "owner@demo.hoxta") {
-        navigate("/admin", { replace: true });
-      } else if (email === "admin@demo.hoxta") {
-        navigate("/admin", { replace: true });
-      } else {
-        navigate(from, { replace: true });
-      }
+      navigate(from, { replace: true });
     } else {
       setError(result.error || "Login failed");
     }
@@ -43,14 +36,6 @@ export default function Login() {
     setIsLoading(false);
   };
 
-  const handleDemoLogin = (role: "client" | "admin" | "owner") => {
-    loginAsDemo(role);
-    if (role === "admin" || role === "owner") {
-      navigate("/admin", { replace: true });
-    } else {
-      navigate("/panel", { replace: true });
-    }
-  };
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
