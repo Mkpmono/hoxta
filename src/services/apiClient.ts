@@ -25,8 +25,7 @@ export async function checkMockMode(): Promise<boolean> {
   mockModeCheckPromise = (async () => {
     try {
       const { data, error } = await supabase.functions.invoke('whmcs-auth', {
-        body: {},
-        method: 'GET'
+        body: { path: '/me' },
       });
       
       if (error) {
