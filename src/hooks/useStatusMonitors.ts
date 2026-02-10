@@ -23,7 +23,9 @@ export interface MonitorWithChecks extends StatusMonitor {
   uptimePercent: number;
 }
 
-export function useStatusMonitors(timeRange: "30m" | "1h" | "6h" | "24h" | "7d" | "30d" = "24h") {
+export type TimeRange = "1m" | "5m" | "15m" | "30m" | "1h" | "6h" | "24h" | "7d" | "30d";
+
+export function useStatusMonitors(timeRange: TimeRange = "24h") {
   const [monitors, setMonitors] = useState<MonitorWithChecks[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
@@ -31,6 +33,9 @@ export function useStatusMonitors(timeRange: "30m" | "1h" | "6h" | "24h" | "7d" 
   const getTimeAgo = (range: string): string => {
     const now = new Date();
     switch (range) {
+      case "1m": return new Date(now.getTime() - 60000).toISOString();
+      case "5m": return new Date(now.getTime() - 5 * 60000).toISOString();
+      case "15m": return new Date(now.getTime() - 15 * 60000).toISOString();
       case "30m": return new Date(now.getTime() - 30 * 60000).toISOString();
       case "1h": return new Date(now.getTime() - 60 * 60000).toISOString();
       case "6h": return new Date(now.getTime() - 6 * 3600000).toISOString();
