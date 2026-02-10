@@ -3,76 +3,57 @@ import { useTranslation } from "react-i18next";
 import { brand } from "@/config/brand";
 import { MapPin, Clock, MessageCircle, Twitter, Github, Youtube, Instagram } from "lucide-react";
 
-// Payment method icons as SVG components for clean, themed display
-const PaymentIcons = {
-  Visa: () => (
-    <svg viewBox="0 0 48 32" className="w-12 h-8" fill="currentColor">
-      <rect width="48" height="32" rx="4" className="fill-muted" />
-      <path d="M19.5 11l-2.4 10h-2.6l2.4-10h2.6zm10.9 6.5l1.4-3.7.8 3.7h-2.2zm2.9 3.5h2.4l-2.1-10h-2.2c-.5 0-.9.3-1.1.7l-3.8 9.3h2.7l.5-1.5h3.3l.3 1.5zm-6.7-3.3c0-2.6-3.6-2.8-3.6-3.9 0-.4.3-.7 1.1-.8.4 0 1.4-.1 2.6.5l.5-2.1c-.6-.2-1.5-.5-2.5-.5-2.6 0-4.5 1.4-4.5 3.4 0 1.5 1.3 2.3 2.4 2.8 1 .5 1.4.9 1.4 1.3 0 .7-.8 1-1.6 1-.7 0-2.1-.3-2.7-.6l-.5 2.2c.6.3 1.8.5 3 .5 2.8 0 4.6-1.4 4.6-3.5l-.2-.3zm-11.1-6.7l-4.2 10h-2.8l-2.1-8c-.1-.5-.2-.7-.6-.9-.6-.4-1.7-.7-2.6-.9l.1-.5h4.4c.6 0 1.1.4 1.2 1l1.1 5.8 2.7-6.7h2.8v.2z" className="fill-foreground/80" />
-    </svg>
-  ),
-  Mastercard: () => (
-    <svg viewBox="0 0 48 32" className="w-12 h-8">
-      <rect width="48" height="32" rx="4" className="fill-muted" />
-      <circle cx="19" cy="16" r="8" className="fill-red-500/70" />
-      <circle cx="29" cy="16" r="8" className="fill-yellow-500/70" />
-      <path d="M24 10.5a8 8 0 010 11" className="fill-orange-500/70" />
-    </svg>
-  ),
-  Maestro: () => (
-    <svg viewBox="0 0 48 32" className="w-12 h-8">
-      <rect width="48" height="32" rx="4" className="fill-muted" />
-      <circle cx="19" cy="16" r="8" className="fill-red-500/60" />
-      <circle cx="29" cy="16" r="8" className="fill-blue-500/60" />
-    </svg>
-  ),
-  PayPal: () => (
-    <svg viewBox="0 0 48 32" className="w-12 h-8" fill="currentColor">
-      <rect width="48" height="32" rx="4" className="fill-muted" />
-      <path d="M19.5 8h5.3c3.5 0 5 1.8 4.6 4.5-.5 3.5-3 5.5-6.3 5.5h-1.4c-.5 0-.9.4-1 .9l-.7 4.1h-3.3l2.8-15zm4.4 7c1.5 0 2.8-1 3-2.5.2-1.3-.6-2-2-2h-1.8l-.8 4.5h1.6z" className="fill-blue-400/80" />
-      <path d="M32 11h3.2c2.3 0 3.3 1.2 3 3-.4 2.3-2 3.6-4.2 3.6h-.9c-.3 0-.6.3-.7.6l-.4 2.7h-2.2l2.2-10zm2.9 4.6c1 0 1.8-.7 2-1.6.1-.9-.4-1.4-1.3-1.4h-1.2l-.5 3h1z" className="fill-blue-600/80" />
-    </svg>
-  ),
-  ApplePay: () => (
-    <svg viewBox="0 0 48 32" className="w-12 h-8" fill="currentColor">
-      <rect width="48" height="32" rx="4" className="fill-muted" />
-      <path d="M16 10c.7-.8 1.2-2 1-3.2-1 0-2.2.7-2.9 1.5-.7.7-1.2 1.9-1.1 3 1.1.1 2.3-.5 3-1.3zm1 1.5c-1.7-.1-3.1 1-3.9 1s-2-.9-3.3-.9c-1.7 0-3.3 1-4.2 2.5-1.8 3.1-.5 7.7 1.3 10.3.9 1.2 1.9 2.6 3.3 2.5 1.3-.1 1.8-.8 3.4-.8s2 .8 3.4.8c1.4 0 2.3-1.2 3.2-2.5 1-1.4 1.4-2.8 1.4-2.8-.1 0-2.7-1.1-2.8-4.2 0-2.6 2.1-3.9 2.2-4-1.2-1.8-3.1-2-3.7-2-.3 0-.2 0-.3 0z" className="fill-foreground/80" />
-      <path d="M29 11v11h1.8v-4.2h2.5c2.3 0 3.9-1.6 3.9-3.9s-1.6-3.9-3.8-3.9H29zm1.8 1.5h2c1.6 0 2.5.9 2.5 2.4s-.9 2.4-2.5 2.4h-2v-4.8z" className="fill-foreground/80" />
-    </svg>
-  ),
-  GooglePay: () => (
-    <svg viewBox="0 0 48 32" className="w-12 h-8" fill="currentColor">
-      <rect width="48" height="32" rx="4" className="fill-muted" />
-      <path d="M24 10.5c1.9 0 3.4 1.5 3.4 3.4 0 1.9-1.5 3.4-3.4 3.4s-3.4-1.5-3.4-3.4c0-1.9 1.5-3.4 3.4-3.4zm0 5.4c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z" className="fill-blue-500/80" />
-      <path d="M15.5 13.9c0-.3.2-.5.5-.5h1.3c2.1 0 3.8 1.7 3.8 3.8v3.3c0 .3-.2.5-.5.5h-1.3v-3.8c0-1.3-1-2.3-2.3-2.3H16c-.3 0-.5-.2-.5-.5v-.5z" className="fill-red-500/80" />
-      <path d="M32.5 13.9c0-.3-.2-.5-.5-.5h-1.3c-2.1 0-3.8 1.7-3.8 3.8v3.3c0 .3.2.5.5.5h1.3v-3.8c0-1.3 1-2.3 2.3-2.3H32c.3 0 .5-.2.5-.5v-.5z" className="fill-green-500/80" />
-      <path d="M24 18.3c-1.1 0-2 .9-2 2v1.2c0 .3.2.5.5.5h3c.3 0 .5-.2.5-.5v-1.2c0-1.1-.9-2-2-2z" className="fill-yellow-500/80" />
-    </svg>
-  ),
-  BankTransfer: () => (
-    <svg viewBox="0 0 48 32" className="w-12 h-8" fill="currentColor">
-      <rect width="48" height="32" rx="4" className="fill-muted" />
-      <path d="M24 6l-12 6v2h24v-2l-12-6zm0 2.2l7.5 3.8h-15l7.5-3.8zM14 16v6h3v-6h-3zm6 0v6h3v-6h-3zm6 0v6h3v-6h-3zm6 0v6h3v-6h-3zM12 24v2h24v-2H12z" className="fill-foreground/60" />
-    </svg>
-  ),
-  Crypto: () => (
-    <svg viewBox="0 0 48 32" className="w-12 h-8" fill="currentColor">
-      <rect width="48" height="32" rx="4" className="fill-muted" />
-      <circle cx="24" cy="16" r="9" className="fill-none stroke-yellow-500/70" strokeWidth="1.5" />
-      <path d="M24 9v2m0 10v2M21 11h4.5c1.4 0 2.5 1.1 2.5 2.5S26.9 16 25.5 16H21m0 0h5c1.4 0 2.5 1.1 2.5 2.5s-1.1 2.5-2.5 2.5H21m0-10v10" className="stroke-yellow-500/70 fill-none" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-  ),
-};
+// Payment icon images
+import visaSvg from "@/assets/payments/visa.svg";
+import mastercardSvg from "@/assets/payments/mastercard.svg";
+import maestroSvg from "@/assets/payments/maestro.svg";
+import paypalSvg from "@/assets/payments/paypal.svg";
+
+// Inline SVGs for icons not available in the library
+const ApplePayIcon = () => (
+  <svg viewBox="0 0 750 471" className="w-full h-full">
+    <rect width="750" height="471" rx="40" className="fill-muted" />
+    <path d="M196.8 172.1c-8.1 9.5-21.1 16.9-34 15.8-1.6-12.9 4.7-26.7 12.1-35.2 8.1-9.8 22.2-16.6 33.7-17.1 1.4 13.2-3.9 26.2-11.8 36.5zm11.6 18.5c-18.8-1.1-34.8 10.7-43.8 10.7s-22.7-10.1-37.5-9.8c-19.3.3-37.1 11.2-47.1 28.5-20.1 34.7-5.3 86.1 14.3 114.3 9.5 13.9 20.9 29.4 35.9 28.8 14.3-.6 19.8-9.2 37.2-9.2s22.3 9.2 37.5 8.9c15.5-.3 25.2-13.9 34.7-27.8 10.7-15.8 15.1-31.2 15.4-32-.3-.3-29.6-11.5-29.9-45.4-.3-28.4 23.2-42 24.3-42.8-13.2-19.5-33.8-21.7-41-22.2zM375 159.4v252.7h38.9V324h53.9c49.2 0 83.8-33.8 83.8-82.5s-34-82.1-82.7-82.1H375zm38.9 33.2h44.8c33.8 0 53.1 18 53.1 49.5S492.5 291.8 458.4 291.8h-44.5V192.6z" className="fill-foreground/80" />
+  </svg>
+);
+
+const GooglePayIcon = () => (
+  <svg viewBox="0 0 750 471" className="w-full h-full">
+    <rect width="750" height="471" rx="40" className="fill-muted" />
+    <path d="M360.1 236.5v68.8h-22V141h58.3c14 0 25.9 4.7 35.8 14.2 10.1 9.5 15.1 21 15.1 34.5 0 13.8-5 25.3-15.1 34.6-9.8 9.3-21.7 14-35.8 14h-36.3v-1.8zm0-74.8v53h36.7c8.2 0 15.1-2.8 20.8-8.5 5.7-5.7 8.6-12.5 8.6-20.5 0-7.8-2.9-14.5-8.6-20.2-5.6-5.8-12.5-8.6-20.8-8.6h-36.7v4.8z" className="fill-[#4285F4]" />
+    <path d="M497.2 201.3c16.1 0 28.8 4.3 38 12.9s13.8 20.4 13.8 35.2v71.2h-21.1v-16.1h-1c-9 13.2-20.9 19.8-35.8 19.8-12.8 0-23.4-3.8-31.9-11.3-8.5-7.5-12.8-16.9-12.8-28.2 0-11.9 4.5-21.4 13.5-28.5 9-7.1 21.1-10.6 36.1-10.6 12.8 0 23.4 2.4 31.7 7.1V247c0-8.5-3.3-15.5-10-21.2-6.7-5.7-14.5-8.5-23.5-8.5-13.6 0-24.4 5.7-32.3 17.2l-19.5-12.2c11.4-17 28.2-25.5 50.4-25.5v4.5zm-28.1 83.5c0 6.4 2.8 11.7 8.3 16.1 5.5 4.3 11.8 6.5 18.9 6.5 10.2 0 19.2-3.9 26.8-11.6 7.7-7.7 11.5-16.6 11.5-26.7-6.9-5.4-16.4-8.1-28.7-8.1-8.9 0-16.4 2.2-22.3 6.5-5.9 4.3-8.9 9.6-8.9 15.8l-5.6 1.5z" className="fill-[#4285F4]" />
+    <path d="M633.3 204.9l-74 170.3h-22.8l27.5-59.6-48.7-110.7h24l35.1 84.6h.5l34.1-84.6h24.3z" className="fill-[#4285F4]" />
+    <path d="M262.3 235.5c0-5.2-.4-10.2-1.3-15h-82.8v28.4h47.4c-2 11-8.2 20.3-17.5 26.5v22h28.3c16.6-15.2 26.1-37.7 26.1-61.9h-.2z" className="fill-[#4285F4]" />
+    <path d="M178.2 299.4c23.7 0 43.6-7.8 58.1-21.3l-28.3-22c-7.9 5.3-17.9 8.4-29.8 8.4-22.9 0-42.3-15.5-49.3-36.3H99.7v22.7c14.4 28.6 44 48.5 78.5 48.5z" className="fill-[#34A853]" />
+    <path d="M128.9 228.2c-1.8-5.3-2.8-11-2.8-16.9s1-11.5 2.8-16.9v-22.7H99.7c-6.1 12.1-9.5 25.7-9.5 39.6s3.4 27.5 9.5 39.6l29.2-22.7z" className="fill-[#FABB05]" />
+    <path d="M178.2 158.1c12.9 0 24.5 4.4 33.6 13.2l25.2-25.2c-15.2-14.2-35.1-22.9-58.8-22.9-34.5 0-64.1 19.9-78.5 48.5l29.2 22.7c7-20.8 26.4-36.3 49.3-36.3z" className="fill-[#E94235]" />
+  </svg>
+);
+
+const BankTransferIcon = () => (
+  <svg viewBox="0 0 750 471" className="w-full h-full">
+    <rect width="750" height="471" rx="40" className="fill-muted" />
+    <path d="M375 100l-200 100v30h400v-30L375 100zm0 25l140 70H235l140-70zM195 260v120h50V260h-50zm105 0v120h50V260h-50zm105 0v120h50V260h-50zm105 0v120h50V260h-50zM175 400v30h400v-30H175z" className="fill-foreground/60" />
+  </svg>
+);
+
+const CryptoIcon = () => (
+  <svg viewBox="0 0 750 471" className="w-full h-full">
+    <rect width="750" height="471" rx="40" className="fill-muted" />
+    <circle cx="375" cy="235" r="130" className="fill-none stroke-yellow-500/70" strokeWidth="12" />
+    <path d="M375 130v30m0 150v30M310 165h80c20 0 35 15 35 35s-15 35-35 35H310m0 0h90c20 0 35 15 35 35s-15 35-35 35H310m0-140v140" className="stroke-yellow-500/70 fill-none" strokeWidth="12" strokeLinecap="round" />
+  </svg>
+);
 
 const paymentMethods = [
-  { name: "Visa", Icon: PaymentIcons.Visa },
-  { name: "Mastercard", Icon: PaymentIcons.Mastercard },
-  { name: "Maestro", Icon: PaymentIcons.Maestro },
-  { name: "PayPal", Icon: PaymentIcons.PayPal },
-  { name: "Apple Pay", Icon: PaymentIcons.ApplePay },
-  { name: "Google Pay", Icon: PaymentIcons.GooglePay },
-  { name: "Bank Transfer", Icon: PaymentIcons.BankTransfer },
-  { name: "Crypto", Icon: PaymentIcons.Crypto },
+  { name: "Visa", src: visaSvg },
+  { name: "Mastercard", src: mastercardSvg },
+  { name: "Maestro", src: maestroSvg },
+  { name: "PayPal", src: paypalSvg },
+  { name: "Apple Pay", Component: ApplePayIcon },
+  { name: "Google Pay", Component: GooglePayIcon },
+  { name: "Bank Transfer", Component: BankTransferIcon },
+  { name: "Crypto", Component: CryptoIcon },
 ];
 
 export function Footer() {
@@ -184,11 +165,15 @@ export function Footer() {
                 {paymentMethods.map((method) => (
                   <div
                     key={method.name}
-                    className="group relative transition-all duration-200 hover:scale-105"
+                    className="group relative w-12 h-8 transition-all duration-200 hover:scale-105"
                     title={method.name}
                   >
-                    <div className="opacity-70 group-hover:opacity-100 transition-opacity">
-                      <method.Icon />
+                    <div className="opacity-70 group-hover:opacity-100 transition-opacity w-full h-full">
+                      {'src' in method && method.src ? (
+                        <img src={method.src} alt={method.name} className="w-full h-full rounded" />
+                      ) : 'Component' in method && method.Component ? (
+                        <method.Component />
+                      ) : null}
                     </div>
                     <div className="absolute inset-0 rounded opacity-0 group-hover:opacity-100 transition-opacity bg-primary/5 blur-sm -z-10" />
                   </div>
