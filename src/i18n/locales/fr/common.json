@@ -16,7 +16,7 @@
     "vpsHosting": "Hébergement VPS",
     "vpsHostingDesc": "Serveurs privés virtuels avec contrôle total",
     "dedicatedServer": "Serveur Dédié",
-    "dedicatedServerDesc": "Serveurs bare metal d'entreprise",
+    "dedicatedServerDesc": "Serveurs bare metal pour puissance maximale",
     "discordBot": "Bot Discord",
     "discordBotDesc": "Hébergez vos bots Discord 24/7",
     "teamspeak": "Hébergement TeamSpeak",
@@ -43,20 +43,41 @@
     "submit": "Soumettre",
     "cancel": "Annuler",
     "save": "Enregistrer",
+    "saveChanges": "Enregistrer les modifications",
     "delete": "Supprimer",
     "edit": "Modifier",
     "login": "Connexion",
     "logout": "Déconnexion",
+    "signIn": "Se connecter",
+    "signingIn": "Connexion en cours...",
     "signup": "S'inscrire",
     "learnMore": "En savoir plus",
     "getStarted": "Commencer",
     "changePlan": "Changer d'offre",
     "clearFilters": "Effacer les filtres",
     "createTicket": "Créer un ticket",
+    "submitTicket": "Soumettre le ticket",
+    "submitting": "Envoi en cours...",
     "reply": "Répondre",
     "close": "Fermer",
-    "pay": "Payer",
-    "completeOrder": "Finaliser la commande"
+    "pay": "Payer maintenant",
+    "completeOrder": "Finaliser la commande",
+    "exploreServices": "Découvrir les services",
+    "contactSupport": "Contacter le support",
+    "browseGames": "Parcourir les serveurs de jeux",
+    "talkToSales": "Contacter les ventes",
+    "comparePlans": "Comparer les offres",
+    "newOrder": "Nouvelle commande",
+    "viewAll": "Voir tout",
+    "backToWebsite": "Retour au site",
+    "tryAgain": "Réessayer",
+    "contactSales": "Contacter les ventes",
+    "forgotPassword": "Mot de passe oublié ?",
+    "rememberMe": "Se souvenir de moi",
+    "changeAvatar": "Changer l'avatar",
+    "updatePassword": "Mettre à jour le mot de passe",
+    "testConnection": "Tester la connexion",
+    "testing": "Test en cours..."
   },
   "checkout": {
     "title": "Finaliser votre commande",
@@ -81,13 +102,16 @@
     "loginToAutofill": "Connectez-vous pour remplir automatiquement",
     "orContinueAsGuest": "Ou continuer en tant qu'invité",
     "success": {
-      "title": "Commande finalisée !",
-      "message": "Votre commande a été passée avec succès."
+      "title": "Paiement réussi !",
+      "message": "Merci pour votre commande. Votre service est en cours d'activation et sera bientôt prêt.",
+      "orderReference": "Référence de commande"
     },
     "failed": {
       "title": "Paiement échoué",
       "message": "Une erreur s'est produite lors du traitement de votre paiement."
-    }
+    },
+    "goToPanel": "Aller au panneau de contrôle",
+    "viewInvoice": "Voir la facture"
   },
   "panel": {
     "dashboard": {
@@ -96,7 +120,11 @@
       "activeServices": "Services actifs",
       "openTickets": "Tickets ouverts",
       "pendingInvoices": "Factures en attente",
-      "recentActivity": "Activité récente"
+      "pendingOrders": "Commandes en attente",
+      "unpaidInvoices": "Factures impayées",
+      "recentActivity": "Activité récente",
+      "yourServices": "Vos services",
+      "recentTickets": "Tickets récents"
     },
     "services": {
       "title": "Mes services",
@@ -104,10 +132,13 @@
       "active": "Actif",
       "suspended": "Suspendu",
       "cancelled": "Annulé",
+      "terminated": "Résilié",
       "pending": "En attente",
       "nextDue": "Prochaine échéance",
       "manage": "Gérer",
-      "noServices": "Aucun service trouvé"
+      "noServices": "Aucun service trouvé",
+      "due": "Échéance",
+      "noIpAssigned": "Aucune IP attribuée"
     },
     "invoices": {
       "title": "Factures",
@@ -120,12 +151,17 @@
       "unpaid": "Non payée",
       "overdue": "En retard",
       "cancelled": "Annulée",
-      "noInvoices": "Aucune facture trouvée"
+      "refunded": "Remboursée",
+      "noInvoices": "Aucune facture trouvée",
+      "actions": "Actions"
     },
     "tickets": {
       "title": "Tickets de support",
       "newTicket": "Nouveau ticket",
+      "newTicketTitle": "Nouveau ticket de support",
+      "newTicketSubtitle": "Soumettre une nouvelle demande de support",
       "subject": "Sujet",
+      "subjectPlaceholder": "Description brève de votre problème",
       "department": "Département",
       "priority": "Priorité",
       "status": "Statut",
@@ -139,28 +175,65 @@
       "high": "Haute",
       "urgent": "Urgente",
       "noTickets": "Aucun ticket trouvé",
-      "message": "Message"
+      "message": "Message",
+      "messagePlaceholder": "Veuillez décrire votre problème en détail. Incluez les messages d'erreur, les étapes de reproduction et ce que vous avez déjà essayé.",
+      "attachments": "Pièces jointes",
+      "attachmentsHint": "Glissez-déposez les fichiers ici ou cliquez pour parcourir",
+      "maxFileSize": "Taille maximale : 10 Mo",
+      "searchTickets": "Rechercher des tickets...",
+      "allStatus": "Tous les statuts",
+      "technicalSupport": "Support technique",
+      "sales": "Ventes",
+      "billing": "Facturation",
+      "validationError": "Erreur de validation",
+      "fillRequiredFields": "Veuillez remplir tous les champs obligatoires",
+      "ticketCreated": "Ticket créé",
+      "ticketCreatedMsg": "Votre ticket a été créé. ID : {{id}}"
     },
     "orders": {
       "title": "Commandes",
       "order": "Commande",
+      "orderId": "ID de commande",
       "product": "Produit",
       "status": "Statut",
-      "noOrders": "Aucune commande trouvée"
+      "noOrders": "Aucune commande trouvée",
+      "ordersCount": "{{count}} commandes",
+      "completed": "Terminée",
+      "fraud": "Fraude"
     },
     "profile": {
-      "title": "Mon profil",
+      "title": "Paramètres du profil",
       "personalInfo": "Informations personnelles",
       "security": "Sécurité",
-      "changePassword": "Changer le mot de passe"
+      "changePassword": "Changer le mot de passe",
+      "avatar": "Avatar",
+      "fullName": "Nom complet",
+      "currentPassword": "Mot de passe actuel",
+      "newPassword": "Nouveau mot de passe",
+      "confirmNewPassword": "Confirmer le mot de passe"
     },
     "api": {
       "title": "Paramètres API",
       "connection": "Connexion",
+      "whmcsConnection": "Connexion WHMCS",
+      "configureCredentials": "Configurer les identifiants API WHMCS (côté serveur requis)",
       "testConnection": "Tester la connexion",
       "mockMode": "Mode test",
+      "mockModeActive": "Mode test actif",
+      "mockModeDesc": "Le panneau utilise des données simulées. Pour connecter une installation WHMCS, configurez les identifiants API côté serveur.",
+      "securityNotice": "Avis de sécurité",
+      "securityDesc": "Les identifiants API WHMCS (Identifiant et Secret) doivent être stockés de manière sécurisée sur le serveur, pas dans le navigateur.",
+      "secureArchitecture": "Architecture sécurisée",
+      "secureArchitectureDesc": "Tous les appels API WHMCS sont routés via des points de terminaison proxy internes. Le frontend ne communique jamais directement avec WHMCS.",
       "connected": "Connecté",
-      "disconnected": "Déconnecté"
+      "disconnected": "Déconnecté",
+      "connectionSuccess": "Connexion réussie",
+      "connectionFailed": "Connexion échouée",
+      "whmcsApiUrl": "URL API WHMCS",
+      "apiIdentifier": "Identifiant API",
+      "apiSecret": "Secret API",
+      "internalEndpoints": "Points de terminaison API internes",
+      "endpointsDesc": "Ces points de terminaison sont utilisés en interne par le panneau. Lorsque WHMCS est configuré, ils relaient les requêtes vers l'API WHMCS."
     },
     "sidebar": {
       "dashboard": "Tableau de bord",
@@ -171,16 +244,28 @@
       "profile": "Profil",
       "apiSettings": "Paramètres API",
       "logout": "Déconnexion"
+    },
+    "login": {
+      "title": "Panneau de contrôle",
+      "subtitle": "Connectez-vous pour gérer vos services",
+      "demoAccess": "Accès rapide démo",
+      "demoModeNotice": "Mode démo uniquement. Remplacez par une authentification réelle plus tard.",
+      "client": "Client",
+      "admin": "Admin",
+      "owner": "Propriétaire"
     }
   },
   "forms": {
     "email": "E-mail",
+    "emailPlaceholder": "vous@exemple.fr",
     "password": "Mot de passe",
     "confirmPassword": "Confirmer le mot de passe",
     "firstName": "Prénom",
     "lastName": "Nom",
     "company": "Nom de l'entreprise",
+    "companyPlaceholder": "Le nom de votre entreprise",
     "phone": "Téléphone",
+    "phonePlaceholder": "+33 1 23 45 67 89",
     "address": "Adresse",
     "address2": "Adresse ligne 2",
     "city": "Ville",
@@ -189,7 +274,9 @@
     "country": "Pays",
     "taxId": "Numéro de TVA",
     "optional": "(optionnel)",
-    "required": "Obligatoire"
+    "required": "Obligatoire",
+    "name": "Nom",
+    "message": "Message"
   },
   "errors": {
     "required": "Ce champ est obligatoire",
@@ -201,7 +288,15 @@
     "invalidCredentials": "E-mail ou mot de passe incorrect",
     "sessionExpired": "Votre session a expiré",
     "notFound": "Non trouvé",
-    "unauthorized": "Accès non autorisé"
+    "unauthorized": "Accès non autorisé",
+    "failedToLoad": "Impossible de charger {{item}}",
+    "failedToLoadServices": "Impossible de charger les services",
+    "failedToLoadInvoices": "Impossible de charger les factures",
+    "failedToLoadTickets": "Impossible de charger les tickets",
+    "failedToLoadOrders": "Impossible de charger les commandes",
+    "failedToGetPaymentLink": "Impossible d'obtenir le lien de paiement",
+    "failedToCreateTicket": "Impossible de créer le ticket",
+    "loginFailed": "Échec de la connexion"
   },
   "common": {
     "loading": "Chargement...",
@@ -220,24 +315,37 @@
     "gamesFound": "{{count}} jeu trouvé",
     "gamesFound_plural": "{{count}} jeux trouvés",
     "sortBy": "Trier par",
-    "priceLowHigh": "Prix: Croissant",
-    "priceHighLow": "Prix: Décroissant",
-    "nameAZ": "Nom: A à Z",
-    "nameZA": "Nom: Z à A",
+    "priceLowHigh": "Prix : Croissant",
+    "priceHighLow": "Prix : Décroissant",
+    "nameAZ": "Nom : A à Z",
+    "nameZA": "Nom : Z à A",
     "searchGame": "Rechercher un jeu...",
     "instantSetup": "Installation instantanée",
     "ddosProtection": "Protection DDoS",
     "support247": "Support 24/7",
     "globalLocations": "Emplacements mondiaux",
     "highPerformance": "Haute performance",
-    "easyManagement": "Gestion facile"
+    "easyManagement": "Gestion facile",
+    "noArticlesFound": "Aucun article trouvé correspondant à vos critères.",
+    "allRightsReserved": "Tous droits réservés.",
+    "error": "Erreur",
+    "success": "Succès",
+    "id": "ID",
+    "total": "Total"
   },
   "hero": {
     "title": "Hébergement Premium",
     "titleHighlight": "Solutions",
-    "subtitle": "Serveurs haute performance avec 99,9% de disponibilité, protection DDoS et support expert 24/7.",
+    "headline": "Premium",
+    "headlineHighlight": "Jeux, Web, VPS",
+    "headlineSuffix": "& Hébergement Serveur",
+    "subtitle": "Hébergement fiable pour les joueurs, développeurs et entreprises. De Minecraft & FiveM au VPS & serveurs dédiés — nous avons tout ce qu'il vous faut.",
     "cta": "Commencer",
-    "viewPricing": "Voir les prix"
+    "viewPricing": "Voir les prix",
+    "premiumInfrastructure": "Infrastructure Premium",
+    "uptimeSla": "SLA Uptime",
+    "gbpsDdos": "Gbps DDoS",
+    "support": "Support"
   },
   "sections": {
     "whyChoose": "Pourquoi choisir Hoxta",
@@ -252,7 +360,48 @@
     "faqSubtitle": "Questions courantes sur nos services",
     "trustedBy": "Approuvé par des milliers de clients",
     "readyToStart": "Prêt à commencer ?",
-    "readyToStartSubtitle": "Déployez votre serveur en moins de 60 secondes"
+    "readyToStartSubtitle": "Déployez votre serveur en moins de 60 secondes",
+    "infrastructureBuiltFor": "Conçue pour la performance",
+    "enterpriseGradeHosting": "Hébergement fiable",
+    "youCanRelyOn": "Sur lequel vous pouvez compter",
+    "builtOnPremium": "Construit avec du matériel premium, une couverture mondiale et une surveillance proactive — conçu pour les charges de travail exigeantes nécessitant une disponibilité maximale.",
+    "uptimeSla": "SLA Uptime",
+    "globalLocations": "Emplacements mondiaux",
+    "gbpsNetwork": "Réseau Gbps",
+    "avgLatency": "Latence moyenne",
+    "enterpriseHardware": "Matériel Premium",
+    "enterpriseHardwareDesc": "Processeurs Intel Xeon & AMD EPYC avec RAM ECC et alimentation redondante dans des datacenters Tier III+.",
+    "nvmeStorage": "Stockage NVMe",
+    "nvmeStorageDesc": "SSD NVMe ultra-rapides avec protection RAID — jusqu'à 7 000 Mo/s en lecture et latence sub-milliseconde.",
+    "globalNetworkDesc": "12+ emplacements dans le monde avec peering direct vers les principaux FAI pour un routage optimal et une faible latence.",
+    "ddosProtection": "Protection DDoS",
+    "ddosProtectionDesc": "Protection multi-couche avec scrubbing 2,5 Tbps+. Filtres spécifiques aux jeux et détection instantanée des menaces inclus.",
+    "instantDeployment": "Installation instantanée",
+    "instantDeploymentDesc": "Provisionnement automatisé avec installations en un clic. Votre serveur est en ligne en moins de 60 secondes.",
+    "expertSupport": "Support expert 24/7",
+    "expertSupportDesc": "Nos ingénieurs sont disponibles 24h/24. Temps de réponse moyen inférieur à 15 minutes.",
+    "soc2Compliant": "Conforme SOC 2",
+    "monitoring247": "Surveillance 24/7",
+    "tierIiiDc": "DC Tier III+",
+    "iso27001": "ISO 27001",
+    "getStarted": "Commencer",
+    "noCardRequired": "Sans carte de crédit • Installation instantanée • Support 24/7",
+    "testimonials": "Témoignages",
+    "trustedByGamers": "La confiance des joueurs",
+    "worldwide": "Dans le monde entier",
+    "joinThousands": "Rejoignez des milliers de joueurs qui font confiance à Hoxta pour leurs communautés gaming. 99,9% de disponibilité et support 24/7 pour des serveurs toujours performants.",
+    "viewAllReviews": "Voir tous les avis",
+    "antiDdos": "Protection DDoS",
+    "antiDdosDesc": "Protection multi-couche L3/L4/L7 avec scrubbing automatique et surveillance en temps réel. Nous stoppons les attaques volumétriques, protocolaires et applicatives — sans temps d'arrêt.",
+    "antiDdosCapacity": "Capacité 400+ Gbps, toujours active",
+    "antiDdosFiltering": "Filtrage L7 intelligent & limitation de débit",
+    "antiDdosAlerts": "Alertes et rapports instantanés",
+    "browseAllGames": "Parcourir tous les jeux",
+    "noCreditCard": "Sans carte de crédit",
+    "services": "Services",
+    "usefulLinks": "Liens utiles",
+    "company": "Entreprise",
+    "paymentMethods": "Modes de paiement"
   },
   "footer": {
     "company": "Entreprise",
@@ -266,13 +415,17 @@
     "dedicated": "Serveurs dédiés",
     "gameServers": "Serveurs de jeux",
     "support": "Support",
+    "support247": "Support 24/7",
     "knowledgeBase": "Base de connaissances",
     "serverStatus": "État des serveurs",
     "openTicket": "Ouvrir un ticket",
     "legal": "Légal",
     "termsOfService": "Conditions d'utilisation",
     "privacyPolicy": "Politique de confidentialité",
-    "copyright": "© {{year}} Hoxta. Tous droits réservés."
+    "copyright": "© {{year}} Hoxta. Tous droits réservés.",
+    "terms": "CGU",
+    "privacy": "Confidentialité",
+    "status": "Statut"
   },
   "games": {
     "minecraft": "Minecraft",
@@ -296,7 +449,31 @@
     "garrysmod": "Garry's Mod",
     "garrysmodDesc": "Serveurs sandbox",
     "7days": "7 Days to Die",
-    "7daysDesc": "Sandbox de survie zombie"
+    "7daysDesc": "Sandbox de survie zombie",
+    "metin2": "Metin2",
+    "metin2Desc": "Serveurs privés MMORPG classique",
+    "cs16": "Counter-Strike 1.6",
+    "cs16Desc": "Serveurs CS 1.6 classiques",
+    "farmingsim25": "Farming Simulator 25",
+    "farmingsim25Desc": "Serveurs multijoueur agricoles",
+    "terraria": "Terraria",
+    "terrariaDesc": "Serveurs d'aventure sandbox 2D",
+    "unturned": "Unturned",
+    "unturnedDesc": "Serveurs de survie gratuits",
+    "enshrouded": "Enshrouded",
+    "enshroudedDesc": "Serveurs RPG d'action et survie",
+    "arkAscended": "ARK: Survival Ascended",
+    "arkAscendedDesc": "Serveurs ARK nouvelle génération",
+    "amongus": "Among Us",
+    "amongusDesc": "Hébergement de lobbys privés",
+    "ragemp": "RageMP",
+    "ragempDesc": "Serveurs mod multijoueur GTA V",
+    "samp": "SA-MP",
+    "sampDesc": "Multijoueur GTA San Andreas",
+    "mtasa": "MTA: San Andreas",
+    "mtasaDesc": "Serveurs Multi Theft Auto",
+    "dayofdragons": "Day of Dragons",
+    "dayofdragonsDesc": "Serveurs de survie dragon"
   },
   "categories": {
     "all": "Tous les jeux",
@@ -306,5 +483,130 @@
     "roleplay": "Roleplay",
     "mmo": "MMO",
     "other": "Autre"
+  },
+  "pages": {
+    "about": {
+      "title": "À propos",
+      "headline": "À propos de Hoxta",
+      "subtitle": "Infrastructure d'hébergement premium pour les joueurs, développeurs et entreprises du monde entier.",
+      "ourMission": "Notre mission",
+      "missionText": "Fournir l'infrastructure d'hébergement la plus fiable et performante, permettant aux joueurs et développeurs de créer des expériences incroyables sans se soucier de leurs serveurs.",
+      "activeCustomers": "Clients actifs",
+      "uptimeSla": "SLA Uptime",
+      "dataCenters": "Centres de données",
+      "expertSupport": "Support expert"
+    },
+    "pricing": {
+      "title": "Tarifs",
+      "subtitle": "Tarification transparente pour tous nos services. Consultez les pages produits pour les offres détaillées."
+    },
+    "status": {
+      "title": "État du système",
+      "allOperational": "Tous les systèmes opérationnels",
+      "operational": "Opérationnel"
+    },
+    "contact": {
+      "title": "Contactez-nous",
+      "subtitle": "Contactez notre équipe",
+      "location": "Emplacement",
+      "supportHours": "Heures de support",
+      "available247": "Disponible 24/7",
+      "sendMessage": "Envoyer un message"
+    },
+    "blog": {
+      "title": "Blog",
+      "headline": "Conseils hébergement &",
+      "headlineHighlight": "Tutoriels",
+      "subtitle": "Découvrez des guides, tutoriels et informations pour tirer le meilleur parti de votre hébergement."
+    },
+    "notFound": {
+      "connectionLost": "Connexion perdue",
+      "title": "Page non trouvée",
+      "subtitle": "La page que vous cherchez n'existe pas ou a été déplacée. Laissez-nous vous rediriger.",
+      "goHome": "Retour à l'accueil",
+      "quickNav": "Navigation rapide",
+      "checkStatus": "Vérifier l'état des serveurs"
+    },
+    "terms": {
+      "title": "Conditions d'utilisation",
+      "lastUpdated": "Dernière mise à jour : Janvier 2026",
+      "acceptance": "Acceptation des conditions",
+      "acceptanceText": "En accédant et en utilisant les services Hoxta, vous acceptez d'être lié par ces conditions d'utilisation.",
+      "serviceDescription": "Description du service",
+      "serviceDescriptionText": "Hoxta fournit des services d'hébergement web, de serveurs de jeux, VPS et serveurs dédiés.",
+      "acceptableUse": "Utilisation acceptable",
+      "acceptableUseText": "Vous acceptez de ne pas utiliser nos services à des fins illégales ou non autorisées."
+    },
+    "privacy": {
+      "title": "Politique de confidentialité",
+      "lastUpdated": "Dernière mise à jour : Janvier 2026",
+      "dataCollection": "Collecte de données",
+      "dataCollectionText": "Nous collectons les informations que vous nous fournissez directement, comme lors de la création d'un compte ou du contact avec le support.",
+      "dataUsage": "Utilisation des données",
+      "dataUsageText": "Nous utilisons vos informations pour fournir, maintenir et améliorer nos services.",
+      "dataSecurity": "Sécurité des données",
+      "dataSecurityText": "Nous mettons en œuvre des mesures de sécurité appropriées pour protéger vos informations personnelles."
+    }
+  },
+  "ddos": {
+    "infrastructure": {
+      "title": "Réseau mondial & SLA",
+      "subtitle": "Infrastructure de niveau entreprise avec performance et fiabilité garanties.",
+      "kpis": {
+        "uptimeSla": "SLA Uptime",
+        "anycastPops": "POPs Anycast",
+        "latencyImpact": "Impact latence",
+        "mitigationTime": "Temps de mitigation"
+      },
+      "legend": {
+        "scrubbingCenter": "Centre de scrubbing",
+        "datacenter": "Centre de données"
+      },
+      "regions": {
+        "americas": "Amériques",
+        "europe": "Europe",
+        "asiaPacific": "Asie-Pacifique"
+      },
+      "locations": {
+        "amsterdam": "Amsterdam",
+        "frankfurt": "Francfort",
+        "london": "Londres",
+        "paris": "Paris",
+        "newYork": "New York",
+        "losAngeles": "Los Angeles",
+        "singapore": "Singapour",
+        "sydney": "Sydney",
+        "tokyo": "Tokyo",
+        "miami": "Miami"
+      }
+    }
+  },
+  "mockMode": {
+    "banner": "Mode test – WHMCS non connecté. Données de démonstration utilisées.",
+    "demoCredentials": "Démo : client@demo.hoxta / Demo1234!"
+  },
+  "register": {
+    "title": "Créer un compte",
+    "subtitle": "Inscrivez-vous pour commencer avec Hoxta",
+    "createAccount": "Créer un compte",
+    "creating": "Création du compte...",
+    "success": "Compte créé",
+    "successMessage": "Bienvenue chez Hoxta ! Votre compte a été créé avec succès.",
+    "failed": "L'inscription a échoué. Veuillez réessayer.",
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "loginToManage": "Connectez-vous pour accéder à vos services et gérer votre compte.",
+    "agreeToTerms": "J'accepte les",
+    "termsLink": "Conditions d'utilisation",
+    "errors": {
+      "firstnameRequired": "Le prénom est obligatoire",
+      "lastnameRequired": "Le nom est obligatoire",
+      "passwordRequired": "Le mot de passe est obligatoire",
+      "phoneRequired": "Le numéro de téléphone est obligatoire",
+      "addressRequired": "L'adresse est obligatoire",
+      "cityRequired": "La ville est obligatoire",
+      "postcodeRequired": "Le code postal est obligatoire",
+      "countryRequired": "Le pays est obligatoire",
+      "termsRequired": "Vous devez accepter les conditions d'utilisation"
+    }
   }
 }
