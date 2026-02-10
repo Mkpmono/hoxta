@@ -28,8 +28,8 @@ export function ContentSection({
         <div className={`flex flex-col ${reverse ? "lg:flex-row-reverse" : "lg:flex-row"} items-center gap-12 lg:gap-20`}>
           {/* Content */}
           <motion.div
-            initial={{ opacity: 0, x: reverse ? 30 : -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 1, x: reverse ? 20 : -20 }}
+            whileInView={{ x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
             className="flex-1 max-w-xl"
@@ -48,8 +48,8 @@ export function ContentSection({
                 {points.map((point, index) => (
                   <motion.li
                     key={index}
-                    initial={{ opacity: 0, x: -10 }}
-                    whileInView={{ opacity: 1, x: 0 }}
+                    initial={{ x: -10 }}
+                    whileInView={{ x: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.3, delay: index * 0.1 }}
                     className="flex items-start gap-3"
@@ -68,8 +68,8 @@ export function ContentSection({
 
           {/* Visual */}
           <motion.div
-            initial={{ opacity: 0, x: reverse ? -30 : 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 1, x: reverse ? -20 : 20 }}
+            whileInView={{ x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
             className="flex-1 w-full max-w-lg"

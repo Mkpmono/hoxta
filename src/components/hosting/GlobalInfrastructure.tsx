@@ -32,16 +32,12 @@ export function GlobalInfrastructure({
   return (
     <section className="py-20 md:py-28 bg-gradient-to-b from-card/30 via-transparent to-card/30 overflow-hidden">
       <div className="container mx-auto px-4 md:px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+        <div
           className="text-center mb-12"
         >
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">{title}</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">{subtitle}</p>
-        </motion.div>
+        </div>
 
         {/* Animated Network Map */}
         <motion.div
@@ -87,17 +83,13 @@ export function GlobalInfrastructure({
             <h3 className="text-lg font-semibold text-foreground mb-4">Infrastructure Capabilities</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {networkHighlights.map((item, index) => (
-                <motion.div
+              <div
                   key={index}
-                  initial={{ opacity: 0, x: -10 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.3, delay: 0.3 + index * 0.05 }}
                   className="flex items-center gap-3 text-sm text-muted-foreground"
                 >
                   <item.icon className="w-4 h-4 text-primary flex-shrink-0" />
                   <span>{item.text}</span>
-                </motion.div>
+              </div>
               ))}
             </div>
           </motion.div>
