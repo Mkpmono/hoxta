@@ -46,22 +46,14 @@ export function PlanComparison({
   return (
     <section id="comparison" className="py-20 md:py-28">
       <div className="container mx-auto px-4 md:px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+        <div
           className="text-center mb-12"
         >
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">{title}</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">{subtitle}</p>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+        <div
           className="overflow-x-auto"
         >
           <table className="w-full min-w-[600px]">
@@ -120,7 +112,7 @@ export function PlanComparison({
               )}
             </tbody>
           </table>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

@@ -44,16 +44,12 @@ export function HowItWorks({
   return (
     <section className="py-20 md:py-28">
       <div className="container mx-auto px-4 md:px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+        <div
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">{title}</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">{subtitle}</p>
-        </motion.div>
+        </div>
 
         <div className="relative max-w-5xl mx-auto">
           {/* Connection Line */}
@@ -61,12 +57,8 @@ export function HowItWorks({
 
           <div className="grid md:grid-cols-4 gap-8">
             {steps.map((step, index) => (
-              <motion.div
+            <div
                 key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="relative text-center"
               >
                 {/* Step Number */}
@@ -81,7 +73,7 @@ export function HowItWorks({
 
                 <h3 className="text-lg font-semibold text-foreground mb-2">{step.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{step.description}</p>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
