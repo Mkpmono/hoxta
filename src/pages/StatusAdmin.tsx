@@ -207,22 +207,22 @@ export default function StatusAdmin() {
       <section className="py-20 md:py-28">
         <div className="container mx-auto px-4 md:px-6 max-w-4xl">
           {/* Header */}
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-3">
-              <Link to="/status" className="text-muted-foreground hover:text-foreground transition-colors">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+            <div className="flex items-center gap-3 min-w-0">
+              <Link to="/status" className="text-muted-foreground hover:text-foreground transition-colors shrink-0">
                 <ArrowLeft className="w-5 h-5" />
               </Link>
-              <div>
-                <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-                  <Activity className="w-6 h-6 text-primary" />
-                  Status Monitors
+              <div className="min-w-0">
+                <h1 className="text-xl sm:text-2xl font-bold text-foreground flex items-center gap-2">
+                  <Activity className="w-5 h-5 sm:w-6 sm:h-6 text-primary shrink-0" />
+                  <span className="truncate">Status Monitors</span>
                 </h1>
-                <p className="text-sm text-muted-foreground mt-1">
+                <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                   Manage services monitored on your status page
                 </p>
               </div>
             </div>
-            <Button onClick={startAdd} disabled={isAdding} size="sm">
+            <Button onClick={startAdd} disabled={isAdding} size="sm" className="w-full sm:w-auto shrink-0">
               <Plus className="w-4 h-4 mr-1" /> Add Monitor
             </Button>
           </div>
@@ -306,7 +306,7 @@ export default function StatusAdmin() {
                         )}
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 shrink-0">
+                    <div className="flex items-center gap-1 sm:gap-2 shrink-0 self-end sm:self-center">
                       <Button onClick={() => startEdit(mon)} variant="ghost" size="icon" className="h-8 w-8">
                         <Pencil className="w-4 h-4" />
                       </Button>
@@ -333,7 +333,7 @@ function MonitorForm({
   setForm: React.Dispatch<React.SetStateAction<Omit<Monitor, "id">>>;
 }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <div>
         <label className="text-xs text-muted-foreground mb-1 block">Name *</label>
         <Input
