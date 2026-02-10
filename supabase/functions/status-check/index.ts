@@ -6,6 +6,41 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
+async function checkHttp(url: string): Promise<{ status: string; ms: number }> {
+  try {
+    const start = Date.now();
+    const resp = await fetch(url, {
+      method: "HEAD",
+      signal: AbortSignal.timeout(10000),
+    });
+    return { status: resp.ok ? "up" : "degraded", ms: Date.now() - start };
+  } catch {
+    return { status: "down", ms: 10000 };
+  }
+}
+
+async function checkTcp(url: string): Promise<{ status: string; ms: number }> {
+  try {
+    // Parse host:port from URL or raw IP
+    let host: string;
+    let port: number;
+
+    // Handle formats: "http://1.2.3.4:25565", "1.2.3.4:25565", "1.2.3.4"
+    const cleaned = url.replace(/^https?:\/\//, "").replace(/\/$/, "");
+    const parts = cleaned.split(":");
+    host = parts[0];
+    port = parts[1] ? parseInt(parts[1]) : 80;
+
+    const start = Date.now();
+    const conn = await Deno.connect({ hostname: host, port, transport: "tcp" });
+    const ms = Date.now() - start;
+    conn.close();
+    return { status: "up", ms };
+  } catch {
+    return { status: "down", ms: 10000 };
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -16,7 +51,6 @@ Deno.serve(async (req) => {
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, serviceKey);
 
-    // Fetch active monitors
     const { data: monitors, error: mErr } = await supabase
       .from("status_monitors")
       .select("*")
@@ -31,20 +65,19 @@ Deno.serve(async (req) => {
       let responseTime = 0;
 
       if (monitor.url) {
-        try {
-          const start = Date.now();
-          const resp = await fetch(monitor.url, {
-            method: "HEAD",
-            signal: AbortSignal.timeout(10000),
-          });
-          responseTime = Date.now() - start;
-          status = resp.ok ? "up" : "degraded";
-        } catch {
-          status = "down";
-          responseTime = 10000;
+        const checkType = monitor.check_type || "http";
+
+        if (checkType === "tcp" || checkType === "ping") {
+          const r = await checkTcp(monitor.url);
+          status = r.status;
+          responseTime = r.ms;
+        } else {
+          const r = await checkHttp(monitor.url);
+          status = r.status;
+          responseTime = r.ms;
         }
       } else {
-        // Simulated check for services without URL
+        // No URL — simulated as up
         status = "up";
         responseTime = Math.floor(Math.random() * 50) + 10;
       }
@@ -56,7 +89,6 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Batch insert all checks
     if (results.length > 0) {
       const { error: insertErr } = await supabase
         .from("status_checks")
