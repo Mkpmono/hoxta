@@ -34,11 +34,7 @@ export const FinalCTA = forwardRef<HTMLElement, FinalCTAProps>(function FinalCTA
   return (
     <section className="py-20 md:py-28">
       <div className="container mx-auto px-4 md:px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+        <div
           className="relative overflow-hidden rounded-3xl"
         >
           {/* Background */}
@@ -50,32 +46,20 @@ export const FinalCTA = forwardRef<HTMLElement, FinalCTAProps>(function FinalCTA
           <div className="absolute bottom-0 left-0 w-48 h-48 bg-primary/5 rounded-full blur-2xl" />
 
           <div className="relative px-8 py-16 md:py-20 text-center">
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.1 }}
+            <h2
               className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6"
             >
               {title}
-            </motion.h2>
+            </h2>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2 }}
+            <p
               className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8"
             >
               {subtitle}
-            </motion.p>
+            </p>
 
             {/* CTAs */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.3 }}
+            <div
               className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10"
             >
               <Link
@@ -88,14 +72,10 @@ export const FinalCTA = forwardRef<HTMLElement, FinalCTAProps>(function FinalCTA
               <Link to={secondaryCTA.href} className="btn-outline px-8 py-4 text-lg font-medium">
                 {secondaryCTA.text}
               </Link>
-            </motion.div>
+            </div>
 
             {/* Guarantees */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.4 }}
+            <div
               className="flex flex-wrap items-center justify-center gap-6"
             >
               {guarantees.map((item, index) => (
@@ -104,9 +84,9 @@ export const FinalCTA = forwardRef<HTMLElement, FinalCTAProps>(function FinalCTA
                   <span>{item.text}</span>
                 </div>
               ))}
-            </motion.div>
+            </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
