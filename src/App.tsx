@@ -34,7 +34,7 @@ import KBArticle from "./pages/KBArticle";
 import KBAdmin from "./pages/KBAdmin";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
-import GameAdmin from "./pages/GameAdmin";
+
 import StatusAdmin from "./pages/StatusAdmin";
 // Panel Pages
 import Login from "./pages/panel/Login";
@@ -98,7 +98,7 @@ const App = () => (
             <Route path="/kb-admin" element={<KBAdmin />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:postId" element={<BlogPost />} />
-            <Route path="/game-admin" element={<GameAdmin />} />
+            
             <Route path="/status-admin" element={<StatusAdmin />} />
 
             
