@@ -46,7 +46,7 @@ export function useStatusMonitors(timeRange: "30m" | "1h" | "6h" | "24h" | "7d" 
     const since = getTimeAgo(timeRange);
 
     const [monitorsRes, checksRes] = await Promise.all([
-      supabase.from("status_monitors").select("*").eq("is_active", true).order("sort_order"),
+      supabase.from("status_monitors_public" as any).select("*").eq("is_active", true).order("sort_order"),
       supabase.from("status_checks").select("*").gte("checked_at", since).order("checked_at", { ascending: true }),
     ]);
 
