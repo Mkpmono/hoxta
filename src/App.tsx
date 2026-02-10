@@ -99,7 +99,7 @@ const App = () => (
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:postId" element={<BlogPost />} />
             <Route path="/game-admin" element={<GameAdmin />} />
-            <Route path="/status-admin" element={<ProtectedRoute allowedRoles={["admin", "owner"]}><StatusAdmin /></ProtectedRoute>} />
+            <Route path="/status-admin" element={<StatusAdmin />} />
 
             
             {/* Auth */}
