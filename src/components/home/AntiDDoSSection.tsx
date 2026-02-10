@@ -29,45 +29,122 @@ export function AntiDDoSSection() {
           }}
         >
           <div className="grid md:grid-cols-2 gap-10 items-center">
-            {/* Static illustration (no SVG/canvas/anim) */}
-            <div className="relative w-full max-w-[420px] mx-auto">
-              <div className="relative rounded-3xl border border-border/40 bg-card/20 backdrop-blur-sm p-8 overflow-hidden">
-                <div className="absolute -top-16 -left-16 w-72 h-72 rounded-full bg-primary/10 blur-[90px]" />
-                <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-primary/10 blur-[100px]" />
+            {/* Animated Radar */}
+            <div className="relative w-full max-w-[380px] aspect-square mx-auto">
+              <svg viewBox="0 0 200 200" className="w-full h-full">
+                <defs>
+                  <radialGradient id="radarSweep" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.3" />
+                    <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0" />
+                  </radialGradient>
+                  <filter id="radarGlow">
+                    <feGaussianBlur stdDeviation="1.5" result="blur" />
+                    <feMerge>
+                      <feMergeNode in="blur" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+                </defs>
 
-                <div className="relative grid gap-5">
-                  <div className="flex items-center gap-3">
-                    <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20">
-                      <Shield className="w-6 h-6 text-primary" />
-                    </div>
-                    <div>
-                      <div className="text-sm text-muted-foreground">{t("sections.antiDdos")}</div>
-                      <div className="text-lg font-semibold text-foreground">Always-on mitigation</div>
-                    </div>
-                  </div>
+                {/* Grid circles */}
+                {[30, 55, 80].map((r) => (
+                  <circle key={r} cx="100" cy="100" r={r} fill="none" stroke="hsl(var(--primary))" strokeOpacity="0.1" strokeWidth="0.5" />
+                ))}
 
-                  <div className="grid grid-cols-3 gap-3">
-                    {[
-                      { icon: Zap, label: "<10s" },
-                      { icon: Activity, label: "24/7" },
-                      { icon: Shield, label: "L3–L7" },
-                    ].map((item, idx) => (
-                      <div key={idx} className="rounded-2xl border border-border/40 bg-background/20 p-4 text-center">
-                        <item.icon className="w-5 h-5 text-primary mx-auto mb-2" />
-                        <div className="text-sm font-semibold text-foreground">{item.label}</div>
-                      </div>
-                    ))}
-                  </div>
+                {/* Cross lines */}
+                <line x1="100" y1="15" x2="100" y2="185" stroke="hsl(var(--primary))" strokeOpacity="0.08" strokeWidth="0.5" />
+                <line x1="15" y1="100" x2="185" y2="100" stroke="hsl(var(--primary))" strokeOpacity="0.08" strokeWidth="0.5" />
+                <line x1="40" y1="40" x2="160" y2="160" stroke="hsl(var(--primary))" strokeOpacity="0.05" strokeWidth="0.5" />
+                <line x1="160" y1="40" x2="40" y2="160" stroke="hsl(var(--primary))" strokeOpacity="0.05" strokeWidth="0.5" />
 
-                  <div className="rounded-2xl border border-border/40 bg-background/20 p-4">
-                    <div className="text-xs text-muted-foreground mb-2">Live status</div>
-                    <div className="h-2 rounded-full bg-border/50 overflow-hidden">
-                      <div className="h-full w-2/3 bg-primary/40" />
-                    </div>
-                    <div className="mt-2 text-xs text-muted-foreground">All systems nominal</div>
-                  </div>
-                </div>
-              </div>
+                {/* Rotating sweep */}
+                <g style={{ transformOrigin: '100px 100px' }}>
+                  <path
+                    d="M100,100 L100,20 A80,80 0 0,1 169,60 Z"
+                    fill="url(#radarSweep)"
+                    opacity="0.6"
+                  >
+                    <animateTransform
+                      attributeName="transform"
+                      type="rotate"
+                      from="0 100 100"
+                      to="360 100 100"
+                      dur="4s"
+                      repeatCount="indefinite"
+                    />
+                  </path>
+                </g>
+
+                {/* Sweep line */}
+                <line x1="100" y1="100" x2="100" y2="20" stroke="hsl(var(--primary))" strokeWidth="1" strokeOpacity="0.6" filter="url(#radarGlow)">
+                  <animateTransform
+                    attributeName="transform"
+                    type="rotate"
+                    from="0 100 100"
+                    to="360 100 100"
+                    dur="4s"
+                    repeatCount="indefinite"
+                  />
+                </line>
+
+                {/* Dashed orbit ring */}
+                <circle cx="100" cy="100" r="65" fill="none" stroke="hsl(var(--primary))" strokeWidth="1" strokeDasharray="4 6" strokeOpacity="0.3">
+                  <animateTransform
+                    attributeName="transform"
+                    type="rotate"
+                    from="0 100 100"
+                    to="-360 100 100"
+                    dur="20s"
+                    repeatCount="indefinite"
+                  />
+                </circle>
+
+                {/* Blips — threat dots */}
+                {[
+                  { cx: 72, cy: 48, delay: "0s" },
+                  { cx: 135, cy: 65, delay: "1.2s" },
+                  { cx: 60, cy: 120, delay: "2.5s" },
+                  { cx: 140, cy: 130, delay: "0.8s" },
+                  { cx: 110, cy: 45, delay: "3s" },
+                  { cx: 85, cy: 140, delay: "1.8s" },
+                ].map((blip, idx) => (
+                  <g key={idx}>
+                    <circle cx={blip.cx} cy={blip.cy} r="2" fill="hsl(var(--primary))" filter="url(#radarGlow)">
+                      <animate attributeName="opacity" values="0;1;1;0" dur="4s" begin={blip.delay} repeatCount="indefinite" />
+                    </circle>
+                    <circle cx={blip.cx} cy={blip.cy} r="2" fill="none" stroke="hsl(var(--primary))" strokeWidth="0.5">
+                      <animate attributeName="r" values="2;6;2" dur="2s" begin={blip.delay} repeatCount="indefinite" />
+                      <animate attributeName="opacity" values="0.5;0;0.5" dur="2s" begin={blip.delay} repeatCount="indefinite" />
+                    </circle>
+                  </g>
+                ))}
+
+                {/* Center dot */}
+                <circle cx="100" cy="100" r="3" fill="hsl(var(--primary))" filter="url(#radarGlow)" />
+                <circle cx="100" cy="100" r="1.5" fill="white" opacity="0.9" />
+
+                {/* Outer ring */}
+                <circle cx="100" cy="100" r="85" fill="none" stroke="hsl(var(--primary))" strokeOpacity="0.15" strokeWidth="0.8" />
+
+                {/* Tick marks on outer ring */}
+                {Array.from({ length: 36 }).map((_, i) => {
+                  const angle = (i * 10 * Math.PI) / 180;
+                  const inner = 83;
+                  const outer = 87;
+                  return (
+                    <line
+                      key={i}
+                      x1={100 + Math.cos(angle) * inner}
+                      y1={100 + Math.sin(angle) * inner}
+                      x2={100 + Math.cos(angle) * outer}
+                      y2={100 + Math.sin(angle) * outer}
+                      stroke="hsl(var(--primary))"
+                      strokeOpacity={i % 3 === 0 ? 0.3 : 0.12}
+                      strokeWidth={i % 3 === 0 ? 0.8 : 0.4}
+                    />
+                  );
+                })}
+              </svg>
             </div>
 
             {/* Content */}
