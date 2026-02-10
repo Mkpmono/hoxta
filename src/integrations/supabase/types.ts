@@ -259,6 +259,13 @@ export type Database = {
             referencedRelation: "status_monitors"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "status_checks_monitor_id_fkey"
+            columns: ["monitor_id"]
+            isOneToOne: false
+            referencedRelation: "status_monitors_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       status_monitors: {
@@ -320,7 +327,36 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      status_monitors_public: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          id: string | null
+          is_active: boolean | null
+          name: string | null
+          sort_order: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          id?: string | null
+          is_active?: boolean | null
+          name?: string | null
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          id?: string | null
+          is_active?: boolean | null
+          name?: string | null
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {
