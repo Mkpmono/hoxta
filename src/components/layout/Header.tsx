@@ -58,7 +58,6 @@ const menuItems: MenuItemProps[] = [
     items: [
       { titleKey: "nav.aboutUs", subtitleKey: "nav.aboutUsDesc", icon: <LifeBuoy className="w-5 h-5" />, href: "/about" },
       { titleKey: "nav.contactUs", subtitleKey: "nav.contactUsDesc", icon: <LifeBuoy className="w-5 h-5" />, href: "/contact" },
-      { titleKey: "nav.blog", subtitleKey: "nav.blogDesc", icon: <LifeBuoy className="w-5 h-5" />, href: "/blog" },
       { titleKey: "nav.terms", subtitleKey: "nav.termsDesc", icon: <LifeBuoy className="w-5 h-5" />, href: "/terms" },
       { titleKey: "nav.privacy", subtitleKey: "nav.privacyDesc", icon: <LifeBuoy className="w-5 h-5" />, href: "/privacy" },
     ],
