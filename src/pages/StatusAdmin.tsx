@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { supabase } from "@/integrations/supabase/client";
+import { useKBAdmin } from "@/hooks/useKBAdmin";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Save, X, Activity, ArrowLeft } from "lucide-react";
+import { Plus, Pencil, Trash2, Save, X, Activity, ArrowLeft, LogIn, ShieldAlert, LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
@@ -41,7 +42,87 @@ const EMPTY_MONITOR: Omit<Monitor, "id"> = {
   sort_order: 0,
 };
 
+// Login form for admin auth
+function AdminLogin() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    if (isSignUp) {
+      const { error } = await supabase.auth.signUp({ email, password });
+      if (error) toast.error(error.message);
+      else toast.success("Account created! Ask the site owner to grant you admin access.");
+    } else {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) toast.error(error.message);
+    }
+    setLoading(false);
+  };
+
+  return (
+    <Layout>
+      <section className="pt-32 pb-20">
+        <div className="container mx-auto px-4 max-w-md">
+          <div className="glass-card p-8">
+            <div className="flex items-center gap-3 mb-6">
+              <ShieldAlert className="w-6 h-6 text-primary" />
+              <h1 className="text-2xl font-bold text-foreground">{isSignUp ? "Create Account" : "Admin Login"}</h1>
+            </div>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="text-sm text-muted-foreground mb-1 block">Email</label>
+                <Input type="email" value={email} onChange={e => setEmail(e.target.value)} required />
+              </div>
+              <div>
+                <label className="text-sm text-muted-foreground mb-1 block">Password</label>
+                <Input type="password" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} />
+              </div>
+              <Button type="submit" disabled={loading} className="w-full">
+                <LogIn className="w-4 h-4 mr-2" />
+                {loading ? "Loading..." : isSignUp ? "Sign Up" : "Sign In"}
+              </Button>
+            </form>
+            <p className="text-xs text-muted-foreground mt-4 text-center">
+              {isSignUp ? "Already have an account?" : "Don't have an account?"}
+              <button onClick={() => setIsSignUp(!isSignUp)} className="text-primary ml-1 hover:underline">
+                {isSignUp ? "Sign In" : "Sign Up"}
+              </button>
+            </p>
+          </div>
+          <p className="text-center text-sm text-muted-foreground mt-6">
+            <Link to="/status" className="hover:text-primary transition-colors">← Back to Status</Link>
+          </p>
+        </div>
+      </section>
+    </Layout>
+  );
+}
+
+function NoAccess() {
+  return (
+    <Layout>
+      <section className="pt-32 pb-20">
+        <div className="container mx-auto px-4 max-w-md text-center">
+          <div className="glass-card p-8">
+            <ShieldAlert className="w-12 h-12 text-destructive mx-auto mb-4" />
+            <h1 className="text-xl font-bold text-foreground mb-2">Access Denied</h1>
+            <p className="text-muted-foreground text-sm mb-6">You need admin privileges to access this page.</p>
+            <Button variant="outline" onClick={() => supabase.auth.signOut()}>
+              <LogOut className="w-4 h-4 mr-2" /> Sign Out
+            </Button>
+          </div>
+        </div>
+      </section>
+    </Layout>
+  );
+}
+
 export default function StatusAdmin() {
+  const { isAdmin, loading: authLoading, user } = useKBAdmin();
   const [monitors, setMonitors] = useState<Monitor[]>([]);
   const [stats, setStats] = useState<Map<string, MonitorStats>>(new Map());
   const [loading, setLoading] = useState(true);
@@ -101,8 +182,23 @@ export default function StatusAdmin() {
   };
 
   useEffect(() => {
-    fetchMonitors();
-  }, []);
+    if (isAdmin) fetchMonitors();
+  }, [isAdmin]);
+
+  if (authLoading) {
+    return (
+      <Layout>
+        <section className="pt-32 pb-20">
+          <div className="container mx-auto px-4 text-center">
+            <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
+          </div>
+        </section>
+      </Layout>
+    );
+  }
+
+  if (!user) return <AdminLogin />;
+  if (!isAdmin) return <NoAccess />;
 
   const handleSave = async () => {
     if (!editForm.name.trim()) {
@@ -222,9 +318,14 @@ export default function StatusAdmin() {
                 </p>
               </div>
             </div>
-            <Button onClick={startAdd} disabled={isAdding} size="sm" className="w-full sm:w-auto shrink-0">
-              <Plus className="w-4 h-4 mr-1" /> Add Monitor
-            </Button>
+            <div className="flex gap-2 w-full sm:w-auto">
+              <Button onClick={startAdd} disabled={isAdding} size="sm" className="flex-1 sm:flex-none">
+                <Plus className="w-4 h-4 mr-1" /> Add Monitor
+              </Button>
+              <Button onClick={() => supabase.auth.signOut()} variant="ghost" size="sm" className="shrink-0">
+                <LogOut className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
 
           {/* Add Form */}

@@ -148,14 +148,14 @@ export default function Status() {
           </motion.div>
 
           {/* Controls */}
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex gap-1 bg-card/50 rounded-lg p-1 border border-border/50">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-8">
+            <div className="flex flex-wrap gap-1 bg-card/50 rounded-lg p-1 border border-border/50 w-full sm:w-auto">
               {TIME_RANGES.map((r) => (
                 <button
                   key={r.key}
                   onClick={() => setTimeRange(r.key)}
                   className={cn(
-                    "px-3 py-1.5 text-xs rounded-md font-medium transition-colors",
+                    "px-2.5 sm:px-3 py-1.5 text-xs rounded-md font-medium transition-colors",
                     timeRange === r.key
                       ? "bg-primary text-primary-foreground"
                       : "text-muted-foreground hover:text-foreground"
@@ -167,10 +167,10 @@ export default function Status() {
             </div>
             <button
               onClick={refetch}
-              className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
+              className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors shrink-0"
             >
               <RefreshCw className={cn("w-3.5 h-3.5", loading && "animate-spin")} />
-              <span className="hidden sm:inline">
+              <span>
                 Updated {lastUpdated.toLocaleTimeString()}
               </span>
             </button>
