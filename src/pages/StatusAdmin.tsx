@@ -42,24 +42,17 @@ const EMPTY_MONITOR: Omit<Monitor, "id"> = {
   sort_order: 0,
 };
 
-// Login form for admin auth
+// Login form for admin auth - no sign-up, admin accounts are pre-created
 function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    if (isSignUp) {
-      const { error } = await supabase.auth.signUp({ email, password });
-      if (error) toast.error(error.message);
-      else toast.success("Account created! Ask the site owner to grant you admin access.");
-    } else {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) toast.error(error.message);
-    }
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) toast.error("Invalid credentials");
     setLoading(false);
   };
 
@@ -70,28 +63,23 @@ function AdminLogin() {
           <div className="glass-card p-8">
             <div className="flex items-center gap-3 mb-6">
               <ShieldAlert className="w-6 h-6 text-primary" />
-              <h1 className="text-2xl font-bold text-foreground">{isSignUp ? "Create Account" : "Admin Login"}</h1>
+              <h1 className="text-2xl font-bold text-foreground">Admin Login</h1>
             </div>
+            <p className="text-sm text-muted-foreground mb-4">Access restricted to authorized administrators only.</p>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="text-sm text-muted-foreground mb-1 block">Email</label>
-                <Input type="email" value={email} onChange={e => setEmail(e.target.value)} required />
+                <Input type="email" value={email} onChange={e => setEmail(e.target.value)} required autoComplete="email" />
               </div>
               <div>
                 <label className="text-sm text-muted-foreground mb-1 block">Password</label>
-                <Input type="password" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} />
+                <Input type="password" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} autoComplete="current-password" />
               </div>
               <Button type="submit" disabled={loading} className="w-full">
                 <LogIn className="w-4 h-4 mr-2" />
-                {loading ? "Loading..." : isSignUp ? "Sign Up" : "Sign In"}
+                {loading ? "Loading..." : "Sign In"}
               </Button>
             </form>
-            <p className="text-xs text-muted-foreground mt-4 text-center">
-              {isSignUp ? "Already have an account?" : "Don't have an account?"}
-              <button onClick={() => setIsSignUp(!isSignUp)} className="text-primary ml-1 hover:underline">
-                {isSignUp ? "Sign In" : "Sign Up"}
-              </button>
-            </p>
           </div>
           <p className="text-center text-sm text-muted-foreground mt-6">
             <Link to="/status" className="hover:text-primary transition-colors">← Back to Status</Link>
