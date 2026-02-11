@@ -57,11 +57,11 @@ export function getCorsHeaders(origin: string | null): Record<string, string> {
 }
 
 /**
- * Legacy static headers for backward compatibility
+ * Legacy static headers - uses first allowed origin as default
  * @deprecated Use getCorsHeaders(origin) instead
  */
 export const corsHeaders = {
-  'Access-Control-Allow-Origin': DEV_MODE ? '*' : 'https://hoxta.com',
+  'Access-Control-Allow-Origin': ALLOWED_ORIGINS[0],
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
 };
