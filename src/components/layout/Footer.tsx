@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { brand } from "@/config/brand";
+import { HoxtaLogo } from "@/components/HoxtaLogo";
 import { MapPin, Clock, MessageCircle, Twitter, Github, Youtube, Instagram } from "lucide-react";
 
 // Payment icon images
@@ -141,11 +142,9 @@ export function Footer() {
 
           {/* Brand Info */}
           <div className="col-span-2">
-            <Link to="/" className="flex items-center gap-1 mb-4">
-              <span className="text-2xl font-bold text-foreground">Ho</span>
-              <span className="text-2xl font-bold text-primary">x</span>
-              <span className="text-2xl font-bold text-foreground">ta</span>
-            </Link>
+            <div className="mb-4">
+              <HoxtaLogo size="lg" />
+            </div>
             
             <div className="space-y-3 mb-6">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">

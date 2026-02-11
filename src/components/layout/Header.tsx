@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Globe, Server, Gamepad2, HardDrive, LifeBuoy, X, Menu } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { HoxtaLogo } from "@/components/HoxtaLogo";
 
 interface DropdownItem {
   titleKey: string;
@@ -122,14 +123,7 @@ export function Header() {
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center group">
-            <span className="text-xl md:text-2xl font-extrabold tracking-tight text-foreground font-display">Ho</span>
-            <span className="relative text-xl md:text-2xl font-extrabold tracking-tight text-primary font-display">
-              x
-              <span className="absolute -inset-1 rounded-md bg-primary/15 blur-sm group-hover:bg-primary/25 transition-all duration-300" />
-            </span>
-            <span className="text-xl md:text-2xl font-extrabold tracking-tight text-foreground font-display">ta</span>
-          </Link>
+          <HoxtaLogo size="md" />
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-0.5">
