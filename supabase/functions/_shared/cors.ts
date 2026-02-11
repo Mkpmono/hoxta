@@ -10,6 +10,7 @@ const ALLOWED_ORIGINS = [
   'https://panel.hoxta.com',
   'https://hoxta.lovable.app',
   'https://id-preview--3c009f31-c1ef-47e9-8a42-d06a347bc20b.lovable.app',
+  'https://3c009f31-c1ef-47e9-8a42-d06a347bc20b.lovableproject.com',
 ];
 
 // Dev origins (only allowed when DEV_MODE is set)
@@ -32,7 +33,7 @@ export function getCorsHeaders(origin: string | null): Record<string, string> {
   if (origin && allAllowed.includes(origin)) {
     return {
       'Access-Control-Allow-Origin': origin,
-      'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+      'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
       'Access-Control-Max-Age': '86400',
     };
@@ -42,7 +43,7 @@ export function getCorsHeaders(origin: string | null): Record<string, string> {
   if (DEV_MODE) {
     return {
       'Access-Control-Allow-Origin': origin || '*',
-      'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+      'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
       'Access-Control-Max-Age': '86400',
     };
@@ -51,7 +52,7 @@ export function getCorsHeaders(origin: string | null): Record<string, string> {
   // Return empty headers for unknown origins in production
   return {
     'Access-Control-Allow-Origin': '',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
   };
 }
@@ -62,7 +63,7 @@ export function getCorsHeaders(origin: string | null): Record<string, string> {
  */
 export const corsHeaders = {
   'Access-Control-Allow-Origin': ALLOWED_ORIGINS[0],
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
 };
 
