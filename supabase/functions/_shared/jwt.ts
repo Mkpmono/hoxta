@@ -158,16 +158,8 @@ export async function createSession(
  * Validate session from JWT
  */
 export async function validateSession(token: string): Promise<SessionData | null> {
-  // First check JWT validity
   const payload = await verifyJWT(token);
   if (!payload) return null;
-
-  // Check session store (optional for stateless, required for revocation)
-  const session = sessions.get(token);
-  if (session && Date.now() > session.expiresAt) {
-    sessions.delete(token);
-    return null;
-  }
 
   return {
     clientId: Number(payload.sub),
