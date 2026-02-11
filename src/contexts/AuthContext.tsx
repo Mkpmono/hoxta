@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from "react";
-import { apiClient, ClientDetails, checkMockMode, isMockMode } from "@/services/apiClient";
+import { apiClient, ClientDetails } from "@/services/apiClient";
 
 export interface User {
   id: string;
@@ -35,7 +35,6 @@ interface AuthContextType {
   }) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   isLoading: boolean;
-  isMockMode: boolean;
   refreshSession: () => Promise<void>;
 }
 
@@ -43,27 +42,19 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 const STORAGE_KEY = "hoxta_auth_session";
 
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<AuthSession>({ isAuthenticated: false, user: null, client: null });
   const [isLoading, setIsLoading] = useState(true);
-  const [mockMode, setMockMode] = useState(true);
 
-  // Initialize: check mock mode and restore session
+  // Initialize: restore session
   useEffect(() => {
     const init = async () => {
       try {
-        // Check if backend is in mock mode
-        const isInMockMode = await checkMockMode();
-        setMockMode(isInMockMode);
-
-        // Try to restore session
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored) {
           try {
             const parsed = JSON.parse(stored);
             if (parsed.isAuthenticated && parsed.user) {
-              // Verify session is still valid by calling /me
               const result = await apiClient.getMe();
               if (result.data) {
                 setSession({
@@ -72,7 +63,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                   client: result.data
                 });
               } else {
-                // Session invalid, clear storage
                 localStorage.removeItem(STORAGE_KEY);
               }
             }
@@ -104,7 +94,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback(async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     try {
-      // Call backend login
       const result = await apiClient.login(email, password);
 
       if (result.success && result.client) {
@@ -182,7 +171,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-
   const refreshSession = useCallback(async () => {
     if (!session.isAuthenticated) return;
 
@@ -206,7 +194,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       register, 
       logout, 
       isLoading, 
-      isMockMode: mockMode,
       refreshSession
     }}>
       {children}

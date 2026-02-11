@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Server, ShoppingCart, FileText, MessageSquare, AlertCircle, CheckCircle, Clock, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { PanelLayout } from "@/components/panel/PanelLayout";
-import { MockModeBanner } from "@/components/panel/MockModeBanner";
+
 import { apiClient, Service, Order, Invoice, Ticket } from "@/services/apiClient";
 
 interface DashboardData {
@@ -48,7 +48,6 @@ export default function PanelDashboard() {
   if (loading) {
     return (
       <PanelLayout>
-        <MockModeBanner />
         <div className="flex items-center justify-center h-64">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
@@ -59,7 +58,6 @@ export default function PanelDashboard() {
   if (error) {
     return (
       <PanelLayout>
-        <MockModeBanner />
         <div className="flex items-center justify-center h-64 text-destructive">
           <AlertCircle className="w-6 h-6 mr-2" />
           {error}
@@ -98,7 +96,7 @@ export default function PanelDashboard() {
   return (
     <PanelLayout>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-        <MockModeBanner />
+        
         <h1 className="text-2xl font-bold text-foreground mb-6">Dashboard</h1>
 
         {/* Stats Grid */}

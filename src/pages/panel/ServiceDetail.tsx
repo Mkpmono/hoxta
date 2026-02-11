@@ -15,7 +15,7 @@ import {
   AlertTriangle
 } from "lucide-react";
 import { PanelLayout } from "@/components/panel/PanelLayout";
-import { MockModeBanner } from "@/components/panel/MockModeBanner";
+
 import { Skeleton } from "@/components/ui/LoadingSkeleton";
 import { whmcsClient, ServiceDetails } from "@/services/whmcsClient";
 import { toast } from "@/hooks/use-toast";
@@ -87,7 +87,7 @@ export default function ServiceDetailPage() {
   return (
     <PanelLayout>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <MockModeBanner />
+        
 
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Download, Eye } from "lucide-react";
 import { PanelLayout } from "@/components/panel/PanelLayout";
-import { MockModeBanner } from "@/components/panel/MockModeBanner";
+
 import { TableRowSkeleton } from "@/components/ui/LoadingSkeleton";
 import { apiClient, Invoice } from "@/services/apiClient";
 import { toast } from "@/hooks/use-toast";
@@ -51,7 +51,7 @@ export default function PanelInvoices() {
   return (
     <PanelLayout>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <MockModeBanner />
+        
         <h1 className="text-2xl font-bold text-foreground mb-6">Invoices</h1>
         
         <div className="glass-card overflow-hidden">

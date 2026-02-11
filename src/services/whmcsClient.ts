@@ -1,50 +1,49 @@
 /**
  * WHMCS Client Service Layer
  * This service provides a clean interface for all WHMCS-related operations.
- * It calls internal proxy endpoints, never WHMCS directly.
- * 
- * In MOCK MODE: Returns mock data
- * In LIVE MODE: Proxy endpoints call WHMCS API with server-side credentials
+ * It calls internal proxy endpoints via Edge Functions.
  */
 
-import { mockApi } from "./mockApi";
+import { supabase } from "@/integrations/supabase/client";
 
-export interface WhmcsConfig {
-  isMockMode: boolean;
-  baseUrl?: string;
+// Get auth token from storage
+function getAuthToken(): string | null {
+  return localStorage.getItem('hoxta_auth_token');
 }
 
-// Check if we're in mock mode (always true until WHMCS is configured)
-let mockMode = true;
-
-export const setMockMode = (value: boolean) => {
-  mockMode = value;
-};
-
-export const isMockMode = () => mockMode;
-
-// API base for internal proxy endpoints
-const API_BASE = "/api/whmcs";
-
-// Generic fetch wrapper
+// Generic fetch wrapper using Edge Functions
 async function apiCall<T>(endpoint: string, options?: RequestInit): Promise<T> {
-  if (mockMode) {
-    return mockApi.handleRequest<T>(endpoint, options);
+  // Determine which edge function to call based on endpoint
+  const parts = endpoint.split('/').filter(Boolean);
+  const resource = parts[0]; // services, orders, invoices, tickets, me, departments
+  const path = '/' + parts.join('/');
+
+  let functionName = 'whmcs-auth';
+  if (resource === 'services') functionName = 'whmcs-services';
+  else if (resource === 'orders') functionName = 'whmcs-orders';
+  else if (resource === 'invoices') functionName = 'whmcs-invoices';
+  else if (resource === 'tickets') functionName = 'whmcs-tickets';
+
+  const token = getAuthToken();
+  const headers: Record<string, string> = {};
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_BASE}${endpoint}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...options?.headers,
+  const { data, error } = await supabase.functions.invoke(functionName, {
+    body: {
+      path: '/' + parts.slice(resource === 'me' ? 0 : 1).join('/') || '/list',
+      method: options?.method || 'GET',
+      ...(options?.body ? JSON.parse(options.body as string) : {}),
     },
+    headers,
   });
 
-  if (!response.ok) {
-    throw new Error(`API Error: ${response.statusText}`);
+  if (error) {
+    throw new Error(`API Error: ${error.message}`);
   }
 
-  return response.json();
+  return data as T;
 }
 
 // ============ CLIENT METHODS ============
@@ -287,6 +286,4 @@ export const whmcsClient = {
   createTicket,
   replyTicket,
   testConnection,
-  isMockMode,
-  setMockMode,
 };

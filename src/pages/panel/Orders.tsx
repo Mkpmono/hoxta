@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Package, ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { PanelLayout } from "@/components/panel/PanelLayout";
-import { MockModeBanner } from "@/components/panel/MockModeBanner";
+
 import { TableRowSkeleton } from "@/components/ui/LoadingSkeleton";
 import { apiClient, Order } from "@/services/apiClient";
 import { toast } from "sonner";
@@ -48,7 +48,7 @@ export default function PanelOrders() {
   return (
     <PanelLayout>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <MockModeBanner />
+        
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-foreground">Orders</h1>
           <div className="flex items-center gap-4">

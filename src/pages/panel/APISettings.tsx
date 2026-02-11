@@ -11,7 +11,7 @@ export default function PanelAPI() {
   const [secret, setSecret] = useState("");
   const [testing, setTesting] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState<"idle" | "success" | "error">("idle");
-  const isMockMode = whmcsClient.isMockMode();
+  
 
   const handleTestConnection = async () => {
     if (!baseUrl || !identifier || !secret) {
@@ -48,22 +48,6 @@ export default function PanelAPI() {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-2xl font-bold text-foreground mb-6">API Settings</h1>
         
-        {/* Mock Mode Banner */}
-        {isMockMode && (
-          <div className="glass-card p-4 mb-6 border-primary/30 bg-primary/5">
-            <div className="flex items-start gap-3">
-              <Server className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-              <div>
-                <h3 className="font-medium text-foreground">Mock Mode Active</h3>
-                <p className="text-sm text-muted-foreground mt-1">
-                  The panel is currently using simulated data. To connect to a live WHMCS installation, 
-                  configure your API credentials on the server side.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Security Warning */}
         <div className="glass-card p-4 mb-6 border-yellow-500/30 bg-yellow-500/5">
           <div className="flex items-start gap-3">

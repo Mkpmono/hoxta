@@ -1,57 +1,14 @@
 /**
  * Unified API Client
  * Calls Edge Functions for all WHMCS operations.
- * Automatically switches between mock mode and live mode based on backend configuration.
+ * All operations go through WHMCS API - no mock mode.
  */
 
 import { supabase } from "@/integrations/supabase/client";
 
-// Cache mock mode status
-let mockModeCache: boolean | null = null;
-let mockModeCheckPromise: Promise<boolean> | null = null;
-
 export interface ApiResponse<T> {
   data?: T;
   error?: string;
-  mockMode?: boolean;
-}
-
-// Check if we're in mock mode by calling the backend
-export async function checkMockMode(): Promise<boolean> {
-  if (mockModeCache !== null) return mockModeCache;
-  
-  if (mockModeCheckPromise) return mockModeCheckPromise;
-  
-  mockModeCheckPromise = (async () => {
-    try {
-      const { data, error } = await supabase.functions.invoke('whmcs-auth', {
-        body: { path: '/me' },
-      });
-      
-      if (error) {
-        console.warn('Mock mode check failed:', error);
-        mockModeCache = true;
-        return true;
-      }
-      
-      mockModeCache = data?.mockMode ?? true;
-      return mockModeCache;
-    } catch {
-      mockModeCache = true;
-      return true;
-    }
-  })();
-  
-  return mockModeCheckPromise;
-}
-
-export function isMockMode(): boolean {
-  return mockModeCache ?? true;
-}
-
-export function clearMockModeCache(): void {
-  mockModeCache = null;
-  mockModeCheckPromise = null;
 }
 
 // Get auth token from storage
@@ -96,7 +53,7 @@ async function callEdgeFunction<T>(
       return { error: error.message };
     }
 
-    return { data, mockMode: data?.mockMode };
+    return { data };
   } catch (err) {
     return { error: err instanceof Error ? err.message : 'Request failed' };
   }
@@ -126,7 +83,6 @@ export interface LoginResponse {
   token?: string;
   client?: ClientDetails;
   error?: string;
-  mockMode?: boolean;
 }
 
 export async function login(email: string, password: string): Promise<LoginResponse> {
@@ -394,11 +350,6 @@ export async function confirmPayment(paymentId: string, method: string): Promise
 
 // Export as unified client
 export const apiClient = {
-  // Mock mode
-  checkMockMode,
-  isMockMode,
-  clearMockModeCache,
-  
   // Auth
   login,
   register,
