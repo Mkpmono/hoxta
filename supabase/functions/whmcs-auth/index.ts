@@ -1,6 +1,6 @@
 /**
  * WHMCS Authentication Edge Function
- * Handles login, registration, session management with httpOnly cookies
+ * Handles login, registration, session management
  * 
  * Endpoints:
  * POST /login - Authenticate existing user
@@ -10,8 +10,7 @@
  */
 
 import { handleCors, createCorsResponse, createErrorResponse, getCorsHeaders } from '../_shared/cors.ts';
-import { isWhmcsConfigured, validateLogin, addClient, getClientDetails } from '../_shared/whmcs.ts';
-import { mockClient } from '../_shared/mock-data.ts';
+import { validateLogin, addClient, getClientDetails } from '../_shared/whmcs.ts';
 import { validateEmail, validatePassword, validateText, validateAll } from '../_shared/validation.ts';
 import { 
   createSession, 
@@ -23,17 +22,7 @@ import {
 } from '../_shared/jwt.ts';
 import { rateLimit } from '../_shared/rate-limit.ts';
 
-const MOCK_MODE = !isWhmcsConfigured();
-
-// Demo users for development
-const DEMO_USERS: Record<string, { password: string; role: 'client' | 'admin' | 'owner' }> = {
-  'demo@hoxta.com': { password: 'demo123', role: 'client' },
-  'admin@hoxta.com': { password: 'admin123', role: 'admin' },
-  'owner@hoxta.com': { password: 'owner123', role: 'owner' },
-};
-
 Deno.serve(async (req) => {
-  // Handle CORS preflight
   const corsResponse = handleCors(req);
   if (corsResponse) return corsResponse;
 
@@ -41,14 +30,12 @@ Deno.serve(async (req) => {
   const origin = req.headers.get('Origin');
   const isSecure = origin?.startsWith('https://') || false;
 
-  // Determine path: from URL pathname or from body
   let path = url.pathname.replace('/whmcs-auth', '');
   let bodyData: Record<string, unknown> | null = null;
 
   if (req.method === 'POST') {
     try {
       bodyData = await req.json();
-      // If path came in body (from supabase.functions.invoke), use it
       if (bodyData?.path && typeof bodyData.path === 'string') {
         path = bodyData.path;
       }
@@ -57,18 +44,14 @@ Deno.serve(async (req) => {
     }
   }
 
-  // For GET requests, try to read path from query params as fallback
   if (req.method === 'GET') {
     const queryPath = url.searchParams.get('path');
     if (queryPath) path = queryPath;
   }
 
   try {
-    // ============================================
-    // POST /login - Authenticate existing user
-    // ============================================
+    // POST /login
     if (path === '/login' && (req.method === 'POST' || bodyData)) {
-      // Rate limit auth endpoints
       const rateLimitResponse = rateLimit(req, 'auth');
       if (rateLimitResponse) return rateLimitResponse;
 
@@ -79,7 +62,6 @@ Deno.serve(async (req) => {
 
       const { email, password } = body as { email: string; password: string };
       
-      // Validate inputs
       const emailValidation = validateEmail(email);
       if (!emailValidation.valid) {
         return createErrorResponse(req, emailValidation.error!, 400);
@@ -91,65 +73,8 @@ Deno.serve(async (req) => {
 
       const sanitizedEmail = emailValidation.sanitized as string;
 
-      if (MOCK_MODE) {
-        // Check demo users
-        const demoUser = DEMO_USERS[sanitizedEmail.toLowerCase()];
-        if (demoUser && demoUser.password === password) {
-          const token = await createSession(
-            1,
-            sanitizedEmail,
-            'Demo',
-            'User',
-            demoUser.role
-          );
-
-          const headers = new Headers(getCorsHeaders(origin));
-          headers.set('Content-Type', 'application/json');
-          headers.set('Set-Cookie', createSessionCookie(token, isSecure));
-
-          return new Response(
-            JSON.stringify({ 
-              success: true,
-              client: { 
-                id: 1,
-                email: sanitizedEmail,
-                firstName: mockClient.firstName,
-                lastName: mockClient.lastName,
-                role: demoUser.role,
-              },
-              mockMode: true,
-            }),
-            { headers }
-          );
-        }
-
-        // Any other email in mock mode - accept with default role
-        const token = await createSession(1, sanitizedEmail, 'Mock', 'User', 'client');
-        
-        const headers = new Headers(getCorsHeaders(origin));
-        headers.set('Content-Type', 'application/json');
-        headers.set('Set-Cookie', createSessionCookie(token, isSecure));
-
-        return new Response(
-          JSON.stringify({ 
-            success: true,
-            client: { 
-              id: 1,
-              email: sanitizedEmail,
-              firstName: 'Mock',
-              lastName: 'User',
-              role: 'client',
-            },
-            mockMode: true,
-          }),
-          { headers }
-        );
-      }
-
-      // Real WHMCS login
       const result = await validateLogin(sanitizedEmail, password);
       if (result.result === 'success' && result.userid) {
-        // Get client details for session
         const clientDetails = await getClientDetails(Number(result.userid));
         const firstname = (clientDetails.firstname as string) || 'User';
         const lastname = (clientDetails.lastname as string) || '';
@@ -169,6 +94,7 @@ Deno.serve(async (req) => {
         return new Response(
           JSON.stringify({ 
             success: true,
+            token,
             client: {
               id: result.userid,
               email: sanitizedEmail,
@@ -185,11 +111,8 @@ Deno.serve(async (req) => {
       return createErrorResponse(req, 'Invalid email or password', 401);
     }
 
-    // ============================================
-    // POST /register - Register new client
-    // ============================================
+    // POST /register
     if (path === '/register' && (req.method === 'POST' || bodyData)) {
-      // Rate limit auth endpoints
       const rateLimitResponse = rateLimit(req, 'auth');
       if (rateLimitResponse) return rateLimitResponse;
 
@@ -204,7 +127,6 @@ Deno.serve(async (req) => {
         phone, password 
       } = body;
 
-      // Validate all required fields
       const validation = validateAll([
         { result: validateEmail(email), fieldName: 'email' },
         { result: validatePassword(password), fieldName: 'password' },
@@ -225,37 +147,6 @@ Deno.serve(async (req) => {
 
       const s = validation.sanitized;
 
-      if (MOCK_MODE) {
-        const token = await createSession(
-          1,
-          s.email as string,
-          s.firstName as string,
-          s.lastName as string,
-          'client'
-        );
-
-        const headers = new Headers(getCorsHeaders(origin));
-        headers.set('Content-Type', 'application/json');
-        headers.set('Set-Cookie', createSessionCookie(token, isSecure));
-
-        return new Response(
-          JSON.stringify({ 
-            success: true,
-            client: { 
-              id: 1,
-              email: s.email,
-              firstName: s.firstName,
-              lastName: s.lastName,
-              companyName: s.companyName,
-              role: 'client',
-            },
-            mockMode: true,
-          }),
-          { headers }
-        );
-      }
-
-      // Real WHMCS registration
       const result = await addClient({
         firstname: s.firstName as string,
         lastname: s.lastName as string,
@@ -267,7 +158,7 @@ Deno.serve(async (req) => {
         postcode: s.postcode as string,
         country: s.country as string,
         phonenumber: s.phone as string,
-        password2: password,
+        password2: password as string,
       });
 
       if (result.result === 'success' && result.clientid) {
@@ -286,6 +177,7 @@ Deno.serve(async (req) => {
         return new Response(
           JSON.stringify({ 
             success: true,
+            token,
             client: {
               id: result.clientid,
               email: s.email,
@@ -302,9 +194,7 @@ Deno.serve(async (req) => {
       return createErrorResponse(req, result.message || 'Registration failed', 400);
     }
 
-    // ============================================
-    // POST /logout - Destroy session
-    // ============================================
+    // POST /logout
     if (path === '/logout' && (req.method === 'POST' || bodyData)) {
       const token = getTokenFromRequest(req);
       
@@ -322,9 +212,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    // ============================================
-    // GET /me - Get current session
-    // ============================================
+    // GET /me
     if (path === '/me') {
       const token = getTokenFromRequest(req);
       
@@ -334,7 +222,6 @@ Deno.serve(async (req) => {
 
       const session = await validateSession(token);
       if (!session) {
-        // Clear invalid cookie
         const headers = new Headers(getCorsHeaders(origin));
         headers.set('Content-Type', 'application/json');
         headers.set('Set-Cookie', createLogoutCookie());
@@ -345,25 +232,6 @@ Deno.serve(async (req) => {
         );
       }
 
-      if (MOCK_MODE) {
-        return createCorsResponse(req, {
-          id: session.clientId,
-          email: session.email,
-          firstName: session.firstName,
-          lastName: session.lastName,
-          role: session.role,
-          companyName: mockClient.companyName,
-          address1: mockClient.address1,
-          city: mockClient.city,
-          state: mockClient.state,
-          postcode: mockClient.postcode,
-          country: mockClient.country,
-          phone: mockClient.phone,
-          mockMode: true,
-        });
-      }
-
-      // Get full client details from WHMCS
       const clientDetails = await getClientDetails(session.clientId);
       
       return createCorsResponse(req, {

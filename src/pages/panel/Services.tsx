@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Server, ExternalLink, Settings, Loader2 } from "lucide-react";
 import { PanelLayout } from "@/components/panel/PanelLayout";
-import { MockModeBanner } from "@/components/panel/MockModeBanner";
+
 import { ServiceCardSkeleton } from "@/components/ui/LoadingSkeleton";
 import { apiClient, Service } from "@/services/apiClient";
 import { toast } from "@/hooks/use-toast";
@@ -41,7 +41,7 @@ export default function PanelServices() {
   return (
     <PanelLayout>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <MockModeBanner />
+        
         <h1 className="text-2xl font-bold text-foreground mb-6">My Services</h1>
         
         <div className="grid gap-4">

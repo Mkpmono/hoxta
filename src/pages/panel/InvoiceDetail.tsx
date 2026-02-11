@@ -14,7 +14,7 @@ import {
   ExternalLink
 } from "lucide-react";
 import { PanelLayout } from "@/components/panel/PanelLayout";
-import { MockModeBanner } from "@/components/panel/MockModeBanner";
+
 import { InvoiceDetailSkeleton } from "@/components/ui/LoadingSkeleton";
 import { whmcsClient, Invoice } from "@/services/whmcsClient";
 import { toast } from "@/hooks/use-toast";
@@ -78,7 +78,7 @@ export default function InvoiceDetailPage() {
   return (
     <PanelLayout>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <MockModeBanner />
+        
 
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">

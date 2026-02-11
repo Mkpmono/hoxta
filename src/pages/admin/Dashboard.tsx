@@ -1,16 +1,54 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ShoppingCart, MessageSquare, Users, DollarSign } from "lucide-react";
+import { ShoppingCart, MessageSquare, Users, DollarSign, Loader2, AlertCircle } from "lucide-react";
 import { AdminLayout } from "@/components/panel/AdminLayout";
-import { mockOrders, mockTickets, mockClients, mockInvoices } from "@/lib/mockData";
-
-const stats = [
-  { icon: ShoppingCart, label: "Total Orders", value: mockOrders.length, color: "text-primary" },
-  { icon: MessageSquare, label: "Open Tickets", value: mockTickets.filter(t => t.status !== "closed").length, color: "text-yellow-400" },
-  { icon: Users, label: "Total Clients", value: mockClients.length, color: "text-green-400" },
-  { icon: DollarSign, label: "Revenue", value: "$" + mockInvoices.filter(i => i.status === "paid").reduce((a, b) => a + b.total, 0).toFixed(2), color: "text-primary" },
-];
+import { apiClient } from "@/services/apiClient";
 
 export default function AdminDashboard() {
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState([
+    { icon: ShoppingCart, label: "Total Orders", value: "0", color: "text-primary" },
+    { icon: MessageSquare, label: "Open Tickets", value: "0", color: "text-yellow-400" },
+    { icon: Users, label: "Active Services", value: "0", color: "text-green-400" },
+    { icon: DollarSign, label: "Unpaid Invoices", value: "0", color: "text-primary" },
+  ]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [ordersRes, ticketsRes, servicesRes, invoicesRes] = await Promise.all([
+          apiClient.getOrders(),
+          apiClient.getTickets(),
+          apiClient.getServices(),
+          apiClient.getInvoices(),
+        ]);
+
+        setStats([
+          { icon: ShoppingCart, label: "Total Orders", value: String(ordersRes.data?.orders?.length || 0), color: "text-primary" },
+          { icon: MessageSquare, label: "Open Tickets", value: String(ticketsRes.data?.tickets?.filter((t: { status: string }) => t.status !== "closed").length || 0), color: "text-yellow-400" },
+          { icon: Users, label: "Active Services", value: String(servicesRes.data?.services?.filter((s: { status: string }) => s.status === "active").length || 0), color: "text-green-400" },
+          { icon: DollarSign, label: "Unpaid Invoices", value: String(invoicesRes.data?.invoices?.filter((i: { status: string }) => i.status === "unpaid" || i.status === "overdue").length || 0), color: "text-primary" },
+        ]);
+      } catch (error) {
+        console.error('Failed to load admin stats:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <AdminLayout>
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </AdminLayout>
+    );
+  }
+
   return (
     <AdminLayout>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>

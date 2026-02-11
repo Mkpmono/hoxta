@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, Send, Paperclip } from "lucide-react";
 import { PanelLayout } from "@/components/panel/PanelLayout";
-import { MockModeBanner } from "@/components/panel/MockModeBanner";
+
 import { whmcsClient } from "@/services/whmcsClient";
 import { toast } from "@/hooks/use-toast";
 
@@ -59,7 +59,7 @@ export default function NewTicketPage() {
   return (
     <PanelLayout>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <MockModeBanner />
+        
 
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">

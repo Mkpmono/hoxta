@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, ArrowUpCircle, Check, AlertCircle } from "lucide-react";
 import { PanelLayout } from "@/components/panel/PanelLayout";
-import { MockModeBanner } from "@/components/panel/MockModeBanner";
+
 import { Skeleton } from "@/components/ui/LoadingSkeleton";
 import { whmcsClient, ServiceDetails, UpgradeOption } from "@/services/whmcsClient";
 import { toast } from "@/hooks/use-toast";
@@ -70,7 +70,7 @@ export default function ServiceUpgradePage() {
   return (
     <PanelLayout>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <MockModeBanner />
+        
 
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
