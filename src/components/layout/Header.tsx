@@ -122,10 +122,13 @@ export function Header() {
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-0.5">
-            <span className="text-xl md:text-2xl font-bold text-foreground">Ho</span>
-            <span className="text-xl md:text-2xl font-bold text-primary">x</span>
-            <span className="text-xl md:text-2xl font-bold text-foreground">ta</span>
+          <Link to="/" className="flex items-center group">
+            <span className="text-xl md:text-2xl font-extrabold tracking-tight text-foreground font-display">Ho</span>
+            <span className="relative text-xl md:text-2xl font-extrabold tracking-tight text-primary font-display">
+              x
+              <span className="absolute -inset-1 rounded-md bg-primary/15 blur-sm group-hover:bg-primary/25 transition-all duration-300" />
+            </span>
+            <span className="text-xl md:text-2xl font-extrabold tracking-tight text-foreground font-display">ta</span>
           </Link>
 
           {/* Desktop Navigation */}
