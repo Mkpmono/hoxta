@@ -1,5 +1,4 @@
 import { Layout } from "@/components/layout/Layout";
-import { motion } from "framer-motion";
 import { CheckCircle, AlertTriangle, XCircle, RefreshCw } from "lucide-react";
 import { useStatusMonitors, MonitorWithChecks, TimeRange } from "@/hooks/useStatusMonitors";
 import { useState } from "react";
@@ -19,7 +18,6 @@ const TIME_RANGES = [
 
 function UptimeBar({ monitor }: { monitor: MonitorWithChecks }) {
   const checks = monitor.checks;
-  // Group checks into ~30 segments
   const segmentCount = 30;
   const segments: ("up" | "down" | "degraded" | "empty")[] = [];
 
@@ -63,11 +61,7 @@ function MonitorCard({ monitor, timeRange }: { monitor: MonitorWithChecks; timeR
   const isDown = monitor.uptimePercent < 95;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="glass-card p-5 rounded-xl border border-border/50"
-    >
+    <div className="glass-card p-5 rounded-xl border border-border/50">
       <div className="flex items-center justify-between mb-3">
         <span className="text-foreground font-medium">{monitor.name}</span>
         <span
@@ -84,7 +78,7 @@ function MonitorCard({ monitor, timeRange }: { monitor: MonitorWithChecks; timeR
         <span>{timeRange}</span>
         <span>now</span>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -107,11 +101,7 @@ export default function Status() {
       <section className="py-20 md:py-28">
         <div className="container mx-auto px-4 md:px-6 max-w-3xl">
           {/* Header */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-10"
-          >
+          <div className="text-center mb-10">
             <h1 className="text-4xl font-bold text-foreground mb-6">System Status</h1>
 
             {/* Overall status banner */}
@@ -145,7 +135,7 @@ export default function Status() {
                   : "Partial Degradation"}
               </span>
             </div>
-          </motion.div>
+          </div>
 
           {/* Controls */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-8">
@@ -202,13 +192,9 @@ export default function Status() {
 
           {/* No data message */}
           {!loading && monitors.length > 0 && monitors.every((m) => m.checks.length === 0) && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center py-8 text-muted-foreground"
-            >
+            <div className="text-center py-8 text-muted-foreground">
               <p>No monitoring data yet. Checks will appear after the first health check runs.</p>
-            </motion.div>
+            </div>
           )}
         </div>
       </section>
