@@ -54,7 +54,10 @@ export async function callWhmcsApi<T = unknown>(
     formData.append(key, String(value));
   }
 
-  const response = await fetch(`${url}/includes/api.php`, {
+  const apiUrl = `${url}/includes/api.php`;
+  console.log(`[WHMCS] Calling: ${apiUrl} | Action: ${action}`);
+
+  const response = await fetch(apiUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -62,11 +65,14 @@ export async function callWhmcsApi<T = unknown>(
     body: formData.toString(),
   });
 
+  const responseText = await response.text();
+  console.log(`[WHMCS] Status: ${response.status} | Response: ${responseText.substring(0, 500)}`);
+
   if (!response.ok) {
-    throw new Error(`WHMCS API request failed: ${response.statusText}`);
+    throw new Error(`WHMCS API request failed: ${response.status} ${response.statusText} - ${responseText.substring(0, 200)}`);
   }
 
-  const data = await response.json();
+  const data = JSON.parse(responseText);
   return data as WhmcsResponse<T>;
 }
 
