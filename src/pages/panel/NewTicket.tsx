@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, Send, Paperclip } from "lucide-react";
 import { PanelLayout } from "@/components/panel/PanelLayout";
 
-import { whmcsClient } from "@/services/whmcsClient";
+import { apiClient } from "@/services/apiClient";
 import { toast } from "@/hooks/use-toast";
 
 const departments = [
@@ -37,7 +37,12 @@ export default function NewTicketPage() {
 
     try {
       setSubmitting(true);
-      const result = await whmcsClient.createTicket(formData);
+      const result = await apiClient.openTicket({
+        deptid: formData.departmentId,
+        subject: formData.subject,
+        message: formData.message,
+        priority: formData.priority,
+      });
       if (result.success) {
         toast({
           title: "Ticket Created",

@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { Search, Calendar, Clock, ArrowRight, Tag, User, TrendingUp } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/integrations/supabase/client";
+// Content fetched from PHP backend
 
 interface BlogPost {
   id: string;
@@ -29,12 +29,15 @@ export default function Blog() {
 
   useEffect(() => {
     const fetchPosts = async () => {
-      const { data } = await supabase
-        .from("blog_posts")
-        .select("id, title, slug, excerpt, category, author, image_url, tags, is_featured, read_time, created_at")
-        .eq("is_published", true)
-        .order("created_at", { ascending: false });
-      if (data) setPosts(data as BlogPost[]);
+      try {
+        const res = await fetch("https://api.hoxta.com/content/blog-posts.php");
+        if (res.ok) {
+          const data = await res.json();
+          setPosts((data.posts || data || []) as BlogPost[]);
+        }
+      } catch {
+        // API not available
+      }
       setLoading(false);
     };
     fetchPosts();

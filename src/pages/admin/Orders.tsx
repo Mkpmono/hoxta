@@ -12,7 +12,7 @@ export default function AdminOrders() {
     const fetchOrders = async () => {
       try {
         const result = await apiClient.getOrders();
-        setOrders(result.data?.orders || []);
+        setOrders(result.orders || []);
       } catch (error) {
         console.error('Failed to load orders:', error);
       } finally {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
-import { supabase } from "@/integrations/supabase/client";
+// Content fetched from PHP backend
 import { ArrowLeft, Clock, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DOMPurify from "dompurify";
@@ -40,26 +40,31 @@ export default function KBArticle() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetch = async () => {
-      const { data } = await supabase
-        .from("kb_articles")
-        .select("*")
-        .eq("slug", articleSlug)
-        .eq("is_published", true)
-        .maybeSingle();
-      if (data) {
-        setArticle(data);
-        // increment views
-        supabase.from("kb_articles").update({ views: (data.views || 0) + 1 }).eq("id", data.id).then();
-        // fetch category
-        if (data.category_id) {
-          const { data: cat } = await supabase.from("kb_categories").select("*").eq("id", data.category_id).maybeSingle();
-          setCategory(cat);
+    const fetchArticle = async () => {
+      try {
+        const API_BASE = "https://api.hoxta.com";
+        const res = await fetch(`${API_BASE}/content/kb-articles.php?slug=${articleSlug}`);
+        if (res.ok) {
+          const data = await res.json();
+          const art = data.article || data;
+          if (art) {
+            setArticle(art);
+            // fetch category
+            if (art.category_id) {
+              const catRes = await fetch(`${API_BASE}/content/kb-categories.php?id=${art.category_id}`);
+              if (catRes.ok) {
+                const catData = await catRes.json();
+                setCategory(catData.category || catData);
+              }
+            }
+          }
         }
+      } catch {
+        // API not available
       }
       setLoading(false);
     };
-    fetch();
+    fetchArticle();
   }, [articleSlug]);
 
   if (loading) {

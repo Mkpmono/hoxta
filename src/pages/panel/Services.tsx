@@ -16,11 +16,7 @@ export default function PanelServices() {
     async function fetchServices() {
       try {
         const result = await apiClient.getServices();
-        if (result.error) {
-          toast({ title: "Error", description: result.error, variant: "destructive" });
-        } else {
-          setServices(result.data?.services || []);
-        }
+        setServices(result.services || []);
       } catch (error) {
         toast({ title: "Error", description: "Failed to load services", variant: "destructive" });
       } finally {

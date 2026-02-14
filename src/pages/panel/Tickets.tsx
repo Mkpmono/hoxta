@@ -22,12 +22,7 @@ export default function PanelTickets() {
     try {
       setLoading(true);
       const result = await apiClient.getTickets();
-      if (result.error) {
-        toast.error(result.error);
-        setTickets([]);
-      } else {
-        setTickets(result.data?.tickets || []);
-      }
+      setTickets(result.tickets || []);
     } catch (error) {
       toast.error("Failed to load tickets");
       setTickets([]);

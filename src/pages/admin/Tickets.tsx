@@ -12,7 +12,7 @@ export default function AdminTickets() {
     const fetchTickets = async () => {
       try {
         const result = await apiClient.getTickets();
-        setTickets(result.data?.tickets || []);
+        setTickets(result.tickets || []);
       } catch (error) {
         console.error('Failed to load tickets:', error);
       } finally {

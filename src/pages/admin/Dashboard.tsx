@@ -24,10 +24,10 @@ export default function AdminDashboard() {
         ]);
 
         setStats([
-          { icon: ShoppingCart, label: "Total Orders", value: String(ordersRes.data?.orders?.length || 0), color: "text-primary" },
-          { icon: MessageSquare, label: "Open Tickets", value: String(ticketsRes.data?.tickets?.filter((t: { status: string }) => t.status !== "closed").length || 0), color: "text-yellow-400" },
-          { icon: Users, label: "Active Services", value: String(servicesRes.data?.services?.filter((s: { status: string }) => s.status === "active").length || 0), color: "text-green-400" },
-          { icon: DollarSign, label: "Unpaid Invoices", value: String(invoicesRes.data?.invoices?.filter((i: { status: string }) => i.status === "unpaid" || i.status === "overdue").length || 0), color: "text-primary" },
+          { icon: ShoppingCart, label: "Total Orders", value: String(ordersRes.orders?.length || 0), color: "text-primary" },
+          { icon: MessageSquare, label: "Open Tickets", value: String(ticketsRes.tickets?.filter((t: { status: string }) => t.status !== "closed").length || 0), color: "text-yellow-400" },
+          { icon: Users, label: "Active Services", value: String(servicesRes.services?.filter((s: { status: string }) => s.status === "active").length || 0), color: "text-green-400" },
+          { icon: DollarSign, label: "Unpaid Invoices", value: String(invoicesRes.invoices?.filter((i: { status: string }) => i.status === "unpaid" || i.status === "overdue").length || 0), color: "text-primary" },
         ]);
       } catch (error) {
         console.error('Failed to load admin stats:', error);

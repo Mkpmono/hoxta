@@ -16,11 +16,7 @@ export default function PanelInvoices() {
     async function fetchInvoices() {
       try {
         const result = await apiClient.getInvoices();
-        if (result.error) {
-          toast({ title: "Error", description: result.error, variant: "destructive" });
-        } else {
-          setInvoices(result.data?.invoices || []);
-        }
+        setInvoices(result.invoices || []);
       } catch (error) {
         toast({ title: "Error", description: "Failed to load invoices", variant: "destructive" });
       } finally {
@@ -33,7 +29,7 @@ export default function PanelInvoices() {
   const handlePayNow = async (invoiceId: string) => {
     try {
       const result = await apiClient.getInvoicePayLink(invoiceId);
-      if (result.data?.url) window.open(result.data.url, "_blank");
+      if (result.url) window.open(result.url, "_blank");
       else toast({ title: "Error", description: "Failed to get payment link", variant: "destructive" });
     } catch (error) {
       toast({ title: "Error", description: "Failed to get payment link", variant: "destructive" });
