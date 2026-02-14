@@ -20,12 +20,7 @@ export default function PanelOrders() {
     try {
       setLoading(true);
       const result = await apiClient.getOrders();
-      if (result.error) {
-        toast.error(result.error);
-        setOrders([]);
-      } else {
-        setOrders(result.data?.orders || []);
-      }
+      setOrders(result.orders || []);
     } catch (error) {
       toast.error("Failed to load orders");
       setOrders([]);

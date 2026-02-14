@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
 
 export interface DBGameServer {
   id: string;
@@ -25,19 +24,24 @@ export interface DBGameServer {
   updated_at: string;
 }
 
+// TODO: Replace with PHP backend API call when available
+// For now, fetch from a static JSON or return empty
+const API_BASE = "https://api.hoxta.com";
+
 export function useGameServers() {
   const [games, setGames] = useState<DBGameServer[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchGames = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("game_servers")
-      .select("*")
-      .order("sort_order", { ascending: true });
-
-    if (!error && data) {
-      setGames(data as unknown as DBGameServer[]);
+    try {
+      const res = await fetch(`${API_BASE}/content/game-servers.php`);
+      if (res.ok) {
+        const data = await res.json();
+        setGames(data.servers || data || []);
+      }
+    } catch {
+      // API not available, games will be empty
     }
     setLoading(false);
   };
@@ -55,20 +59,20 @@ export function useGameServerBySlug(slug: string | undefined) {
 
   useEffect(() => {
     if (!slug) { setLoading(false); return; }
-    const fetch = async () => {
+    const fetchGame = async () => {
       setLoading(true);
-      const { data, error } = await supabase
-        .from("game_servers")
-        .select("*")
-        .eq("slug", slug)
-        .maybeSingle();
-
-      if (!error && data) {
-        setGame(data as unknown as DBGameServer);
+      try {
+        const res = await fetch(`${API_BASE}/content/game-servers.php?slug=${slug}`);
+        if (res.ok) {
+          const data = await res.json();
+          setGame(data.server || data || null);
+        }
+      } catch {
+        // API not available
       }
       setLoading(false);
     };
-    fetch();
+    fetchGame();
   }, [slug]);
 
   return { game, loading };

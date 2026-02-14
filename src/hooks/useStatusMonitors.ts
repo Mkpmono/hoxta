@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
 
 export interface StatusMonitor {
   id: string;
@@ -25,52 +24,23 @@ export interface MonitorWithChecks extends StatusMonitor {
 
 export type TimeRange = "1m" | "5m" | "15m" | "30m" | "1h" | "6h" | "24h" | "7d" | "30d";
 
+const API_BASE = "https://api.hoxta.com";
+
 export function useStatusMonitors(timeRange: TimeRange = "24h") {
   const [monitors, setMonitors] = useState<MonitorWithChecks[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
-  const getTimeAgo = (range: string): string => {
-    const now = new Date();
-    switch (range) {
-      case "1m": return new Date(now.getTime() - 60000).toISOString();
-      case "5m": return new Date(now.getTime() - 5 * 60000).toISOString();
-      case "15m": return new Date(now.getTime() - 15 * 60000).toISOString();
-      case "30m": return new Date(now.getTime() - 30 * 60000).toISOString();
-      case "1h": return new Date(now.getTime() - 60 * 60000).toISOString();
-      case "6h": return new Date(now.getTime() - 6 * 3600000).toISOString();
-      case "24h": return new Date(now.getTime() - 24 * 3600000).toISOString();
-      case "7d": return new Date(now.getTime() - 7 * 86400000).toISOString();
-      case "30d": return new Date(now.getTime() - 30 * 86400000).toISOString();
-      default: return new Date(now.getTime() - 24 * 3600000).toISOString();
-    }
-  };
-
   const fetchData = async () => {
     setLoading(true);
-    const since = getTimeAgo(timeRange);
-
-    const [monitorsRes, checksRes] = await Promise.all([
-      supabase.from("status_monitors_public" as any).select("*").eq("is_active", true).order("sort_order"),
-      supabase.from("status_checks").select("*").gte("checked_at", since).order("checked_at", { ascending: true }),
-    ]);
-
-    if (monitorsRes.data && checksRes.data) {
-      const checksMap = new Map<string, StatusCheck[]>();
-      for (const c of checksRes.data as unknown as StatusCheck[]) {
-        if (!checksMap.has(c.monitor_id)) checksMap.set(c.monitor_id, []);
-        checksMap.get(c.monitor_id)!.push(c);
+    try {
+      const res = await fetch(`${API_BASE}/content/status.php?range=${timeRange}`);
+      if (res.ok) {
+        const data = await res.json();
+        setMonitors(data.monitors || []);
       }
-
-      const result: MonitorWithChecks[] = (monitorsRes.data as unknown as StatusMonitor[]).map((m) => {
-        const checks = checksMap.get(m.id) || [];
-        const total = checks.length;
-        const upCount = checks.filter((c) => c.status === "up").length;
-        const uptimePercent = total > 0 ? Math.round((upCount / total) * 10000) / 100 : 100;
-        return { ...m, checks, uptimePercent };
-      });
-
-      setMonitors(result);
+    } catch {
+      // API not available
     }
     setLastUpdated(new Date());
     setLoading(false);
@@ -78,7 +48,7 @@ export function useStatusMonitors(timeRange: TimeRange = "24h") {
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 60000); // refresh every minute
+    const interval = setInterval(fetchData, 60000);
     return () => clearInterval(interval);
   }, [timeRange]);
 

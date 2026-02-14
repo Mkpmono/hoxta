@@ -50,7 +50,7 @@ export default function TicketDetailPage() {
 
     try {
       setSubmitting(true);
-      await whmcsClient.replyTicket(id, { message: replyMessage });
+      await whmcsClient.replyTicket(id, replyMessage);
       
       // Add the reply to local state
       if (ticket) {

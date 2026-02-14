@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { SEOHead } from "@/components/seo";
 import { Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+// Content fetched from PHP backend
 import { useKBAdmin } from "@/hooks/useKBAdmin";
 import { 
   Search, BookOpen, Server, Shield, Settings, Users, Zap,
@@ -56,21 +56,25 @@ const KnowledgeBase = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const [catRes, artRes] = await Promise.all([
-        supabase.from("kb_categories").select("*").order("sort_order"),
-        supabase.from("kb_articles").select("id, category_id, title, slug, excerpt, is_featured, views, created_at, updated_at").eq("is_published", true).order("created_at", { ascending: false }),
-      ]);
-      
-      const cats = (catRes.data || []) as Category[];
-      const arts = (artRes.data || []) as Article[];
-      
-      // Count articles per category
-      cats.forEach(cat => {
-        cat.article_count = arts.filter(a => a.category_id === cat.id).length;
-      });
-      
-      setCategories(cats);
-      setArticles(arts);
+      try {
+        const API_BASE = "https://api.hoxta.com";
+        const [catRes, artRes] = await Promise.all([
+          fetch(`${API_BASE}/content/kb-categories.php`).then(r => r.ok ? r.json() : []),
+          fetch(`${API_BASE}/content/kb-articles.php`).then(r => r.ok ? r.json() : []),
+        ]);
+        
+        const cats = (catRes.categories || catRes || []) as Category[];
+        const arts = (artRes.articles || artRes || []) as Article[];
+        
+        cats.forEach(cat => {
+          cat.article_count = arts.filter(a => a.category_id === cat.id).length;
+        });
+        
+        setCategories(cats);
+        setArticles(arts);
+      } catch {
+        // API not available
+      }
       setLoading(false);
     };
     fetchData();

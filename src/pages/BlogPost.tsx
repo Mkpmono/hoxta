@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import DOMPurify from "dompurify";
-import { supabase } from "@/integrations/supabase/client";
+// Content fetched from PHP backend
 
 interface BlogPostData {
   id: string;
@@ -61,26 +61,24 @@ export default function BlogPost() {
 
   useEffect(() => {
     const fetchPost = async () => {
-      const { data } = await supabase
-        .from("blog_posts")
-        .select("*")
-        .eq("slug", postId)
-        .eq("is_published", true)
-        .maybeSingle();
-
-      if (data) {
-        setPost(data as BlogPostData);
-        // Increment views
-        supabase.from("blog_posts").update({ views: (data.views || 0) + 1 }).eq("id", data.id).then();
-        // Fetch related posts
-        const { data: related } = await supabase
-          .from("blog_posts")
-          .select("*")
-          .eq("is_published", true)
-          .neq("id", data.id)
-          .eq("category", data.category)
-          .limit(3);
-        if (related) setRelatedPosts(related as BlogPostData[]);
+      try {
+        const API_BASE = "https://api.hoxta.com";
+        const res = await fetch(`${API_BASE}/content/blog-posts.php?slug=${postId}`);
+        if (res.ok) {
+          const data = await res.json();
+          const p = data.post || data;
+          if (p) {
+            setPost(p as BlogPostData);
+            // Fetch related posts
+            const relRes = await fetch(`${API_BASE}/content/blog-posts.php?category=${p.category}&exclude=${p.id}&limit=3`);
+            if (relRes.ok) {
+              const relData = await relRes.json();
+              setRelatedPosts((relData.posts || relData || []) as BlogPostData[]);
+            }
+          }
+        }
+      } catch {
+        // API not available
       }
       setLoading(false);
     };

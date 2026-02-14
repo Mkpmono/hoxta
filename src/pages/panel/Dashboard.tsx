@@ -30,10 +30,10 @@ export default function PanelDashboard() {
         ]);
 
         setData({
-          services: servicesRes.data?.services || [],
-          orders: ordersRes.data?.orders || [],
-          invoices: invoicesRes.data?.invoices || [],
-          tickets: ticketsRes.data?.tickets || []
+          services: servicesRes.services || [],
+          orders: ordersRes.orders || [],
+          invoices: invoicesRes.invoices || [],
+          tickets: ticketsRes.tickets || []
         });
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load dashboard');

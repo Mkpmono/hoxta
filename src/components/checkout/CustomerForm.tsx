@@ -119,30 +119,33 @@ export function CustomerForm({ onSubmit, isLoading, initialData }: CustomerFormP
     try {
       const result = await apiClient.login(loginData.email, loginData.password);
       
-      if (result.success && result.client) {
-        // Auto-fill the form with client data from WHMCS
-        setFormData({
-          firstName: result.client.firstName || "",
-          lastName: result.client.lastName || "",
-          email: result.client.email || loginData.email,
-          phone: result.client.phone || "",
-          companyName: result.client.companyName || "",
-          address1: result.client.address1 || "",
-          address2: "",
-          city: result.client.city || "",
-          state: result.client.state || "",
-          postcode: result.client.postcode || "",
-          country: result.client.country || "",
-          vatNumber: "",
-          password: loginData.password,
-          confirmPassword: loginData.password,
-          acceptTerms: true,
-        });
-        
-        toast.success("Logged in! Your details have been filled in.");
-        setCustomerType("new"); // Switch to show the filled form
+      if (result.ok && result.token) {
+        // Fetch client details to auto-fill form
+        const meResult = await apiClient.me();
+        if (meResult.ok && meResult.client) {
+          const client = meResult.client;
+          setFormData({
+            firstName: client.firstName || "",
+            lastName: client.lastName || "",
+            email: client.email || loginData.email,
+            phone: client.phone || "",
+            companyName: client.companyName || "",
+            address1: client.address1 || "",
+            address2: "",
+            city: client.city || "",
+            state: client.state || "",
+            postcode: client.postcode || "",
+            country: client.country || "",
+            vatNumber: "",
+            password: loginData.password,
+            confirmPassword: loginData.password,
+            acceptTerms: true,
+          });
+          toast.success("Logged in! Your details have been filled in.");
+          setCustomerType("new");
+        }
       } else {
-        setLoginError(result.error || "Invalid email or password");
+        setLoginError("Invalid email or password");
       }
     } catch (error) {
       setLoginError("Login failed. Please try again.");

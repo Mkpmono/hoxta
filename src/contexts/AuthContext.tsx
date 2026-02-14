@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from "react";
-import { apiClient, ClientDetails } from "@/services/apiClient";
+import { apiClient, ClientDetails, AuthExpiredError } from "@/integrations/api/client";
 
 export interface User {
   id: string;
@@ -40,82 +40,83 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-const STORAGE_KEY = "hoxta_auth_session";
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<AuthSession>({ isAuthenticated: false, user: null, client: null });
   const [isLoading, setIsLoading] = useState(true);
 
-  // Initialize: restore session
+  // Listen for auth:expired events (401 from API)
+  useEffect(() => {
+    const handler = () => {
+      setSession({ isAuthenticated: false, user: null, client: null });
+    };
+    window.addEventListener("auth:expired", handler);
+    return () => window.removeEventListener("auth:expired", handler);
+  }, []);
+
+  // Initialize: check if token exists and validate via /me
   useEffect(() => {
     const init = async () => {
       try {
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored) {
-          try {
-            const parsed = JSON.parse(stored);
-            if (parsed.isAuthenticated && parsed.user) {
-              const result = await apiClient.getMe();
-              if (result.data) {
-                setSession({
-                  isAuthenticated: true,
-                  user: parsed.user,
-                  client: result.data
-                });
-              } else {
-                localStorage.removeItem(STORAGE_KEY);
-              }
-            }
-          } catch {
-            localStorage.removeItem(STORAGE_KEY);
+        const token = apiClient.getAuthToken();
+        if (token) {
+          const result = await apiClient.me();
+          if (result.ok && result.client) {
+            const client = result.client;
+            setSession({
+              isAuthenticated: true,
+              user: {
+                id: client.id,
+                email: client.email,
+                name: `${client.firstName} ${client.lastName}`,
+                firstName: client.firstName,
+                lastName: client.lastName,
+                role: "client",
+              },
+              client,
+            });
+          } else {
+            // Token invalid
+            await apiClient.logout();
           }
         }
       } catch (error) {
-        console.error('Auth init error:', error);
+        // Token expired or invalid
+        if (!(error instanceof AuthExpiredError)) {
+          console.error("Auth init error:", error);
+        }
       } finally {
         setIsLoading(false);
       }
     };
-
     init();
   }, []);
-
-  // Save session to localStorage when it changes
-  useEffect(() => {
-    if (session.isAuthenticated && session.user) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        isAuthenticated: true,
-        user: session.user
-      }));
-    } else {
-      localStorage.removeItem(STORAGE_KEY);
-    }
-  }, [session]);
 
   const login = useCallback(async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     try {
       const result = await apiClient.login(email, password);
 
-      if (result.success && result.client) {
-        const user: User = {
-          id: result.client.id,
-          email: result.client.email,
-          name: `${result.client.firstName} ${result.client.lastName}`,
-          firstName: result.client.firstName,
-          lastName: result.client.lastName,
-          role: "client",
-        };
-
-        setSession({
-          isAuthenticated: true,
-          user,
-          client: result.client
-        });
-
-        return { success: true };
+      if (result.ok && result.token) {
+        // Fetch full client details
+        const meResult = await apiClient.me();
+        if (meResult.ok && meResult.client) {
+          const client = meResult.client;
+          setSession({
+            isAuthenticated: true,
+            user: {
+              id: client.id,
+              email: client.email,
+              name: `${client.firstName} ${client.lastName}`,
+              firstName: client.firstName,
+              lastName: client.lastName,
+              role: "client",
+            },
+            client,
+          });
+          return { success: true };
+        }
       }
 
-      return { success: false, error: result.error || "Invalid email or password" };
+      return { success: false, error: "Invalid email or password" };
     } catch (error) {
       return { success: false, error: error instanceof Error ? error.message : "Login failed" };
     }
@@ -136,66 +137,70 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     country?: string;
   }): Promise<{ success: boolean; error?: string }> => {
     try {
-      const result = await apiClient.register(data);
+      const result = await apiClient.register({
+        firstname: data.firstName,
+        lastname: data.lastName,
+        email: data.email,
+        password: data.password,
+        address1: data.address1 || "",
+        city: data.city || "",
+        state: data.state || "",
+        postcode: data.postcode || "",
+        country: data.country || "US",
+        phonenumber: data.phone || "",
+        companyname: data.companyName,
+        address2: data.address2,
+      });
 
-      if (result.success && result.client) {
-        const user: User = {
-          id: result.client.id,
-          email: result.client.email,
-          name: `${result.client.firstName} ${result.client.lastName}`,
-          firstName: result.client.firstName,
-          lastName: result.client.lastName,
-          role: "client",
-        };
-
-        setSession({
-          isAuthenticated: true,
-          user,
-          client: result.client
-        });
-
-        return { success: true };
+      if (result.ok && result.token) {
+        // Fetch full client details
+        const meResult = await apiClient.me();
+        if (meResult.ok && meResult.client) {
+          const client = meResult.client;
+          setSession({
+            isAuthenticated: true,
+            user: {
+              id: client.id,
+              email: client.email,
+              name: `${client.firstName} ${client.lastName}`,
+              firstName: client.firstName,
+              lastName: client.lastName,
+              role: "client",
+            },
+            client,
+          });
+          return { success: true };
+        }
       }
 
-      return { success: false, error: result.error || "Registration failed" };
+      return { success: false, error: "Registration failed" };
     } catch (error) {
       return { success: false, error: error instanceof Error ? error.message : "Registration failed" };
     }
   }, []);
 
   const logout = useCallback(async () => {
-    try {
-      await apiClient.logout();
-    } finally {
-      setSession({ isAuthenticated: false, user: null, client: null });
-    }
+    await apiClient.logout();
+    setSession({ isAuthenticated: false, user: null, client: null });
   }, []);
 
   const refreshSession = useCallback(async () => {
     if (!session.isAuthenticated) return;
-
     try {
-      const result = await apiClient.getMe();
-      if (result.data) {
+      const result = await apiClient.me();
+      if (result.ok && result.client) {
         setSession(prev => ({
           ...prev,
-          client: result.data!
+          client: result.client,
         }));
       }
     } catch (error) {
-      console.error('Session refresh failed:', error);
+      console.error("Session refresh failed:", error);
     }
   }, [session.isAuthenticated]);
 
   return (
-    <AuthContext.Provider value={{ 
-      session, 
-      login,
-      register, 
-      logout, 
-      isLoading, 
-      refreshSession
-    }}>
+    <AuthContext.Provider value={{ session, login, register, logout, isLoading, refreshSession }}>
       {children}
     </AuthContext.Provider>
   );
