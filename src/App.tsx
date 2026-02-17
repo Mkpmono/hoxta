@@ -4,7 +4,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { AdminAuthProvider } from "@/contexts/AdminAuthContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { AdminProtectedRoute } from "@/components/auth/AdminProtectedRoute";
 import Index from "./pages/Index";
 import WebHosting from "./pages/WebHosting";
 import ResellerHosting from "./pages/ResellerHosting";
@@ -34,7 +36,7 @@ import KBArticle from "./pages/KBArticle";
 import KBAdmin from "./pages/KBAdmin";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
-
+import AdminLogin from "./pages/AdminLogin";
 import StatusAdmin from "./pages/StatusAdmin";
 // Panel Pages
 import Login from "./pages/panel/Login";
@@ -63,6 +65,7 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
+      <AdminAuthProvider>
       <TooltipProvider>
         <Toaster />
         <Sonner />
@@ -95,11 +98,11 @@ const App = () => (
             <Route path="/knowledge-base" element={<KnowledgeBase />} />
             <Route path="/knowledge-base/:categorySlug" element={<KnowledgeBase />} />
             <Route path="/knowledge-base/article/:articleSlug" element={<KBArticle />} />
-            <Route path="/kb-admin" element={<KBAdmin />} />
+            <Route path="/kb-admin" element={<AdminProtectedRoute><KBAdmin /></AdminProtectedRoute>} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:postId" element={<BlogPost />} />
-            
-            <Route path="/status-admin" element={<StatusAdmin />} />
+            <Route path="/admin-login" element={<AdminLogin />} />
+            <Route path="/status-admin" element={<AdminProtectedRoute><StatusAdmin /></AdminProtectedRoute>} />
 
             
             {/* Auth */}
@@ -132,6 +135,7 @@ const App = () => (
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
+      </AdminAuthProvider>
     </AuthProvider>
   </QueryClientProvider>
 );
