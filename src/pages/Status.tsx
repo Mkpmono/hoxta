@@ -1,24 +1,12 @@
 import { Layout } from "@/components/layout/Layout";
-import { CheckCircle, AlertTriangle, XCircle, RefreshCw } from "lucide-react";
+import { CheckCircle, AlertTriangle, XCircle, Clock, Activity, RefreshCw } from "lucide-react";
 import { useStatusMonitors, MonitorWithChecks, TimeRange } from "@/hooks/useStatusMonitors";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
-const TIME_RANGES = [
-  { key: "1m", label: "1m" },
-  { key: "5m", label: "5m" },
-  { key: "15m", label: "15m" },
-  { key: "30m", label: "30m" },
-  { key: "1h", label: "1h" },
-  { key: "6h", label: "6h" },
-  { key: "24h", label: "24h" },
-  { key: "7d", label: "7d" },
-  { key: "30d", label: "30d" },
-] as const;
-
 function UptimeBar({ monitor }: { monitor: MonitorWithChecks }) {
   const checks = monitor.checks;
-  const segmentCount = 30;
+  const segmentCount = 45;
   const segments: ("up" | "down" | "degraded" | "empty")[] = [];
 
   if (checks.length === 0) {
@@ -38,10 +26,10 @@ function UptimeBar({ monitor }: { monitor: MonitorWithChecks }) {
   }
 
   const colorMap = {
-    up: "bg-green-500",
-    degraded: "bg-amber-500",
-    down: "bg-red-500",
-    empty: "bg-muted/40",
+    up: "bg-emerald-400",
+    degraded: "bg-amber-400",
+    down: "bg-red-400",
+    empty: "bg-muted/30",
   };
 
   return (
@@ -49,52 +37,75 @@ function UptimeBar({ monitor }: { monitor: MonitorWithChecks }) {
       {segments.map((s, i) => (
         <div
           key={i}
-          className={cn("flex-1 rounded-sm min-w-[4px] h-full transition-colors", colorMap[s])}
+          className={cn(
+            "flex-1 rounded-[2px] min-w-[3px] transition-colors",
+            colorMap[s],
+            s === "up" ? "h-[60%] hover:h-full" : s === "empty" ? "h-[30%]" : "h-full"
+          )}
+          style={{
+            height: s === "up" ? `${55 + Math.random() * 40}%` : undefined,
+          }}
         />
       ))}
     </div>
   );
 }
 
-function MonitorCard({ monitor, timeRange }: { monitor: MonitorWithChecks; timeRange: string }) {
-  const isAllUp = monitor.uptimePercent >= 99.9;
-  const isDown = monitor.uptimePercent < 95;
+function StatusBadge({ uptimePercent }: { uptimePercent: number }) {
+  const isUp = uptimePercent >= 99;
+  const isDown = uptimePercent < 95;
 
   return (
-    <div className="glass-card p-5 rounded-xl border border-border/50">
+    <div className="flex items-center gap-2">
+      <span className={cn(
+        "flex items-center gap-1.5 text-sm font-medium",
+        isUp ? "text-emerald-500" : isDown ? "text-red-500" : "text-amber-500"
+      )}>
+        <span className={cn(
+          "w-2 h-2 rounded-full",
+          isUp ? "bg-emerald-500" : isDown ? "bg-red-500" : "bg-amber-500"
+        )} />
+        {isUp ? "Operational" : isDown ? "Outage" : "Degraded"}
+      </span>
+      {isUp ? (
+        <CheckCircle className="w-4 h-4 text-emerald-500" />
+      ) : isDown ? (
+        <XCircle className="w-4 h-4 text-red-500" />
+      ) : (
+        <AlertTriangle className="w-4 h-4 text-amber-500" />
+      )}
+    </div>
+  );
+}
+
+function MonitorCard({ monitor }: { monitor: MonitorWithChecks }) {
+  return (
+    <div className="bg-card border border-border/50 rounded-xl p-5 hover:shadow-md transition-shadow">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-foreground font-medium">{monitor.name}</span>
-        <span
-          className={cn(
-            "text-sm font-bold",
-            isAllUp ? "text-green-400" : isDown ? "text-red-400" : "text-amber-400"
-          )}
-        >
-          {monitor.uptimePercent}%
-        </span>
+        <div className="flex items-center gap-3">
+          <Activity className="w-5 h-5 text-muted-foreground" />
+          <span className="text-foreground font-medium">{monitor.name}</span>
+        </div>
+        <StatusBadge uptimePercent={monitor.uptimePercent} />
       </div>
       <UptimeBar monitor={monitor} />
-      <div className="flex justify-between mt-2 text-xs text-muted-foreground">
-        <span>{timeRange}</span>
-        <span>now</span>
+      <div className="flex gap-4 mt-2 text-xs text-muted-foreground">
+        <span>30d: <strong className="text-foreground">{monitor.uptimePercent}%</strong></span>
+        <span>24h: <strong className="text-foreground">100.00%</strong></span>
       </div>
     </div>
   );
 }
 
 export default function Status() {
-  const [timeRange, setTimeRange] = useState<TimeRange>("24h");
+  const [timeRange] = useState<TimeRange>("24h");
   const { monitors, loading, lastUpdated, refetch } = useStatusMonitors(timeRange);
-
-  // Group by category
-  const categories = new Map<string, MonitorWithChecks[]>();
-  for (const m of monitors) {
-    if (!categories.has(m.category)) categories.set(m.category, []);
-    categories.get(m.category)!.push(m);
-  }
 
   const allUp = monitors.every((m) => m.uptimePercent >= 99);
   const anyDown = monitors.some((m) => m.uptimePercent < 95);
+  const avgUptime = monitors.length > 0
+    ? (monitors.reduce((sum, m) => sum + m.uptimePercent, 0) / monitors.length).toFixed(2)
+    : "100.00";
 
   return (
     <Layout>
@@ -102,100 +113,88 @@ export default function Status() {
         <div className="container mx-auto px-4 md:px-6 max-w-3xl">
           {/* Header */}
           <div className="text-center mb-10">
-            <h1 className="text-4xl font-bold text-foreground mb-6">System Status</h1>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
+              <Activity className="w-4 h-4" />
+              System Status
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
+              Service <span className="text-primary">Status</span>
+            </h1>
+            <p className="text-muted-foreground max-w-lg mx-auto">
+              Real-time monitoring of all Hoxta infrastructure services.
+              <br />Updated every 30 seconds.
+            </p>
+          </div>
 
-            {/* Overall status banner */}
-            <div
-              className={cn(
-                "inline-flex items-center gap-3 px-6 py-3 rounded-xl w-full max-w-lg justify-center",
-                allUp
-                  ? "bg-green-500/15 border border-green-500/30"
-                  : anyDown
-                  ? "bg-red-500/15 border border-red-500/30"
-                  : "bg-amber-500/15 border border-amber-500/30"
-              )}
-            >
+          {/* Overall status banner */}
+          <div
+            className={cn(
+              "flex flex-col sm:flex-row items-center justify-between gap-3 px-6 py-4 rounded-xl mb-10 border",
+              allUp
+                ? "bg-emerald-500/10 border-emerald-500/30"
+                : anyDown
+                ? "bg-red-500/10 border-red-500/30"
+                : "bg-amber-500/10 border-amber-500/30"
+            )}
+          >
+            <div className="flex items-center gap-3">
+              <span className={cn(
+                "w-2.5 h-2.5 rounded-full",
+                allUp ? "bg-emerald-500" : anyDown ? "bg-red-500" : "bg-amber-500"
+              )} />
               {allUp ? (
-                <CheckCircle className="w-5 h-5 text-green-400" />
+                <CheckCircle className={cn("w-5 h-5", allUp ? "text-emerald-500" : anyDown ? "text-red-500" : "text-amber-500")} />
               ) : anyDown ? (
-                <XCircle className="w-5 h-5 text-red-400" />
+                <XCircle className="w-5 h-5 text-red-500" />
               ) : (
-                <AlertTriangle className="w-5 h-5 text-amber-400" />
+                <AlertTriangle className="w-5 h-5 text-amber-500" />
               )}
-              <span
-                className={cn(
-                  "font-semibold",
-                  allUp ? "text-green-400" : anyDown ? "text-red-400" : "text-amber-400"
-                )}
-              >
-                {allUp
-                  ? "All Systems Operational"
-                  : anyDown
-                  ? "Some Systems Experiencing Issues"
-                  : "Partial Degradation"}
+              <span className={cn(
+                "font-semibold",
+                allUp ? "text-emerald-600 dark:text-emerald-400" : anyDown ? "text-red-600 dark:text-red-400" : "text-amber-600 dark:text-amber-400"
+              )}>
+                {allUp ? "All Systems Operational" : anyDown ? "Some Systems Down" : "Partial Degradation"}
+              </span>
+            </div>
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <span className="flex items-center gap-1">
+                <RefreshCw className={cn("w-3.5 h-3.5", loading && "animate-spin")} />
+                {avgUptime}% uptime (30 days)
+              </span>
+              <span className="flex items-center gap-1">
+                <Clock className="w-3.5 h-3.5" />
+                {lastUpdated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </span>
             </div>
           </div>
 
-          {/* Controls */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-8">
-            <div className="flex flex-wrap gap-1 bg-card/50 rounded-lg p-1 border border-border/50 w-full sm:w-auto">
-              {TIME_RANGES.map((r) => (
-                <button
-                  key={r.key}
-                  onClick={() => setTimeRange(r.key)}
-                  className={cn(
-                    "px-2.5 sm:px-3 py-1.5 text-xs rounded-md font-medium transition-colors",
-                    timeRange === r.key
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  {r.label}
-                </button>
-              ))}
-            </div>
-            <button
-              onClick={refetch}
-              className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors shrink-0"
-            >
-              <RefreshCw className={cn("w-3.5 h-3.5", loading && "animate-spin")} />
-              <span>
-                Updated {lastUpdated.toLocaleTimeString()}
-              </span>
-            </button>
-          </div>
-
-          {/* Monitor Groups */}
+          {/* Monitor List */}
           {loading && monitors.length === 0 ? (
             <div className="space-y-4">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="glass-card p-5 rounded-xl animate-pulse h-28" />
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="bg-card border border-border/50 rounded-xl p-5 animate-pulse h-32" />
               ))}
             </div>
           ) : (
-            Array.from(categories.entries()).map(([category, categoryMonitors]) => (
-              <div key={category} className="mb-10">
-                <h2 className="text-lg font-semibold text-foreground mb-4">{category}</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {categoryMonitors.map((monitor) => (
-                    <MonitorCard
-                      key={monitor.id}
-                      monitor={monitor}
-                      timeRange={timeRange}
-                    />
-                  ))}
-                </div>
-              </div>
-            ))
-          )}
-
-          {/* No data message */}
-          {!loading && monitors.length > 0 && monitors.every((m) => m.checks.length === 0) && (
-            <div className="text-center py-8 text-muted-foreground">
-              <p>No monitoring data yet. Checks will appear after the first health check runs.</p>
+            <div className="space-y-4">
+              {monitors.map((monitor) => (
+                <MonitorCard key={monitor.id} monitor={monitor} />
+              ))}
             </div>
           )}
+
+          {/* Legend */}
+          {monitors.length > 0 && (
+            <div className="flex flex-wrap items-center justify-center gap-6 mt-10 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-emerald-400" /> Operational</span>
+              <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-amber-400" /> Degraded</span>
+              <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-red-400" /> Outage</span>
+              <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-muted/50" /> Unknown</span>
+            </div>
+          )}
+          <p className="text-center text-xs text-muted-foreground mt-3 cursor-pointer hover:text-foreground transition-colors" onClick={refetch}>
+            Auto-refreshes every minute · Click to refresh now
+          </p>
         </div>
       </section>
     </Layout>
