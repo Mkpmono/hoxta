@@ -1,13 +1,16 @@
 import { Layout } from "@/components/layout/Layout";
 import { CheckCircle, AlertTriangle, XCircle, Clock, Activity, RefreshCw, Sparkles, Signal } from "lucide-react";
 import { useStatusMonitors, MonitorWithChecks, TimeRange } from "@/hooks/useStatusMonitors";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 
 function UptimeBar({ monitor }: { monitor: MonitorWithChecks }) {
   const checks = monitor.checks;
   const segmentCount = 45;
+  const [heights, setHeights] = useState<number[]>([]);
+  const animFrameRef = useRef<number>();
+
   const segments: ("up" | "down" | "degraded" | "empty")[] = [];
 
   if (checks.length === 0) {
@@ -26,6 +29,26 @@ function UptimeBar({ monitor }: { monitor: MonitorWithChecks }) {
     }
   }
 
+  // Animate heights continuously
+  useEffect(() => {
+    let t = 0;
+    const animate = () => {
+      t += 0.03;
+      const newHeights = segments.map((s, i) => {
+        if (s === "empty") return 30;
+        if (s !== "up") return 100;
+        // Sine wave with offset per segment for flowing effect
+        return 55 + Math.sin(t + i * 0.4) * 15 + Math.sin(t * 1.7 + i * 0.25) * 10;
+      });
+      setHeights(newHeights);
+      animFrameRef.current = requestAnimationFrame(animate);
+    };
+    animFrameRef.current = requestAnimationFrame(animate);
+    return () => {
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    };
+  }, [segments.length]);
+
   const colorMap = {
     up: "bg-emerald-400",
     degraded: "bg-amber-400",
@@ -36,17 +59,14 @@ function UptimeBar({ monitor }: { monitor: MonitorWithChecks }) {
   return (
     <div className="flex gap-[2px] h-10 items-end">
       {segments.map((s, i) => (
-        <motion.div
+        <div
           key={i}
-          initial={{ scaleY: 0 }}
-          animate={{ scaleY: 1 }}
-          transition={{ duration: 0.4, delay: i * 0.01 }}
           className={cn(
-            "flex-1 rounded-sm min-w-[3px] origin-bottom transition-all duration-200 hover:brightness-125",
+            "flex-1 rounded-sm min-w-[3px] origin-bottom transition-[height] duration-150 ease-out hover:brightness-125",
             colorMap[s],
           )}
           style={{
-            height: s === "up" ? `${55 + Math.random() * 40}%` : s === "empty" ? "30%" : "100%",
+            height: `${heights[i] ?? 50}%`,
           }}
         />
       ))}
