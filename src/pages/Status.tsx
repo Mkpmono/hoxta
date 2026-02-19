@@ -29,25 +29,39 @@ function UptimeBar({ monitor }: { monitor: MonitorWithChecks }) {
     }
   }
 
-  // Animate heights continuously
+  // Animate heights with slow, smooth breathing based on real response times
   useEffect(() => {
     let t = 0;
-    const animate = () => {
-      t += 0.03;
-      const newHeights = segments.map((s, i) => {
-        if (s === "empty") return 30;
-        if (s !== "up") return 100;
-        // Sine wave with offset per segment for flowing effect
-        return 55 + Math.sin(t + i * 0.4) * 15 + Math.sin(t * 1.7 + i * 0.25) * 10;
+    let intervalId: ReturnType<typeof setInterval>;
+
+    // Compute base heights from real response_time data per segment
+    const perSegment = Math.max(1, Math.ceil(checks.length / segmentCount));
+    const baseHeights = segments.map((s, i) => {
+      if (s === "empty") return 30;
+      if (s !== "up") return 100;
+      const slice = checks.slice(i * perSegment, (i + 1) * perSegment);
+      if (slice.length === 0) return 60;
+      const avgRt = slice.reduce((sum, c) => sum + (c.response_time_ms || 50), 0) / slice.length;
+      // Map response time to height: lower rt = taller bar (better health)
+      return Math.min(95, Math.max(50, 90 - (avgRt / 10)));
+    });
+
+    const tick = () => {
+      t += 0.08; // slow increment ~every 100ms
+      const newHeights = baseHeights.map((base, i) => {
+        if (segments[i] === "empty") return 30;
+        if (segments[i] !== "up") return 100;
+        // Gentle sine wave ±5% around the base height
+        return base + Math.sin(t + i * 0.5) * 4 + Math.sin(t * 0.6 + i * 0.3) * 3;
       });
       setHeights(newHeights);
-      animFrameRef.current = requestAnimationFrame(animate);
     };
-    animFrameRef.current = requestAnimationFrame(animate);
-    return () => {
-      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
-    };
-  }, [segments.length]);
+
+    tick(); // initial
+    intervalId = setInterval(tick, 100); // update every 100ms for smooth but not frantic animation
+
+    return () => clearInterval(intervalId);
+  }, [checks, segments.length]);
 
   const colorMap = {
     up: "bg-emerald-400",
