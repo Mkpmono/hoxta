@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Pencil, Trash2, LogOut, Save, X, FileText, BookOpen } from "lucide-react";
+import { Plus, Pencil, Trash2, LogOut, Save, X, FileText, BookOpen, Upload, Image } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
@@ -60,7 +60,7 @@ export default function KBAdmin() {
   const [editingCategory, setEditingCategory] = useState<Partial<KBCategory> | null>(null);
   const [editingBlog, setEditingBlog] = useState<Partial<BlogPost> | null>(null);
   const [loading, setLoading] = useState(true);
-
+  const [uploading, setUploading] = useState(false);
   const fetchData = async () => {
     setLoading(true);
     const [catRes, artRes, blogRes] = await Promise.all([
@@ -170,6 +170,42 @@ export default function KBAdmin() {
     fetchData();
   };
 
+  const uploadImage = async (file: File, target: "blog" | "article") => {
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop();
+      const fileName = `${target}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+      const { error } = await supabase.storage.from("article-images").upload(fileName, file, { upsert: true });
+      if (error) { toast({ title: "Upload failed", description: error.message, variant: "destructive" }); return null; }
+      const { data: urlData } = supabase.storage.from("article-images").getPublicUrl(fileName);
+      toast({ title: "Image uploaded!" });
+      return urlData.publicUrl;
+    } catch {
+      toast({ title: "Upload error", variant: "destructive" });
+      return null;
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleBlogImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const url = await uploadImage(file, "blog");
+    if (url) setEditingBlog((prev) => prev ? { ...prev, image_url: url } : prev);
+  };
+
+  const handleArticleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const url = await uploadImage(file, "article");
+    if (url && editingArticle) {
+      const imgMd = `\n![${file.name}](${url})\n`;
+      setEditingArticle((prev) => prev ? { ...prev, content: (prev.content || "") + imgMd } : prev);
+      toast({ title: "Image inserted into content!" });
+    }
+  };
+
   return (
     <Layout>
       <section className="pt-28 pb-20">
@@ -262,7 +298,18 @@ export default function KBAdmin() {
                       {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                     </select>
                   </div>
-                  <div><Label>Content (Markdown)</Label><Textarea rows={12} value={editingArticle.content || ""} onChange={(e) => setEditingArticle({ ...editingArticle, content: e.target.value })} /></div>
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <Label>Content (Markdown)</Label>
+                      <label className="cursor-pointer">
+                        <input type="file" accept="image/*" className="hidden" onChange={handleArticleImageUpload} />
+                        <Button type="button" variant="outline" size="sm" disabled={uploading} asChild>
+                          <span><Image className="w-4 h-4 mr-1" />{uploading ? "Uploading..." : "Insert Image"}</span>
+                        </Button>
+                      </label>
+                    </div>
+                    <Textarea rows={12} value={editingArticle.content || ""} onChange={(e) => setEditingArticle({ ...editingArticle, content: e.target.value })} />
+                  </div>
                   <div className="flex gap-6">
                     <div className="flex items-center gap-2"><Switch checked={editingArticle.is_published ?? false} onCheckedChange={(v) => setEditingArticle({ ...editingArticle, is_published: v })} /><Label>Published</Label></div>
                     <div className="flex items-center gap-2"><Switch checked={editingArticle.is_featured ?? false} onCheckedChange={(v) => setEditingArticle({ ...editingArticle, is_featured: v })} /><Label>Featured</Label></div>
@@ -360,7 +407,21 @@ export default function KBAdmin() {
                     <div><Label>Author</Label><Input value={editingBlog.author || ""} onChange={(e) => setEditingBlog({ ...editingBlog, author: e.target.value })} /></div>
                   </div>
                   <div><Label>Excerpt</Label><Input value={editingBlog.excerpt || ""} onChange={(e) => setEditingBlog({ ...editingBlog, excerpt: e.target.value })} /></div>
-                  <div><Label>Image URL</Label><Input value={editingBlog.image_url || ""} onChange={(e) => setEditingBlog({ ...editingBlog, image_url: e.target.value })} /></div>
+                  <div>
+                    <Label>Cover Image</Label>
+                    <div className="flex gap-2 items-center">
+                      <Input value={editingBlog.image_url || ""} placeholder="Image URL or upload" onChange={(e) => setEditingBlog({ ...editingBlog, image_url: e.target.value })} className="flex-1" />
+                      <label className="cursor-pointer">
+                        <input type="file" accept="image/*" className="hidden" onChange={handleBlogImageUpload} />
+                        <Button type="button" variant="outline" size="sm" disabled={uploading} asChild>
+                          <span><Upload className="w-4 h-4 mr-1" />{uploading ? "Uploading..." : "Upload"}</span>
+                        </Button>
+                      </label>
+                    </div>
+                    {editingBlog.image_url && (
+                      <img src={editingBlog.image_url} alt="Preview" className="mt-2 rounded-lg max-h-32 object-cover" />
+                    )}
+                  </div>
                   <div><Label>Tags (comma separated)</Label><Input value={editingBlog.tags?.join(", ") || ""} onChange={(e) => setEditingBlog({ ...editingBlog, tags: e.target.value.split(",").map(t => t.trim()).filter(Boolean) })} /></div>
                   <div><Label>Content (Markdown)</Label><Textarea rows={12} value={editingBlog.content || ""} onChange={(e) => setEditingBlog({ ...editingBlog, content: e.target.value })} /></div>
                   <div className="flex gap-6">
