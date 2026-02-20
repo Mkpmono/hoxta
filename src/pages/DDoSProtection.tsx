@@ -4,7 +4,6 @@ import {
   DdosHero,
   DdosHowItWorks,
   ProtectionTabs,
-  DdosPlans,
   MonitoringPreview,
   UseCasesGrid,
   DdosFaq,
@@ -29,8 +28,7 @@ export default function DDoSProtection() {
       {/* Protection Layers - tabbed interface */}
       <ProtectionTabs />
 
-      {/* Pricing Plans with comparison table */}
-      <DdosPlans />
+      {/* DDoS protection is included with all servers - no separate plans */}
 
       {/* Real-time Monitoring Preview */}
       <MonitoringPreview />
