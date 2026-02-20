@@ -2,7 +2,6 @@ import { useState, useMemo, useEffect } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { SEOHead } from "@/components/seo";
 import { Link } from "react-router-dom";
-// Content fetched from PHP backend
 import { useKBAdmin } from "@/hooks/useKBAdmin";
 import { 
   Search, BookOpen, Server, Shield, Settings, Users, Zap,
@@ -100,7 +99,6 @@ const KnowledgeBase = () => {
   const recentArticles = useMemo(() => articles.slice(0, 5), [articles]);
 
   const getCategoryName = (id: string | null) => categories.find(c => c.id === id)?.name || "";
-  const getCategorySlug = (id: string | null) => categories.find(c => c.id === id)?.slug || "";
 
   return (
     <Layout>
@@ -156,22 +154,22 @@ const KnowledgeBase = () => {
       {searchQuery && (
         <section className="pb-12">
           <div className="container mx-auto px-4 md:px-6">
-            <h2 className="text-xl font-semibold text-foreground mb-4">
+            <h2 className="text-xl font-semibold text-foreground mb-6">
               Search Results ({filteredArticles.length} articles)
             </h2>
             {filteredArticles.length > 0 ? (
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid md:grid-cols-2 gap-5">
                 {filteredArticles.map(article => (
                   <Link key={article.id} to={`/knowledge-base/article/${article.slug}`}>
                     <div className="group glass-card p-5 hover:border-primary/30 transition-all duration-300">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="px-2 py-0.5 text-xs bg-primary/10 text-primary rounded">{getCategoryName(article.category_id)}</span>
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="px-2.5 py-1 text-xs bg-primary/10 text-primary rounded-md font-medium">{getCategoryName(article.category_id)}</span>
                         <span className="text-xs text-muted-foreground flex items-center gap-1">
                           <Eye className="w-3 h-3" />{article.views}
                         </span>
                       </div>
                       <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">{article.title}</h3>
-                      {article.excerpt && <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{article.excerpt}</p>}
+                      {article.excerpt && <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{article.excerpt}</p>}
                     </div>
                   </Link>
                 ))}
@@ -185,9 +183,9 @@ const KnowledgeBase = () => {
 
       {/* Quick Links */}
       {!searchQuery && (
-        <section className="py-8">
+        <section className="pb-8">
           <div className="container mx-auto px-4 md:px-6">
-            <div className="flex flex-wrap justify-center gap-4">
+            <div className="flex flex-wrap justify-center gap-3">
               {[
                 { icon: Terminal, label: "API Documentation", href: "/knowledge-base" },
                 { icon: Database, label: "Database Guides", href: "/knowledge-base" },
@@ -210,18 +208,18 @@ const KnowledgeBase = () => {
       {!searchQuery && (
         <section className="py-16">
           <div className="container mx-auto px-4 md:px-6">
-            <div className="text-center mb-12">
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">Browse by Category</h2>
+            <div className="text-center mb-10">
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">Browse by Category</h2>
               <p className="text-muted-foreground">Find articles organized by topic</p>
             </div>
             
             {loading ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[1,2,3,4,5,6].map(i => (
-                  <div key={i} className="glass-card p-6 h-40 animate-pulse" />
+                  <div key={i} className="glass-card p-6 h-44 animate-pulse" />
                 ))}
               </div>
-            ) : (
+            ) : filteredCategories.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredCategories.map((category) => {
                   const Icon = iconMap[category.icon || "Zap"] || Zap;
@@ -233,7 +231,7 @@ const KnowledgeBase = () => {
                           <Icon className="w-7 h-7 text-primary" />
                         </div>
                         <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">{category.name}</h3>
-                        <p className="text-sm text-muted-foreground mb-4">{category.description}</p>
+                        <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{category.description}</p>
                         <div className="flex items-center justify-between text-sm">
                           <span className="text-muted-foreground">{category.article_count || 0} articles</span>
                           <ChevronRight className="w-4 h-4 text-primary opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
@@ -242,6 +240,11 @@ const KnowledgeBase = () => {
                     </Link>
                   );
                 })}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <BookOpen className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
+                <p className="text-muted-foreground">No categories available yet.</p>
               </div>
             )}
           </div>
@@ -252,18 +255,18 @@ const KnowledgeBase = () => {
       {!searchQuery && featuredArticles.length > 0 && (
         <section className="py-16 bg-card/30">
           <div className="container mx-auto px-4 md:px-6">
-            <div className="mb-12">
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">Popular Articles</h2>
+            <div className="mb-10">
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">Popular Articles</h2>
               <p className="text-muted-foreground">Most viewed guides and tutorials</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {featuredArticles.map((article) => (
                 <Link key={article.id} to={`/knowledge-base/article/${article.slug}`}>
                   <div className="group glass-card p-6 h-full hover:border-primary/30 transition-all duration-300 hover:shadow-[0_8px_40px_rgba(25,195,255,0.12)]">
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="px-2 py-1 text-xs bg-primary/10 text-primary rounded">{getCategoryName(article.category_id)}</span>
-                      <div className="flex items-center gap-3 text-xs text-muted-foreground ml-auto">
-                        <span className="flex items-center gap-1"><Eye className="w-3 h-3" />{article.views.toLocaleString()}</span>
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="px-2.5 py-1 text-xs bg-primary/10 text-primary rounded-md font-medium">{getCategoryName(article.category_id)}</span>
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground ml-auto">
+                        <Eye className="w-3 h-3" />{article.views.toLocaleString()}
                       </div>
                     </div>
                     <h3 className="text-base font-semibold text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2">{article.title}</h3>
@@ -276,25 +279,26 @@ const KnowledgeBase = () => {
         </section>
       )}
 
-      {/* Recent Articles */}
+      {/* Recent Articles + Support Sidebar */}
       {!searchQuery && (
         <section className="py-16">
           <div className="container mx-auto px-4 md:px-6">
-            <div className="grid lg:grid-cols-3 gap-12">
+            <div className="grid lg:grid-cols-3 gap-8">
+              {/* Recent Articles */}
               <div className="lg:col-span-2">
                 <h2 className="text-2xl font-bold text-foreground mb-6">Recently Updated</h2>
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {recentArticles.length > 0 ? recentArticles.map((article) => (
-                    <Link key={article.id} to={`/knowledge-base/article/${article.slug}`}>
+                    <Link key={article.id} to={`/knowledge-base/article/${article.slug}`} className="block">
                       <div className="group flex items-center justify-between p-4 rounded-xl bg-card/40 border border-border/30 hover:border-primary/30 transition-all">
-                        <div className="flex items-center gap-4">
-                          <BookOpen className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                          <div>
-                            <h4 className="font-medium text-foreground group-hover:text-primary transition-colors">{article.title}</h4>
+                        <div className="flex items-center gap-4 min-w-0">
+                          <BookOpen className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
+                          <div className="min-w-0">
+                            <h4 className="font-medium text-foreground group-hover:text-primary transition-colors truncate">{article.title}</h4>
                             <span className="text-sm text-muted-foreground">{getCategoryName(article.category_id)}</span>
                           </div>
                         </div>
-                        <span className="text-sm text-muted-foreground hidden sm:block">{new Date(article.updated_at).toLocaleDateString()}</span>
+                        <span className="text-sm text-muted-foreground hidden sm:block flex-shrink-0 ml-4">{new Date(article.updated_at).toLocaleDateString()}</span>
                       </div>
                     </Link>
                   )) : (
@@ -302,15 +306,17 @@ const KnowledgeBase = () => {
                   )}
                 </div>
               </div>
+
+              {/* Support Sidebar */}
               <div>
-                <div className="glass-card p-6">
-                  <h3 className="text-lg font-semibold text-foreground mb-4">Need More Help?</h3>
+                <div className="glass-card p-6 sticky top-24">
+                  <h3 className="text-lg font-semibold text-foreground mb-3">Need More Help?</h3>
                   <p className="text-sm text-muted-foreground mb-6">Can't find what you're looking for? Our support team is available 24/7.</p>
                   <div className="space-y-3">
-                    <Link to="/panel/tickets/new">
+                    <Link to="/panel/tickets/new" className="block">
                       <Button className="w-full btn-glow">Open Support Ticket</Button>
                     </Link>
-                    <Link to="/contact">
+                    <Link to="/contact" className="block">
                       <Button variant="outline" className="w-full btn-outline">Contact Us</Button>
                     </Link>
                   </div>
