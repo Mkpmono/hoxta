@@ -26,6 +26,7 @@ const menuItems: MenuItemProps[] = [
     items: [
       { titleKey: "nav.webHosting", subtitleKey: "nav.webHostingDesc", icon: <Globe className="w-5 h-5" />, href: "/web-hosting" },
       { titleKey: "nav.resellerHosting", subtitleKey: "nav.resellerHostingDesc", icon: <Server className="w-5 h-5" />, href: "/reseller-hosting" },
+      { titleKey: "nav.domains", subtitleKey: "nav.domainsDesc", icon: <Globe className="w-5 h-5" />, href: "/domains" },
     ],
   },
   {

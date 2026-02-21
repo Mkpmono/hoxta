@@ -38,6 +38,7 @@ import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import AdminLogin from "./pages/AdminLogin";
 import StatusAdmin from "./pages/StatusAdmin";
+import Domains from "./pages/Domains";
 // Panel Pages
 import Login from "./pages/panel/Login";
 import Register from "./pages/panel/Register";
@@ -82,6 +83,7 @@ const App = () => (
             <Route path="/ddos-protection" element={<DDoSProtection />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/status" element={<Status />} />
+            <Route path="/domains" element={<Domains />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/terms" element={<Terms />} />
