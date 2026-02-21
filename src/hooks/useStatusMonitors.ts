@@ -46,8 +46,8 @@ export function useStatusMonitors(timeRange: TimeRange = "24h") {
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
   const fetchData = useCallback(async () => {
-    setLoading(true);
     try {
+      console.log("[Status] Fetching monitors...");
       // Fetch monitors from the public view
       const { data: monitorRows, error: mErr } = await supabase
         .from("status_monitors_public")
@@ -55,20 +55,30 @@ export function useStatusMonitors(timeRange: TimeRange = "24h") {
         .eq("is_active", true)
         .order("sort_order");
 
-      if (mErr || !monitorRows) {
+      if (mErr) {
         console.error("Failed to fetch monitors:", mErr);
         setLoading(false);
         return;
       }
 
+      if (!monitorRows || monitorRows.length === 0) {
+        setMonitors([]);
+        setLoading(false);
+        setLastUpdated(new Date());
+        return;
+      }
+
+      const monitorIds = monitorRows.map((m) => m.id!).filter(Boolean);
       const since = getTimeRangeDate(timeRange).toISOString();
 
-      // Fetch checks for all monitors since the time range
+      // Fetch checks filtered by monitor IDs and time range, with explicit limit
       const { data: checkRows, error: cErr } = await supabase
         .from("status_checks")
-        .select("*")
+        .select("id, monitor_id, status, response_time_ms, checked_at")
+        .in("monitor_id", monitorIds)
         .gte("checked_at", since)
-        .order("checked_at", { ascending: true });
+        .order("checked_at", { ascending: true })
+        .limit(5000);
 
       if (cErr) {
         console.error("Failed to fetch checks:", cErr);
