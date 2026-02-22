@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { checkDomains } from "@/integrations/api/client";
+import { supabase } from "@/integrations/supabase/client";
 
 const popularTLDs = [
   { ext: ".com", price: "€9.99", oldPrice: "€12.99", desc: "Cel mai popular", hot: true },
@@ -72,7 +72,11 @@ export default function Domains() {
     const domainsToCheck = extensions.map((ext) => `${baseName}${ext}`);
 
     try {
-      const data = await checkDomains(domainsToCheck);
+      const { data, error } = await supabase.functions.invoke("domain-check", {
+        body: { domains: domainsToCheck },
+      });
+
+      if (error) throw error;
 
       if (data.results) {
         const priceMap: Record<string, string> = {};
