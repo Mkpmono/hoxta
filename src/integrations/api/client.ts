@@ -380,6 +380,21 @@ export async function replyTicket(
   });
 }
 
+// ============ DOMAINS ============
+
+export interface DomainCheckResult {
+  domain: string;
+  status: "available" | "unavailable";
+}
+
+export async function checkDomains(domains: string[]): Promise<{ results: DomainCheckResult[] }> {
+  return apiFetch("/whmcs/domain_check.php", {
+    method: "POST",
+    body: { domains } as unknown as Record<string, unknown>,
+    auth: false,
+  });
+}
+
 // ============ UNIFIED CLIENT EXPORT ============
 
 export const apiClient = {
@@ -413,4 +428,7 @@ export const apiClient = {
   getDepartments,
   openTicket,
   replyTicket,
+
+  // Domains
+  checkDomains,
 };

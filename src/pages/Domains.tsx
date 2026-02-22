@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { checkDomains } from "@/integrations/api/client";
 
 const popularTLDs = [
   { ext: ".com", price: "€9.99", oldPrice: "€12.99", desc: "Cel mai popular", hot: true },
@@ -55,21 +56,46 @@ export default function Domains() {
   const [searching, setSearching] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  const handleSearch = (e: React.FormEvent) => {
+  const [searchError, setSearchError] = useState<string | null>(null);
+
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
     setSearching(true);
-    setTimeout(() => {
-      const domain = searchQuery.replace(/\s+/g, "").toLowerCase().split(".")[0];
-      setResults(
-        popularTLDs.slice(0, 8).map((tld) => ({
-          ext: `${domain}${tld.ext}`,
-          price: tld.price,
-          available: Math.random() > 0.25,
-        }))
-      );
+    setResults(null);
+    setSearchError(null);
+
+    // Extract the domain name (without extension if provided)
+    const cleaned = searchQuery.replace(/\s+/g, "").toLowerCase();
+    const baseName = cleaned.includes(".") ? cleaned.split(".")[0] : cleaned;
+    const extensions = [".com", ".ro", ".eu", ".net", ".org", ".io", ".dev", ".online"];
+    const domainsToCheck = extensions.map((ext) => `${baseName}${ext}`);
+
+    try {
+      const data = await checkDomains(domainsToCheck);
+
+      if (data.results) {
+        const priceMap: Record<string, string> = {};
+        popularTLDs.forEach((t) => { priceMap[t.ext] = t.price; });
+
+        setResults(
+          data.results.map((r) => {
+            const ext = "." + r.domain.split(".").slice(1).join(".");
+            return {
+              ext: r.domain,
+              price: priceMap[ext] || "€9.99",
+              available: r.status === "available",
+            };
+          })
+        );
+      } else {
+        setSearchError("Eroare la verificare");
+      }
+    } catch {
+      setSearchError("Nu s-a putut conecta la server. Încearcă din nou.");
+    } finally {
       setSearching(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -160,6 +186,18 @@ export default function Domains() {
           </div>
         </div>
       </section>
+
+      {/* Search Error */}
+      {searchError && (
+        <section className="py-8">
+          <div className="container mx-auto px-4 max-w-3xl">
+            <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm flex items-center gap-2">
+              <X className="w-4 h-4 shrink-0" />
+              {searchError}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Search Results */}
       <AnimatePresence>
