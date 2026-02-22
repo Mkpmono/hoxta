@@ -47,8 +47,7 @@ export function useStatusMonitors(timeRange: TimeRange = "24h") {
 
   const fetchData = useCallback(async () => {
     try {
-      console.log("[Status] Fetching monitors...");
-      // Fetch monitors from the public view
+      // Step 1: Fetch monitors first and display them immediately
       const { data: monitorRows, error: mErr } = await supabase
         .from("status_monitors_public")
         .select("*")
@@ -68,10 +67,23 @@ export function useStatusMonitors(timeRange: TimeRange = "24h") {
         return;
       }
 
+      // Show monitors immediately with 100% uptime (before checks load)
+      const initialMonitors: MonitorWithChecks[] = monitorRows.map((m) => ({
+        id: m.id!,
+        name: m.name!,
+        category: m.category!,
+        is_active: m.is_active!,
+        sort_order: m.sort_order!,
+        checks: [],
+        uptimePercent: 100,
+      }));
+      setMonitors(initialMonitors);
+      setLoading(false);
+
+      // Step 2: Fetch checks in background (non-blocking)
       const monitorIds = monitorRows.map((m) => m.id!).filter(Boolean);
       const since = getTimeRangeDate(timeRange).toISOString();
 
-      // Fetch checks filtered by monitor IDs and time range, with explicit limit
       const { data: checkRows, error: cErr } = await supabase
         .from("status_checks")
         .select("id, monitor_id, status, response_time_ms, checked_at")
@@ -82,6 +94,9 @@ export function useStatusMonitors(timeRange: TimeRange = "24h") {
 
       if (cErr) {
         console.error("Failed to fetch checks:", cErr);
+        // Monitors are already displayed, just skip checks
+        setLastUpdated(new Date());
+        return;
       }
 
       const checksMap = new Map<string, StatusCheck[]>();
@@ -97,6 +112,7 @@ export function useStatusMonitors(timeRange: TimeRange = "24h") {
         checksMap.set(c.monitor_id, list);
       }
 
+      // Update monitors with actual check data
       const result: MonitorWithChecks[] = monitorRows.map((m) => {
         const checks = checksMap.get(m.id!) || [];
         const total = checks.length;
@@ -119,7 +135,6 @@ export function useStatusMonitors(timeRange: TimeRange = "24h") {
       console.error("Status fetch error:", err);
     }
     setLastUpdated(new Date());
-    setLoading(false);
   }, [timeRange]);
 
   useEffect(() => {

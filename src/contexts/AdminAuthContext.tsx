@@ -18,20 +18,29 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   const checkAdminRole = useCallback(async (userId: string) => {
-    const { data } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", userId)
-      .eq("role", "admin")
-      .maybeSingle();
-    return !!data;
+    try {
+      const { data } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId)
+        .eq("role", "admin")
+        .maybeSingle();
+      return !!data;
+    } catch {
+      return false;
+    }
   }, []);
 
   useEffect(() => {
+    let mounted = true;
+
+    // Initial session check
     const init = async () => {
       const { data: { session } } = await supabase.auth.getSession();
+      if (!mounted) return;
       if (session?.user) {
         const admin = await checkAdminRole(session.user.id);
+        if (!mounted) return;
         setUser(session.user);
         setIsAdmin(admin);
       }
@@ -39,18 +48,28 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     };
     init();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    // Listen for auth changes - DO NOT await inside callback to prevent deadlock
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!mounted) return;
       if (session?.user) {
-        const admin = await checkAdminRole(session.user.id);
         setUser(session.user);
-        setIsAdmin(admin);
+        // Defer the async role check with setTimeout to avoid Supabase deadlock
+        setTimeout(async () => {
+          if (!mounted) return;
+          const admin = await checkAdminRole(session.user.id);
+          if (!mounted) return;
+          setIsAdmin(admin);
+        }, 0);
       } else {
         setUser(null);
         setIsAdmin(false);
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, [checkAdminRole]);
 
   const login = useCallback(async (email: string, password: string) => {
