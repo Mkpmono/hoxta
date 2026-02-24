@@ -100,7 +100,6 @@ const games: Game[] = [
 
 export function ChooseGameSection() {
   const navigate = useNavigate();
-  const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annual">("monthly");
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -136,8 +135,7 @@ export function ChooseGameSection() {
   const handleOrderNow = (game: Game, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const billing = billingPeriod === "annual" ? "annually" : "monthly";
-    navigate(`/checkout?category=games&product=${game.id}&plan=${game.planId}&billing=${billing}`);
+    navigate(`/checkout?category=games&product=${game.id}&plan=${game.planId}&billing=monthly`);
   };
 
   return (
@@ -167,36 +165,6 @@ export function ChooseGameSection() {
             </p>
           </div>
 
-          <div className="flex items-center gap-4">
-            {/* Billing Toggle */}
-            <div className="inline-flex items-center gap-1 p-1 rounded-xl bg-card/80 border border-border/50 backdrop-blur-sm">
-              <button
-                onClick={() => setBillingPeriod("monthly")}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  billingPeriod === "monthly"
-                    ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                Monthly
-              </button>
-              <button
-                onClick={() => setBillingPeriod("annual")}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  billingPeriod === "annual"
-                    ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                Annual
-              </button>
-            </div>
-            {billingPeriod === "annual" && (
-              <span className="px-3 py-1.5 text-xs font-semibold bg-green-500/20 text-green-400 rounded-full border border-green-500/30">
-                SAVE 20%
-              </span>
-            )}
-          </div>
         </motion.div>
 
         {/* Game Cards Carousel */}
@@ -276,7 +244,7 @@ export function ChooseGameSection() {
                     <div className="flex items-baseline gap-1.5 mb-4">
                       <span className="text-xs text-muted-foreground">from</span>
                       <span className="text-2xl font-bold text-primary">
-                        ${billingPeriod === "annual" ? (game.price * 0.8).toFixed(2) : game.price.toFixed(2)}
+                        ${game.price.toFixed(2)}
                       </span>
                       <span className="text-xs text-muted-foreground">/ month</span>
                     </div>

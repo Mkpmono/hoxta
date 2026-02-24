@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Copy, Check, Gift } from "lucide-react";
+import { X, Copy, Check, Percent } from "lucide-react";
 
 const DISCOUNT_CODE = "HOXTA20";
 const STORAGE_KEY = "hoxta_discount_dismissed";
@@ -38,60 +38,78 @@ export function DiscountPopup() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={handleClose}
-            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md"
           />
 
           {/* Popup */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-[90vw] max-w-md"
+            initial={{ opacity: 0, scale: 0.85 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.85 }}
+            transition={{ type: "spring", damping: 20, stiffness: 250 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
           >
-            <div className="relative glass-card border-primary/30 p-8 text-center overflow-hidden">
-              {/* Glow effect */}
-              <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-60 h-60 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
+            <div className="relative w-full max-w-sm pointer-events-auto rounded-2xl border border-primary/20 bg-card shadow-2xl shadow-primary/10 overflow-hidden">
+              {/* Top accent bar */}
+              <div className="h-1 w-full bg-gradient-to-r from-primary via-primary/80 to-primary" />
+
+              {/* Glow */}
+              <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-80 h-80 bg-primary/15 rounded-full blur-3xl pointer-events-none" />
 
               {/* Close button */}
               <button
                 onClick={handleClose}
-                className="absolute top-3 right-3 p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                className="absolute top-4 right-4 p-1.5 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors z-10"
               >
                 <X className="w-4 h-4" />
               </button>
 
-              {/* Icon */}
-              <div className="relative mx-auto mb-4 w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
-                <Gift className="w-8 h-8 text-primary" />
+              <div className="relative px-8 py-10 flex flex-col items-center text-center">
+                {/* Icon */}
+                <div className="mb-5 w-14 h-14 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
+                  <Percent className="w-6 h-6 text-primary" />
+                </div>
+
+                {/* Title */}
+                <h3 className="text-xl font-bold text-foreground mb-1.5">
+                  Exclusive Discount
+                </h3>
+                <p className="text-sm text-muted-foreground mb-6 max-w-[260px] leading-relaxed">
+                  Use the code below at checkout to get{" "}
+                  <span className="text-primary font-semibold">20% off</span> your first order.
+                </p>
+
+                {/* Code box */}
+                <button
+                  onClick={handleCopy}
+                  className="group w-full max-w-[240px] flex items-center justify-between px-5 py-3.5 rounded-xl bg-background border border-border/60 hover:border-primary/40 transition-all"
+                >
+                  <span className="text-lg font-mono font-bold tracking-[0.2em] text-foreground">
+                    {DISCOUNT_CODE}
+                  </span>
+                  <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground group-hover:text-primary transition-colors">
+                    {copied ? (
+                      <>
+                        <Check className="w-3.5 h-3.5 text-primary" />
+                        <span className="text-primary">Copied</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3.5 h-3.5" />
+                        <span>Copy</span>
+                      </>
+                    )}
+                  </div>
+                </button>
+
+                {/* Dismiss text */}
+                <button
+                  onClick={handleClose}
+                  className="mt-5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  No thanks, continue browsing
+                </button>
               </div>
-
-              {/* Title */}
-              <h3 className="text-2xl font-bold text-foreground mb-2">
-                🎉 20% Reducere!
-              </h3>
-              <p className="text-muted-foreground mb-6">
-                Folosește codul de mai jos la checkout și primești <span className="text-primary font-semibold">20% reducere</span> la prima comandă!
-              </p>
-
-              {/* Code */}
-              <button
-                onClick={handleCopy}
-                className="group relative inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-primary/10 border-2 border-dashed border-primary/40 hover:border-primary/60 transition-all cursor-pointer"
-              >
-                <span className="text-2xl font-mono font-bold tracking-widest text-primary">
-                  {DISCOUNT_CODE}
-                </span>
-                {copied ? (
-                  <Check className="w-5 h-5 text-primary" />
-                ) : (
-                  <Copy className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                )}
-              </button>
-
-              <p className="text-xs text-muted-foreground mt-4">
-                {copied ? "✅ Cod copiat!" : "Click pentru a copia codul"}
-              </p>
             </div>
           </motion.div>
         </>
