@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { Check, Zap, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -30,36 +29,7 @@ export function PlanSelector({
       animate={{ opacity: 1 }}
       className="space-y-8"
     >
-      {/* Billing Cycle Toggle */}
-      <div className="flex justify-center">
-        <div className="inline-flex items-center gap-4 p-1.5 rounded-full bg-card/50 border border-border/50">
-          <button
-            onClick={() => onBillingCycleChange("monthly")}
-            className={cn(
-              "px-6 py-2 rounded-full text-sm font-medium transition-all",
-              selectedBillingCycle === "monthly"
-                ? "bg-primary text-primary-foreground shadow-lg"
-                : "text-muted-foreground hover:text-foreground"
-            )}
-          >
-            Monthly
-          </button>
-          <button
-            onClick={() => onBillingCycleChange("annually")}
-            className={cn(
-              "px-6 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2",
-              selectedBillingCycle === "annually"
-                ? "bg-primary text-primary-foreground shadow-lg"
-                : "text-muted-foreground hover:text-foreground"
-            )}
-          >
-            Yearly
-            <span className="px-2 py-0.5 rounded-full bg-green-500/20 text-green-400 text-xs font-bold">
-              Save 20%
-            </span>
-          </button>
-        </div>
-      </div>
+      {/* Billing info */}
 
       {/* Plans Grid */}
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">

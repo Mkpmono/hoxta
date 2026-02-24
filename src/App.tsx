@@ -61,6 +61,8 @@ import AdminTickets from "./pages/admin/Tickets";
 import AdminClients from "./pages/admin/Clients";
 import AdminSettings from "./pages/admin/Settings";
 
+import { DiscountPopup } from "@/components/DiscountPopup";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -70,6 +72,7 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
+        <DiscountPopup />
         <BrowserRouter>
           <Routes>
             {/* Public Routes */}

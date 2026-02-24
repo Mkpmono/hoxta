@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, Zap } from "lucide-react";
@@ -10,12 +9,12 @@ export interface PlanFeature {
 }
 
 export interface Plan {
-  id?: string; // Plan ID for order routing
-  productSlug?: string; // Product slug for order routing
+  id?: string;
+  productSlug?: string;
   name: string;
   description?: string;
   monthlyPrice: number;
-  yearlyPrice: number;
+  yearlyPrice?: number;
   popular?: boolean;
   features: PlanFeature[];
   cta?: {
@@ -35,27 +34,22 @@ interface PricingPlansProps {
 function generateCheckoutUrl(
   plan: Plan, 
   productSlug: string | undefined, 
-  isYearly: boolean,
   category?: string
 ): string {
   const slug = plan.productSlug || productSlug;
-  const billing = isYearly ? "annually" : "monthly";
+  const billing = "monthly";
   
-  // If plan has a custom CTA href, update the billing param
   if (plan.cta?.href) {
-    // Update billing in the existing URL
     const url = new URL(plan.cta.href, window.location.origin);
     url.searchParams.set("billing", billing);
     return url.pathname + url.search;
   }
   
-  // Route directly to checkout when we have all params
   if (slug && plan.id) {
     const categoryParam = category ? `category=${category}&` : "";
     return `/checkout?${categoryParam}product=${slug}&plan=${plan.id}&billing=${billing}`;
   }
   
-  // Fallback to order page for plan selection
   if (slug) {
     return `/order?product=${slug}&billing=${billing}`;
   }
@@ -71,44 +65,14 @@ export function PricingPlans({
   category,
 }: PricingPlansProps) {
   const { t } = useTranslation();
-  const [isYearly, setIsYearly] = useState(true);
 
   return (
     <section id="pricing" className="py-20 md:py-28">
       <div className="container mx-auto px-4 md:px-6">
         {/* Header */}
-        <div
-          className="text-center mb-12"
-        >
+        <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">{title}</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto mb-8">{subtitle}</p>
-
-          {/* Billing Toggle */}
-          <div className="inline-flex items-center gap-4 p-1.5 rounded-full bg-card/50 border border-border/50">
-            <button
-              onClick={() => setIsYearly(false)}
-              className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
-                !isYearly
-                  ? "bg-primary text-primary-foreground shadow-lg"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {t("checkout.monthly")}
-            </button>
-            <button
-              onClick={() => setIsYearly(true)}
-              className={`px-6 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
-                isYearly
-                  ? "bg-primary text-primary-foreground shadow-lg"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {t("checkout.annually")}
-              <span className="px-2 py-0.5 rounded-full bg-green-500/20 text-green-400 text-xs font-bold">
-                Save 20%
-              </span>
-            </button>
-          </div>
         </div>
 
         {/* Plans Grid */}
@@ -140,15 +104,10 @@ export function PricingPlans({
                 <div className="mb-6">
                   <div className="flex items-baseline gap-1">
                     <span className="text-4xl font-bold text-foreground">
-                      ${isYearly ? plan.yearlyPrice.toFixed(2) : plan.monthlyPrice.toFixed(2)}
+                      ${plan.monthlyPrice.toFixed(2)}
                     </span>
                     <span className="text-muted-foreground">{t("common.perMonth")}</span>
                   </div>
-                  {isYearly && (
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Billed ${(plan.yearlyPrice * 12).toFixed(2)}/year
-                    </p>
-                  )}
                 </div>
 
                 <ul className="space-y-3 mb-8 flex-1">
@@ -170,7 +129,7 @@ export function PricingPlans({
                 </ul>
 
                 <Link
-                  to={generateCheckoutUrl(plan, productSlug, isYearly, category)}
+                  to={generateCheckoutUrl(plan, productSlug, category)}
                   className={`block w-full py-3 text-center rounded-lg font-medium transition-all ${
                     plan.popular
                       ? "btn-glow"
