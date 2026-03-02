@@ -1000,6 +1000,622 @@ export const gameServers: GameServer[] = [
       { question: "Can I configure the server settings?", answer: "Yes! Full access to server configuration via our control panel." },
       { question: "Are updates automatic?", answer: "Yes, we automatically update your server when new game updates are released." }
     ]
+  },
+  // ============================================
+  // BATCH 2 - Additional games from panel
+  // ============================================
+  {
+    id: "css",
+    slug: "counter-strike-source",
+    title: "Counter-Strike: Source",
+    coverImage: "",
+    pricingDisplay: "$0.40/slot",
+    priceValue: 0.40,
+    pricingUnit: "slot",
+    shortDescription: "Classic Source engine servers",
+    tags: ["FPS", "Classic", "Competitive", "Mods"],
+    category: "fps",
+    os: "linux",
+    popular: false,
+    fullDescription: "Host classic Counter-Strike: Source servers. Perfect for nostalgic gameplay, surf maps, jailbreak, and custom game modes.",
+    heroPoints: ["SourceMod support", "Custom maps & skins", "Anti-cheat ready", "Low ping servers"],
+    features: ["SourceMod/MetaMod", "Custom maps", "FastDL included", "RCON access", "Workshop support", "Automatic updates", "Anti-cheat", "Low-latency"],
+    plans: [
+      { name: "Public", slots: 16, storage: "15GB NVMe", price: 5.00, features: ["16 slots", "SourceMod", "FastDL"] },
+      { name: "Community", slots: 24, storage: "25GB NVMe", price: 8.00, popular: true, features: ["24 slots", "Custom mods", "Priority support"] },
+      { name: "Premium", slots: 32, storage: "40GB NVMe", price: 12.00, features: ["32 slots", "All features", "Dedicated resources"] }
+    ],
+    faqs: [
+      { question: "Do you support SourceMod?", answer: "Yes! SourceMod and MetaMod are pre-installed." },
+      { question: "Can I run surf or jailbreak servers?", answer: "Absolutely! All game modes are supported." }
+    ]
+  },
+  {
+    id: "l4d2",
+    slug: "left-4-dead-2",
+    title: "Left 4 Dead 2",
+    coverImage: "",
+    pricingDisplay: "$0.50/slot",
+    priceValue: 0.50,
+    pricingUnit: "slot",
+    shortDescription: "Co-op zombie shooter servers",
+    tags: ["Co-op", "Zombies", "FPS", "Mods"],
+    category: "fps",
+    os: "linux",
+    popular: false,
+    fullDescription: "Survive the zombie horde together. Host Left 4 Dead 2 servers with custom campaigns, mutations, and mods.",
+    heroPoints: ["Custom campaigns", "SourceMod support", "Workshop integration", "Versus & co-op modes"],
+    features: ["Custom campaigns", "SourceMod", "Workshop maps", "Versus mode", "Automatic updates", "RCON access", "FastDL", "Low-latency"],
+    plans: [
+      { name: "Co-op", slots: 8, storage: "15GB NVMe", price: 4.00, features: ["8 slots", "Custom campaigns", "Daily backups"] },
+      { name: "Versus", slots: 16, storage: "25GB NVMe", price: 7.00, popular: true, features: ["16 slots", "All modes", "Mods"] },
+      { name: "Community", slots: 32, storage: "40GB NVMe", price: 12.00, features: ["32 slots", "Priority support", "All features"] }
+    ],
+    faqs: [
+      { question: "Can I install custom campaigns?", answer: "Yes! Workshop and custom campaign support is included." },
+      { question: "Do you support Versus mode?", answer: "Yes, all game modes including Versus, Scavenge, and Survival." }
+    ]
+  },
+  {
+    id: "squad",
+    slug: "squad",
+    title: "Squad",
+    coverImage: "",
+    pricingDisplay: "$1.20/slot",
+    priceValue: 1.20,
+    pricingUnit: "slot",
+    shortDescription: "Tactical military shooter servers",
+    tags: ["MilSim", "Tactical", "FPS", "Large Scale"],
+    category: "fps",
+    os: "linux",
+    popular: false,
+    fullDescription: "Lead your squad into battle with dedicated Squad servers. Large-scale tactical combat with realistic mechanics and teamwork-focused gameplay.",
+    heroPoints: ["50v50 battles", "Custom map layers", "RCON administration", "Licensed server hosting"],
+    features: ["Large-scale battles", "Custom map layers", "RCON access", "Admin tools", "Automatic updates", "Mod support", "Performance tuned", "DDoS protection"],
+    plans: [
+      { name: "Standard", slots: 50, cpu: "4 vCores", ram: "8GB", storage: "60GB NVMe", price: 35.00, features: ["50 slots", "All maps", "Admin tools"] },
+      { name: "Full Server", slots: 100, cpu: "6 vCores", ram: "16GB", storage: "100GB NVMe", price: 60.00, popular: true, features: ["100 slots", "Custom layers", "Priority support"] }
+    ],
+    faqs: [
+      { question: "Do I need a license?", answer: "Server licensing is handled automatically through our hosting." },
+      { question: "Can I run custom map layers?", answer: "Yes! Full control over map rotation and layer selection." }
+    ]
+  },
+  {
+    id: "tf2",
+    slug: "team-fortress-2",
+    title: "Team Fortress 2",
+    coverImage: "",
+    pricingDisplay: "$0.35/slot",
+    priceValue: 0.35,
+    pricingUnit: "slot",
+    shortDescription: "Classic team-based FPS servers",
+    tags: ["FPS", "Classic", "Free-to-Play", "Mods"],
+    category: "fps",
+    os: "linux",
+    popular: false,
+    fullDescription: "Host community TF2 servers with custom maps, plugins, and game modes. Perfect for MvM, trade servers, and competitive play.",
+    heroPoints: ["SourceMod ready", "MvM support", "Custom maps", "FastDL included"],
+    features: ["SourceMod/MetaMod", "MvM mode", "Custom maps", "FastDL", "RCON access", "Automatic updates", "Anti-cheat", "Low-latency"],
+    plans: [
+      { name: "Casual", slots: 16, storage: "15GB NVMe", price: 5.00, features: ["16 slots", "SourceMod", "FastDL"] },
+      { name: "Community", slots: 24, storage: "25GB NVMe", price: 7.00, popular: true, features: ["24 slots", "MvM ready", "All modes"] },
+      { name: "Premium", slots: 32, storage: "40GB NVMe", price: 10.00, features: ["32 slots", "Priority support", "Custom configs"] }
+    ],
+    faqs: [
+      { question: "Do you support MvM?", answer: "Yes! Mann vs Machine mode is fully supported on our servers." },
+      { question: "Can I run trade servers?", answer: "Absolutely! All game modes and custom plugins are supported." }
+    ]
+  },
+  {
+    id: "beammp",
+    slug: "beammp",
+    title: "BeamMP",
+    coverImage: "",
+    pricingDisplay: "$0.80/slot",
+    priceValue: 0.80,
+    pricingUnit: "slot",
+    shortDescription: "BeamNG.drive multiplayer servers",
+    tags: ["Driving", "Simulation", "Multiplayer", "Physics"],
+    category: "other",
+    os: "both",
+    popular: false,
+    fullDescription: "Drive together in BeamNG.drive with BeamMP multiplayer. Realistic physics-based driving with friends on dedicated servers.",
+    heroPoints: ["Realistic physics sync", "Custom maps", "Mod vehicle support", "Easy server setup"],
+    features: ["Vehicle sync", "Custom maps", "Mod support", "Server configuration", "Automatic updates", "Password protection", "Admin tools", "Low-latency"],
+    plans: [
+      { name: "Garage", slots: 8, ram: "4GB", storage: "20GB NVMe", price: 8.00, features: ["8 players", "Easy setup", "Daily backups"] },
+      { name: "Track", slots: 16, ram: "8GB", storage: "40GB NVMe", price: 14.00, popular: true, features: ["16 players", "Custom maps", "All features"] },
+      { name: "Circuit", slots: 32, ram: "16GB", storage: "80GB NVMe", price: 25.00, features: ["32 players", "Priority support", "Maximum resources"] }
+    ],
+    faqs: [
+      { question: "Do mods sync between players?", answer: "Yes! Vehicle mods sync automatically when configured properly." },
+      { question: "Is the physics realistic?", answer: "BeamMP preserves BeamNG.drive's full soft-body physics simulation in multiplayer." }
+    ]
+  },
+  {
+    id: "satisfactory",
+    slug: "satisfactory",
+    title: "Satisfactory",
+    coverImage: "",
+    pricingDisplay: "$0.70/slot",
+    priceValue: 0.70,
+    pricingUnit: "slot",
+    shortDescription: "Factory building co-op servers",
+    tags: ["Building", "Co-op", "Simulation", "Automation"],
+    category: "sandbox",
+    os: "both",
+    popular: false,
+    fullDescription: "Build massive factories together on dedicated Satisfactory servers. Automate production lines and explore an alien planet with friends.",
+    heroPoints: ["Dedicated server support", "Save management", "Mod support", "Automatic updates"],
+    features: ["Factory save management", "Mod support", "Server configuration", "Automatic updates", "Password protection", "Admin tools", "Backup management", "Performance tuned"],
+    plans: [
+      { name: "Workshop", slots: 4, ram: "6GB", storage: "30GB NVMe", price: 10.00, features: ["4 players", "Easy setup", "Daily backups"] },
+      { name: "Factory", slots: 8, ram: "12GB", storage: "60GB NVMe", price: 18.00, popular: true, features: ["8 players", "Mod support", "Hourly backups"] },
+      { name: "Megafactory", slots: 16, ram: "24GB", storage: "120GB NVMe", price: 35.00, features: ["16 players", "Priority support", "Maximum resources"] }
+    ],
+    faqs: [
+      { question: "How many players can join?", answer: "Satisfactory supports up to 16 players in co-op on dedicated servers." },
+      { question: "Can I upload my save?", answer: "Yes! Transfer your existing save via FTP to continue building." }
+    ]
+  },
+  {
+    id: "conan-exiles",
+    slug: "conan-exiles",
+    title: "Conan Exiles",
+    coverImage: "",
+    pricingDisplay: "$0.90/slot",
+    priceValue: 0.90,
+    pricingUnit: "slot",
+    shortDescription: "Open world survival servers",
+    tags: ["Survival", "Building", "PvP", "Mods"],
+    category: "survival",
+    os: "both",
+    popular: false,
+    fullDescription: "Survive in the brutal Exiled Lands. Build kingdoms, fight enemies, and dominate on your own Conan Exiles server.",
+    heroPoints: ["Full mod support", "Custom map mods", "Admin panel", "Age of Sorcery ready"],
+    features: ["Steam Workshop mods", "Custom settings", "Admin panel", "Automatic updates", "Backup management", "Password protection", "PvP/PvE modes", "DDoS protection"],
+    plans: [
+      { name: "Exile", slots: 20, ram: "6GB", storage: "40GB NVMe", price: 15.00, features: ["20 slots", "Basic mods", "Daily backups"] },
+      { name: "Clan", slots: 40, ram: "10GB", storage: "80GB NVMe", price: 28.00, popular: true, features: ["40 slots", "Full mods", "Hourly backups"] },
+      { name: "Empire", slots: 70, ram: "16GB", storage: "150GB NVMe", price: 50.00, features: ["70 slots", "Priority support", "All features"] }
+    ],
+    faqs: [
+      { question: "Are mods supported?", answer: "Yes! Full Steam Workshop mod support is included." },
+      { question: "Can I run Age of Sorcery?", answer: "Yes, all official content updates including Age of Sorcery are fully supported." }
+    ]
+  },
+  {
+    id: "dst",
+    slug: "dont-starve-together",
+    title: "Don't Starve Together",
+    coverImage: "",
+    pricingDisplay: "$0.40/slot",
+    priceValue: 0.40,
+    pricingUnit: "slot",
+    shortDescription: "Survival co-op servers",
+    tags: ["Survival", "Co-op", "Roguelike", "Mods"],
+    category: "survival",
+    os: "linux",
+    popular: false,
+    fullDescription: "Survive the wilderness together in this unique survival game. Host DST servers with caves, mods, and custom world settings.",
+    heroPoints: ["Cave server included", "Workshop mods", "World customization", "Automatic updates"],
+    features: ["Caves enabled", "Workshop mods", "World generation settings", "Admin tools", "Automatic updates", "Backup management", "Password protection", "Low-latency"],
+    plans: [
+      { name: "Camp", slots: 6, ram: "2GB", storage: "10GB NVMe", price: 4.00, features: ["6 players", "Caves", "Daily backups"] },
+      { name: "Base", slots: 12, ram: "4GB", storage: "20GB NVMe", price: 7.00, popular: true, features: ["12 players", "Workshop mods", "Hourly backups"] },
+      { name: "Kingdom", slots: 24, ram: "8GB", storage: "40GB NVMe", price: 12.00, features: ["24 players", "Priority support", "All features"] }
+    ],
+    faqs: [
+      { question: "Are caves included?", answer: "Yes! Cave servers are included with all plans at no extra cost." },
+      { question: "Can I install Workshop mods?", answer: "Absolutely! Easy Workshop mod integration through our panel." }
+    ]
+  },
+  {
+    id: "humanitz",
+    slug: "humanitz",
+    title: "HumanitZ",
+    coverImage: "",
+    pricingDisplay: "$0.60/slot",
+    priceValue: 0.60,
+    pricingUnit: "slot",
+    shortDescription: "Post-apocalyptic survival servers",
+    tags: ["Survival", "Zombies", "Open World", "Multiplayer"],
+    category: "survival",
+    os: "both",
+    popular: false,
+    fullDescription: "Survive the zombie apocalypse in this open-world survival game. Build, craft, and fight to stay alive on dedicated servers.",
+    heroPoints: ["Dedicated server hosting", "Custom configurations", "Automatic updates", "Low-latency network"],
+    features: ["Server configuration", "World management", "Password protection", "Automatic updates", "Admin commands", "Backup management", "Performance tuned", "24/7 uptime"],
+    plans: [
+      { name: "Survivor", slots: 16, ram: "4GB", storage: "20GB NVMe", price: 8.00, features: ["16 players", "Easy setup", "Daily backups"] },
+      { name: "Community", slots: 32, ram: "8GB", storage: "40GB NVMe", price: 15.00, popular: true, features: ["32 players", "Custom settings", "Hourly backups"] },
+      { name: "Outpost", slots: 64, ram: "16GB", storage: "80GB NVMe", price: 28.00, features: ["64 players", "Priority support", "All features"] }
+    ],
+    faqs: [
+      { question: "Is the game in Early Access?", answer: "Yes, HumanitZ is in Early Access. We keep servers updated with every patch." },
+      { question: "How many players can join?", answer: "Our plans support up to 64 players on dedicated servers." }
+    ]
+  },
+  {
+    id: "icarus",
+    slug: "icarus",
+    title: "Icarus",
+    coverImage: "",
+    pricingDisplay: "$0.70/slot",
+    priceValue: 0.70,
+    pricingUnit: "slot",
+    shortDescription: "Session-based survival servers",
+    tags: ["Survival", "Co-op", "Crafting", "Exploration"],
+    category: "survival",
+    os: "both",
+    popular: false,
+    fullDescription: "Explore an alien wilderness in session-based survival. Host Icarus servers for persistent Open World or timed prospect missions.",
+    heroPoints: ["Open World mode", "Session management", "Save persistence", "Automatic updates"],
+    features: ["Open World support", "Session management", "Save files", "Server configuration", "Automatic updates", "Password protection", "Admin tools", "Backup management"],
+    plans: [
+      { name: "Prospect", slots: 8, ram: "6GB", storage: "30GB NVMe", price: 10.00, features: ["8 players", "Easy setup", "Daily backups"] },
+      { name: "Outpost", slots: 16, ram: "12GB", storage: "60GB NVMe", price: 18.00, popular: true, features: ["16 players", "Open World", "Hourly backups"] }
+    ],
+    faqs: [
+      { question: "Does Open World mode work?", answer: "Yes! Both Open World persistent mode and session-based prospects are supported." },
+      { question: "Can I save progress?", answer: "Yes, save files persist on our servers and can be backed up." }
+    ]
+  },
+  {
+    id: "scum",
+    slug: "scum",
+    title: "SCUM",
+    coverImage: "",
+    pricingDisplay: "$0.80/slot",
+    priceValue: 0.80,
+    pricingUnit: "slot",
+    shortDescription: "Hardcore survival servers",
+    tags: ["Survival", "Hardcore", "Open World", "PvP"],
+    category: "survival",
+    os: "both",
+    popular: false,
+    fullDescription: "Survive in the ultimate open-world hardcore survival game. Host SCUM servers with full metabolism simulation and character customization.",
+    heroPoints: ["Full admin tools", "Custom spawn points", "Vehicle management", "Base building configs"],
+    features: ["Admin commands", "Custom spawns", "Vehicle settings", "Base configurations", "Automatic updates", "Backup management", "Password protection", "DDoS protection"],
+    plans: [
+      { name: "Survivor", slots: 32, ram: "6GB", storage: "40GB NVMe", price: 18.00, features: ["32 slots", "Basic setup", "Daily backups"] },
+      { name: "Community", slots: 64, ram: "12GB", storage: "80GB NVMe", price: 35.00, popular: true, features: ["64 slots", "Full configs", "Hourly backups"] },
+      { name: "Hardcore", slots: 128, ram: "24GB", storage: "150GB NVMe", price: 65.00, features: ["128 slots", "Priority support", "All features"] }
+    ],
+    faqs: [
+      { question: "Can I customize metabolism settings?", answer: "Yes! Full control over all server settings including metabolism simulation." },
+      { question: "Are vehicles configurable?", answer: "Yes, vehicle spawns and settings can be customized through the admin panel." }
+    ]
+  },
+  {
+    id: "sons-of-the-forest",
+    slug: "sons-of-the-forest",
+    title: "Sons of the Forest",
+    coverImage: "",
+    pricingDisplay: "$0.75/slot",
+    priceValue: 0.75,
+    pricingUnit: "slot",
+    shortDescription: "Survival horror co-op servers",
+    tags: ["Survival", "Horror", "Co-op", "Building"],
+    category: "survival",
+    os: "both",
+    popular: true,
+    fullDescription: "Survive on a cannibal-infested island with friends. Host dedicated Sons of the Forest servers for seamless co-op gameplay.",
+    heroPoints: ["Dedicated server support", "Save management", "Easy configuration", "Automatic updates"],
+    features: ["Dedicated hosting", "Save management", "Server configuration", "Automatic updates", "Password protection", "Admin tools", "Backup management", "Performance tuned"],
+    plans: [
+      { name: "Camp", slots: 8, ram: "6GB", storage: "20GB NVMe", price: 10.00, features: ["8 players", "Easy setup", "Daily backups"] },
+      { name: "Colony", slots: 16, ram: "12GB", storage: "40GB NVMe", price: 18.00, popular: true, features: ["16 players", "Custom settings", "Hourly backups"] }
+    ],
+    faqs: [
+      { question: "How many players can play?", answer: "Dedicated servers support up to 16 players in co-op." },
+      { question: "Can I upload my existing save?", answer: "Yes! Transfer your save files via FTP to continue your world." }
+    ]
+  },
+  {
+    id: "the-forest",
+    slug: "the-forest",
+    title: "The Forest",
+    coverImage: "",
+    pricingDisplay: "$0.50/slot",
+    priceValue: 0.50,
+    pricingUnit: "slot",
+    shortDescription: "Survival horror servers",
+    tags: ["Survival", "Horror", "Co-op", "Building"],
+    category: "survival",
+    os: "both",
+    popular: false,
+    fullDescription: "Build, explore, and survive in a mysterious forest filled with cannibals. Host The Forest servers for co-op survival with friends.",
+    heroPoints: ["Dedicated server hosting", "Save persistence", "Easy setup", "Mod support"],
+    features: ["Dedicated hosting", "Save management", "Server settings", "Automatic updates", "Password protection", "Admin tools", "Backup management", "Low-latency"],
+    plans: [
+      { name: "Shelter", slots: 8, ram: "4GB", storage: "15GB NVMe", price: 6.00, features: ["8 players", "Easy setup", "Daily backups"] },
+      { name: "Village", slots: 16, ram: "8GB", storage: "30GB NVMe", price: 10.00, popular: true, features: ["16 players", "Custom settings", "Hourly backups"] }
+    ],
+    faqs: [
+      { question: "How many players can join?", answer: "The Forest supports up to 16 players in co-op on dedicated servers." },
+      { question: "Can I use mods?", answer: "Yes, mod support is available through community modding tools." }
+    ]
+  },
+  {
+    id: "vrising",
+    slug: "v-rising",
+    title: "V Rising",
+    coverImage: "",
+    pricingDisplay: "$0.70/slot",
+    priceValue: 0.70,
+    pricingUnit: "slot",
+    shortDescription: "Vampire survival servers",
+    tags: ["Survival", "Vampire", "PvP", "Building"],
+    category: "survival",
+    os: "both",
+    popular: true,
+    fullDescription: "Rise as a vampire lord and build your castle. Host V Rising servers for PvP, PvE, or co-op with custom settings.",
+    heroPoints: ["Full server settings", "PvP/PvE modes", "Castle management", "Automatic updates"],
+    features: ["Server configuration", "PvP/PvE modes", "Castle settings", "Automatic updates", "Password protection", "Admin tools", "Backup management", "DDoS protection"],
+    plans: [
+      { name: "Crypt", slots: 20, ram: "6GB", storage: "30GB NVMe", price: 12.00, features: ["20 slots", "Easy setup", "Daily backups"] },
+      { name: "Castle", slots: 40, ram: "12GB", storage: "60GB NVMe", price: 22.00, popular: true, features: ["40 slots", "Custom settings", "Hourly backups"] },
+      { name: "Empire", slots: 70, ram: "16GB", storage: "100GB NVMe", price: 38.00, features: ["70 slots", "Priority support", "All features"] }
+    ],
+    faqs: [
+      { question: "Can I customize PvP settings?", answer: "Yes! Full control over PvP rules, raid windows, and castle mechanics." },
+      { question: "Are wipes necessary?", answer: "Not required, but you can schedule wipes through our control panel." }
+    ]
+  },
+  {
+    id: "scp-sl",
+    slug: "scp-secret-laboratory",
+    title: "SCP: Secret Laboratory",
+    coverImage: "",
+    pricingDisplay: "$0.30/slot",
+    priceValue: 0.30,
+    pricingUnit: "slot",
+    shortDescription: "SCP multiplayer horror servers",
+    tags: ["Horror", "Multiplayer", "FPS", "Free-to-Play"],
+    category: "fps",
+    os: "linux",
+    popular: false,
+    fullDescription: "Contain or escape as SCPs and humans in this multiplayer horror game. Host dedicated servers with custom plugins and configurations.",
+    heroPoints: ["EXILED plugin framework", "Custom configurations", "Remote admin", "Automatic updates"],
+    features: ["EXILED plugins", "Remote admin", "Custom configs", "Automatic updates", "Password protection", "Whitelist support", "Backup management", "DDoS protection"],
+    plans: [
+      { name: "Facility", slots: 20, storage: "10GB NVMe", price: 5.00, features: ["20 slots", "EXILED ready", "Daily backups"] },
+      { name: "Complex", slots: 30, storage: "20GB NVMe", price: 8.00, popular: true, features: ["30 slots", "Custom plugins", "Hourly backups"] },
+      { name: "Site", slots: 40, storage: "30GB NVMe", price: 12.00, features: ["40 slots", "Priority support", "All features"] }
+    ],
+    faqs: [
+      { question: "Do you support EXILED?", answer: "Yes! EXILED plugin framework is supported for custom plugins." },
+      { question: "Can I use Remote Admin?", answer: "Yes, full Remote Admin access is included with all plans." }
+    ]
+  },
+  {
+    id: "factorio",
+    slug: "factorio",
+    title: "Factorio",
+    coverImage: "",
+    pricingDisplay: "$0.50/slot",
+    priceValue: 0.50,
+    pricingUnit: "slot",
+    shortDescription: "Factory automation servers",
+    tags: ["Automation", "Strategy", "Co-op", "Mods"],
+    category: "sandbox",
+    os: "linux",
+    popular: false,
+    fullDescription: "Build and automate massive factories with friends. Host dedicated Factorio servers for multiplayer industrial automation.",
+    heroPoints: ["Mod support", "Save management", "Headless server", "Automatic updates"],
+    features: ["Mod portal integration", "Save management", "Headless server", "Automatic updates", "Password protection", "Admin tools", "RCON access", "Low-latency"],
+    plans: [
+      { name: "Workshop", slots: 8, ram: "2GB", storage: "10GB NVMe", price: 5.00, features: ["8 players", "Mod support", "Daily backups"] },
+      { name: "Factory", slots: 16, ram: "4GB", storage: "25GB NVMe", price: 9.00, popular: true, features: ["16 players", "Full mods", "Hourly backups"] },
+      { name: "Megabase", slots: 32, ram: "8GB", storage: "50GB NVMe", price: 16.00, features: ["32 players", "Priority support", "All features"] }
+    ],
+    faqs: [
+      { question: "Are mods supported?", answer: "Yes! Mods can be installed from the Factorio mod portal." },
+      { question: "Can I run Space Age?", answer: "Yes, all DLC and expansion content is fully supported." }
+    ]
+  },
+  {
+    id: "ets2",
+    slug: "euro-truck-simulator-2",
+    title: "Euro Truck Simulator 2",
+    coverImage: "",
+    pricingDisplay: "$0.50/slot",
+    priceValue: 0.50,
+    pricingUnit: "slot",
+    shortDescription: "Convoy trucking servers",
+    tags: ["Simulation", "Driving", "Multiplayer", "TruckersMP"],
+    category: "other",
+    os: "both",
+    popular: false,
+    fullDescription: "Drive across Europe with friends. Host dedicated convoy servers for Euro Truck Simulator 2 multiplayer trucking.",
+    heroPoints: ["Convoy mode support", "Custom routes", "Mod compatibility", "Low-latency hosting"],
+    features: ["Convoy hosting", "Mod support", "Custom settings", "Automatic updates", "Password protection", "Admin tools", "Backup management", "24/7 uptime"],
+    plans: [
+      { name: "Convoy", slots: 8, ram: "4GB", storage: "20GB NVMe", price: 8.00, features: ["8 players", "Easy setup", "Daily backups"] },
+      { name: "Fleet", slots: 16, ram: "8GB", storage: "40GB NVMe", price: 14.00, popular: true, features: ["16 players", "Custom routes", "Hourly backups"] }
+    ],
+    faqs: [
+      { question: "Does it work with TruckersMP?", answer: "Our servers support the official Convoy mode. TruckersMP uses its own servers." },
+      { question: "Can I use DLC maps?", answer: "Yes, all DLC map expansions are fully supported." }
+    ]
+  },
+  {
+    id: "arma-reforger",
+    slug: "arma-reforger",
+    title: "Arma Reforger",
+    coverImage: "",
+    pricingDisplay: "$1.00/slot",
+    priceValue: 1.00,
+    pricingUnit: "slot",
+    shortDescription: "Next-gen military sim servers",
+    tags: ["MilSim", "FPS", "Mods", "Enfusion Engine"],
+    category: "fps",
+    os: "both",
+    popular: false,
+    fullDescription: "The next generation of military simulation. Host Arma Reforger servers with Workshop mod support on the Enfusion engine.",
+    heroPoints: ["Enfusion engine", "Workshop mods", "Game Master mode", "Cross-platform"],
+    features: ["Workshop mods", "Game Master mode", "Cross-platform", "Admin tools", "Automatic updates", "Backup management", "Custom scenarios", "DDoS protection"],
+    plans: [
+      { name: "Squad", slots: 32, cpu: "4 vCores", ram: "8GB", storage: "40GB NVMe", price: 25.00, features: ["32 slots", "Mod support", "Daily backups"] },
+      { name: "Platoon", slots: 64, cpu: "6 vCores", ram: "16GB", storage: "80GB NVMe", price: 45.00, popular: true, features: ["64 slots", "Game Master", "Hourly backups"] },
+      { name: "Battalion", slots: 128, cpu: "8 vCores", ram: "24GB", storage: "150GB NVMe", price: 80.00, features: ["128 slots", "Priority support", "All features"] }
+    ],
+    faqs: [
+      { question: "Is cross-platform supported?", answer: "Yes! Arma Reforger supports cross-platform play between PC and console." },
+      { question: "Can I use Workshop mods?", answer: "Yes, full Workshop mod support is available through our panel." }
+    ]
+  },
+  {
+    id: "subsistence",
+    slug: "subsistence",
+    title: "Subsistence",
+    coverImage: "",
+    pricingDisplay: "$0.50/slot",
+    priceValue: 0.50,
+    pricingUnit: "slot",
+    shortDescription: "Base building survival servers",
+    tags: ["Survival", "Building", "Co-op", "PvE"],
+    category: "survival",
+    os: "both",
+    popular: false,
+    fullDescription: "Build and survive in the wilderness. Host Subsistence servers for co-op base building and survival gameplay.",
+    heroPoints: ["Dedicated server hosting", "Save management", "Custom settings", "Automatic updates"],
+    features: ["Dedicated hosting", "Save management", "Server settings", "Automatic updates", "Password protection", "Admin tools", "Backup management", "24/7 uptime"],
+    plans: [
+      { name: "Outpost", slots: 8, ram: "4GB", storage: "15GB NVMe", price: 6.00, features: ["8 players", "Easy setup", "Daily backups"] },
+      { name: "Settlement", slots: 16, ram: "8GB", storage: "30GB NVMe", price: 11.00, popular: true, features: ["16 players", "Custom settings", "Hourly backups"] }
+    ],
+    faqs: [
+      { question: "How many players can join?", answer: "Our plans support up to 16 players on dedicated servers." },
+      { question: "Is the game still updated?", answer: "Yes, Subsistence receives regular updates which we apply automatically." }
+    ]
+  },
+  {
+    id: "aska",
+    slug: "aska",
+    title: "Aska",
+    coverImage: "",
+    pricingDisplay: "$0.60/slot",
+    priceValue: 0.60,
+    pricingUnit: "slot",
+    shortDescription: "Viking village building servers",
+    tags: ["Survival", "Building", "Vikings", "Co-op"],
+    category: "survival",
+    os: "both",
+    popular: false,
+    fullDescription: "Build a thriving Viking village with NPC villagers. Host Aska servers for co-op settlement building and exploration.",
+    heroPoints: ["Co-op village building", "NPC management", "World exploration", "Early Access support"],
+    features: ["Dedicated hosting", "Save management", "Server configuration", "Automatic updates", "Password protection", "Admin tools", "Backup management", "Performance tuned"],
+    plans: [
+      { name: "Village", slots: 8, ram: "4GB", storage: "20GB NVMe", price: 8.00, features: ["8 players", "Easy setup", "Daily backups"] },
+      { name: "Settlement", slots: 16, ram: "8GB", storage: "40GB NVMe", price: 14.00, popular: true, features: ["16 players", "Custom settings", "Hourly backups"] }
+    ],
+    faqs: [
+      { question: "Is the game in Early Access?", answer: "Yes, Aska is in Early Access and we update servers with every new patch." },
+      { question: "How many players can play?", answer: "Currently supports up to 16 players in co-op." }
+    ]
+  },
+  {
+    id: "project-zomboid",
+    slug: "project-zomboid",
+    title: "Project Zomboid",
+    coverImage: gameCoverImages["project-zomboid"],
+    pricingDisplay: "$0.50/slot",
+    priceValue: 0.50,
+    pricingUnit: "slot",
+    shortDescription: "Isometric zombie survival servers",
+    tags: ["Survival", "Zombies", "Co-op", "Mods"],
+    category: "survival",
+    os: "both",
+    popular: true,
+    fullDescription: "The ultimate zombie survival experience. Host Project Zomboid servers with full mod support, custom maps, and sandbox settings.",
+    heroPoints: ["Steam Workshop mods", "Sandbox customization", "Custom maps", "Build 42 ready"],
+    features: ["Workshop mods", "Sandbox settings", "Custom maps", "Admin tools", "Automatic updates", "Backup management", "Password protection", "Low-latency"],
+    plans: [
+      { name: "Survivor", slots: 16, ram: "4GB", storage: "20GB NVMe", price: 8.00, features: ["16 slots", "Workshop mods", "Daily backups"] },
+      { name: "Community", slots: 32, ram: "8GB", storage: "40GB NVMe", price: 14.00, popular: true, features: ["32 slots", "Full mods", "Hourly backups"] },
+      { name: "Apocalypse", slots: 64, ram: "16GB", storage: "80GB NVMe", price: 28.00, features: ["64 slots", "Priority support", "All features"] }
+    ],
+    faqs: [
+      { question: "Do you support Build 42?", answer: "Yes! We support the latest build and update automatically." },
+      { question: "Can I install Workshop mods?", answer: "Absolutely! Full Steam Workshop mod integration is included." }
+    ]
+  },
+  {
+    id: "hytale",
+    slug: "hytale",
+    title: "Hytale",
+    coverImage: "",
+    pricingDisplay: "Coming Soon",
+    priceValue: 0,
+    pricingUnit: "slot",
+    shortDescription: "Block-based adventure (coming soon)",
+    tags: ["Sandbox", "Adventure", "Upcoming", "Modding"],
+    category: "sandbox",
+    os: "both",
+    popular: false,
+    fullDescription: "Get ready for Hytale! We'll offer dedicated server hosting as soon as the game launches. Sign up to be notified.",
+    heroPoints: ["Day-one server hosting", "Full mod support planned", "Custom content tools", "Community focused"],
+    features: ["Pre-launch reservation", "Day-one availability", "Mod support planned", "Custom worlds", "Admin tools", "Automatic updates", "Backup management", "Low-latency"],
+    plans: [
+      { name: "Early Bird", slots: 20, ram: "4GB", storage: "30GB NVMe", price: 0, features: ["Coming soon", "Be first in line", "Launch day setup"] }
+    ],
+    faqs: [
+      { question: "When will Hytale be available?", answer: "We'll launch server hosting as soon as the game is released. Sign up to be notified!" },
+      { question: "Can I reserve a server?", answer: "Yes! Contact us to be on the priority list for launch day." }
+    ]
+  },
+  {
+    id: "veloren",
+    slug: "veloren",
+    title: "Veloren",
+    coverImage: "",
+    pricingDisplay: "$0.30/slot",
+    priceValue: 0.30,
+    pricingUnit: "slot",
+    shortDescription: "Open-source voxel RPG servers",
+    tags: ["RPG", "Voxel", "Open Source", "Co-op"],
+    category: "sandbox",
+    os: "linux",
+    popular: false,
+    fullDescription: "Explore a beautiful voxel world in this open-source multiplayer RPG. Host Veloren servers for community adventures.",
+    heroPoints: ["Open-source game", "Voxel world exploration", "Regular updates", "Community driven"],
+    features: ["Easy setup", "World management", "Automatic updates", "Password protection", "Admin tools", "Backup management", "Performance tuned", "24/7 uptime"],
+    plans: [
+      { name: "Explorer", slots: 16, ram: "2GB", storage: "10GB NVMe", price: 4.00, features: ["16 players", "Easy setup", "Daily backups"] },
+      { name: "Adventure", slots: 32, ram: "4GB", storage: "20GB NVMe", price: 7.00, popular: true, features: ["32 players", "Custom settings", "Hourly backups"] }
+    ],
+    faqs: [
+      { question: "Is Veloren free to play?", answer: "Yes! Veloren is completely free and open-source." },
+      { question: "How often is it updated?", answer: "Veloren receives regular updates. We update servers automatically." }
+    ]
+  },
+  {
+    id: "urban-terror",
+    slug: "urban-terror",
+    title: "Urban Terror",
+    coverImage: "",
+    pricingDisplay: "$0.20/slot",
+    priceValue: 0.20,
+    pricingUnit: "slot",
+    shortDescription: "Free-to-play tactical FPS servers",
+    tags: ["FPS", "Tactical", "Free-to-Play", "Classic"],
+    category: "fps",
+    os: "linux",
+    popular: false,
+    fullDescription: "Host classic Urban Terror servers for tactical FPS action. Free-to-play with active community and custom maps.",
+    heroPoints: ["Free-to-play game", "Custom maps", "Low resource usage", "Active community"],
+    features: ["Custom maps", "Server configuration", "RCON access", "Automatic updates", "Low resource usage", "Password protection", "Admin tools", "24/7 uptime"],
+    plans: [
+      { name: "Public", slots: 16, storage: "5GB NVMe", price: 3.00, features: ["16 slots", "Custom maps", "Daily backups"] },
+      { name: "Community", slots: 24, storage: "10GB NVMe", price: 5.00, popular: true, features: ["24 slots", "All modes", "Priority support"] }
+    ],
+    faqs: [
+      { question: "Is Urban Terror still active?", answer: "Yes! Urban Terror has a dedicated community and is completely free to play." },
+      { question: "Can I add custom maps?", answer: "Yes, custom map support is included with all plans." }
+    ]
   }
 ];
 
@@ -1010,7 +1626,9 @@ export const gameCategories = [
   { id: "sandbox", label: "Sandbox" },
   { id: "roleplay", label: "Roleplay" },
   { id: "mmo", label: "MMO" },
-  { id: "other", label: "Other" }
+  { id: "other", label: "Other" },
+  { id: "simulator", label: "Simulator" },
+  { id: "adventure", label: "Adventure" }
 ];
 
 export const gameSortOptions = [
