@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Copy, Check, Percent } from "lucide-react";
+import { X, Copy, Check, Sparkles, Gift, ArrowRight } from "lucide-react";
 
 const DISCOUNT_CODE = "HOXTA20";
 const STORAGE_KEY = "hoxta_discount_dismissed";
@@ -32,82 +32,117 @@ export function DiscountPopup() {
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={handleClose}
-            className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md"
+            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm"
           />
 
-          {/* Popup */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.85 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.85 }}
-            transition={{ type: "spring", damping: 20, stiffness: 250 }}
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
           >
-            <div className="relative w-full max-w-sm pointer-events-auto rounded-2xl border border-primary/20 bg-card shadow-2xl shadow-primary/10 overflow-hidden">
-              {/* Top accent bar */}
-              <div className="h-1 w-full bg-gradient-to-r from-primary via-primary/80 to-primary" />
+            <div className="relative w-full max-w-md pointer-events-auto rounded-3xl border border-primary/30 bg-card overflow-hidden shadow-2xl shadow-primary/20">
+              {/* Top gradient accent */}
+              <div className="h-1.5 w-full bg-gradient-to-r from-primary via-accent to-primary" />
 
-              {/* Glow */}
-              <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-80 h-80 bg-primary/15 rounded-full blur-3xl pointer-events-none" />
+              {/* Decorative glow orbs */}
+              <div className="absolute -top-20 -left-20 w-40 h-40 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute -top-20 -right-20 w-40 h-40 bg-accent/15 rounded-full blur-3xl pointer-events-none" />
 
               {/* Close button */}
               <button
                 onClick={handleClose}
-                className="absolute top-4 right-4 p-1.5 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors z-10"
+                className="absolute top-4 right-4 p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all z-10"
               >
                 <X className="w-4 h-4" />
               </button>
 
-              <div className="relative px-8 py-10 flex flex-col items-center text-center">
-                {/* Icon */}
-                <div className="mb-5 w-14 h-14 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
-                  <Percent className="w-6 h-6 text-primary" />
-                </div>
+              <div className="relative px-8 pt-10 pb-8 flex flex-col items-center text-center">
+                {/* Animated gift icon */}
+                <motion.div
+                  initial={{ rotate: -10 }}
+                  animate={{ rotate: [0, -8, 8, -4, 4, 0] }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                  className="mb-4"
+                >
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/10 border border-primary/30 flex items-center justify-center">
+                    <Gift className="w-8 h-8 text-primary" />
+                  </div>
+                </motion.div>
+
+                {/* Badge */}
+                <motion.div
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.15 }}
+                  className="mb-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-primary" />
+                  <span className="text-xs font-semibold text-primary tracking-wide uppercase">Ofertă Exclusivă</span>
+                </motion.div>
 
                 {/* Title */}
-                <h3 className="text-xl font-bold text-foreground mb-1.5">
-                  Exclusive Discount
+                <h3 className="text-2xl font-bold text-foreground mb-2">
+                  🎉 20% Reducere Instant
                 </h3>
-                <p className="text-sm text-muted-foreground mb-6 max-w-[260px] leading-relaxed">
-                  Use the code below at checkout to get{" "}
-                  <span className="text-primary font-semibold">20% off</span> your first order.
+                <p className="text-sm text-muted-foreground mb-6 max-w-[300px] leading-relaxed">
+                  Folosește codul de mai jos la checkout și primești{" "}
+                  <span className="text-primary font-semibold">20% discount</span>{" "}
+                  la prima ta comandă! 🚀
                 </p>
 
                 {/* Code box */}
-                <button
+                <motion.button
                   onClick={handleCopy}
-                  className="group w-full max-w-[240px] flex items-center justify-between px-5 py-3.5 rounded-xl bg-background border border-border/60 hover:border-primary/40 transition-all"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="group w-full max-w-[280px] flex items-center justify-between px-6 py-4 rounded-2xl bg-background border-2 border-dashed border-primary/30 hover:border-primary/60 transition-all"
                 >
-                  <span className="text-lg font-mono font-bold tracking-[0.2em] text-foreground">
+                  <span className="text-xl font-mono font-extrabold tracking-[0.25em] text-foreground">
                     {DISCOUNT_CODE}
                   </span>
-                  <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground group-hover:text-primary transition-colors">
+                  <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground group-hover:text-primary transition-colors">
                     {copied ? (
-                      <>
-                        <Check className="w-3.5 h-3.5 text-primary" />
-                        <span className="text-primary">Copied</span>
-                      </>
+                      <motion.div
+                        initial={{ scale: 0.8 }}
+                        animate={{ scale: 1 }}
+                        className="flex items-center gap-1.5 text-primary"
+                      >
+                        <Check className="w-4 h-4" />
+                        <span>Copiat! ✅</span>
+                      </motion.div>
                     ) : (
                       <>
-                        <Copy className="w-3.5 h-3.5" />
-                        <span>Copy</span>
+                        <Copy className="w-4 h-4" />
+                        <span>Copiază</span>
                       </>
                     )}
                   </div>
-                </button>
+                </motion.button>
 
-                {/* Dismiss text */}
+                {/* CTA hint */}
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                  className="mt-4 text-xs text-muted-foreground flex items-center gap-1"
+                >
+                  <ArrowRight className="w-3 h-3" />
+                  Introdu codul la pasul de plată
+                </motion.p>
+
+                {/* Dismiss */}
                 <button
                   onClick={handleClose}
-                  className="mt-5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                  className="mt-5 text-xs text-muted-foreground/60 hover:text-foreground transition-colors"
                 >
-                  No thanks, continue browsing
+                  Nu, mulțumesc
                 </button>
               </div>
             </div>
