@@ -66,7 +66,7 @@ export function GameCard({ game, index }: GameCardProps) {
               <img
                 src={game.coverImage}
                 alt={game.title}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
                 onError={() => setImageError(true)}
               />
             ) : (
