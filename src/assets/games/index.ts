@@ -25,6 +25,30 @@ import ragempCover from './ragemp-cover.jpg';
 import sampCover from './samp-cover.jpg';
 import mtasaCover from './mtasa-cover.jpg';
 import dayofdragonsCover from './dayofdragons-cover.jpg';
+// New batch covers
+import cssCover from './css-cover.jpg';
+import l4d2Cover from './l4d2-cover.jpg';
+import squadCover from './squad-cover.jpg';
+import tf2Cover from './tf2-cover.jpg';
+import beammpCover from './beammp-cover.jpg';
+import satisfactoryCover from './satisfactory-cover.jpg';
+import conanExilesCover from './conan-exiles-cover.jpg';
+import dstCover from './dst-cover.jpg';
+import humanitzCover from './humanitz-cover.jpg';
+import icarusCover from './icarus-cover.jpg';
+import scumCover from './scum-cover.jpg';
+import sonsOfTheForestCover from './sons-of-the-forest-cover.jpg';
+import theForestCover from './the-forest-cover.jpg';
+import vRisingCover from './v-rising-cover.jpg';
+import scpSlCover from './scp-sl-cover.jpg';
+import factorioCover from './factorio-cover.jpg';
+import ets2Cover from './ets2-cover.jpg';
+import armaReforgerCover from './arma-reforger-cover.jpg';
+import subsistenceCover from './subsistence-cover.jpg';
+import askaCover from './aska-cover.jpg';
+import hytaleCover from './hytale-cover.jpg';
+import velorenCover from './veloren-cover.jpg';
+import urbanTerrorCover from './urban-terror-cover.jpg';
 
 export const gameCoverImages: Record<string, string> = {
   minecraft: minecraftCover,
@@ -57,6 +81,34 @@ export const gameCoverImages: Record<string, string> = {
   mtasa: mtasaCover,
   dayofdragons: dayofdragonsCover,
   'day-of-dragons': dayofdragonsCover,
+  // New batch
+  'counter-strike-source': cssCover,
+  css: cssCover,
+  'left-4-dead-2': l4d2Cover,
+  l4d2: l4d2Cover,
+  squad: squadCover,
+  'team-fortress-2': tf2Cover,
+  tf2: tf2Cover,
+  beammp: beammpCover,
+  satisfactory: satisfactoryCover,
+  'conan-exiles': conanExilesCover,
+  'dont-starve-together': dstCover,
+  humanitz: humanitzCover,
+  icarus: icarusCover,
+  scum: scumCover,
+  'sons-of-the-forest': sonsOfTheForestCover,
+  'the-forest': theForestCover,
+  'v-rising': vRisingCover,
+  'scp-secret-laboratory': scpSlCover,
+  factorio: factorioCover,
+  'euro-truck-simulator-2': ets2Cover,
+  ets2: ets2Cover,
+  'arma-reforger': armaReforgerCover,
+  subsistence: subsistenceCover,
+  aska: askaCover,
+  hytale: hytaleCover,
+  veloren: velorenCover,
+  'urban-terror': urbanTerrorCover,
 };
 
 export {
@@ -85,4 +137,27 @@ export {
   sampCover,
   mtasaCover,
   dayofdragonsCover,
+  cssCover,
+  l4d2Cover,
+  squadCover,
+  tf2Cover,
+  beammpCover,
+  satisfactoryCover,
+  conanExilesCover,
+  dstCover,
+  humanitzCover,
+  icarusCover,
+  scumCover,
+  sonsOfTheForestCover,
+  theForestCover,
+  vRisingCover,
+  scpSlCover,
+  factorioCover,
+  ets2Cover,
+  armaReforgerCover,
+  subsistenceCover,
+  askaCover,
+  hytaleCover,
+  velorenCover,
+  urbanTerrorCover,
 };
