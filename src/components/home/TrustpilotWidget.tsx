@@ -1,79 +1,33 @@
-import { Star } from 'lucide-react';
-import { type ReviewSummary, getRatingLabel, formatReviewCount } from '@/services/reviewsService';
-import { Skeleton } from '@/components/ui/skeleton';
-
-interface TrustpilotWidgetProps {
-  summary: ReviewSummary | null;
-  isLoading?: boolean;
-  isPlaceholder?: boolean;
-}
+import { useEffect, useRef } from 'react';
 
 /**
- * Trustpilot-style rating widget
- * 
- * Displays aggregate rating with star visualization.
- * Shows loading skeleton during fetch and handles null data gracefully.
+ * Official Trustpilot TrustBox widget embed.
+ * Uses the Review Collector template with Hoxta's Business Unit ID.
  */
-export function TrustpilotWidget({ 
-  summary, 
-  isLoading = false,
-  isPlaceholder = false 
-}: TrustpilotWidgetProps) {
-  if (isLoading) {
-    return (
-      <div className="flex items-center gap-4 p-4 rounded-xl bg-card/50 border border-border/50">
-        <Skeleton className="h-6 w-32" />
-        <div className="flex-1">
-          <Skeleton className="h-4 w-20 mb-1" />
-          <Skeleton className="h-3 w-28" />
-        </div>
-        <Skeleton className="h-5 w-24" />
-      </div>
-    );
-  }
+export function TrustpilotWidget() {
+  const ref = useRef<HTMLDivElement>(null);
 
-  if (!summary) {
-    return null;
-  }
-
-  const ratingLabel = getRatingLabel(summary.rating);
-  const reviewCount = formatReviewCount(summary.totalReviews);
+  useEffect(() => {
+    // Load TrustBox widget when available
+    if ((window as any).Trustpilot && ref.current) {
+      (window as any).Trustpilot.loadFromElement(ref.current, true);
+    }
+  }, []);
 
   return (
-    <div className="flex items-center gap-4 p-4 rounded-xl bg-card/50 border border-border/50">
-      {/* Star Rating */}
-      <div className="flex items-center gap-1">
-        {[1, 2, 3, 4, 5].map((star) => {
-          const filled = star <= Math.round(summary.rating);
-          return (
-            <div 
-              key={star} 
-              className={`w-6 h-6 flex items-center justify-center ${
-                filled ? 'bg-[#00b67a]' : 'bg-[#00b67a]/30'
-              }`}
-            >
-              <Star className={`w-4 h-4 ${filled ? 'fill-white text-white' : 'text-white/50'}`} />
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Rating Text */}
-      <div className="text-sm">
-        <p className="font-semibold text-foreground">{ratingLabel}</p>
-        <p className="text-muted-foreground text-xs">
-          Based on <span className="text-foreground font-medium">{reviewCount} reviews</span>
-          {isPlaceholder && (
-            <span className="text-muted-foreground/60 ml-1">(demo)</span>
-          )}
-        </p>
-      </div>
-
-      {/* Trustpilot Branding */}
-      <div className="ml-auto flex items-center gap-2">
-        <Star className="w-5 h-5 text-[#00b67a]" />
-        <span className="text-sm font-medium text-foreground">Trustpilot</span>
-      </div>
+    <div
+      ref={ref}
+      className="trustpilot-widget"
+      data-locale="en-US"
+      data-template-id="56278e9abfbbba0bdcd568bc"
+      data-businessunit-id="69a8446c906325a770c6320c"
+      data-style-height="52px"
+      data-style-width="100%"
+      data-token="cda27eed-b9f5-4b48-a518-fa455287f13c"
+    >
+      <a href="https://www.trustpilot.com/review/hoxta.com" target="_blank" rel="noopener noreferrer">
+        Trustpilot
+      </a>
     </div>
   );
 }

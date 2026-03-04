@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, Quote, ExternalLink } from "lucide-react";
 import { useState, useEffect, useCallback, useRef } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { useReviews } from "@/hooks/useReviews";
+// summary/isLoading/isPlaceholder kept for ReviewCard usage
 import { TrustpilotWidget } from "./TrustpilotWidget";
 import { ReviewCard } from "./ReviewCard";
 
@@ -98,11 +99,7 @@ export function TrustSection() {
 
             {/* Trustpilot Widget */}
             <div className="mb-8">
-              <TrustpilotWidget 
-                summary={summary} 
-                isLoading={isLoading} 
-                isPlaceholder={isPlaceholder} 
-              />
+              <TrustpilotWidget />
             </div>
 
             {/* Navigation Controls */}
