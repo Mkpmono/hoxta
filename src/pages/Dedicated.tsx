@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { motion } from "framer-motion";
 import { Check, Server, Cpu, HardDrive, Wifi, Zap, Shield, Lock, Gauge } from "lucide-react";
@@ -12,6 +13,7 @@ import {
   FinalCTA,
   ManagedServicesUpsell,
 } from "@/components/hosting";
+import { ProcessorToggle } from "@/components/hosting/ProcessorToggle";
 import { SEOHead, ServiceSchema, FAQSchema, OrganizationSchema } from "@/components/seo";
 
 interface DedicatedServer {
@@ -28,25 +30,47 @@ interface DedicatedServer {
   };
 }
 
-const servers: DedicatedServer[] = [
+const intelServers: DedicatedServer[] = [
   {
-    id: "dedicated-starter",
+    id: "dedicated-intel-e3",
     name: "Intel Xeon E3",
     price: 89,
     specs: { cpu: "Intel Xeon E3-1230v6", cores: "4 Cores / 8 Threads", ram: "32 GB DDR4", storage: "2x 500GB NVMe", bandwidth: "10 TB" },
   },
   {
-    id: "dedicated-business",
+    id: "dedicated-intel-e5",
     name: "Intel Xeon E5",
     price: 149,
     popular: true,
     specs: { cpu: "Intel Xeon E5-2680v4", cores: "14 Cores / 28 Threads", ram: "64 GB DDR4", storage: "2x 1TB NVMe", bandwidth: "20 TB" },
   },
   {
-    id: "dedicated-enterprise",
-    name: "AMD EPYC",
-    price: 249,
-    specs: { cpu: "AMD EPYC 7302P", cores: "16 Cores / 32 Threads", ram: "128 GB DDR4", storage: "2x 2TB NVMe", bandwidth: "Unlimited" },
+    id: "dedicated-intel-gold",
+    name: "Intel Xeon Gold",
+    price: 229,
+    specs: { cpu: "Intel Xeon Gold 6248R", cores: "24 Cores / 48 Threads", ram: "128 GB DDR4", storage: "2x 2TB NVMe", bandwidth: "Unlimited" },
+  },
+];
+
+const amdServers: DedicatedServer[] = [
+  {
+    id: "dedicated-amd-7232p",
+    name: "AMD EPYC 7232P",
+    price: 99,
+    specs: { cpu: "AMD EPYC 7232P", cores: "8 Cores / 16 Threads", ram: "32 GB DDR4 ECC", storage: "2x 500GB NVMe", bandwidth: "10 TB" },
+  },
+  {
+    id: "dedicated-amd-7302p",
+    name: "AMD EPYC 7302P",
+    price: 169,
+    popular: true,
+    specs: { cpu: "AMD EPYC 7302P", cores: "16 Cores / 32 Threads", ram: "64 GB DDR4 ECC", storage: "2x 1TB NVMe", bandwidth: "20 TB" },
+  },
+  {
+    id: "dedicated-amd-7443p",
+    name: "AMD EPYC 7443P",
+    price: 279,
+    specs: { cpu: "AMD EPYC 7443P", cores: "24 Cores / 48 Threads", ram: "128 GB DDR4 ECC", storage: "2x 2TB NVMe", bandwidth: "Unlimited" },
   },
 ];
 
@@ -112,6 +136,8 @@ const dedicatedFAQs = [
 
 export default function Dedicated() {
   const navigate = useNavigate();
+  const [processor, setProcessor] = useState<"intel" | "amd">("intel");
+  const servers = processor === "intel" ? intelServers : amdServers;
 
   const handleOrderServer = (serverId: string) => {
     navigate(`/checkout?product=dedicated&plan=${serverId}&billing=monthly`);
@@ -121,14 +147,14 @@ export default function Dedicated() {
     <Layout>
       {/* SEO */}
       <SEOHead
-        title="Dedicated Servers - Enterprise Bare Metal | Hoxta"
+        title="Dedicated Servers - Intel Xeon & AMD EPYC | Hoxta"
         description="Enterprise-grade dedicated servers with Intel Xeon & AMD EPYC processors. Full hardware control, NVMe RAID, DDoS protection. From $89/mo."
         canonicalUrl="https://hoxta.com/dedicated-servers"
       />
       <ServiceSchema
         name="Hoxta Dedicated Servers"
-        description="Enterprise bare metal dedicated servers with full hardware control, NVMe RAID storage, and premium network connectivity."
-        priceRange="$89 - $249"
+        description="Enterprise bare metal dedicated servers with Intel Xeon and AMD EPYC options, NVMe RAID storage, and premium network."
+        priceRange="$89 - $279"
       />
       <FAQSchema faqs={dedicatedFAQs} />
       <OrganizationSchema />
@@ -138,7 +164,7 @@ export default function Dedicated() {
         badge="Dedicated Servers"
         headline="Powerful"
         highlightedText="Dedicated Servers"
-        description="Bare metal servers with full hardware control and maximum performance. No sharing, no compromises."
+        description="Bare metal servers with full hardware control. Choose Intel Xeon or AMD EPYC — no sharing, no compromises."
         promotion={{
           text: "Enterprise Deal",
           discount: "Free Setup + First Month 50% OFF",
@@ -164,15 +190,16 @@ export default function Dedicated() {
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
               Choose Your <span className="text-gradient">Configuration</span>
             </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Pre-configured servers ready for rapid deployment. Need a custom build? Contact our sales team.
+            <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
+              Pre-configured servers ready for rapid deployment. Choose your processor platform.
             </p>
+            <ProcessorToggle selected={processor} onChange={setProcessor} />
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-6">
             {servers.map((server, index) => (
               <motion.div
-                key={server.name}
+                key={server.id}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -275,13 +302,13 @@ export default function Dedicated() {
       />
 
       <ContentSection
-        title="Top-Tier Performance"
-        description="Our servers run on the latest Intel and AMD hardware for consistent performance on demanding workloads."
+        title="Intel Xeon & AMD EPYC"
+        description="Choose the processor platform that fits your workload. Intel Xeon for single-thread performance or AMD EPYC for multi-core efficiency."
         points={[
-          "Latest Intel Xeon and AMD EPYC processors",
+          "Intel Xeon E3, E5, and Gold processors",
+          "AMD EPYC 7000 series available",
           "ECC RAM for data integrity",
           "Hardware RAID with NVMe SSDs",
-          "Redundant power and network",
         ]}
         icon={Gauge}
         reverse

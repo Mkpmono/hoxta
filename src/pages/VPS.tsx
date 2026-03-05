@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Layout } from "@/components/layout/Layout";
 import {
   HostingHero,
@@ -12,8 +13,10 @@ import {
   FinalCTA,
   CrossSellBlock,
 } from "@/components/hosting";
+import { ProcessorToggle } from "@/components/hosting/ProcessorToggle";
 import {
-  vpsHostingPlans,
+  vpsIntelPlans,
+  vpsAmdPlans,
   vpsHostingFeatures,
   vpsHostingFAQs,
   vpsHostingComparison,
@@ -22,18 +25,21 @@ import { Cpu, Lock, Gauge, Server } from "lucide-react";
 import { SEOHead, ServiceSchema, FAQSchema, OrganizationSchema } from "@/components/seo";
 
 export default function VPS() {
+  const [processor, setProcessor] = useState<"intel" | "amd">("intel");
+  const plans = processor === "intel" ? vpsIntelPlans : vpsAmdPlans;
+
   return (
     <Layout>
       {/* SEO */}
       <SEOHead
         title="VPS Hosting - High-Performance Virtual Servers | Hoxta"
-        description="Deploy powerful VPS with NVMe storage, full root access, and DDoS protection. Scalable virtual servers from $9.99/mo with 24/7 expert support."
+        description="Deploy powerful VPS with NVMe storage, full root access, and DDoS protection. Choose Intel Xeon or AMD EPYC. Scalable virtual servers from $12.99/mo."
         canonicalUrl="https://hoxta.com/vps-hosting"
       />
       <ServiceSchema
         name="Hoxta VPS Hosting"
-        description="High-performance VPS hosting with dedicated resources, NVMe SSD storage, full root access, and enterprise DDoS protection."
-        priceRange="$9.99 - $74.99"
+        description="High-performance VPS hosting with dedicated resources, NVMe SSD storage, full root access, and enterprise DDoS protection. Intel Xeon & AMD EPYC options."
+        priceRange="$12.99 - $99.99"
       />
       <FAQSchema faqs={vpsHostingFAQs} />
       <OrganizationSchema />
@@ -43,7 +49,7 @@ export default function VPS() {
         badge="VPS Hosting"
         headline="Powerful"
         highlightedText="VPS Hosting"
-        description="Virtual servers with dedicated resources, full root access, and reliable performance. Scale instantly as you grow."
+        description="Virtual servers with dedicated resources, full root access, and reliable performance. Choose Intel or AMD — scale instantly as you grow."
         promotion={{
           text: "Launch Promo",
           discount: "25% OFF First 3 Months",
@@ -56,13 +62,22 @@ export default function VPS() {
       {/* Trust Bar */}
       <TrustBar />
 
-      {/* Pricing Plans */}
-      <PricingPlans
-        title="VPS Hosting Plans"
-        subtitle="Dedicated resources that are never shared. All plans include root access, DDoS protection, and 24/7 support."
-        plans={vpsHostingPlans}
-        productSlug="vps"
-      />
+      {/* Processor Toggle + Pricing Plans */}
+      <section id="pricing" className="py-20 md:py-28">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">VPS Hosting Plans</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
+              Dedicated resources that are never shared. Choose your processor platform.
+            </p>
+            <ProcessorToggle selected={processor} onChange={setProcessor} />
+          </div>
+        </div>
+        <PricingPlans
+          plans={plans}
+          productSlug="vps"
+        />
+      </section>
 
       {/* Why Choose Section */}
       <FeatureGrid
@@ -87,9 +102,9 @@ export default function VPS() {
       {/* Content Section - Performance */}
       <ContentSection
         title="Blazing-Fast Performance"
-        description="Our VPS runs on top-tier hardware with NVMe storage, delivering great I/O for demanding apps and databases."
+        description="Choose between Intel Xeon and AMD EPYC processors, both paired with NVMe storage for exceptional I/O."
         points={[
-          "Latest Intel Xeon and AMD EPYC processors",
+          "Intel Xeon & AMD EPYC processors available",
           "Pure NVMe SSD storage for speed",
           "High-bandwidth, low-latency network",
           "Instant resource scaling when needed",
