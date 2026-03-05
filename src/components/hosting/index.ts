@@ -13,3 +13,4 @@ export { CrossSellBlock } from './CrossSellBlock';
 export { ManagedServicesUpsell } from './ManagedServicesUpsell';
 export { GameCard } from './GameCard';
 export { GameCatalog } from './GameCatalog';
+export { ProcessorToggle } from './ProcessorToggle';

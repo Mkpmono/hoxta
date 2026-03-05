@@ -15,6 +15,7 @@ import GameServerDetail from "./pages/GameServerDetail";
 import VPS from "./pages/VPS";
 import Dedicated from "./pages/Dedicated";
 import DDoSProtection from "./pages/DDoSProtection";
+import DDoSChallenge from "./pages/DDoSChallenge";
 import Pricing from "./pages/Pricing";
 import Status from "./pages/Status";
 import About from "./pages/About";
@@ -84,6 +85,7 @@ const App = () => (
             <Route path="/vps" element={<VPS />} />
             <Route path="/dedicated" element={<Dedicated />} />
             <Route path="/ddos-protection" element={<DDoSProtection />} />
+            <Route path="/ddos-challenge" element={<DDoSChallenge />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/status" element={<Status />} />
             <Route path="/domains" element={<Domains />} />
