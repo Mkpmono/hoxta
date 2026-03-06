@@ -63,10 +63,12 @@ import AdminClients from "./pages/admin/Clients";
 import AdminSettings from "./pages/admin/Settings";
 
 import { DiscountPopup } from "@/components/DiscountPopup";
+import { DDoSGate } from "@/components/DDoSGate";
 
 const queryClient = new QueryClient();
 
 const App = () => (
+  <DDoSGate>
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <AdminAuthProvider>
@@ -145,6 +147,7 @@ const App = () => (
       </AdminAuthProvider>
     </AuthProvider>
   </QueryClientProvider>
+  </DDoSGate>
 );
 
 export default App;
