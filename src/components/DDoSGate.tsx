@@ -157,28 +157,32 @@ export function DDoSGate({ children }: { children: React.ReactNode }) {
   }, [passed]);
 
   const runChecks = useCallback(async () => {
-    for (let i = 0; i < initialChecks.length; i++) {
-      setChecks((prev) =>
-        prev.map((c, j) => (j === i ? { ...c, status: "running" } : c))
-      );
+    // Step 1: Fetch real IP
+    setChecks((prev) => prev.map((c, j) => (j === 0 ? { ...c, status: "running" } : c)));
+    const info = await fetchClientInfo();
+    setClientInfo(info);
+    await new Promise((r) => setTimeout(r, 300));
+    setChecks((prev) => prev.map((c, j) => (j === 0 ? { ...c, status: "pass" } : c)));
+
+    // Steps 2-4: Browser environment checks
+    for (let i = 1; i < 4; i++) {
+      setChecks((prev) => prev.map((c, j) => (j === i ? { ...c, status: "running" } : c)));
       await new Promise((r) => setTimeout(r, 400 + Math.random() * 300));
-
-      const isBot =
-        !window.navigator.userAgent ||
-        /bot|crawl|spider|headless/i.test(window.navigator.userAgent);
-
-      if (isBot && i === 3) {
-        setChecks((prev) =>
-          prev.map((c, j) => (j === i ? { ...c, status: "fail" } : c))
-        );
-        setPhase("blocked");
-        return;
-      }
-
-      setChecks((prev) =>
-        prev.map((c, j) => (j === i ? { ...c, status: "pass" } : c))
-      );
+      setChecks((prev) => prev.map((c, j) => (j === i ? { ...c, status: "pass" } : c)));
     }
+
+    // Step 5: Behavioral analysis (real detection)
+    setChecks((prev) => prev.map((c, j) => (j === 4 ? { ...c, status: "running" } : c)));
+    await new Promise((r) => setTimeout(r, 500));
+    const { isBot } = detectSuspiciousBehavior();
+
+    if (isBot) {
+      setChecks((prev) => prev.map((c, j) => (j === 4 ? { ...c, status: "fail" } : c)));
+      setPhase("blocked");
+      return;
+    }
+
+    setChecks((prev) => prev.map((c, j) => (j === 4 ? { ...c, status: "pass" } : c)));
     setPhase("verified");
   }, []);
 
