@@ -11,6 +11,14 @@ interface CheckItem {
   status: "pending" | "running" | "pass" | "fail";
 }
 
+interface ClientInfo {
+  ip: string;
+  country?: string;
+  isp?: string;
+  isProxy?: boolean;
+  isTor?: boolean;
+}
+
 function isVerified(): boolean {
   try {
     const raw = sessionStorage.getItem(VERIFICATION_KEY);
@@ -26,11 +34,102 @@ function markVerified() {
   sessionStorage.setItem(VERIFICATION_KEY, JSON.stringify({ ts: Date.now() }));
 }
 
+// Canvas fingerprint to detect headless browsers
+function getCanvasFingerprint(): string {
+  try {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return "no-canvas";
+    canvas.width = 200;
+    canvas.height = 50;
+    ctx.textBaseline = "top";
+    ctx.font = "14px Arial";
+    ctx.fillStyle = "#f60";
+    ctx.fillRect(125, 1, 62, 20);
+    ctx.fillStyle = "#069";
+    ctx.fillText("Hoxta Security", 2, 15);
+    ctx.fillStyle = "rgba(102, 204, 0, 0.7)";
+    ctx.fillText("DDoS Shield", 4, 35);
+    return canvas.toDataURL().slice(-50);
+  } catch {
+    return "error";
+  }
+}
+
+// Detect bot-like behavior
+function detectSuspiciousBehavior(): { isBot: boolean; reasons: string[] } {
+  const reasons: string[] = [];
+
+  // Check user agent
+  const ua = navigator.userAgent || "";
+  if (!ua || /bot|crawl|spider|headless|phantom|puppeteer|selenium/i.test(ua)) {
+    reasons.push("suspicious-ua");
+  }
+
+  // Check for webdriver (Selenium, Puppeteer)
+  if ((navigator as any).webdriver === true) {
+    reasons.push("webdriver-detected");
+  }
+
+  // Check for missing browser APIs that real browsers have
+  if (!(window as any).chrome && /Chrome/.test(ua)) {
+    reasons.push("fake-chrome");
+  }
+
+  // Check for automation tools
+  if ((window as any).__nightmare || (window as any)._phantom || (window as any).callPhantom) {
+    reasons.push("automation-tool");
+  }
+
+  // Check screen dimensions (headless often has 0x0 or unusual sizes)
+  if (screen.width === 0 || screen.height === 0) {
+    reasons.push("no-screen");
+  }
+
+  // Check plugin count (headless browsers often have 0)
+  if (navigator.plugins && navigator.plugins.length === 0 && !/Firefox/.test(ua)) {
+    reasons.push("no-plugins");
+  }
+
+  // Canvas fingerprint check
+  const fp = getCanvasFingerprint();
+  if (fp === "no-canvas" || fp === "error") {
+    reasons.push("canvas-blocked");
+  }
+
+  return { isBot: reasons.length >= 2, reasons };
+}
+
+// Fetch real IP from free API
+async function fetchClientInfo(): Promise<ClientInfo> {
+  try {
+    const res = await fetch("https://ipapi.co/json/", { signal: AbortSignal.timeout(5000) });
+    if (!res.ok) throw new Error("IP fetch failed");
+    const data = await res.json();
+    return {
+      ip: data.ip || "Unknown",
+      country: data.country_code || undefined,
+      isp: data.org || undefined,
+      isProxy: false,
+      isTor: false,
+    };
+  } catch {
+    // Fallback to simpler API
+    try {
+      const res = await fetch("https://api.ipify.org?format=json", { signal: AbortSignal.timeout(3000) });
+      const data = await res.json();
+      return { ip: data.ip || "Unknown" };
+    } catch {
+      return { ip: "Unable to detect" };
+    }
+  }
+}
+
 const initialChecks: CheckItem[] = [
+  { label: "Detecting client IP address", status: "pending" },
   { label: "Verifying browser environment", status: "pending" },
-  { label: "Analyzing connection integrity", status: "pending" },
-  { label: "Checking TLS fingerprint", status: "pending" },
-  { label: "Validating JavaScript runtime", status: "pending" },
+  { label: "Analyzing connection fingerprint", status: "pending" },
+  { label: "Scanning for automation tools", status: "pending" },
   { label: "Running behavioral analysis", status: "pending" },
 ];
 
@@ -39,10 +138,8 @@ export function DDoSGate({ children }: { children: React.ReactNode }) {
   const [phase, setPhase] = useState<"checking" | "verified" | "blocked">("checking");
   const [checks, setChecks] = useState<CheckItem[]>(initialChecks);
   const [countdown, setCountdown] = useState(3);
+  const [clientInfo, setClientInfo] = useState<ClientInfo | null>(null);
   const rayId = useRef(Math.random().toString(36).substring(2, 14));
-  const ip = useRef(
-    Array.from({ length: 4 }, () => Math.floor(Math.random() * 200) + 20).join(".")
-  );
 
   // Periodically re-check verification validity
   useEffect(() => {
@@ -60,28 +157,32 @@ export function DDoSGate({ children }: { children: React.ReactNode }) {
   }, [passed]);
 
   const runChecks = useCallback(async () => {
-    for (let i = 0; i < initialChecks.length; i++) {
-      setChecks((prev) =>
-        prev.map((c, j) => (j === i ? { ...c, status: "running" } : c))
-      );
+    // Step 1: Fetch real IP
+    setChecks((prev) => prev.map((c, j) => (j === 0 ? { ...c, status: "running" } : c)));
+    const info = await fetchClientInfo();
+    setClientInfo(info);
+    await new Promise((r) => setTimeout(r, 300));
+    setChecks((prev) => prev.map((c, j) => (j === 0 ? { ...c, status: "pass" } : c)));
+
+    // Steps 2-4: Browser environment checks
+    for (let i = 1; i < 4; i++) {
+      setChecks((prev) => prev.map((c, j) => (j === i ? { ...c, status: "running" } : c)));
       await new Promise((r) => setTimeout(r, 400 + Math.random() * 300));
-
-      const isBot =
-        !window.navigator.userAgent ||
-        /bot|crawl|spider|headless/i.test(window.navigator.userAgent);
-
-      if (isBot && i === 3) {
-        setChecks((prev) =>
-          prev.map((c, j) => (j === i ? { ...c, status: "fail" } : c))
-        );
-        setPhase("blocked");
-        return;
-      }
-
-      setChecks((prev) =>
-        prev.map((c, j) => (j === i ? { ...c, status: "pass" } : c))
-      );
+      setChecks((prev) => prev.map((c, j) => (j === i ? { ...c, status: "pass" } : c)));
     }
+
+    // Step 5: Behavioral analysis (real detection)
+    setChecks((prev) => prev.map((c, j) => (j === 4 ? { ...c, status: "running" } : c)));
+    await new Promise((r) => setTimeout(r, 500));
+    const { isBot } = detectSuspiciousBehavior();
+
+    if (isBot) {
+      setChecks((prev) => prev.map((c, j) => (j === 4 ? { ...c, status: "fail" } : c)));
+      setPhase("blocked");
+      return;
+    }
+
+    setChecks((prev) => prev.map((c, j) => (j === 4 ? { ...c, status: "pass" } : c)));
     setPhase("verified");
   }, []);
 
@@ -270,7 +371,7 @@ export function DDoSGate({ children }: { children: React.ReactNode }) {
           <div className="flex items-center justify-center gap-4 text-[10px] text-muted-foreground/50">
             <span className="flex items-center gap-1">
               <Globe className="w-2.5 h-2.5" />
-              {ip.current}
+              {clientInfo?.ip || "Detecting..."}{clientInfo?.country ? ` (${clientInfo.country})` : ""}
             </span>
             <span className="flex items-center gap-1">
               <Fingerprint className="w-2.5 h-2.5" />
