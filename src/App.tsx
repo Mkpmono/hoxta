@@ -68,7 +68,6 @@ import { DDoSGate } from "@/components/DDoSGate";
 const queryClient = new QueryClient();
 
 const App = () => (
-  <DDoSGate>
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <AdminAuthProvider>
@@ -77,6 +76,7 @@ const App = () => (
         <Sonner />
         <DiscountPopup />
         <BrowserRouter>
+        <DDoSGate>
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Index />} />
@@ -142,12 +142,12 @@ const App = () => (
             
             <Route path="*" element={<NotFound />} />
           </Routes>
+        </DDoSGate>
         </BrowserRouter>
       </TooltipProvider>
       </AdminAuthProvider>
     </AuthProvider>
   </QueryClientProvider>
-  </DDoSGate>
 );
 
 export default App;
