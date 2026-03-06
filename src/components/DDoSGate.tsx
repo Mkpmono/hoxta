@@ -371,7 +371,7 @@ export function DDoSGate({ children }: { children: React.ReactNode }) {
           <div className="flex items-center justify-center gap-4 text-[10px] text-muted-foreground/50">
             <span className="flex items-center gap-1">
               <Globe className="w-2.5 h-2.5" />
-              {ip.current}
+              {clientInfo?.ip || "Detecting..."}{clientInfo?.country ? ` (${clientInfo.country})` : ""}
             </span>
             <span className="flex items-center gap-1">
               <Fingerprint className="w-2.5 h-2.5" />
