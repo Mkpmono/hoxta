@@ -72,7 +72,7 @@ function detectSuspiciousBehavior(): { isBot: boolean; reasons: string[] } {
   }
 
   // Check for missing browser APIs that real browsers have
-  if (!window.chrome && /Chrome/.test(ua)) {
+  if (!(window as any).chrome && /Chrome/.test(ua)) {
     reasons.push("fake-chrome");
   }
 
