@@ -4,7 +4,7 @@ import { CheckCircle, AlertTriangle, Globe, Lock, Fingerprint, ShieldCheck } fro
 import { HoxtaLogo } from "@/components/HoxtaLogo";
 
 const VERIFICATION_KEY = "hoxta_ddos_verified";
-const VERIFICATION_TTL_MS = 30 * 60 * 1000; // 30 minutes
+const VERIFICATION_TTL_MS = 15 * 60 * 1000; // 15 minutes
 
 interface CheckItem {
   label: string;
