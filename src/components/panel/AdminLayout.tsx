@@ -10,7 +10,7 @@ import {
   LogOut,
   Menu,
   X,
-  Bell,
+  Palette,
   ChevronDown,
   Shield,
   User,
