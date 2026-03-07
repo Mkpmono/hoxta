@@ -61,6 +61,7 @@ import AdminOrders from "./pages/admin/Orders";
 import AdminTickets from "./pages/admin/Tickets";
 import AdminClients from "./pages/admin/Clients";
 import AdminSettings from "./pages/admin/Settings";
+import VisitorLogs from "./pages/admin/VisitorLogs";
 
 import { DiscountPopup } from "@/components/DiscountPopup";
 import { DDoSGate } from "@/components/DDoSGate";
