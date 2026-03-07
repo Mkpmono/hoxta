@@ -6,7 +6,7 @@ import {
   ShoppingCart,
   MessageSquare,
   Users,
-  Palette,
+  ShieldCheck,
   LogOut,
   Menu,
   X,
