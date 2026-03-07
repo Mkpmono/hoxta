@@ -11,6 +11,7 @@ import {
   Menu,
   X,
   Palette,
+  Bell,
   ChevronDown,
   Shield,
   User,
