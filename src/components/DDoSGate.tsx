@@ -174,7 +174,8 @@ export function DDoSGate({ children }: { children: React.ReactNode }) {
     // Step 5: Behavioral analysis (real detection)
     setChecks((prev) => prev.map((c, j) => (j === 4 ? { ...c, status: "running" } : c)));
     await new Promise((r) => setTimeout(r, 500));
-    const { isBot } = detectSuspiciousBehavior();
+    const { isBot, reasons } = detectSuspiciousBehavior();
+    const botResult = { isBot, reasons };
 
     const botResult = detectSuspiciousBehavior();
 

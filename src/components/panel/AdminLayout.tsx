@@ -27,6 +27,7 @@ const adminNavItems = [
   { icon: ShoppingCart, label: "Orders", href: "/admin/orders" },
   { icon: MessageSquare, label: "Tickets", href: "/admin/tickets" },
   { icon: Users, label: "Clients", href: "/admin/clients" },
+  { icon: ShieldCheck, label: "Visitor Logs", href: "/admin/visitors" },
   { icon: Palette, label: "Brand & UI Settings", href: "/admin/settings" },
 ];
 
