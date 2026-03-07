@@ -174,17 +174,42 @@ export function DDoSGate({ children }: { children: React.ReactNode }) {
     // Step 5: Behavioral analysis (real detection)
     setChecks((prev) => prev.map((c, j) => (j === 4 ? { ...c, status: "running" } : c)));
     await new Promise((r) => setTimeout(r, 500));
-    const { isBot } = detectSuspiciousBehavior();
+    const botResult = detectSuspiciousBehavior();
 
-    if (isBot) {
+    if (botResult.isBot) {
       setChecks((prev) => prev.map((c, j) => (j === 4 ? { ...c, status: "fail" } : c)));
       setPhase("blocked");
+      logVisitor(info, botResult);
       return;
     }
 
     setChecks((prev) => prev.map((c, j) => (j === 4 ? { ...c, status: "pass" } : c)));
     setPhase("verified");
+    logVisitor(info, { isBot: false, reasons: [] });
   }, []);
+
+  const logVisitor = async (info: ClientInfo, botResult: { isBot: boolean; reasons: string[] }) => {
+    try {
+      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+      await fetch(`https://${projectId}.supabase.co/functions/v1/log-visitor`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ip_address: info.ip,
+          country_code: info.country || null,
+          isp: info.isp || null,
+          user_agent: navigator.userAgent,
+          is_bot: botResult.isBot,
+          bot_reasons: botResult.reasons,
+          canvas_fingerprint: getCanvasFingerprint(),
+          ray_id: rayId.current,
+          result: botResult.isBot ? "blocked" : "passed",
+        }),
+      });
+    } catch {
+      // Silent fail — don't block visitor
+    }
+  };
 
   useEffect(() => {
     if (!passed) runChecks();

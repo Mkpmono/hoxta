@@ -325,6 +325,48 @@ export type Database = {
         }
         Relationships: []
       }
+      visitor_logs: {
+        Row: {
+          bot_reasons: string[] | null
+          canvas_fingerprint: string | null
+          country_code: string | null
+          created_at: string
+          id: string
+          ip_address: string
+          is_bot: boolean
+          isp: string | null
+          ray_id: string | null
+          result: string
+          user_agent: string | null
+        }
+        Insert: {
+          bot_reasons?: string[] | null
+          canvas_fingerprint?: string | null
+          country_code?: string | null
+          created_at?: string
+          id?: string
+          ip_address?: string
+          is_bot?: boolean
+          isp?: string | null
+          ray_id?: string | null
+          result?: string
+          user_agent?: string | null
+        }
+        Update: {
+          bot_reasons?: string[] | null
+          canvas_fingerprint?: string | null
+          country_code?: string | null
+          created_at?: string
+          id?: string
+          ip_address?: string
+          is_bot?: boolean
+          isp?: string | null
+          ray_id?: string | null
+          result?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       status_monitors_public: {
