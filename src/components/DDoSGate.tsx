@@ -176,9 +176,12 @@ export function DDoSGate({ children }: { children: React.ReactNode }) {
     await new Promise((r) => setTimeout(r, 500));
     const { isBot } = detectSuspiciousBehavior();
 
-    if (isBot) {
+    const botResult = detectSuspiciousBehavior();
+
+    if (botResult.isBot) {
       setChecks((prev) => prev.map((c, j) => (j === 4 ? { ...c, status: "fail" } : c)));
       setPhase("blocked");
+      logVisitor(info, botResult);
       return;
     }
 
