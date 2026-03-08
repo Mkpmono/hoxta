@@ -66,7 +66,6 @@ export function CTASection() {
       <div className="container mx-auto px-4 md:px-6 relative">
         {/* Header */}
         <div className="text-center mb-12">
-        >
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-4">
             <Zap className="w-4 h-4 text-primary" />
             <span className="text-sm font-medium text-primary">Get Started</span>
