@@ -13,7 +13,7 @@ export interface OrderSession {
 
 export async function createOrderSession(
   productSlug: string,
-  plan: { id: string; price: number },
+  plan: { id: string; pricing: { monthly: number } },
   billingCycle: BillingCycle
 ): Promise<OrderSession> {
   const id = crypto.randomUUID();
@@ -23,7 +23,7 @@ export async function createOrderSession(
     productSlug,
     planId: plan.id,
     billingCycle,
-    amount: plan.price,
+    amount: plan.pricing.monthly,
     status: "pending",
   };
   sessionStorage.setItem(`order_${id}`, JSON.stringify(session));
