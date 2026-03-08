@@ -5,6 +5,7 @@ import { Layout } from "@/components/layout/Layout";
 import { ArrowLeft, Clock, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DOMPurify from "dompurify";
+import { getTranslatedField } from "@/lib/translations";
 
 // Simple markdown to HTML converter
 function markdownToHtml(md: string): string {
@@ -94,7 +95,8 @@ export default function KBArticle() {
     );
   }
 
-  const htmlContent = DOMPurify.sanitize(markdownToHtml(article.content), {
+  const translatedContent = getTranslatedField(article, "content");
+  const htmlContent = DOMPurify.sanitize(markdownToHtml(translatedContent), {
     ALLOWED_TAGS: ['h1', 'h2', 'h3', 'p', 'strong', 'em', 'ul', 'li', 'pre', 'code', 'a', 'img'],
     ALLOWED_ATTR: ['href', 'class', 'src', 'alt']
   });
@@ -125,7 +127,7 @@ export default function KBArticle() {
               <span className="flex items-center gap-1"><Eye className="w-3.5 h-3.5" />{article.views}</span>
               <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{new Date(article.updated_at).toLocaleDateString()}</span>
             </div>
-            <h1 className="text-3xl font-bold text-foreground mb-6">{article.title}</h1>
+            <h1 className="text-3xl font-bold text-foreground mb-6">{getTranslatedField(article, "title")}</h1>
             <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
           </div>
 

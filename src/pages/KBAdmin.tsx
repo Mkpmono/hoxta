@@ -7,9 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Pencil, Trash2, Save, X, FileText, BookOpen, Upload, Image } from "lucide-react";
+import { Plus, Pencil, Trash2, Save, X, FileText, BookOpen, Upload, Image, Languages, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
+import { useTranslateContent } from "@/hooks/useTranslateContent";
 
 type Tab = "articles" | "categories" | "blog";
 
@@ -32,6 +33,7 @@ interface KBArticle {
   is_published: boolean;
   is_featured: boolean;
   views: number;
+  translations?: Record<string, any>;
 }
 
 interface BlogPost {
@@ -47,6 +49,7 @@ interface BlogPost {
   views: number;
   tags: string[] | null;
   image_url: string | null;
+  translations?: Record<string, any>;
 }
 
 export default function KBAdmin() {
@@ -60,6 +63,8 @@ export default function KBAdmin() {
   const [editingBlog, setEditingBlog] = useState<Partial<BlogPost> | null>(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const { translateFields, translating } = useTranslateContent();
+
   const fetchData = async () => {
     setLoading(true);
     const [catRes, artRes, blogRes] = await Promise.all([
@@ -68,17 +73,44 @@ export default function KBAdmin() {
       supabase.from("blog_posts").select("*").order("created_at", { ascending: false }),
     ]);
     setCategories(catRes.data || []);
-    setArticles(artRes.data || []);
-    setBlogPosts(blogRes.data || []);
+    setArticles((artRes.data || []) as unknown as KBArticle[]);
+    setBlogPosts((blogRes.data || []) as unknown as BlogPost[]);
     setLoading(false);
   };
 
   useEffect(() => { fetchData(); }, []);
 
+  // ========= TRANSLATE HELPERS =========
+  const handleTranslateArticle = async () => {
+    if (!editingArticle?.title) return;
+    const fields: Record<string, string> = {
+      title: editingArticle.title || "",
+      excerpt: editingArticle.excerpt || "",
+      content: editingArticle.content || "",
+    };
+    const translations = await translateFields(fields);
+    if (translations) {
+      setEditingArticle(prev => prev ? { ...prev, translations } : prev);
+    }
+  };
+
+  const handleTranslateBlog = async () => {
+    if (!editingBlog?.title) return;
+    const fields: Record<string, string> = {
+      title: editingBlog.title || "",
+      excerpt: editingBlog.excerpt || "",
+      content: editingBlog.content || "",
+    };
+    const translations = await translateFields(fields);
+    if (translations) {
+      setEditingBlog(prev => prev ? { ...prev, translations } : prev);
+    }
+  };
+
   // ========= ARTICLE CRUD =========
   const saveArticle = async () => {
     if (!editingArticle?.title || !editingArticle?.slug) return;
-    const payload = {
+    const payload: any = {
       title: editingArticle.title,
       slug: editingArticle.slug,
       excerpt: editingArticle.excerpt || null,
@@ -87,6 +119,9 @@ export default function KBAdmin() {
       is_published: editingArticle.is_published ?? false,
       is_featured: editingArticle.is_featured ?? false,
     };
+    if (editingArticle.translations) {
+      payload.translations = editingArticle.translations;
+    }
 
     if (editingArticle.id) {
       const { error } = await supabase.from("kb_articles").update(payload).eq("id", editingArticle.id);
@@ -138,7 +173,7 @@ export default function KBAdmin() {
   // ========= BLOG CRUD =========
   const saveBlog = async () => {
     if (!editingBlog?.title || !editingBlog?.slug) return;
-    const payload = {
+    const payload: any = {
       title: editingBlog.title,
       slug: editingBlog.slug,
       excerpt: editingBlog.excerpt || null,
@@ -150,6 +185,9 @@ export default function KBAdmin() {
       tags: editingBlog.tags || [],
       image_url: editingBlog.image_url || null,
     };
+    if (editingBlog.translations) {
+      payload.translations = editingBlog.translations;
+    }
 
     if (editingBlog.id) {
       const { error } = await supabase.from("blog_posts").update(payload).eq("id", editingBlog.id);
@@ -205,6 +243,34 @@ export default function KBAdmin() {
     }
   };
 
+  const TranslateButton = ({ onClick, hasTranslations }: { onClick: () => void; hasTranslations: boolean }) => (
+    <Button
+      type="button"
+      variant="outline"
+      size="sm"
+      onClick={onClick}
+      disabled={translating}
+      className={cn(
+        "gap-2 border-primary/30 text-primary hover:bg-primary/10",
+        hasTranslations && "border-emerald-500/30 text-emerald-400"
+      )}
+    >
+      {translating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Languages className="w-4 h-4" />}
+      {translating ? "Translating..." : hasTranslations ? "Re-translate" : "Auto Translate 🌐"}
+    </Button>
+  );
+
+  const TranslationStatus = ({ translations }: { translations?: Record<string, any> }) => {
+    if (!translations || Object.keys(translations).length === 0) return null;
+    const langs = Object.keys(translations);
+    return (
+      <div className="flex items-center gap-2 text-xs text-emerald-400">
+        <Languages className="w-3 h-3" />
+        Translated: {langs.join(", ").toUpperCase()}
+      </div>
+    );
+  };
+
   return (
     <AdminLayout>
       <div className="max-w-4xl mx-auto">
@@ -256,7 +322,10 @@ export default function KBAdmin() {
                           <span className={cn("ml-2 text-xs px-2 py-0.5 rounded-full", a.is_published ? "bg-emerald-500/20 text-emerald-400" : "bg-muted text-muted-foreground")}>
                             {a.is_published ? "Published" : "Draft"}
                           </span>
-                          <p className="text-xs text-muted-foreground mt-0.5">{a.slug} · {a.views} views</p>
+                          <div className="flex items-center gap-3">
+                            <p className="text-xs text-muted-foreground mt-0.5">{a.slug} · {a.views} views</p>
+                            <TranslationStatus translations={a.translations} />
+                          </div>
                         </div>
                         <div className="flex gap-1">
                           <Button variant="ghost" size="icon" onClick={() => setEditingArticle(a)}><Pencil className="w-4 h-4" /></Button>
@@ -273,8 +342,12 @@ export default function KBAdmin() {
                 <div className="glass-card p-6 rounded-xl space-y-4">
                   <div className="flex justify-between items-center">
                     <h2 className="font-semibold text-foreground">{editingArticle.id ? "Edit Article" : "New Article"}</h2>
-                    <Button variant="ghost" size="icon" onClick={() => setEditingArticle(null)}><X className="w-4 h-4" /></Button>
+                    <div className="flex items-center gap-2">
+                      <TranslateButton onClick={handleTranslateArticle} hasTranslations={!!editingArticle.translations && Object.keys(editingArticle.translations).length > 0} />
+                      <Button variant="ghost" size="icon" onClick={() => setEditingArticle(null)}><X className="w-4 h-4" /></Button>
+                    </div>
                   </div>
+                  <TranslationStatus translations={editingArticle.translations} />
                   <div className="grid grid-cols-2 gap-4">
                     <div><Label>Title</Label><Input value={editingArticle.title || ""} onChange={(e) => setEditingArticle({ ...editingArticle, title: e.target.value })} /></div>
                     <div><Label>Slug</Label><Input value={editingArticle.slug || ""} onChange={(e) => setEditingArticle({ ...editingArticle, slug: e.target.value })} /></div>
@@ -368,7 +441,10 @@ export default function KBAdmin() {
                           <span className={cn("ml-2 text-xs px-2 py-0.5 rounded-full", p.is_published ? "bg-emerald-500/20 text-emerald-400" : "bg-muted text-muted-foreground")}>
                             {p.is_published ? "Published" : "Draft"}
                           </span>
-                          <p className="text-xs text-muted-foreground mt-0.5">{p.category} · {p.author} · {p.views} views</p>
+                          <div className="flex items-center gap-3">
+                            <p className="text-xs text-muted-foreground mt-0.5">{p.category} · {p.author} · {p.views} views</p>
+                            <TranslationStatus translations={p.translations} />
+                          </div>
                         </div>
                         <div className="flex gap-1">
                           <Button variant="ghost" size="icon" onClick={() => setEditingBlog(p)}><Pencil className="w-4 h-4" /></Button>
@@ -385,8 +461,12 @@ export default function KBAdmin() {
                 <div className="glass-card p-6 rounded-xl space-y-4">
                   <div className="flex justify-between items-center">
                     <h2 className="font-semibold text-foreground">{editingBlog.id ? "Edit Blog Post" : "New Blog Post"}</h2>
-                    <Button variant="ghost" size="icon" onClick={() => setEditingBlog(null)}><X className="w-4 h-4" /></Button>
+                    <div className="flex items-center gap-2">
+                      <TranslateButton onClick={handleTranslateBlog} hasTranslations={!!editingBlog.translations && Object.keys(editingBlog.translations).length > 0} />
+                      <Button variant="ghost" size="icon" onClick={() => setEditingBlog(null)}><X className="w-4 h-4" /></Button>
+                    </div>
                   </div>
+                  <TranslationStatus translations={editingBlog.translations} />
                   <div className="grid grid-cols-2 gap-4">
                     <div><Label>Title</Label><Input value={editingBlog.title || ""} onChange={(e) => setEditingBlog({ ...editingBlog, title: e.target.value })} /></div>
                     <div><Label>Slug</Label><Input value={editingBlog.slug || ""} onChange={(e) => setEditingBlog({ ...editingBlog, slug: e.target.value })} /></div>

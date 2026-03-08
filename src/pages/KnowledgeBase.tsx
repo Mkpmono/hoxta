@@ -9,6 +9,7 @@ import {
   Globe, Database, Terminal, CreditCard, Pencil
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { getTranslatedField } from "@/lib/translations";
 import { Button } from "@/components/ui/button";
 
 const iconMap: Record<string, any> = {
@@ -168,8 +169,8 @@ const KnowledgeBase = () => {
                           <Eye className="w-3 h-3" />{article.views}
                         </span>
                       </div>
-                      <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">{article.title}</h3>
-                      {article.excerpt && <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{article.excerpt}</p>}
+                            <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">{getTranslatedField(article, "title")}</h3>
+                          {article.excerpt && <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{getTranslatedField(article, "excerpt")}</p>}
                     </div>
                   </Link>
                 ))}
@@ -269,8 +270,8 @@ const KnowledgeBase = () => {
                         <Eye className="w-3 h-3" />{article.views.toLocaleString()}
                       </div>
                     </div>
-                    <h3 className="text-base font-semibold text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2">{article.title}</h3>
-                    {article.excerpt && <p className="text-sm text-muted-foreground line-clamp-2">{article.excerpt}</p>}
+                     <h3 className="text-base font-semibold text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2">{getTranslatedField(article, "title")}</h3>
+                    {article.excerpt && <p className="text-sm text-muted-foreground line-clamp-2">{getTranslatedField(article, "excerpt")}</p>}
                   </div>
                 </Link>
               ))}
@@ -294,7 +295,7 @@ const KnowledgeBase = () => {
                         <div className="flex items-center gap-4 min-w-0">
                           <BookOpen className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
                           <div className="min-w-0">
-                            <h4 className="font-medium text-foreground group-hover:text-primary transition-colors truncate">{article.title}</h4>
+                            <h4 className="font-medium text-foreground group-hover:text-primary transition-colors truncate">{getTranslatedField(article, "title")}</h4>
                             <span className="text-sm text-muted-foreground">{getCategoryName(article.category_id)}</span>
                           </div>
                         </div>

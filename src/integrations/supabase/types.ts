@@ -54,6 +54,7 @@ export type Database = {
           slug: string
           tags: string[] | null
           title: string
+          translations: Json | null
           updated_at: string
           views: number
         }
@@ -72,6 +73,7 @@ export type Database = {
           slug: string
           tags?: string[] | null
           title: string
+          translations?: Json | null
           updated_at?: string
           views?: number
         }
@@ -90,6 +92,7 @@ export type Database = {
           slug?: string
           tags?: string[] | null
           title?: string
+          translations?: Json | null
           updated_at?: string
           views?: number
         }
@@ -117,6 +120,7 @@ export type Database = {
           sort_order: number | null
           tags: string[] | null
           title: string
+          translations: Json | null
           updated_at: string
         }
         Insert: {
@@ -140,6 +144,7 @@ export type Database = {
           sort_order?: number | null
           tags?: string[] | null
           title: string
+          translations?: Json | null
           updated_at?: string
         }
         Update: {
@@ -163,6 +168,7 @@ export type Database = {
           sort_order?: number | null
           tags?: string[] | null
           title?: string
+          translations?: Json | null
           updated_at?: string
         }
         Relationships: []
@@ -179,6 +185,7 @@ export type Database = {
           is_published: boolean
           slug: string
           title: string
+          translations: Json | null
           updated_at: string
           views: number
         }
@@ -193,6 +200,7 @@ export type Database = {
           is_published?: boolean
           slug: string
           title: string
+          translations?: Json | null
           updated_at?: string
           views?: number
         }
@@ -207,6 +215,7 @@ export type Database = {
           is_published?: boolean
           slug?: string
           title?: string
+          translations?: Json | null
           updated_at?: string
           views?: number
         }
