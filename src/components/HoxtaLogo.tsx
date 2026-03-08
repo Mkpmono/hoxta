@@ -27,8 +27,8 @@ export const HoxtaLogo = forwardRef<HTMLSpanElement, HoxtaLogoProps>(function Ho
   if (!linked) return content;
 
   return (
-    <Link to="/" className="flex items-center" aria-label="Hoxta Home">
+    <Link to="/" className="flex items-center" aria-label="Hoxta Home" ref={ref as React.Ref<HTMLAnchorElement>}>
       {content}
     </Link>
   );
-}
+});

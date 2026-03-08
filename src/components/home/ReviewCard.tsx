@@ -72,4 +72,4 @@ export const ReviewCard = forwardRef<HTMLDivElement, ReviewCardProps>(function R
       </div>
     </motion.div>
   );
-}
+});
