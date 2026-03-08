@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { Link } from "react-router-dom";
 
 interface HoxtaLogoProps {
@@ -5,7 +6,7 @@ interface HoxtaLogoProps {
   linked?: boolean;
 }
 
-export function HoxtaLogo({ size = "md", linked = true }: HoxtaLogoProps) {
+export const HoxtaLogo = forwardRef<HTMLSpanElement, HoxtaLogoProps>(function HoxtaLogo({ size = "md", linked = true }, ref) {
   const sizes = {
     sm: "text-lg",
     md: "text-2xl",
