@@ -1,29 +1,36 @@
-// Minimal order service - redirects to WHMCS for actual processing
+import { BillingCycle } from "@/data/products";
 
 export interface OrderSession {
   id: string;
+  sessionId: string;
   productSlug: string;
   planId: string;
-  billingCycle: string;
+  billingCycle: BillingCycle;
   customer?: any;
+  amount?: number;
   status: "pending" | "processing" | "completed" | "failed";
 }
 
-export function createOrderSession(data: {
-  productSlug: string;
-  planId: string;
-  billingCycle: string;
-}): OrderSession {
-  return {
-    id: crypto.randomUUID(),
-    productSlug: data.productSlug,
-    planId: data.planId,
-    billingCycle: data.billingCycle,
+export async function createOrderSession(
+  productSlug: string,
+  plan: { id: string; price: number },
+  billingCycle: BillingCycle
+): Promise<OrderSession> {
+  const id = crypto.randomUUID();
+  const session: OrderSession = {
+    id,
+    sessionId: id,
+    productSlug,
+    planId: plan.id,
+    billingCycle,
+    amount: plan.price,
     status: "pending",
   };
+  sessionStorage.setItem(`order_${id}`, JSON.stringify(session));
+  return session;
 }
 
-export function getOrderSession(id: string): OrderSession | null {
+export async function getOrderSession(id: string): Promise<OrderSession | null> {
   try {
     const raw = sessionStorage.getItem(`order_${id}`);
     return raw ? JSON.parse(raw) : null;
@@ -32,13 +39,20 @@ export function getOrderSession(id: string): OrderSession | null {
   }
 }
 
-export function updateOrderCustomer(session: OrderSession, customer: any): OrderSession {
+export async function updateOrderCustomer(sessionId: string, customer: any): Promise<OrderSession> {
+  const raw = sessionStorage.getItem(`order_${sessionId}`);
+  const session: OrderSession = raw ? JSON.parse(raw) : { id: sessionId, sessionId };
   const updated = { ...session, customer };
-  sessionStorage.setItem(`order_${session.id}`, JSON.stringify(updated));
+  sessionStorage.setItem(`order_${sessionId}`, JSON.stringify(updated));
   return updated;
 }
 
-export async function processPayment(session: OrderSession, paymentMethod: string): Promise<{ success: boolean; redirectUrl?: string }> {
+export async function processPayment(
+  sessionId: string,
+  paymentMethod: string,
+  details?: Record<string, string>
+): Promise<{ success: boolean; error?: string; redirectUrl?: string }> {
   // Redirect to WHMCS for payment processing
-  return { success: true, redirectUrl: "https://billing.hoxta.com" };
+  window.open("https://billing.hoxta.com", "_blank");
+  return { success: true };
 }
