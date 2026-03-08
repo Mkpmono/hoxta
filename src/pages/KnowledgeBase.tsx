@@ -270,8 +270,8 @@ const KnowledgeBase = () => {
                         <Eye className="w-3 h-3" />{article.views.toLocaleString()}
                       </div>
                     </div>
-                    <h3 className="text-base font-semibold text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2">{article.title}</h3>
-                    {article.excerpt && <p className="text-sm text-muted-foreground line-clamp-2">{article.excerpt}</p>}
+                     <h3 className="text-base font-semibold text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2">{getTranslatedField(article, "title")}</h3>
+                    {article.excerpt && <p className="text-sm text-muted-foreground line-clamp-2">{getTranslatedField(article, "excerpt")}</p>}
                   </div>
                 </Link>
               ))}
