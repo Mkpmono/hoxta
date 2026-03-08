@@ -143,15 +143,30 @@ export default function KBAdmin() {
   };
 
   // ========= CATEGORY CRUD =========
+  const handleTranslateCategory = async () => {
+    if (!editingCategory?.name) return;
+    const fields: Record<string, string> = {
+      name: editingCategory.name || "",
+      description: editingCategory.description || "",
+    };
+    const translations = await translateFields(fields);
+    if (translations) {
+      setEditingCategory(prev => prev ? { ...prev, translations } : prev);
+    }
+  };
+
   const saveCategory = async () => {
     if (!editingCategory?.name || !editingCategory?.slug) return;
-    const payload = {
+    const payload: any = {
       name: editingCategory.name,
       slug: editingCategory.slug,
       description: editingCategory.description || null,
       icon: editingCategory.icon || null,
       sort_order: editingCategory.sort_order ?? 0,
     };
+    if (editingCategory.translations) {
+      payload.translations = editingCategory.translations;
+    }
 
     if (editingCategory.id) {
       const { error } = await supabase.from("kb_categories").update(payload).eq("id", editingCategory.id);
