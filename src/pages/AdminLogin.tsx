@@ -15,7 +15,7 @@ export default function AdminLogin() {
   const [loading, setLoading] = useState(false);
 
   if (isLoading) return null;
-  if (isAdmin) return <Navigate to="/kb-admin" replace />;
+  if (isAdmin) return <Navigate to="/admin/content" replace />;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
