@@ -1155,6 +1155,65 @@
       }
     }
   },
+  "hosting": {
+    "endsIn": "Se termină în:",
+    "howItWorks": {
+      "title": "Începe în Câteva Minute",
+      "subtitle": "De la înregistrare la implementare, am făcut procesul simplu și rapid.",
+      "step1": "Alege Planul",
+      "step1Desc": "Selectează planul de hosting perfect care corespunde cerințelor și bugetului tău.",
+      "step2": "Checkout Instant",
+      "step2Desc": "Finalizează comanda în siguranță cu procesul nostru simplificat de plată.",
+      "step3": "Implementează & Configurează",
+      "step3Desc": "Hosting-ul tău este activat instant cu setup și configurare automată.",
+      "step4": "Administrează & Scalează",
+      "step4Desc": "Folosește panoul nostru intuitiv pentru a administra și scala serviciile oricând."
+    },
+    "globalInfra": {
+      "title": "Infrastructură Globală",
+      "subtitle": "Infrastructură enterprise construită pentru performanță, fiabilitate și scalare.",
+      "dataCenters": "Centre de Date",
+      "avgLatency": "Latență Medie",
+      "networkUptime": "Uptime Rețea",
+      "ddosProtection": "Protecție DDoS",
+      "capabilities": "Capabilități Infrastructură",
+      "anycast": "Arhitectură Rețea Anycast",
+      "nvmeNodes": "Noduri NVMe enterprise",
+      "failover": "Failover automat & redundanță",
+      "tierIII": "Standarde datacenter Tier III+",
+      "instantProvisioning": "Provizionare instantă",
+      "lowLatency": "Latență scăzută prin design",
+      "builtInDdos": "Protecție DDoS integrată",
+      "scalable": "Scalabil la cerere"
+    },
+    "finalCta": {
+      "title": "Gata să Începi?",
+      "subtitle": "Alătură-te miilor de clienți fericiți care au încredere în Hoxta. Vezi diferența tu însuți.",
+      "getStarted": "Începe Acum",
+      "contactSales": "Contactează Vânzările",
+      "moneyBack": "Garanție 30 Zile",
+      "uptimeSla": "SLA Uptime 99.9%",
+      "support247": "Suport Expert 24/7"
+    },
+    "managedServices": {
+      "badge": "Add-on-uri Opționale",
+      "title": "Îmbunătățește cu",
+      "titleHighlight": "Servicii Administrate",
+      "subtitle": "Concentrează-te pe afacerea ta în timp ce noi ne ocupăm de complexitatea tehnică.",
+      "contactText": "Contactează-ne pentru a personaliza pachetul de servicii administrate",
+      "managedSupport": "Suport Administrat",
+      "managedSupportDesc": "Administrare și monitorizare server expert 24/7",
+      "backupSolutions": "Soluții Backup",
+      "backupSolutionsDesc": "Backup automat cu recuperare instantă",
+      "monitoring": "Monitorizare",
+      "monitoringDesc": "Monitorizare proactivă și alertare",
+      "securityAddons": "Add-on-uri Securitate",
+      "securityAddonsDesc": "Protecție îmbunătățită pentru serverul tău"
+    },
+    "planComparison": {
+      "features": "Funcționalități"
+    }
+  },
   "mockMode": {
     "banner": "Mod Simulare – WHMCS neconectat. Se folosesc date demo.",
     "demoCredentials": "Demo: client@demo.hoxta / Demo1234!"
