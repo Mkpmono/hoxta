@@ -43,14 +43,22 @@ export function useGameServers() {
       if (error) {
         console.error("Error fetching games:", error);
       } else {
-        // Apply translations to each game
-        const translatedGames = (data || []).map(game => ({
-          ...game,
-          title: getTranslatedField(game, "title") || game.title,
-          short_description: getTranslatedField(game, "short_description") || game.short_description,
-          full_description: getTranslatedField(game, "full_description") || game.full_description,
-        }));
-        setGames(translatedGames);
+        // Apply translations to each game and cast types
+        const translatedGames = (data || []).map(game => {
+          const typedGame = {
+            ...game,
+            plans: (game.plans || []) as any[],
+            faqs: (game.faqs || []) as any[],
+            translations: game.translations as Record<string, Record<string, string>> | undefined,
+          };
+          return {
+            ...typedGame,
+            title: getTranslatedField(typedGame, "title") || game.title,
+            short_description: getTranslatedField(typedGame, "short_description") || game.short_description,
+            full_description: getTranslatedField(typedGame, "full_description") || game.full_description,
+          };
+        });
+        setGames(translatedGames as DBGameServer[]);
       }
     } catch (err) {
       console.error("Error fetching games:", err);
