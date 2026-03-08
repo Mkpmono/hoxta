@@ -15,7 +15,7 @@ interface ReviewCardProps {
  * Displays a single review with rating, content, and author info.
  * Supports animation and selection highlighting.
  */
-export function ReviewCard({ review, index, isSelected = false }: ReviewCardProps) {
+export const ReviewCard = forwardRef<HTMLDivElement, ReviewCardProps>(function ReviewCard({ review, index, isSelected = false }, ref) {
   const prefersReducedMotion = useReducedMotion();
 
   return (
