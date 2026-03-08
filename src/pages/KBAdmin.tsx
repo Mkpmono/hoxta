@@ -7,9 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Pencil, Trash2, LogOut, Save, X, FileText, BookOpen, Upload, Image } from "lucide-react";
+import { Plus, Pencil, Trash2, Save, X, FileText, BookOpen, Upload, Image } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Link } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 
 type Tab = "articles" | "categories" | "blog";

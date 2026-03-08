@@ -6,9 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Pencil, Trash2, LogOut, Save, X, Activity } from "lucide-react";
+import { Plus, Pencil, Trash2, Save, X, Activity } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Link } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 
 interface Monitor {
