@@ -183,7 +183,14 @@ export default function GameServerAdmin() {
               <div className="flex items-center gap-2"><Switch checked={editing.is_published ?? false} onCheckedChange={(v) => setEditing({ ...editing, is_published: v })} /><Label>Published</Label></div>
               <div className="flex items-center gap-2"><Switch checked={editing.popular ?? false} onCheckedChange={(v) => setEditing({ ...editing, popular: v })} /><Label>Popular</Label></div>
             </div>
-            <Button onClick={saveServer}><Save className="w-4 h-4 mr-1" /> Save Game Server</Button>
+            <div className="flex gap-3">
+              <Button onClick={saveServer}><Save className="w-4 h-4 mr-1" /> Save Game Server</Button>
+              {editing.id && editing.is_published && (
+                <a href={`/game-servers/${editing.slug}`} target="_blank" rel="noopener noreferrer">
+                  <Button variant="outline"><Eye className="w-4 h-4 mr-1" /> Preview Live</Button>
+                </a>
+              )}
+            </div>
           </div>
         ) : (
           <div>

@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { getTranslatedField } from "@/lib/translations";
 
 export interface DBGameServer {
   id: string;
@@ -22,11 +24,8 @@ export interface DBGameServer {
   sort_order: number;
   created_at: string;
   updated_at: string;
+  translations?: Record<string, Record<string, string>>;
 }
-
-// TODO: Replace with PHP backend API call when available
-// For now, fetch from a static JSON or return empty
-const API_BASE = "https://api.hoxta.com";
 
 export function useGameServers() {
   const [games, setGames] = useState<DBGameServer[]>([]);
@@ -35,13 +34,26 @@ export function useGameServers() {
   const fetchGames = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/content/game-servers.php`);
-      if (res.ok) {
-        const data = await res.json();
-        setGames(data.servers || data || []);
+      const { data, error } = await supabase
+        .from("game_servers")
+        .select("*")
+        .eq("is_published", true)
+        .order("sort_order", { ascending: true });
+      
+      if (error) {
+        console.error("Error fetching games:", error);
+      } else {
+        // Apply translations to each game
+        const translatedGames = (data || []).map(game => ({
+          ...game,
+          title: getTranslatedField(game, "title") || game.title,
+          short_description: getTranslatedField(game, "short_description") || game.short_description,
+          full_description: getTranslatedField(game, "full_description") || game.full_description,
+        }));
+        setGames(translatedGames);
       }
-    } catch {
-      // API not available, games will be empty
+    } catch (err) {
+      console.error("Error fetching games:", err);
     }
     setLoading(false);
   };
@@ -58,20 +70,40 @@ export function useGameServerBySlug(slug: string | undefined) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!slug) { setLoading(false); return; }
+    if (!slug) { 
+      setLoading(false); 
+      return; 
+    }
+    
     const fetchGame = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`${API_BASE}/content/game-servers.php?slug=${slug}`);
-        if (res.ok) {
-          const data = await res.json();
-          setGame(data.server || data || null);
+        const { data, error } = await supabase
+          .from("game_servers")
+          .select("*")
+          .eq("slug", slug)
+          .single();
+        
+        if (error) {
+          console.error("Error fetching game:", error);
+          setGame(null);
+        } else if (data) {
+          // Apply translations
+          const translatedGame = {
+            ...data,
+            title: getTranslatedField(data, "title") || data.title,
+            short_description: getTranslatedField(data, "short_description") || data.short_description,
+            full_description: getTranslatedField(data, "full_description") || data.full_description,
+          };
+          setGame(translatedGame);
         }
-      } catch {
-        // API not available
+      } catch (err) {
+        console.error("Error fetching game:", err);
+        setGame(null);
       }
       setLoading(false);
     };
+    
     fetchGame();
   }, [slug]);
 
