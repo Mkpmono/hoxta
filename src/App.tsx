@@ -38,6 +38,7 @@ import StatusAdmin from "./pages/StatusAdmin";
 import Domains from "./pages/Domains";
 import VisitorLogs from "./pages/admin/VisitorLogs";
 
+import { ScrollToTop } from "@/components/ScrollToTop";
 import { DiscountPopup } from "@/components/DiscountPopup";
 import { DDoSGate } from "@/components/DDoSGate";
 
