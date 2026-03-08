@@ -127,10 +127,6 @@ const infrastructureFeatures = [
 function FeatureCard({ feature, index }: { feature: typeof infrastructureFeatures[0]; index: number }) {
   return (
     <motion.div
-      initial={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -8, transition: { duration: 0.2 } }}
-      className="group relative"
-    >
       whileHover={{ y: -8, transition: { duration: 0.2 } }}
       className="group relative"
     >
