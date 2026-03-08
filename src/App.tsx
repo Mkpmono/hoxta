@@ -3,9 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "@/contexts/AuthContext";
 import { AdminAuthProvider } from "@/contexts/AdminAuthContext";
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { AdminProtectedRoute } from "@/components/auth/AdminProtectedRoute";
 import Index from "./pages/Index";
 import WebHosting from "./pages/WebHosting";
@@ -23,12 +21,10 @@ import Contact from "./pages/Contact";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
-// Order Flow Pages
 import Order from "./pages/Order";
 import Checkout from "./pages/Checkout";
 import CheckoutSuccess from "./pages/CheckoutSuccess";
 import CheckoutFailed from "./pages/CheckoutFailed";
-// More Hosting Pages
 import Colocation from "./pages/Colocation";
 import TeamSpeak from "./pages/TeamSpeak";
 import DiscordBot from "./pages/DiscordBot";
@@ -40,27 +36,6 @@ import BlogPost from "./pages/BlogPost";
 import AdminLogin from "./pages/AdminLogin";
 import StatusAdmin from "./pages/StatusAdmin";
 import Domains from "./pages/Domains";
-// Panel Pages
-import Login from "./pages/panel/Login";
-import Register from "./pages/panel/Register";
-import PanelDashboard from "./pages/panel/Dashboard";
-import PanelServices from "./pages/panel/Services";
-import ServiceDetail from "./pages/panel/ServiceDetail";
-import ServiceUpgrade from "./pages/panel/ServiceUpgrade";
-import PanelOrders from "./pages/panel/Orders";
-import PanelInvoices from "./pages/panel/Invoices";
-import InvoiceDetail from "./pages/panel/InvoiceDetail";
-import PanelTickets from "./pages/panel/Tickets";
-import NewTicket from "./pages/panel/NewTicket";
-import TicketDetail from "./pages/panel/TicketDetail";
-import PanelProfile from "./pages/panel/Profile";
-import PanelAPI from "./pages/panel/APISettings";
-// Admin Pages
-import AdminDashboard from "./pages/admin/Dashboard";
-import AdminOrders from "./pages/admin/Orders";
-import AdminTickets from "./pages/admin/Tickets";
-import AdminClients from "./pages/admin/Clients";
-import AdminSettings from "./pages/admin/Settings";
 import VisitorLogs from "./pages/admin/VisitorLogs";
 
 import { DiscountPopup } from "@/components/DiscountPopup";
@@ -70,8 +45,7 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <AdminAuthProvider>
+    <AdminAuthProvider>
       <TooltipProvider>
         <Toaster />
         <Sonner />
@@ -108,38 +82,15 @@ const App = () => (
             <Route path="/knowledge-base" element={<KnowledgeBase />} />
             <Route path="/knowledge-base/:categorySlug" element={<KnowledgeBase />} />
             <Route path="/knowledge-base/article/:articleSlug" element={<KBArticle />} />
-            <Route path="/kb-admin" element={<AdminProtectedRoute><KBAdmin /></AdminProtectedRoute>} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:postId" element={<BlogPost />} />
+            
+            {/* Admin Login */}
             <Route path="/admin-login" element={<AdminLogin />} />
-            <Route path="/status-admin" element={<AdminProtectedRoute><StatusAdmin /></AdminProtectedRoute>} />
-
             
-            {/* Auth */}
-            <Route path="/panel/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            
-            {/* Client Panel (Protected) */}
-            <Route path="/panel" element={<ProtectedRoute allowedRoles={["client", "admin", "owner"]}><PanelDashboard /></ProtectedRoute>} />
-            <Route path="/panel/services" element={<ProtectedRoute allowedRoles={["client", "admin", "owner"]}><PanelServices /></ProtectedRoute>} />
-            <Route path="/panel/services/:id" element={<ProtectedRoute allowedRoles={["client", "admin", "owner"]}><ServiceDetail /></ProtectedRoute>} />
-            <Route path="/panel/services/:id/upgrade" element={<ProtectedRoute allowedRoles={["client", "admin", "owner"]}><ServiceUpgrade /></ProtectedRoute>} />
-            <Route path="/panel/orders" element={<ProtectedRoute allowedRoles={["client", "admin", "owner"]}><PanelOrders /></ProtectedRoute>} />
-            <Route path="/panel/invoices" element={<ProtectedRoute allowedRoles={["client", "admin", "owner"]}><PanelInvoices /></ProtectedRoute>} />
-            <Route path="/panel/invoices/:id" element={<ProtectedRoute allowedRoles={["client", "admin", "owner"]}><InvoiceDetail /></ProtectedRoute>} />
-            <Route path="/panel/tickets" element={<ProtectedRoute allowedRoles={["client", "admin", "owner"]}><PanelTickets /></ProtectedRoute>} />
-            <Route path="/panel/tickets/new" element={<ProtectedRoute allowedRoles={["client", "admin", "owner"]}><NewTicket /></ProtectedRoute>} />
-            <Route path="/panel/tickets/:id" element={<ProtectedRoute allowedRoles={["client", "admin", "owner"]}><TicketDetail /></ProtectedRoute>} />
-            <Route path="/panel/profile" element={<ProtectedRoute allowedRoles={["client", "admin", "owner"]}><PanelProfile /></ProtectedRoute>} />
-            {/* API Settings - Owner only, dev mode only (enforced in ProtectedRoute) */}
-            <Route path="/panel/api" element={<ProtectedRoute allowedRoles={["owner"]} requireOwner><PanelAPI /></ProtectedRoute>} />
-            
-            {/* Admin Panel (Protected - Admin & Owner) */}
-            <Route path="/admin" element={<AdminProtectedRoute><AdminDashboard /></AdminProtectedRoute>} />
-            <Route path="/admin/orders" element={<AdminProtectedRoute><AdminOrders /></AdminProtectedRoute>} />
-            <Route path="/admin/tickets" element={<AdminProtectedRoute><AdminTickets /></AdminProtectedRoute>} />
-            <Route path="/admin/clients" element={<AdminProtectedRoute><AdminClients /></AdminProtectedRoute>} />
-            <Route path="/admin/settings" element={<AdminProtectedRoute><AdminSettings /></AdminProtectedRoute>} />
+            {/* Admin Panel (Protected) */}
+            <Route path="/admin/content" element={<AdminProtectedRoute><KBAdmin /></AdminProtectedRoute>} />
+            <Route path="/admin/status" element={<AdminProtectedRoute><StatusAdmin /></AdminProtectedRoute>} />
             <Route path="/admin/visitors" element={<AdminProtectedRoute><VisitorLogs /></AdminProtectedRoute>} />
             
             <Route path="*" element={<NotFound />} />
@@ -147,8 +98,7 @@ const App = () => (
         </DDoSGate>
         </BrowserRouter>
       </TooltipProvider>
-      </AdminAuthProvider>
-    </AuthProvider>
+    </AdminAuthProvider>
   </QueryClientProvider>
 );
 

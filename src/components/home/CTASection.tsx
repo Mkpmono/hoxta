@@ -7,7 +7,7 @@ const ctaCards = [
     icon: Headphones,
     title: "24/7 Support",
     description: "Real help whenever you need it. We usually respond in under 5 minutes.",
-    link: "/panel/tickets/new",
+    link: "/contact",
     linkText: "Open a Ticket",
     gradient: "from-blue-500/20 to-cyan-500/20",
     iconColor: "text-cyan-400",

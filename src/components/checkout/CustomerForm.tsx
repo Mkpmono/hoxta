@@ -14,7 +14,7 @@ import {
 import { ArrowRight, Loader2, User, UserPlus, LogIn } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
-import { apiClient } from "@/services/apiClient";
+
 
 export const customerSchema = z.object({
   firstName: z.string().min(2, "First name is required").max(50),
@@ -108,50 +108,7 @@ export function CustomerForm({ onSubmit, isLoading, initialData }: CustomerFormP
 
   const handleExistingCustomerLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!loginData.email || !loginData.password) {
-      setLoginError("Please enter your email and password");
-      return;
-    }
-    
-    setIsLoggingIn(true);
-    setLoginError("");
-    
-    try {
-      const result = await apiClient.login(loginData.email, loginData.password);
-      
-      if (result.ok && result.token) {
-        // Fetch client details to auto-fill form
-        const meResult = await apiClient.me();
-        if (meResult.ok && meResult.client) {
-          const client = meResult.client;
-          setFormData({
-            firstName: client.firstName || "",
-            lastName: client.lastName || "",
-            email: client.email || loginData.email,
-            phone: client.phone || "",
-            companyName: client.companyName || "",
-            address1: client.address1 || "",
-            address2: "",
-            city: client.city || "",
-            state: client.state || "",
-            postcode: client.postcode || "",
-            country: client.country || "",
-            vatNumber: "",
-            password: loginData.password,
-            confirmPassword: loginData.password,
-            acceptTerms: true,
-          });
-          toast.success("Logged in! Your details have been filled in.");
-          setCustomerType("new");
-        }
-      } else {
-        setLoginError("Invalid email or password");
-      }
-    } catch (error) {
-      setLoginError("Login failed. Please try again.");
-    } finally {
-      setIsLoggingIn(false);
-    }
+    setLoginError("Please use your WHMCS client area to manage existing orders.");
   };
 
   const handleSubmit = (e: React.FormEvent) => {

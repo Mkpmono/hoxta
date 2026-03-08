@@ -1,4 +1,4 @@
-import { Layout } from "@/components/layout/Layout";
+import { AdminLayout } from "@/components/panel/AdminLayout";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
@@ -7,9 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Pencil, Trash2, LogOut, Save, X, FileText, BookOpen, Upload, Image } from "lucide-react";
+import { Plus, Pencil, Trash2, Save, X, FileText, BookOpen, Upload, Image } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Link } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 
 type Tab = "articles" | "categories" | "blog";
@@ -207,21 +206,11 @@ export default function KBAdmin() {
   };
 
   return (
-    <Layout>
-      <section className="pt-28 pb-20">
-        <div className="container mx-auto px-4 max-w-4xl">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">Content Admin</h1>
-              <p className="text-sm text-muted-foreground">Manage KB articles, categories, and blog posts</p>
-            </div>
-            <div className="flex gap-2">
-              <Link to="/status-admin">
-                <Button variant="outline" size="sm">Status Admin</Button>
-              </Link>
-              <Button variant="ghost" size="sm" onClick={logout}><LogOut className="w-4 h-4" /></Button>
-            </div>
+    <AdminLayout>
+      <div className="max-w-4xl mx-auto">
+          <div className="mb-8">
+            <h1 className="text-2xl font-bold text-foreground">Content Admin</h1>
+            <p className="text-sm text-muted-foreground">Manage KB articles, categories, and blog posts</p>
           </div>
 
           {/* Tabs */}
@@ -433,8 +422,7 @@ export default function KBAdmin() {
               )}
             </>
           )}
-        </div>
-      </section>
-    </Layout>
+      </div>
+    </AdminLayout>
   );
 }

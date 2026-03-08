@@ -164,12 +164,14 @@ export function Header() {
           <div className="flex items-center gap-2 md:gap-4">
             <LanguageSwitcher />
             
-            <Link
-              to="/panel"
+            <a
+              href="https://billing.hoxta.com"
+              target="_blank"
+              rel="noopener noreferrer"
               className="hidden md:flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 shadow-[0_0_20px_rgba(25,195,255,0.3)] hover:shadow-[0_0_30px_rgba(25,195,255,0.5)]"
             >
               {t("nav.controlPanel")}
-            </Link>
+            </a>
             
             {/* Mobile Menu Button */}
             <button
@@ -262,9 +264,9 @@ export function Header() {
                   )}
                 </div>
               ))}
-              <Link to="/panel" className="block w-full btn-glow text-center mt-4">
+              <a href="https://billing.hoxta.com" target="_blank" rel="noopener noreferrer" className="block w-full btn-glow text-center mt-4">
                 {t("nav.controlPanel")}
-              </Link>
+              </a>
             </div>
           </motion.div>
         )}

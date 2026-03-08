@@ -2,58 +2,38 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  LayoutDashboard,
-  ShoppingCart,
-  MessageSquare,
-  Users,
+  BookOpen,
+  Activity,
   ShieldCheck,
   LogOut,
   Menu,
   X,
-  Palette,
   Bell,
   ChevronDown,
   Shield,
-  User,
 } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
-// Admin nav items - Clean, no WHMCS/API config
 const adminNavItems = [
-  { icon: LayoutDashboard, label: "Dashboard", href: "/admin" },
-  { icon: ShoppingCart, label: "Orders", href: "/admin/orders" },
-  { icon: MessageSquare, label: "Tickets", href: "/admin/tickets" },
-  { icon: Users, label: "Clients", href: "/admin/clients" },
-  { icon: ShieldCheck, label: "Visitor Logs", href: "/admin/visitors" },
-  { icon: Palette, label: "Brand & UI Settings", href: "/admin/settings" },
+  { icon: BookOpen, label: "Content (KB & Blog)", href: "/admin/content" },
+  { icon: Activity, label: "Status Monitors", href: "/admin/status" },
+  { icon: ShieldCheck, label: "DDoS & Visitors", href: "/admin/visitors" },
 ];
 
 export function AdminLayout({ children }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const { session, logout } = useAuth();
+  const { user, logout } = useAdminAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout();
-    navigate("/panel/login");
-  };
-
-  // Get role display text
-  const getRoleDisplay = () => {
-    switch (session.user?.role) {
-      case "owner":
-        return "Owner";
-      case "admin":
-        return "Administrator";
-      default:
-        return "User";
-    }
+  const handleLogout = async () => {
+    await logout();
+    navigate("/admin-login");
   };
 
   return (
@@ -80,11 +60,11 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="flex items-center justify-between p-4 border-b border-border/50">
-            <Link to="/" className="flex items-center gap-2">
+            <Link to="/" className="flex items-center gap-1">
               <span className="text-xl font-bold text-foreground">Ho</span>
               <span className="text-xl font-bold text-primary">x</span>
               <span className="text-xl font-bold text-foreground">ta</span>
-              <span className="px-2 py-0.5 text-xs font-bold bg-primary/20 text-primary rounded">ADMIN</span>
+              <span className="ml-2 px-2 py-0.5 text-xs font-bold bg-primary/20 text-primary rounded">ADMIN</span>
             </Link>
             <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-muted-foreground hover:text-foreground">
               <X className="w-5 h-5" />
@@ -113,17 +93,6 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             })}
           </nav>
 
-          {/* Switch to Client View */}
-          <div className="p-4 border-t border-border/50">
-            <Link
-              to="/panel"
-              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all"
-            >
-              <User className="w-4 h-4" />
-              Client View
-            </Link>
-          </div>
-
           {/* User Section */}
           <div className="p-4 border-t border-border/50">
             <div className="flex items-center gap-3 px-3 py-2">
@@ -131,8 +100,8 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 <Shield className="w-4 h-4 text-primary" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-foreground truncate">{session.user?.name}</p>
-                <p className="text-xs text-primary truncate">{getRoleDisplay()}</p>
+                <p className="text-sm font-medium text-foreground truncate">{user?.email || "Admin"}</p>
+                <p className="text-xs text-primary truncate">Administrator</p>
               </div>
             </div>
             <button
@@ -160,11 +129,6 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           <div className="flex-1" />
 
           <div className="flex items-center gap-4">
-            <button className="relative p-2 text-muted-foreground hover:text-foreground transition-colors">
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-destructive rounded-full" />
-            </button>
-
             <div className="relative">
               <button
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
@@ -173,7 +137,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center">
                   <Shield className="w-3.5 h-3.5 text-primary" />
                 </div>
-                <span className="hidden sm:block text-sm font-medium text-foreground">{session.user?.name}</span>
+                <span className="hidden sm:block text-sm font-medium text-foreground">{user?.email || "Admin"}</span>
                 <ChevronDown className="w-4 h-4 text-muted-foreground" />
               </button>
 
@@ -185,15 +149,6 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                     exit={{ opacity: 0, y: -10 }}
                     className="absolute right-0 mt-2 w-48 py-2 bg-card border border-border/50 rounded-lg shadow-xl"
                   >
-                    <Link
-                      to="/admin/settings"
-                      onClick={() => setUserMenuOpen(false)}
-                      className="flex items-center gap-2 px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                    >
-                      <Palette className="w-4 h-4" />
-                      Brand & UI Settings
-                    </Link>
-                    <hr className="my-2 border-border/50" />
                     <button
                       onClick={handleLogout}
                       className="flex items-center gap-2 w-full px-4 py-2 text-sm text-destructive hover:bg-destructive/10"

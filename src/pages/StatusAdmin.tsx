@@ -1,4 +1,4 @@
-import { Layout } from "@/components/layout/Layout";
+import { AdminLayout } from "@/components/panel/AdminLayout";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
@@ -6,9 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Pencil, Trash2, LogOut, Save, X, Activity } from "lucide-react";
+import { Plus, Pencil, Trash2, Save, X, Activity } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Link } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 
 interface Monitor {
@@ -69,19 +68,11 @@ export default function StatusAdmin() {
   };
 
   return (
-    <Layout>
-      <section className="pt-28 pb-20">
-        <div className="container mx-auto px-4 max-w-3xl">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">Status Admin</h1>
-              <p className="text-sm text-muted-foreground">Manage infrastructure monitors</p>
-            </div>
-            <div className="flex gap-2">
-              <Link to="/kb-admin"><Button variant="outline" size="sm">Content Admin</Button></Link>
-              <Button variant="ghost" size="sm" onClick={logout}><LogOut className="w-4 h-4" /></Button>
-            </div>
+    <AdminLayout>
+      <div className="max-w-3xl mx-auto">
+          <div className="mb-8">
+            <h1 className="text-2xl font-bold text-foreground">Status Admin</h1>
+            <p className="text-sm text-muted-foreground">Manage infrastructure monitors</p>
           </div>
 
           {loading ? (
@@ -147,8 +138,7 @@ export default function StatusAdmin() {
               </div>
             </div>
           )}
-        </div>
-      </section>
-    </Layout>
+      </div>
+    </AdminLayout>
   );
 }
