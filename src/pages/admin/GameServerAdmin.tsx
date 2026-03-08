@@ -210,6 +210,13 @@ export default function GameServerAdmin() {
                     </div>
                   </div>
                   <div className="flex gap-1">
+                    {s.is_published && (
+                      <a href={`/game-servers/${s.slug}`} target="_blank" rel="noopener noreferrer">
+                        <Button variant="ghost" size="icon" title="View Live Page">
+                          <ExternalLink className="w-4 h-4 text-primary" />
+                        </Button>
+                      </a>
+                    )}
                     <Button variant="ghost" size="icon" onClick={() => setEditing(s)}><Pencil className="w-4 h-4" /></Button>
                     <Button variant="ghost" size="icon" onClick={() => deleteServer(s.id)}><Trash2 className="w-4 h-4 text-red-400" /></Button>
                   </div>
