@@ -166,16 +166,24 @@ export default function KBAdmin() {
 
   const saveCategory = async () => {
     if (!editingCategory?.name || !editingCategory?.slug) return;
+
+    // Auto-translate before saving
+    let translations = editingCategory.translations;
+    const fields: Record<string, string> = {
+      name: editingCategory.name || "",
+      description: editingCategory.description || "",
+    };
+    const newTranslations = await translateFields(fields);
+    if (newTranslations) translations = newTranslations;
+
     const payload: any = {
       name: editingCategory.name,
       slug: editingCategory.slug,
       description: editingCategory.description || null,
       icon: editingCategory.icon || null,
       sort_order: editingCategory.sort_order ?? 0,
+      translations: translations || {},
     };
-    if (editingCategory.translations) {
-      payload.translations = editingCategory.translations;
-    }
 
     if (editingCategory.id) {
       const { error } = await supabase.from("kb_categories").update(payload).eq("id", editingCategory.id);
@@ -184,7 +192,7 @@ export default function KBAdmin() {
       const { error } = await supabase.from("kb_categories").insert(payload);
       if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
     }
-    toast({ title: "Saved!" });
+    toast({ title: "Saved & Translated! ✅" });
     setEditingCategory(null);
     fetchData();
   };
