@@ -154,13 +154,10 @@ export function AntiDDoSSection() {
 
               <ul className="space-y-3">
                 {features.map((feature, index) => (
-                  <motion.li
+                  <li
                     key={index}
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 }}
-                    viewport={{ once: true }}
                     className="flex items-center gap-3"
+                  >
                   >
                     <div className="p-1 rounded-full bg-primary/20">
                       <Check className="w-4 h-4 text-primary" />
