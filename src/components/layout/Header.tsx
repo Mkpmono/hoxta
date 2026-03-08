@@ -264,9 +264,9 @@ export function Header() {
                   )}
                 </div>
               ))}
-              <Link to="/panel" className="block w-full btn-glow text-center mt-4">
+              <a href="https://billing.hoxta.com" target="_blank" rel="noopener noreferrer" className="block w-full btn-glow text-center mt-4">
                 {t("nav.controlPanel")}
-              </Link>
+              </a>
             </div>
           </motion.div>
         )}
