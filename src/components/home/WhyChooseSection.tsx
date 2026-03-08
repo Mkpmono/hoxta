@@ -222,7 +222,6 @@ export function WhyChooseSection() {
 
         {/* CTAs */}
         <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-        >
           <Link to="/game-servers">
             <Button className="btn-glow group px-8">
               Explore Services
@@ -235,7 +234,7 @@ export function WhyChooseSection() {
               Contact Support
             </Button>
           </Link>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
