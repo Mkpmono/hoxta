@@ -110,7 +110,7 @@ const NotFound = () => {
                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
-            <Link to="/panel/tickets/new">
+            <Link to="/contact">
               <Button variant="outline" className="btn-outline px-8 py-6 text-lg">
                 <Headphones className="w-5 h-5 mr-2" />
                 Contact Support

@@ -313,7 +313,7 @@ const KnowledgeBase = () => {
                   <h3 className="text-lg font-semibold text-foreground mb-3">Need More Help?</h3>
                   <p className="text-sm text-muted-foreground mb-6">Can't find what you're looking for? Our support team is available 24/7.</p>
                   <div className="space-y-3">
-                    <Link to="/panel/tickets/new" className="block">
+                    <Link to="/contact" className="block">
                       <Button className="w-full btn-glow">Open Support Ticket</Button>
                     </Link>
                     <Link to="/contact" className="block">

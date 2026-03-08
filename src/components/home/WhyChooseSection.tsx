@@ -268,7 +268,7 @@ export function WhyChooseSection() {
               <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
           </Link>
-          <Link to="/panel/tickets/new">
+          <Link to="/contact">
             <Button variant="outline" className="btn-outline px-8">
               <Headphones className="w-4 h-4 mr-2" />
               Contact Support
