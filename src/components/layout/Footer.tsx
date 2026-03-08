@@ -66,7 +66,7 @@ const paymentMethods = [
   },
 ];
 
-export function Footer() {
+export const Footer = forwardRef<HTMLElement>(function Footer(_props, ref) {
   const { t } = useTranslation();
   
   const footerLinks = {
