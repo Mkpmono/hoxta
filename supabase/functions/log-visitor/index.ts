@@ -69,8 +69,10 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const { ip_address, country_code, isp, user_agent, is_bot, bot_reasons, canvas_fingerprint, ray_id, result } = body;
 
+    const cleanIp = ip_address || "Unknown";
+
     const { error } = await supabase.from("visitor_logs").insert({
-      ip_address: ip_address || "Unknown",
+      ip_address: cleanIp,
       country_code: country_code || null,
       isp: isp || null,
       user_agent: user_agent || null,
@@ -82,6 +84,15 @@ Deno.serve(async (req) => {
     });
 
     if (error) throw error;
+
+    // Auto-block detected bots
+    if (is_bot && cleanIp !== "Unknown" && cleanIp !== "Unable to detect") {
+      const reasons = Array.isArray(bot_reasons) ? bot_reasons.join(", ") : "bot-detected";
+      await supabase.from("blocked_ips").upsert(
+        { ip_address: cleanIp, reason: `Auto-blocked: ${reasons}` },
+        { onConflict: "ip_address" }
+      );
+    }
 
     return new Response(JSON.stringify({ ok: true }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
