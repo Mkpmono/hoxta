@@ -110,12 +110,7 @@ export function CTASection() {
         </div>
 
         {/* Main CTA */}
-        <motion.div
-          initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
-          whileInView={prefersReducedMotion ? {} : { opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          viewport={{ once: true }}
-          className="text-center"
+        <div className="text-center">
         >
           <div className="inline-flex flex-col sm:flex-row items-center gap-4">
             <Link
