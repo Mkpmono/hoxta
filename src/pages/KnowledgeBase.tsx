@@ -295,7 +295,7 @@ const KnowledgeBase = () => {
                         <div className="flex items-center gap-4 min-w-0">
                           <BookOpen className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
                           <div className="min-w-0">
-                            <h4 className="font-medium text-foreground group-hover:text-primary transition-colors truncate">{article.title}</h4>
+                            <h4 className="font-medium text-foreground group-hover:text-primary transition-colors truncate">{getTranslatedField(article, "title")}</h4>
                             <span className="text-sm text-muted-foreground">{getCategoryName(article.category_id)}</span>
                           </div>
                         </div>

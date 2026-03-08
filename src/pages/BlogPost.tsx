@@ -185,7 +185,7 @@ export default function BlogPost() {
                   [&_td]:border [&_td]:border-border/50 [&_td]:p-2
                   [&>strong]:text-foreground [&>strong]:font-semibold"
                 dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(markdownToHtml(post.content), {
+                    __html: DOMPurify.sanitize(markdownToHtml(getTranslatedField(post, "content")), {
                     ALLOWED_TAGS: ['h1', 'h2', 'h3', 'p', 'strong', 'em', 'ul', 'ol', 'li', 'pre', 'code', 'blockquote', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'a', 'br', 'img'],
                     ALLOWED_ATTR: ['href', 'target', 'rel', 'src', 'alt', 'class']
                   })

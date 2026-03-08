@@ -173,8 +173,8 @@ export default function Blog() {
                       <div className="flex items-center gap-2 mb-3">
                         <Badge variant="outline" className="text-xs border-border/50">{post.category}</Badge>
                       </div>
-                      <h3 className="font-semibold text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2">{post.title}</h3>
-                      <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{post.excerpt}</p>
+                      <h3 className="font-semibold text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2">{getTranslatedField(post, "title")}</h3>
+                      <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{getTranslatedField(post, "excerpt")}</p>
                       <div className="flex items-center justify-between text-xs text-muted-foreground">
                         <div className="flex items-center gap-3">
                           <span className="flex items-center gap-1"><User className="w-3 h-3" />{post.author}</span>
