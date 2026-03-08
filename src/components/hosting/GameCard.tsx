@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import { Monitor, Apple, ShoppingCart, Eye, Gamepad2 } from "lucide-react";
+import { Monitor, ShoppingCart, Eye, Gamepad2, Terminal } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { GameServer } from "@/data/gameServersData";
 import { gameServerProducts } from "@/data/products";
