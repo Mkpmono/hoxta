@@ -73,7 +73,7 @@ export default function KBAdmin() {
       supabase.from("kb_articles").select("*").order("created_at", { ascending: false }),
       supabase.from("blog_posts").select("*").order("created_at", { ascending: false }),
     ]);
-    setCategories(catRes.data || []);
+    setCategories((catRes.data || []) as unknown as KBCategory[]);
     setArticles((artRes.data || []) as unknown as KBArticle[]);
     setBlogPosts((blogRes.data || []) as unknown as BlogPost[]);
     setLoading(false);
