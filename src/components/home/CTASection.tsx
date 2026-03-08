@@ -131,7 +131,7 @@ export function CTASection() {
           <p className="text-sm text-muted-foreground mt-6">
             No credit card required • Instant setup • 24/7 support
           </p>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

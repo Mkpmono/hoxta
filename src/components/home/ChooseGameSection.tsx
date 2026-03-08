@@ -277,7 +277,7 @@ export function ChooseGameSection() {
             Browse All Games
             <ChevronRight className="w-4 h-4" />
           </Link>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
