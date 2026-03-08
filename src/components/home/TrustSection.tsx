@@ -139,7 +139,7 @@ export function TrustSection() {
               <ExternalLink className="w-4 h-4" />
               View All Reviews
             </a>
-          </motion.div>
+          </div>
 
           {/* Testimonials Carousel */}
           <div
