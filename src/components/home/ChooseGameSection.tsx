@@ -148,7 +148,6 @@ export function ChooseGameSection() {
         <div
           className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10"
         >
-        >
           <div>
             <div className="flex items-center gap-2 mb-3">
               <Gamepad2 className="w-5 h-5 text-primary" />
