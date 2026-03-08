@@ -126,8 +126,8 @@ export default function KBArticle() {
               <span className="flex items-center gap-1"><Eye className="w-3.5 h-3.5" />{article.views}</span>
               <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{new Date(article.updated_at).toLocaleDateString()}</span>
             </div>
-            <h1 className="text-3xl font-bold text-foreground mb-6">{article.title}</h1>
-            <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
+            <h1 className="text-3xl font-bold text-foreground mb-6">{getTranslatedField(article, "title")}</h1>
+            <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(markdownToHtml(getTranslatedField(article, "content")), {
           </div>
 
           <div className="mt-6">
