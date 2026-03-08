@@ -1,5 +1,6 @@
 import { useParams, Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { getTranslatedField } from "@/lib/translations";
 import { Layout } from "@/components/layout/Layout";
 import { motion } from "framer-motion";
 import { Gamepad2, Shield, Zap, Globe, Settings, HardDrive, Clock, Check, Server } from "lucide-react";
