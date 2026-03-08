@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { Star, Shield } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { type Review } from '@/services/reviewsService';
