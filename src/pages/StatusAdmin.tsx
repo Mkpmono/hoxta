@@ -1,4 +1,4 @@
-import { Layout } from "@/components/layout/Layout";
+import { AdminLayout } from "@/components/panel/AdminLayout";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
