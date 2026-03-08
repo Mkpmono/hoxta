@@ -163,7 +163,7 @@ export function AntiDDoSSection() {
                       <Check className="w-4 h-4 text-primary" />
                     </div>
                     <span className="text-foreground">{feature}</span>
-                  </motion.li>
+                  </li>
                 ))}
               </ul>
             </div>
