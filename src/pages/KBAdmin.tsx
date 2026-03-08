@@ -207,10 +207,8 @@ export default function KBAdmin() {
   };
 
   return (
-    <Layout>
-      <section className="pt-28 pb-20">
-        <div className="container mx-auto px-4 max-w-4xl">
-          {/* Header */}
+    <AdminLayout>
+      <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-2xl font-bold text-foreground">Content Admin</h1>
