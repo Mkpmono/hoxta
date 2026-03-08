@@ -199,13 +199,10 @@ export function ChooseGameSection() {
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
             {games.map((game, index) => (
-              <motion.div
+              <div
                 key={game.id}
-                initial={prefersReducedMotion ? {} : { opacity: 0, y: 30 }}
-                whileInView={prefersReducedMotion ? {} : { opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.05 }}
-                viewport={{ once: true }}
                 className="flex-shrink-0 w-[280px] snap-start"
+              >
               >
                 <div className="group block relative rounded-2xl overflow-hidden bg-card border border-border/50 transition-all duration-300 hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1">
                   {/* Image */}
