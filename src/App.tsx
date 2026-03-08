@@ -52,6 +52,7 @@ const App = () => (
         <Sonner />
         <DiscountPopup />
         <BrowserRouter>
+        <ScrollToTop />
         <DDoSGate>
           <Routes>
             {/* Public Routes */}
