@@ -1,6 +1,7 @@
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { StaticBackground } from "../ui/StaticBackground";
+import { PageTransition } from "./PageTransition";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -13,7 +14,9 @@ export function Layout({ children, showWaves = true }: LayoutProps) {
       {/* NOTE: intentionally static, no SVG/canvas/animation */}
       {showWaves && <StaticBackground />}
       <Header />
-      <main className="flex-1 pt-16 md:pt-20">{children}</main>
+      <main className="flex-1 pt-16 md:pt-20">
+        <PageTransition>{children}</PageTransition>
+      </main>
       <Footer />
     </div>
   );
