@@ -21,6 +21,7 @@ interface KBCategory {
   description: string | null;
   icon: string | null;
   sort_order: number | null;
+  translations?: Record<string, any>;
 }
 
 interface KBArticle {
