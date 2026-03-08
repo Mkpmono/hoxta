@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { brand } from "@/config/brand";
@@ -65,7 +66,7 @@ const paymentMethods = [
   },
 ];
 
-export function Footer() {
+export const Footer = forwardRef<HTMLElement>(function Footer(_props, ref) {
   const { t } = useTranslation();
   
   const footerLinks = {
@@ -94,7 +95,7 @@ export function Footer() {
   };
 
   return (
-    <footer className="relative bg-background-secondary border-t border-border/50">
+    <footer ref={ref} className="relative bg-background-secondary border-t border-border/50">
       <div className="container mx-auto px-4 md:px-6 py-12 md:py-16">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 lg:gap-12">
           {/* Services */}
@@ -256,4 +257,4 @@ export function Footer() {
       </div>
     </footer>
   );
-}
+});
