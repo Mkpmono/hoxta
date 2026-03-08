@@ -8,9 +8,9 @@ import {
   LogOut,
   Menu,
   X,
-  Bell,
   ChevronDown,
   Shield,
+  ExternalLink,
 } from "lucide-react";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 
