@@ -165,7 +165,7 @@ export function ChooseGameSection() {
             </p>
           </div>
 
-        </div>
+        </motion.div>
 
         {/* Game Cards Carousel */}
         <div className="relative group/carousel">

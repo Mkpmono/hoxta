@@ -82,7 +82,7 @@ export function CTASection() {
           <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
             Have questions or need a custom solution? We're here to help.
           </p>
-        </div>
+        </motion.div>
 
         {/* CTA Cards Grid */}
         <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-12">

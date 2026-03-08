@@ -168,7 +168,7 @@ export function AntiDDoSSection() {
               </ul>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

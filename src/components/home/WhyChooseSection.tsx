@@ -198,7 +198,7 @@ export function WhyChooseSection() {
             Premium hardware, global coverage, and proactive monitoring —
             designed for demanding workloads that need maximum uptime.
           </p>
-        </div>
+        </motion.div>
 
         {/* Stats */}
         <InfrastructureStats />
