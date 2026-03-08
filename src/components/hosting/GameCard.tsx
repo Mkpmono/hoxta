@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import { Monitor, Apple, ShoppingCart, Eye, Gamepad2 } from "lucide-react";
+import { Monitor, ShoppingCart, Eye, Gamepad2, Terminal } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { GameServer } from "@/data/gameServersData";
 import { gameServerProducts } from "@/data/products";
@@ -87,13 +87,15 @@ export function GameCard({ game, index }: GameCardProps) {
             {/* OS Badge */}
             <div className="absolute top-3 right-3 flex gap-1">
               {(game.os === "windows" || game.os === "both") && (
-                <div className="p-1.5 rounded-md bg-background/80 backdrop-blur-sm">
-                  <Monitor className="w-3.5 h-3.5 text-muted-foreground" />
+                <div className="px-1.5 py-1 rounded-md bg-background/80 backdrop-blur-sm flex items-center gap-1">
+                  <Monitor className="w-3 h-3 text-muted-foreground" />
+                  <span className="text-[10px] font-medium text-muted-foreground">Win</span>
                 </div>
               )}
               {(game.os === "linux" || game.os === "both") && (
-                <div className="p-1.5 rounded-md bg-background/80 backdrop-blur-sm">
-                  <Apple className="w-3.5 h-3.5 text-muted-foreground" />
+                <div className="px-1.5 py-1 rounded-md bg-background/80 backdrop-blur-sm flex items-center gap-1">
+                  <Terminal className="w-3 h-3 text-muted-foreground" />
+                  <span className="text-[10px] font-medium text-muted-foreground">Linux</span>
                 </div>
               )}
             </div>
