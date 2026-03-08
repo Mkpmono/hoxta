@@ -202,7 +202,6 @@ export function ChooseGameSection() {
                 key={game.id}
                 className="flex-shrink-0 w-[280px] snap-start"
               >
-              >
                 <div className="group block relative rounded-2xl overflow-hidden bg-card border border-border/50 transition-all duration-300 hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1">
                   {/* Image */}
                   <Link to={`/game-servers/${game.id}`}>
