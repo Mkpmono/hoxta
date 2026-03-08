@@ -144,8 +144,8 @@ export default function Blog() {
                     </div>
                     <div className="absolute bottom-0 left-0 right-0 p-6">
                       <Badge className="mb-3 bg-primary/20 text-primary border-0">{post.category}</Badge>
-                      <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">{post.title}</h3>
-                      <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{post.excerpt}</p>
+                      <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">{getTranslatedField(post, "title")}</h3>
+                      <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{getTranslatedField(post, "excerpt")}</p>
                       <div className="flex items-center gap-4 text-xs text-muted-foreground">
                         <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{new Date(post.created_at).toLocaleDateString()}</span>
                         <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{post.read_time || "5 min read"}</span>
