@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Pencil, Trash2, Save, X, Gamepad2, Languages, Loader2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Save, X, Gamepad2, Languages, Loader2, Eye, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { useTranslateContent } from "@/hooks/useTranslateContent";
