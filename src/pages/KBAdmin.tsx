@@ -111,6 +111,17 @@ export default function KBAdmin() {
   // ========= ARTICLE CRUD =========
   const saveArticle = async () => {
     if (!editingArticle?.title || !editingArticle?.slug) return;
+    
+    // Auto-translate before saving
+    let translations = editingArticle.translations;
+    const fields: Record<string, string> = {
+      title: editingArticle.title || "",
+      excerpt: editingArticle.excerpt || "",
+      content: editingArticle.content || "",
+    };
+    const newTranslations = await translateFields(fields);
+    if (newTranslations) translations = newTranslations;
+
     const payload: any = {
       title: editingArticle.title,
       slug: editingArticle.slug,
@@ -119,10 +130,8 @@ export default function KBAdmin() {
       category_id: editingArticle.category_id || null,
       is_published: editingArticle.is_published ?? false,
       is_featured: editingArticle.is_featured ?? false,
+      translations: translations || {},
     };
-    if (editingArticle.translations) {
-      payload.translations = editingArticle.translations;
-    }
 
     if (editingArticle.id) {
       const { error } = await supabase.from("kb_articles").update(payload).eq("id", editingArticle.id);
@@ -131,7 +140,7 @@ export default function KBAdmin() {
       const { error } = await supabase.from("kb_articles").insert(payload);
       if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
     }
-    toast({ title: "Saved!" });
+    toast({ title: "Saved & Translated! ✅" });
     setEditingArticle(null);
     fetchData();
   };
@@ -157,16 +166,24 @@ export default function KBAdmin() {
 
   const saveCategory = async () => {
     if (!editingCategory?.name || !editingCategory?.slug) return;
+
+    // Auto-translate before saving
+    let translations = editingCategory.translations;
+    const fields: Record<string, string> = {
+      name: editingCategory.name || "",
+      description: editingCategory.description || "",
+    };
+    const newTranslations = await translateFields(fields);
+    if (newTranslations) translations = newTranslations;
+
     const payload: any = {
       name: editingCategory.name,
       slug: editingCategory.slug,
       description: editingCategory.description || null,
       icon: editingCategory.icon || null,
       sort_order: editingCategory.sort_order ?? 0,
+      translations: translations || {},
     };
-    if (editingCategory.translations) {
-      payload.translations = editingCategory.translations;
-    }
 
     if (editingCategory.id) {
       const { error } = await supabase.from("kb_categories").update(payload).eq("id", editingCategory.id);
@@ -175,7 +192,7 @@ export default function KBAdmin() {
       const { error } = await supabase.from("kb_categories").insert(payload);
       if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
     }
-    toast({ title: "Saved!" });
+    toast({ title: "Saved & Translated! ✅" });
     setEditingCategory(null);
     fetchData();
   };
@@ -189,6 +206,17 @@ export default function KBAdmin() {
   // ========= BLOG CRUD =========
   const saveBlog = async () => {
     if (!editingBlog?.title || !editingBlog?.slug) return;
+
+    // Auto-translate before saving
+    let translations = editingBlog.translations;
+    const fields: Record<string, string> = {
+      title: editingBlog.title || "",
+      excerpt: editingBlog.excerpt || "",
+      content: editingBlog.content || "",
+    };
+    const newTranslations = await translateFields(fields);
+    if (newTranslations) translations = newTranslations;
+
     const payload: any = {
       title: editingBlog.title,
       slug: editingBlog.slug,
@@ -200,10 +228,8 @@ export default function KBAdmin() {
       is_featured: editingBlog.is_featured ?? false,
       tags: editingBlog.tags || [],
       image_url: editingBlog.image_url || null,
+      translations: translations || {},
     };
-    if (editingBlog.translations) {
-      payload.translations = editingBlog.translations;
-    }
 
     if (editingBlog.id) {
       const { error } = await supabase.from("blog_posts").update(payload).eq("id", editingBlog.id);
@@ -212,7 +238,7 @@ export default function KBAdmin() {
       const { error } = await supabase.from("blog_posts").insert(payload);
       if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
     }
-    toast({ title: "Saved!" });
+    toast({ title: "Saved & Translated! ✅" });
     setEditingBlog(null);
     fetchData();
   };
