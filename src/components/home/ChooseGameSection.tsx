@@ -145,11 +145,7 @@ export function ChooseGameSection() {
       
       <div className="container mx-auto px-4 md:px-6 relative">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          viewport={{ once: true }}
+        <div
           className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10"
         >
           <div>
@@ -165,7 +161,7 @@ export function ChooseGameSection() {
             </p>
           </div>
 
-        </motion.div>
+        </div>
 
         {/* Game Cards Carousel */}
         <div className="relative group/carousel">
@@ -202,12 +198,8 @@ export function ChooseGameSection() {
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
             {games.map((game, index) => (
-              <motion.div
+              <div
                 key={game.id}
-                initial={prefersReducedMotion ? {} : { opacity: 0, y: 30 }}
-                whileInView={prefersReducedMotion ? {} : { opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.05 }}
-                viewport={{ once: true }}
                 className="flex-shrink-0 w-[280px] snap-start"
               >
                 <div className="group block relative rounded-2xl overflow-hidden bg-card border border-border/50 transition-all duration-300 hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1">
@@ -267,19 +259,13 @@ export function ChooseGameSection() {
                     </div>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
 
         {/* View All Link */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          viewport={{ once: true }}
-          className="text-center mt-10"
-        >
+        <div className="text-center mt-10">
           <Link
             to="/game-servers"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-card/80 border border-border/50 text-foreground font-medium hover:border-primary/50 hover:text-primary transition-all duration-200"
@@ -288,7 +274,7 @@ export function ChooseGameSection() {
             Browse All Games
             <ChevronRight className="w-4 h-4" />
           </Link>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

@@ -38,7 +38,7 @@ export function PageTransition({ children }: PageTransitionProps) {
       variants={pageVariants}
       transition={pageTransition}
     >
-      {children}
+      <div>{children}</div>
     </motion.div>
   );
 }

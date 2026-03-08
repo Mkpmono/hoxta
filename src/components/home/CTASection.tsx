@@ -65,13 +65,7 @@ export function CTASection() {
       
       <div className="container mx-auto px-4 md:px-6 relative">
         {/* Header */}
-        <motion.div
-          initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
-          whileInView={prefersReducedMotion ? {} : { opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          viewport={{ once: true }}
-          className="text-center mb-12"
-        >
+        <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-4">
             <Zap className="w-4 h-4 text-primary" />
             <span className="text-sm font-medium text-primary">Get Started</span>
@@ -82,18 +76,12 @@ export function CTASection() {
           <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
             Have questions or need a custom solution? We're here to help.
           </p>
-        </motion.div>
+        </div>
 
         {/* CTA Cards Grid */}
         <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-12">
           {ctaCards.map((card, index) => (
-            <motion.div
-              key={card.title}
-              initial={prefersReducedMotion ? {} : { opacity: 0, y: 30 }}
-              whileInView={prefersReducedMotion ? {} : { opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              viewport={{ once: true }}
-            >
+            <div key={card.title}>
               <Link
                 to={card.link}
                 className="group block h-full p-6 rounded-2xl bg-card/80 backdrop-blur-sm border border-border/50 hover:border-primary/40 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1"
@@ -115,18 +103,12 @@ export function CTASection() {
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </div>
               </Link>
-            </motion.div>
+            </div>
           ))}
         </div>
 
         {/* Main CTA */}
-        <motion.div
-          initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
-          whileInView={prefersReducedMotion ? {} : { opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          viewport={{ once: true }}
-          className="text-center"
-        >
+        <div className="text-center">
           <div className="inline-flex flex-col sm:flex-row items-center gap-4">
             <Link
               to="/game-servers"
@@ -146,7 +128,7 @@ export function CTASection() {
           <p className="text-sm text-muted-foreground mt-6">
             No credit card required • Instant setup • 24/7 support
           </p>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

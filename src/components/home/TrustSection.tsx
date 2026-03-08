@@ -78,13 +78,7 @@ export function TrustSection() {
       <div className="container mx-auto px-4 md:px-6 relative">
         <div className="grid lg:grid-cols-[1fr,2fr] gap-12 items-start">
           {/* Left Content */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ once: true }}
-            className="lg:pr-8 lg:sticky lg:top-32"
-          >
+          <div className="lg:pr-8 lg:sticky lg:top-32">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-4">
               <Quote className="w-4 h-4 text-primary" />
               <span className="text-sm font-medium text-primary">Testimonials</span>
@@ -145,7 +139,7 @@ export function TrustSection() {
               <ExternalLink className="w-4 h-4" />
               View All Reviews
             </a>
-          </motion.div>
+          </div>
 
           {/* Testimonials Carousel */}
           <div
