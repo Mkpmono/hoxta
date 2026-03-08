@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { Search, Calendar, Clock, ArrowRight, Tag, User, TrendingUp } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-// Content fetched from PHP backend
+import { getTranslatedField } from "@/lib/translations";
 
 interface BlogPost {
   id: string;
