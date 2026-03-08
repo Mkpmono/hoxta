@@ -96,14 +96,20 @@ export function useGameServerBySlug(slug: string | undefined) {
           console.error("Error fetching game:", error);
           setGame(null);
         } else if (data) {
-          // Apply translations
-          const translatedGame = {
+          // Apply translations and cast types
+          const typedGame = {
             ...data,
-            title: getTranslatedField(data, "title") || data.title,
-            short_description: getTranslatedField(data, "short_description") || data.short_description,
-            full_description: getTranslatedField(data, "full_description") || data.full_description,
+            plans: (data.plans || []) as any[],
+            faqs: (data.faqs || []) as any[],
+            translations: data.translations as Record<string, Record<string, string>> | undefined,
           };
-          setGame(translatedGame);
+          const translatedGame = {
+            ...typedGame,
+            title: getTranslatedField(typedGame, "title") || data.title,
+            short_description: getTranslatedField(typedGame, "short_description") || data.short_description,
+            full_description: getTranslatedField(typedGame, "full_description") || data.full_description,
+          };
+          setGame(translatedGame as DBGameServer);
         }
       } catch (err) {
         console.error("Error fetching game:", err);
