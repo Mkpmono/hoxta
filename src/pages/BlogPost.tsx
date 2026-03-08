@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import DOMPurify from "dompurify";
-// Content fetched from PHP backend
+import { getTranslatedField } from "@/lib/translations";
 
 interface BlogPostData {
   id: string;
