@@ -212,35 +212,20 @@ export function WhyChooseSection() {
         </div>
 
         {/* Trust badges */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          viewport={{ once: true }}
-          className="flex flex-wrap justify-center items-center gap-4 md:gap-8 mb-12"
-        >
+        <div className="flex flex-wrap justify-center items-center gap-4 md:gap-8 mb-12">
           {trustBadges.map((badge, index) => (
-            <motion.div
+            <div
               key={index}
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
-              viewport={{ once: true }}
               className="flex items-center gap-2 text-muted-foreground"
             >
               <badge.icon className="w-4 h-4 text-primary/70" />
               <span className="text-sm">{badge.label}</span>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
 
         {/* CTAs */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          viewport={{ once: true }}
-          className="flex flex-col sm:flex-row justify-center items-center gap-4"
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
         >
           <Link to="/game-servers">
             <Button className="btn-glow group px-8">
