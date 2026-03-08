@@ -62,6 +62,17 @@ export default function GameServerAdmin() {
 
   const saveServer = async () => {
     if (!editing?.title || !editing?.slug) return;
+
+    // Auto-translate before saving
+    let translations = editing.translations;
+    const fields: Record<string, string> = {
+      title: editing.title || "",
+      short_description: editing.short_description || "",
+      full_description: editing.full_description || "",
+    };
+    const newTranslations = await translateFields(fields);
+    if (newTranslations) translations = newTranslations;
+
     const payload: any = {
       title: editing.title,
       slug: editing.slug,
@@ -79,10 +90,8 @@ export default function GameServerAdmin() {
       hero_points: editing.hero_points || [],
       tags: editing.tags || [],
       sort_order: editing.sort_order ?? 0,
+      translations: translations || {},
     };
-    if (editing.translations) {
-      payload.translations = editing.translations;
-    }
 
     if (editing.id) {
       const { error } = await supabase.from("game_servers").update(payload).eq("id", editing.id);
@@ -91,7 +100,7 @@ export default function GameServerAdmin() {
       const { error } = await supabase.from("game_servers").insert(payload);
       if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
     }
-    toast({ title: "Saved!" });
+    toast({ title: "Saved & Translated! ✅" });
     setEditing(null);
     fetchData();
   };

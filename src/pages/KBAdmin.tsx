@@ -206,6 +206,17 @@ export default function KBAdmin() {
   // ========= BLOG CRUD =========
   const saveBlog = async () => {
     if (!editingBlog?.title || !editingBlog?.slug) return;
+
+    // Auto-translate before saving
+    let translations = editingBlog.translations;
+    const fields: Record<string, string> = {
+      title: editingBlog.title || "",
+      excerpt: editingBlog.excerpt || "",
+      content: editingBlog.content || "",
+    };
+    const newTranslations = await translateFields(fields);
+    if (newTranslations) translations = newTranslations;
+
     const payload: any = {
       title: editingBlog.title,
       slug: editingBlog.slug,
@@ -217,10 +228,8 @@ export default function KBAdmin() {
       is_featured: editingBlog.is_featured ?? false,
       tags: editingBlog.tags || [],
       image_url: editingBlog.image_url || null,
+      translations: translations || {},
     };
-    if (editingBlog.translations) {
-      payload.translations = editingBlog.translations;
-    }
 
     if (editingBlog.id) {
       const { error } = await supabase.from("blog_posts").update(payload).eq("id", editingBlog.id);
@@ -229,7 +238,7 @@ export default function KBAdmin() {
       const { error } = await supabase.from("blog_posts").insert(payload);
       if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
     }
-    toast({ title: "Saved!" });
+    toast({ title: "Saved & Translated! ✅" });
     setEditingBlog(null);
     fetchData();
   };
