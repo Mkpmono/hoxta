@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Pencil, Trash2, Save, X, Gamepad2, Languages, Loader2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Save, X, Gamepad2, Languages, Loader2, Eye, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { useTranslateContent } from "@/hooks/useTranslateContent";
@@ -183,7 +183,14 @@ export default function GameServerAdmin() {
               <div className="flex items-center gap-2"><Switch checked={editing.is_published ?? false} onCheckedChange={(v) => setEditing({ ...editing, is_published: v })} /><Label>Published</Label></div>
               <div className="flex items-center gap-2"><Switch checked={editing.popular ?? false} onCheckedChange={(v) => setEditing({ ...editing, popular: v })} /><Label>Popular</Label></div>
             </div>
-            <Button onClick={saveServer}><Save className="w-4 h-4 mr-1" /> Save Game Server</Button>
+            <div className="flex gap-3">
+              <Button onClick={saveServer}><Save className="w-4 h-4 mr-1" /> Save Game Server</Button>
+              {editing.id && editing.is_published && (
+                <a href={`/game-servers/${editing.slug}`} target="_blank" rel="noopener noreferrer">
+                  <Button variant="outline"><Eye className="w-4 h-4 mr-1" /> Preview Live</Button>
+                </a>
+              )}
+            </div>
           </div>
         ) : (
           <div>
@@ -210,6 +217,13 @@ export default function GameServerAdmin() {
                     </div>
                   </div>
                   <div className="flex gap-1">
+                    {s.is_published && (
+                      <a href={`/game-servers/${s.slug}`} target="_blank" rel="noopener noreferrer">
+                        <Button variant="ghost" size="icon" title="View Live Page">
+                          <ExternalLink className="w-4 h-4 text-primary" />
+                        </Button>
+                      </a>
+                    )}
                     <Button variant="ghost" size="icon" onClick={() => setEditing(s)}><Pencil className="w-4 h-4" /></Button>
                     <Button variant="ghost" size="icon" onClick={() => deleteServer(s.id)}><Trash2 className="w-4 h-4 text-red-400" /></Button>
                   </div>
