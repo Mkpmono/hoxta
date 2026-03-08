@@ -82,7 +82,6 @@ export function CTASection() {
         <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-12">
           {ctaCards.map((card, index) => (
             <div key={card.title}>
-            >
               <Link
                 to={card.link}
                 className="group block h-full p-6 rounded-2xl bg-card/80 backdrop-blur-sm border border-border/50 hover:border-primary/40 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1"
