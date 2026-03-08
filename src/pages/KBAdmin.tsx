@@ -409,7 +409,10 @@ export default function KBAdmin() {
                       <div key={c.id} className="glass-card p-4 rounded-xl flex items-center justify-between">
                         <div>
                           <span className="font-medium text-foreground">{c.icon} {c.name}</span>
-                          <p className="text-xs text-muted-foreground">{c.slug} · order: {c.sort_order}</p>
+                          <div className="flex items-center gap-3">
+                            <p className="text-xs text-muted-foreground">{c.slug} · order: {c.sort_order}</p>
+                            <TranslationStatus translations={c.translations} />
+                          </div>
                         </div>
                         <div className="flex gap-1">
                           <Button variant="ghost" size="icon" onClick={() => setEditingCategory(c)}><Pencil className="w-4 h-4" /></Button>
