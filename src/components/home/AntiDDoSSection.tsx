@@ -154,11 +154,7 @@ export function AntiDDoSSection() {
 
               <ul className="space-y-3">
                 {features.map((feature, index) => (
-                  <li
-                    key={index}
-                    className="flex items-center gap-3"
-                  >
-                  >
+                  <li key={index} className="flex items-center gap-3">
                     <div className="p-1 rounded-full bg-primary/20">
                       <Check className="w-4 h-4 text-primary" />
                     </div>
@@ -168,7 +164,7 @@ export function AntiDDoSSection() {
               </ul>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
