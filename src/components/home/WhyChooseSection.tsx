@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState } from "react";
 import { motion, useReducedMotion, useInView } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import { 
   Server, 
   Shield, 
@@ -38,6 +39,7 @@ function useAnimatedCounter(target: number, duration: number = 2000, isInView: b
 
 // Infrastructure stats with animated counters
 function InfrastructureStats() {
+  const { t } = useTranslation();
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   
@@ -47,10 +49,10 @@ function InfrastructureStats() {
   const latency = useAnimatedCounter(5, 1200, isInView);
 
   const stats = [
-    { value: `${uptime.toFixed(2)}%`, label: "Uptime SLA", suffix: "" },
-    { value: locations, label: "Global Locations", suffix: "+" },
-    { value: bandwidth, label: "Gbps Network", suffix: "+" },
-    { value: `<${latency}ms`, label: "Avg Latency", suffix: "" },
+    { value: `${uptime.toFixed(2)}%`, label: t("sections.uptimeSla"), suffix: "" },
+    { value: locations, label: t("sections.globalLocations"), suffix: "+" },
+    { value: bandwidth, label: t("sections.gbpsNetwork"), suffix: "+" },
+    { value: `<${latency}ms`, label: t("sections.avgLatency"), suffix: "" },
   ];
 
   return (
@@ -83,48 +85,8 @@ function SectionGlow() {
   );
 }
 
-// Feature cards data
-const infrastructureFeatures = [
-  {
-    icon: Server,
-    title: "Premium Hardware",
-    description: "Intel Xeon & AMD EPYC processors with ECC RAM and redundant power in Tier III+ datacenters.",
-    highlight: "99.99% Uptime",
-  },
-  {
-    icon: HardDrive,
-    title: "NVMe Storage",
-    description: "Ultra-fast NVMe SSDs with RAID — up to 7,000 MB/s reads and sub-millisecond latency.",
-    highlight: "7,000 MB/s",
-  },
-  {
-    icon: Globe,
-    title: "Global Network",
-    description: "12+ locations worldwide with direct peering to major ISPs for low latency everywhere.",
-    highlight: "12+ Locations",
-  },
-  {
-    icon: Shield,
-    title: "DDoS Protection",
-    description: "Multi-layer protection with 2.5 Tbps+ capacity. Game-specific filters and instant threat detection.",
-    highlight: "2.5 Tbps+",
-  },
-  {
-    icon: Zap,
-    title: "Instant Setup",
-    description: "One-click installs with automated provisioning. Your server is live in under 60 seconds.",
-    highlight: "< 60 Seconds",
-  },
-  {
-    icon: Headphones,
-    title: "24/7 Support",
-    description: "Our engineers are available around the clock. Average response under 15 minutes.",
-    highlight: "< 15 Min Response",
-  },
-];
-
 // Feature Card Component
-function FeatureCard({ feature, index }: { feature: typeof infrastructureFeatures[0]; index: number }) {
+function FeatureCard({ feature, index }: { feature: { icon: any; title: string; description: string; highlight: string }; index: number }) {
   return (
     <motion.div
       whileHover={{ y: -8, transition: { duration: 0.2 } }}
@@ -161,16 +123,55 @@ function FeatureCard({ feature, index }: { feature: typeof infrastructureFeature
   );
 }
 
-// Trust indicators
-const trustBadges = [
-  { icon: Lock, label: "SOC 2 Compliant" },
-  { icon: Activity, label: "24/7 Monitoring" },
-  { icon: Server, label: "Tier III+ DC" },
-  { icon: Shield, label: "ISO 27001" },
-];
-
 export function WhyChooseSection() {
+  const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const infrastructureFeatures = [
+    {
+      icon: Server,
+      title: t("sections.enterpriseHardware"),
+      description: t("sections.enterpriseHardwareDesc"),
+      highlight: "99.99% Uptime",
+    },
+    {
+      icon: HardDrive,
+      title: t("sections.nvmeStorage"),
+      description: t("sections.nvmeStorageDesc"),
+      highlight: "7,000 MB/s",
+    },
+    {
+      icon: Globe,
+      title: t("sections.globalNetwork"),
+      description: t("sections.globalNetworkDesc"),
+      highlight: "12+ Locations",
+    },
+    {
+      icon: Shield,
+      title: t("sections.ddosProtection"),
+      description: t("sections.ddosProtectionDesc"),
+      highlight: "2.5 Tbps+",
+    },
+    {
+      icon: Zap,
+      title: t("sections.instantDeployment"),
+      description: t("sections.instantDeploymentDesc"),
+      highlight: "< 60 Seconds",
+    },
+    {
+      icon: Headphones,
+      title: t("sections.expertSupport"),
+      description: t("sections.expertSupportDesc"),
+      highlight: "< 15 Min",
+    },
+  ];
+
+  const trustBadges = [
+    { icon: Lock, label: t("sections.soc2Compliant") },
+    { icon: Activity, label: t("sections.monitoring247") },
+    { icon: Server, label: t("sections.tierIiiDc") },
+    { icon: Shield, label: t("sections.iso27001") },
+  ];
 
   return (
     <section className="py-24 md:py-32 relative overflow-hidden">
@@ -187,16 +188,15 @@ export function WhyChooseSection() {
         >
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6">
             <Server className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium text-primary">Built for Performance</span>
+            <span className="text-sm font-medium text-primary">{t("sections.infrastructureBuiltFor")}</span>
           </div>
           
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6">
-            Reliable Hosting
-            <span className="block text-primary mt-2">You Can Count On</span>
+            {t("sections.enterpriseGradeHosting")}
+            <span className="block text-primary mt-2">{t("sections.youCanRelyOn")}</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Premium hardware, global coverage, and proactive monitoring —
-            designed for demanding workloads that need maximum uptime.
+            {t("sections.whyChooseDesc")}
           </p>
         </motion.div>
 
@@ -230,14 +230,14 @@ export function WhyChooseSection() {
         <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
           <Link to="/game-servers">
             <Button className="btn-glow group px-8">
-              Explore Services
+              {t("buttons.exploreServices")}
               <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
           </Link>
           <Link to="/contact">
             <Button variant="outline" className="btn-outline px-8">
               <Headphones className="w-4 h-4 mr-2" />
-              Contact Support
+              {t("buttons.contactSupport")}
             </Button>
           </Link>
         </div>

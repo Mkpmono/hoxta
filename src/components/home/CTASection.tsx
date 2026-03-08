@@ -1,44 +1,12 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { MessageSquare, Book, Mail, ArrowRight, Zap, Headphones } from "lucide-react";
 
-const ctaCards = [
-  {
-    icon: Headphones,
-    title: "24/7 Support",
-    description: "Real help whenever you need it. We usually respond in under 5 minutes.",
-    link: "/contact",
-    linkText: "Open a Ticket",
-    gradient: "from-blue-500/20 to-cyan-500/20",
-    iconColor: "text-cyan-400",
-  },
-  {
-    icon: Book,
-    title: "Knowledge Base",
-    description: "Tutorials, guides, and troubleshooting articles for quick self-service help.",
-    link: "/knowledge-base",
-    linkText: "Browse Articles",
-    gradient: "from-purple-500/20 to-pink-500/20",
-    iconColor: "text-purple-400",
-  },
-  {
-    icon: Mail,
-    title: "Custom Solutions",
-    description: "Need something specific? Let's chat about your requirements.",
-    link: "/contact",
-    linkText: "Contact Sales",
-    gradient: "from-amber-500/20 to-orange-500/20",
-    iconColor: "text-amber-400",
-  },
-];
-
 // REMOVED: The animated canvas network background has been removed.
-// This was causing visual confusion with the DDoS-specific infrastructure map.
-// Now using a simple static gradient background instead.
 function StaticBackground() {
   return (
     <div className="absolute inset-0 pointer-events-none">
-      {/* Subtle gradient glow - no dots/lines/network animation */}
       <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[150px]" />
       <div className="absolute bottom-1/4 right-1/3 w-[400px] h-[400px] bg-primary/3 rounded-full blur-[120px]" />
     </div>
@@ -46,21 +14,46 @@ function StaticBackground() {
 }
 
 export function CTASection() {
+  const { t } = useTranslation();
   const prefersReducedMotion = useReducedMotion();
 
-  // Diagnostic switches (safe in production):
-  // - ?disableCta=1 to disable the whole section
   const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
   const disableCta = params?.get("disableCta") === "1";
-
   if (disableCta) return null;
+
+  const ctaCards = [
+    {
+      icon: Headphones,
+      title: t("common.support247"),
+      description: t("sections.ctaSupport247Desc"),
+      link: "/contact",
+      linkText: t("sections.ctaOpenTicket"),
+      gradient: "from-blue-500/20 to-cyan-500/20",
+      iconColor: "text-cyan-400",
+    },
+    {
+      icon: Book,
+      title: t("footer.knowledgeBase"),
+      description: t("sections.ctaKbDesc"),
+      link: "/knowledge-base",
+      linkText: t("sections.ctaBrowseArticles"),
+      gradient: "from-purple-500/20 to-pink-500/20",
+      iconColor: "text-purple-400",
+    },
+    {
+      icon: Mail,
+      title: t("sections.ctaCustomTitle"),
+      description: t("sections.ctaCustomDesc"),
+      link: "/contact",
+      linkText: t("buttons.contactSales"),
+      gradient: "from-amber-500/20 to-orange-500/20",
+      iconColor: "text-amber-400",
+    },
+  ];
 
   return (
     <section className="py-20 md:py-28 relative overflow-hidden">
-      {/* Static Background - no network dots/lines */}
       <StaticBackground />
-      
-      {/* Gradient overlays */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-transparent to-background pointer-events-none" />
       
       <div className="container mx-auto px-4 md:px-6 relative">
@@ -74,13 +67,13 @@ export function CTASection() {
         >
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-4">
             <Zap className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium text-primary">Get Started</span>
+            <span className="text-sm font-medium text-primary">{t("buttons.getStarted")}</span>
           </div>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            Ready to <span className="text-primary">Level Up</span> Your Hosting?
+            {t("sections.readyToLevelUp")} <span className="text-primary">{t("sections.levelUp")}</span> {t("sections.readyToLevelUpSuffix")}
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-            Have questions or need a custom solution? We're here to help.
+            {t("sections.readyToLevelUpDesc")}
           </p>
         </motion.div>
 
@@ -92,7 +85,6 @@ export function CTASection() {
                 to={card.link}
                 className="group block h-full p-6 rounded-2xl bg-card/80 backdrop-blur-sm border border-border/50 hover:border-primary/40 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1"
               >
-                {/* Icon with gradient background */}
                 <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${card.gradient} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300`}>
                   <card.icon className={`w-7 h-7 ${card.iconColor}`} />
                 </div>
@@ -120,7 +112,7 @@ export function CTASection() {
               to="/game-servers"
               className="px-8 py-4 rounded-xl bg-primary text-primary-foreground font-semibold text-lg hover:bg-primary/90 transition-all duration-200 shadow-[0_0_30px_rgba(25,195,255,0.3)] hover:shadow-[0_0_40px_rgba(25,195,255,0.4)] flex items-center gap-2"
             >
-              Browse Game Servers
+              {t("buttons.browseGames")}
               <ArrowRight className="w-5 h-5" />
             </Link>
             <Link
@@ -128,11 +120,11 @@ export function CTASection() {
               className="px-8 py-4 rounded-xl border border-border/50 hover:border-primary/50 text-foreground font-semibold text-lg hover:text-primary transition-all duration-200 flex items-center gap-2"
             >
               <MessageSquare className="w-5 h-5" />
-              Talk to Sales
+              {t("buttons.talkToSales")}
             </Link>
           </div>
           <p className="text-sm text-muted-foreground mt-6">
-            No credit card required • Instant setup • 24/7 support
+            {t("sections.noCardRequired")}
           </p>
         </div>
       </div>

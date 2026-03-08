@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Gamepad2, ChevronLeft, ChevronRight, Flame, Star, Sparkles, ShoppingCart } from "lucide-react";
 import { gameCoverImages } from "@/assets/games";
 
@@ -9,10 +10,10 @@ interface Game {
   name: string;
   image: string;
   price: number;
-  badge: string | null;
+  badgeKey: string | null;
   badgeIcon: React.ReactNode;
   badgeColor: string;
-  planId: string; // First plan ID for direct checkout
+  planId: string;
 }
 
 const games: Game[] = [
@@ -21,7 +22,7 @@ const games: Game[] = [
     name: "Minecraft",
     image: gameCoverImages.minecraft,
     price: 3.00,
-    badge: "BESTSELLER",
+    badgeKey: "common.bestseller",
     badgeIcon: <Star className="w-3 h-3" />,
     badgeColor: "from-amber-500 to-orange-500",
     planId: "mc-starter",
@@ -31,7 +32,7 @@ const games: Game[] = [
     name: "FiveM",
     image: gameCoverImages.fivem,
     price: 19.00,
-    badge: "POPULAR",
+    badgeKey: "common.popular",
     badgeIcon: <Flame className="w-3 h-3" />,
     badgeColor: "from-red-500 to-pink-500",
     planId: "fivem-starter",
@@ -41,7 +42,7 @@ const games: Game[] = [
     name: "Rust",
     image: gameCoverImages.rust,
     price: 20.00,
-    badge: "HOT",
+    badgeKey: "common.hot",
     badgeIcon: <Flame className="w-3 h-3" />,
     badgeColor: "from-orange-500 to-red-500",
     planId: "rust-starter",
@@ -51,7 +52,7 @@ const games: Game[] = [
     name: "Counter-Strike 2",
     image: gameCoverImages.cs2,
     price: 8.00,
-    badge: null,
+    badgeKey: null,
     badgeIcon: null,
     badgeColor: "",
     planId: "cs2-starter",
@@ -61,7 +62,7 @@ const games: Game[] = [
     name: "Palworld",
     image: gameCoverImages.palworld,
     price: 12.00,
-    badge: "NEW",
+    badgeKey: "common.new",
     badgeIcon: <Sparkles className="w-3 h-3" />,
     badgeColor: "from-primary to-cyan-400",
     planId: "palworld-starter",
@@ -71,7 +72,7 @@ const games: Game[] = [
     name: "ARK: Survival",
     image: gameCoverImages.ark,
     price: 18.00,
-    badge: null,
+    badgeKey: null,
     badgeIcon: null,
     badgeColor: "",
     planId: "ark-starter",
@@ -81,7 +82,7 @@ const games: Game[] = [
     name: "Valheim",
     image: gameCoverImages.valheim,
     price: 6.00,
-    badge: null,
+    badgeKey: null,
     badgeIcon: null,
     badgeColor: "",
     planId: "valheim-starter",
@@ -91,7 +92,7 @@ const games: Game[] = [
     name: "DayZ",
     image: gameCoverImages.dayz,
     price: 25.00,
-    badge: null,
+    badgeKey: null,
     badgeIcon: null,
     badgeColor: "",
     planId: "dayz-starter",
@@ -99,6 +100,7 @@ const games: Game[] = [
 ];
 
 export function ChooseGameSection() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -140,7 +142,6 @@ export function ChooseGameSection() {
 
   return (
     <section className="py-20 md:py-28 relative overflow-hidden">
-      {/* Subtle gradient background */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background-secondary/30 to-background pointer-events-none" />
       
       <div className="container mx-auto px-4 md:px-6 relative">
@@ -155,16 +156,15 @@ export function ChooseGameSection() {
           <div>
             <div className="flex items-center gap-2 mb-3">
               <Gamepad2 className="w-5 h-5 text-primary" />
-              <span className="text-sm font-medium text-primary uppercase tracking-wider">Game Servers</span>
+              <span className="text-sm font-medium text-primary uppercase tracking-wider">{t("nav.games")}</span>
             </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
-              Choose Your Game
+              {t("sections.chooseGame")}
             </h2>
             <p className="text-muted-foreground mt-3 max-w-lg">
-              Launch your server in minutes with our optimized game hosting solutions.
+              {t("sections.chooseGameDesc")}
             </p>
           </div>
-
         </motion.div>
 
         {/* Game Cards Carousel */}
@@ -218,14 +218,13 @@ export function ChooseGameSection() {
                       <div className="absolute inset-0 bg-gradient-to-t from-card via-card/20 to-transparent" />
                       
                       {/* Badge */}
-                      {game.badge && (
+                      {game.badgeKey && (
                         <div className={`absolute top-3 left-3 px-2.5 py-1 rounded-lg text-xs font-bold text-white bg-gradient-to-r ${game.badgeColor} flex items-center gap-1 shadow-lg`}>
                           {game.badgeIcon}
-                          {game.badge}
+                          {t(game.badgeKey).toUpperCase()}
                         </div>
                       )}
 
-                      {/* Hover overlay glow */}
                       <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors duration-300" />
                     </div>
                   </Link>
@@ -238,11 +237,11 @@ export function ChooseGameSection() {
                       </h3>
                     </Link>
                     <div className="flex items-baseline gap-1.5 mb-4">
-                      <span className="text-xs text-muted-foreground">from</span>
+                      <span className="text-xs text-muted-foreground">{t("common.from").toLowerCase()}</span>
                       <span className="text-2xl font-bold text-primary">
                         ${game.price.toFixed(2)}
                       </span>
-                      <span className="text-xs text-muted-foreground">/ month</span>
+                      <span className="text-xs text-muted-foreground">/ {t("checkout.monthly").toLowerCase()}</span>
                     </div>
                     
                     {/* Action Buttons */}
@@ -251,14 +250,14 @@ export function ChooseGameSection() {
                         to={`/game-servers/${game.id}`}
                         className="flex-1 py-2.5 text-center rounded-lg text-sm font-medium btn-outline"
                       >
-                        View Plans
+                        {t("buttons.viewPlans")}
                       </Link>
                       <button
                         onClick={(e) => handleOrderNow(game, e)}
                         className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-sm font-medium btn-glow"
                       >
                         <ShoppingCart className="w-3.5 h-3.5" />
-                        Order
+                        {t("buttons.orderNow")}
                       </button>
                     </div>
                   </div>
@@ -275,7 +274,7 @@ export function ChooseGameSection() {
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-card/80 border border-border/50 text-foreground font-medium hover:border-primary/50 hover:text-primary transition-all duration-200"
           >
             <Gamepad2 className="w-4 h-4" />
-            Browse All Games
+            {t("sections.browseAllGames")}
             <ChevronRight className="w-4 h-4" />
           </Link>
         </div>
