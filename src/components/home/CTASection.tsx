@@ -82,12 +82,7 @@ export function CTASection() {
         {/* CTA Cards Grid */}
         <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-12">
           {ctaCards.map((card, index) => (
-            <motion.div
-              key={card.title}
-              initial={prefersReducedMotion ? {} : { opacity: 0, y: 30 }}
-              whileInView={prefersReducedMotion ? {} : { opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              viewport={{ once: true }}
+            <div key={card.title}>
             >
               <Link
                 to={card.link}
