@@ -14,7 +14,11 @@ export function AntiDDoSSection() {
   return (
     <section className="py-20 md:py-32 relative overflow-hidden">
       <div className="container mx-auto px-4 md:px-6">
-        <div
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "0px" }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
           className="relative rounded-3xl overflow-hidden border border-primary/10 p-8 md:p-12"
           style={{
             background: `
