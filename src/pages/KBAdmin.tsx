@@ -21,6 +21,7 @@ interface KBCategory {
   description: string | null;
   icon: string | null;
   sort_order: number | null;
+  translations?: Record<string, any>;
 }
 
 interface KBArticle {
@@ -72,7 +73,7 @@ export default function KBAdmin() {
       supabase.from("kb_articles").select("*").order("created_at", { ascending: false }),
       supabase.from("blog_posts").select("*").order("created_at", { ascending: false }),
     ]);
-    setCategories(catRes.data || []);
+    setCategories((catRes.data || []) as unknown as KBCategory[]);
     setArticles((artRes.data || []) as unknown as KBArticle[]);
     setBlogPosts((blogRes.data || []) as unknown as BlogPost[]);
     setLoading(false);
@@ -142,15 +143,30 @@ export default function KBAdmin() {
   };
 
   // ========= CATEGORY CRUD =========
+  const handleTranslateCategory = async () => {
+    if (!editingCategory?.name) return;
+    const fields: Record<string, string> = {
+      name: editingCategory.name || "",
+      description: editingCategory.description || "",
+    };
+    const translations = await translateFields(fields);
+    if (translations) {
+      setEditingCategory(prev => prev ? { ...prev, translations } : prev);
+    }
+  };
+
   const saveCategory = async () => {
     if (!editingCategory?.name || !editingCategory?.slug) return;
-    const payload = {
+    const payload: any = {
       name: editingCategory.name,
       slug: editingCategory.slug,
       description: editingCategory.description || null,
       icon: editingCategory.icon || null,
       sort_order: editingCategory.sort_order ?? 0,
     };
+    if (editingCategory.translations) {
+      payload.translations = editingCategory.translations;
+    }
 
     if (editingCategory.id) {
       const { error } = await supabase.from("kb_categories").update(payload).eq("id", editingCategory.id);
@@ -393,7 +409,10 @@ export default function KBAdmin() {
                       <div key={c.id} className="glass-card p-4 rounded-xl flex items-center justify-between">
                         <div>
                           <span className="font-medium text-foreground">{c.icon} {c.name}</span>
-                          <p className="text-xs text-muted-foreground">{c.slug} · order: {c.sort_order}</p>
+                          <div className="flex items-center gap-3">
+                            <p className="text-xs text-muted-foreground">{c.slug} · order: {c.sort_order}</p>
+                            <TranslationStatus translations={c.translations} />
+                          </div>
                         </div>
                         <div className="flex gap-1">
                           <Button variant="ghost" size="icon" onClick={() => setEditingCategory(c)}><Pencil className="w-4 h-4" /></Button>
@@ -410,8 +429,12 @@ export default function KBAdmin() {
                 <div className="glass-card p-6 rounded-xl space-y-4">
                   <div className="flex justify-between items-center">
                     <h2 className="font-semibold text-foreground">{editingCategory.id ? "Edit Category" : "New Category"}</h2>
-                    <Button variant="ghost" size="icon" onClick={() => setEditingCategory(null)}><X className="w-4 h-4" /></Button>
+                    <div className="flex items-center gap-2">
+                      <TranslateButton onClick={handleTranslateCategory} hasTranslations={!!editingCategory.translations && Object.keys(editingCategory.translations).length > 0} />
+                      <Button variant="ghost" size="icon" onClick={() => setEditingCategory(null)}><X className="w-4 h-4" /></Button>
+                    </div>
                   </div>
+                  <TranslationStatus translations={editingCategory.translations} />
                   <div className="grid grid-cols-2 gap-4">
                     <div><Label>Name</Label><Input value={editingCategory.name || ""} onChange={(e) => setEditingCategory({ ...editingCategory, name: e.target.value })} /></div>
                     <div><Label>Slug</Label><Input value={editingCategory.slug || ""} onChange={(e) => setEditingCategory({ ...editingCategory, slug: e.target.value })} /></div>

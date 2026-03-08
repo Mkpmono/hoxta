@@ -11,7 +11,7 @@ export function useTranslateContent() {
 
   const translateFields = async (
     fields: Record<string, string>,
-    sourceLang: string = "en"
+    sourceLang: string = "ro"
   ): Promise<Record<string, Record<string, string>> | null> => {
     setTranslating(true);
     try {

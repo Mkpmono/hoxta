@@ -1,5 +1,6 @@
 import { useParams, Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { getTranslatedField } from "@/lib/translations";
 import { Layout } from "@/components/layout/Layout";
 import { motion } from "framer-motion";
 import { Gamepad2, Shield, Zap, Globe, Settings, HardDrive, Clock, Check, Server } from "lucide-react";
@@ -35,13 +36,13 @@ export default function GameServerDetail() {
   const game = dbGame ? {
     id: dbGame.slug,
     slug: dbGame.slug,
-    title: dbGame.title,
+    title: getTranslatedField(dbGame, "title") || dbGame.title,
     coverImage: dbGame.cover_image_url || "",
     pricingDisplay: dbGame.pricing_display,
     priceValue: Number(dbGame.price_value),
     pricingUnit: dbGame.pricing_unit as any,
-    shortDescription: dbGame.short_description,
-    fullDescription: dbGame.full_description,
+    shortDescription: getTranslatedField(dbGame, "short_description") || dbGame.short_description,
+    fullDescription: getTranslatedField(dbGame, "full_description") || dbGame.full_description,
     tags: dbGame.tags || [],
     category: dbGame.category as any,
     os: dbGame.os as any,

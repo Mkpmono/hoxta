@@ -1,0 +1,1 @@
+ALTER TABLE public.kb_categories ADD COLUMN IF NOT EXISTS translations jsonb DEFAULT '{}'::jsonb;
