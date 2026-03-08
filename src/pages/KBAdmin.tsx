@@ -209,17 +209,9 @@ export default function KBAdmin() {
   return (
     <AdminLayout>
       <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">Content Admin</h1>
-              <p className="text-sm text-muted-foreground">Manage KB articles, categories, and blog posts</p>
-            </div>
-            <div className="flex gap-2">
-              <Link to="/status-admin">
-                <Button variant="outline" size="sm">Status Admin</Button>
-              </Link>
-              <Button variant="ghost" size="sm" onClick={logout}><LogOut className="w-4 h-4" /></Button>
-            </div>
+          <div className="mb-8">
+            <h1 className="text-2xl font-bold text-foreground">Content Admin</h1>
+            <p className="text-sm text-muted-foreground">Manage KB articles, categories, and blog posts</p>
           </div>
 
           {/* Tabs */}
