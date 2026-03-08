@@ -5,6 +5,7 @@ import {
   BookOpen,
   Activity,
   ShieldCheck,
+  Gamepad2,
   LogOut,
   Menu,
   X,
