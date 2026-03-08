@@ -5,6 +5,7 @@ import { Layout } from "@/components/layout/Layout";
 import { ArrowLeft, Clock, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DOMPurify from "dompurify";
+import { getTranslatedField } from "@/lib/translations";
 
 // Simple markdown to HTML converter
 function markdownToHtml(md: string): string {
