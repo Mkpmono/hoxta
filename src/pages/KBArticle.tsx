@@ -95,7 +95,8 @@ export default function KBArticle() {
     );
   }
 
-  const htmlContent = DOMPurify.sanitize(markdownToHtml(article.content), {
+  const translatedContent = getTranslatedField(article, "content");
+  const htmlContent = DOMPurify.sanitize(markdownToHtml(translatedContent), {
     ALLOWED_TAGS: ['h1', 'h2', 'h3', 'p', 'strong', 'em', 'ul', 'li', 'pre', 'code', 'a', 'img'],
     ALLOWED_ATTR: ['href', 'class', 'src', 'alt']
   });
