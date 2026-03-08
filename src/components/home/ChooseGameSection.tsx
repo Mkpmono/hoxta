@@ -145,8 +145,12 @@ export function ChooseGameSection() {
       
       <div className="container mx-auto px-4 md:px-6 relative">
         {/* Header */}
-        <div
+        <motion.div
           className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10"
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "0px" }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
         >
           <div>
             <div className="flex items-center gap-2 mb-3">
