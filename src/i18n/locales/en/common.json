@@ -1155,6 +1155,65 @@
       }
     }
   },
+  "hosting": {
+    "endsIn": "Ends in:",
+    "howItWorks": {
+      "title": "Get Started in Minutes",
+      "subtitle": "From signup to deployment, we've made the process simple and fast.",
+      "step1": "Choose Your Plan",
+      "step1Desc": "Select the perfect hosting plan that matches your requirements and budget.",
+      "step2": "Instant Checkout",
+      "step2Desc": "Complete your order securely with our streamlined payment process.",
+      "step3": "Deploy & Configure",
+      "step3Desc": "Your hosting is activated instantly with automatic setup and configuration.",
+      "step4": "Manage & Scale",
+      "step4Desc": "Use our intuitive control panel to manage and scale your services anytime."
+    },
+    "globalInfra": {
+      "title": "Global Infrastructure",
+      "subtitle": "Enterprise-grade infrastructure built for performance, reliability, and scale.",
+      "dataCenters": "Data Centers",
+      "avgLatency": "Avg Latency",
+      "networkUptime": "Network Uptime",
+      "ddosProtection": "DDoS Protection",
+      "capabilities": "Infrastructure Capabilities",
+      "anycast": "Anycast Network Architecture",
+      "nvmeNodes": "Enterprise-grade NVMe nodes",
+      "failover": "Automated failover & redundancy",
+      "tierIII": "Tier III+ datacenter standards",
+      "instantProvisioning": "Instant provisioning",
+      "lowLatency": "Low latency by design",
+      "builtInDdos": "Built-in DDoS protection",
+      "scalable": "Scalable on demand"
+    },
+    "finalCta": {
+      "title": "Ready to Get Started?",
+      "subtitle": "Join thousands of happy customers who trust Hoxta for their hosting. See the difference yourself.",
+      "getStarted": "Get Started Now",
+      "contactSales": "Contact Sales",
+      "moneyBack": "30-Day Money Back",
+      "uptimeSla": "99.9% Uptime SLA",
+      "support247": "24/7 Expert Support"
+    },
+    "managedServices": {
+      "badge": "Optional Add-ons",
+      "title": "Enhance with",
+      "titleHighlight": "Managed Services",
+      "subtitle": "Focus on your business while we handle the technical complexity. Add professional management services to any dedicated server.",
+      "contactText": "Contact us to customize your managed services package",
+      "managedSupport": "Managed Support",
+      "managedSupportDesc": "24/7 expert server management and monitoring",
+      "backupSolutions": "Backup Solutions",
+      "backupSolutionsDesc": "Automated backup with instant recovery",
+      "monitoring": "Monitoring",
+      "monitoringDesc": "Proactive monitoring and alerting",
+      "securityAddons": "Security Add-ons",
+      "securityAddonsDesc": "Enhanced protection for your server"
+    },
+    "planComparison": {
+      "features": "Features"
+    }
+  },
   "mockMode": {
     "banner": "Mock Mode – WHMCS not connected. Using demo data.",
     "demoCredentials": "Demo: client@demo.hoxta / Demo1234!"
