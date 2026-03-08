@@ -267,12 +267,7 @@ export function ChooseGameSection() {
         </div>
 
         {/* View All Link */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          viewport={{ once: true }}
-          className="text-center mt-10"
+        <div className="text-center mt-10">
         >
           <Link
             to="/game-servers"
