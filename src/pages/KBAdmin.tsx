@@ -111,6 +111,17 @@ export default function KBAdmin() {
   // ========= ARTICLE CRUD =========
   const saveArticle = async () => {
     if (!editingArticle?.title || !editingArticle?.slug) return;
+    
+    // Auto-translate before saving
+    let translations = editingArticle.translations;
+    const fields: Record<string, string> = {
+      title: editingArticle.title || "",
+      excerpt: editingArticle.excerpt || "",
+      content: editingArticle.content || "",
+    };
+    const newTranslations = await translateFields(fields);
+    if (newTranslations) translations = newTranslations;
+
     const payload: any = {
       title: editingArticle.title,
       slug: editingArticle.slug,
@@ -119,10 +130,8 @@ export default function KBAdmin() {
       category_id: editingArticle.category_id || null,
       is_published: editingArticle.is_published ?? false,
       is_featured: editingArticle.is_featured ?? false,
+      translations: translations || {},
     };
-    if (editingArticle.translations) {
-      payload.translations = editingArticle.translations;
-    }
 
     if (editingArticle.id) {
       const { error } = await supabase.from("kb_articles").update(payload).eq("id", editingArticle.id);
@@ -131,7 +140,7 @@ export default function KBAdmin() {
       const { error } = await supabase.from("kb_articles").insert(payload);
       if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
     }
-    toast({ title: "Saved!" });
+    toast({ title: "Saved & Translated! ✅" });
     setEditingArticle(null);
     fetchData();
   };
