@@ -146,8 +146,7 @@ export default function StatusAdmin() {
               </div>
             </div>
           )}
-        </div>
-      </section>
-    </Layout>
+      </div>
+    </AdminLayout>
   );
 }

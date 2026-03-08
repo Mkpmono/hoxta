@@ -14,7 +14,7 @@ import {
 import { ArrowRight, Loader2, User, UserPlus, LogIn } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
-import { apiClient } from "@/services/apiClient";
+
 
 export const customerSchema = z.object({
   firstName: z.string().min(2, "First name is required").max(50),

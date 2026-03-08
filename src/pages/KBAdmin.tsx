@@ -431,8 +431,7 @@ export default function KBAdmin() {
               )}
             </>
           )}
-        </div>
-      </section>
-    </Layout>
+      </div>
+    </AdminLayout>
   );
 }
