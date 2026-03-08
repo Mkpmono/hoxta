@@ -9,6 +9,7 @@ import {
   Globe, Database, Terminal, CreditCard, Pencil
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { getTranslatedField } from "@/lib/translations";
 import { Button } from "@/components/ui/button";
 
 const iconMap: Record<string, any> = {
