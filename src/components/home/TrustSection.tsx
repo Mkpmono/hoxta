@@ -1,19 +1,19 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Quote, ExternalLink } from "lucide-react";
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import useEmblaCarousel from "embla-carousel-react";
 import { useReviews } from "@/hooks/useReviews";
-// summary/isLoading/isPlaceholder kept for ReviewCard usage
 import { TrustpilotWidget } from "./TrustpilotWidget";
 import { ReviewCard } from "./ReviewCard";
 
 export function TrustSection() {
+  const { t } = useTranslation();
   const prefersReducedMotion = useReducedMotion();
   const [isPaused, setIsPaused] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const autoplayRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Fetch reviews from service (static placeholder for now)
   const { summary, reviews, isLoading, isPlaceholder } = useReviews();
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
@@ -81,14 +81,13 @@ export function TrustSection() {
           <div className="lg:pr-8 lg:sticky lg:top-32">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-4">
               <Quote className="w-4 h-4 text-primary" />
-              <span className="text-sm font-medium text-primary">Testimonials</span>
+              <span className="text-sm font-medium text-primary">{t("sections.testimonials")}</span>
             </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-              Trusted by Gamers <span className="text-primary">Worldwide</span>
+              {t("sections.trustedByGamers")} <span className="text-primary">{t("sections.worldwide")}</span>
             </h2>
             <p className="text-muted-foreground mb-6 max-w-md">
-              Join thousands of players who trust Hoxta for their gaming communities. 
-              With 99.9% uptime and 24/7 support, we keep your game running smoothly.
+              {t("sections.joinThousands")}
             </p>
 
             {/* Trustpilot Widget */}
@@ -137,7 +136,7 @@ export function TrustSection() {
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border/50 hover:border-primary/50 text-sm font-medium text-foreground hover:text-primary transition-all duration-200"
             >
               <ExternalLink className="w-4 h-4" />
-              View All Reviews
+              {t("sections.viewAllReviews")}
             </a>
           </div>
 

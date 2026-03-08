@@ -403,7 +403,19 @@
     "services": "Servicii",
     "usefulLinks": "Linkuri Utile",
     "company": "Companie",
-    "paymentMethods": "Metode de Plată"
+    "paymentMethods": "Metode de Plată",
+    "chooseGameDesc": "Lansează serverul tău în câteva minute cu soluțiile noastre optimizate de hosting pentru jocuri.",
+    "ctaSupport247Desc": "Ajutor real oricând ai nevoie. De obicei răspundem în mai puțin de 5 minute.",
+    "ctaKbDesc": "Tutoriale, ghiduri și articole de depanare pentru ajutor rapid.",
+    "ctaCustomTitle": "Soluții Personalizate",
+    "ctaCustomDesc": "Ai nevoie de ceva specific? Hai să discutăm cerințele tale.",
+    "ctaOpenTicket": "Deschide un Tichet",
+    "ctaBrowseArticles": "Răsfoiește Articolele",
+    "readyToLevelUp": "Gata să",
+    "levelUp": "Treci la Nivelul Următor",
+    "readyToLevelUpSuffix": "cu Hostingul Tău?",
+    "readyToLevelUpDesc": "Ai întrebări sau ai nevoie de o soluție personalizată? Suntem aici să te ajutăm.",
+    "whyChooseDesc": "Hardware premium, acoperire globală și monitorizare proactivă — proiectat pentru sarcini exigente care necesită uptime maxim."
   },
   "footer": {
     "company": "Companie",
