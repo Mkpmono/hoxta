@@ -403,7 +403,19 @@
     "services": "Services",
     "usefulLinks": "Useful Links",
     "company": "Company",
-    "paymentMethods": "Payment Methods"
+    "paymentMethods": "Payment Methods",
+    "chooseGameDesc": "Launch your server in minutes with our optimized game hosting solutions.",
+    "ctaSupport247Desc": "Real help whenever you need it. We usually respond in under 5 minutes.",
+    "ctaKbDesc": "Tutorials, guides, and troubleshooting articles for quick self-service help.",
+    "ctaCustomTitle": "Custom Solutions",
+    "ctaCustomDesc": "Need something specific? Let's chat about your requirements.",
+    "ctaOpenTicket": "Open a Ticket",
+    "ctaBrowseArticles": "Browse Articles",
+    "readyToLevelUp": "Ready to",
+    "levelUp": "Level Up",
+    "readyToLevelUpSuffix": "Your Hosting?",
+    "readyToLevelUpDesc": "Have questions or need a custom solution? We're here to help.",
+    "whyChooseDesc": "Premium hardware, global coverage, and proactive monitoring — designed for demanding workloads that need maximum uptime."
   },
   "footer": {
     "company": "Company",
