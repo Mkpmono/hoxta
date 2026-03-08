@@ -109,7 +109,6 @@ export function CTASection() {
 
         {/* Main CTA */}
         <div className="text-center">
-        >
           <div className="inline-flex flex-col sm:flex-row items-center gap-4">
             <Link
               to="/game-servers"

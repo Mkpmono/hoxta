@@ -266,7 +266,6 @@ export function ChooseGameSection() {
 
         {/* View All Link */}
         <div className="text-center mt-10">
-        >
           <Link
             to="/game-servers"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-card/80 border border-border/50 text-foreground font-medium hover:border-primary/50 hover:text-primary transition-all duration-200"
