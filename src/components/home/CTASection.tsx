@@ -65,7 +65,13 @@ export function CTASection() {
       
       <div className="container mx-auto px-4 md:px-6 relative">
         {/* Header */}
-        <div className="text-center mb-12">
+        <motion.div
+          className="text-center mb-12"
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "0px" }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+        >
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-4">
             <Zap className="w-4 h-4 text-primary" />
             <span className="text-sm font-medium text-primary">Get Started</span>
