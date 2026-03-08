@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingCart, Eye, Gamepad2 } from "lucide-react";
+import { ShoppingCart, Eye, Gamepad2, Terminal } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { GameServer } from "@/data/gameServersData";
 import { gameServerProducts } from "@/data/products";
@@ -83,8 +83,14 @@ export function GameCard({ game, index }: GameCardProps) {
                 {t("common.popular")}
               </div>
             )}
-            
-            {/* OS Badge */}
+
+            {/* Ubuntu Badge */}
+            <div className="absolute top-3 right-3">
+              <div className="px-2 py-1 rounded-md bg-background/80 backdrop-blur-sm flex items-center gap-1">
+                <Terminal className="w-3 h-3 text-orange-400" />
+                <span className="text-[10px] font-semibold text-muted-foreground">Ubuntu</span>
+              </div>
+            </div>
 
             {/* Price Overlay */}
             <div className="absolute bottom-3 left-3">
