@@ -128,7 +128,7 @@ export default function BlogPost() {
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="max-w-4xl mx-auto">
             <Badge className="mb-4 bg-primary/20 text-primary border-0">{post.category}</Badge>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6 leading-tight">{post.title}</h1>
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6 leading-tight">{getTranslatedField(post, "title")}</h1>
 
             <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-8">
               <div className="flex items-center gap-2">
