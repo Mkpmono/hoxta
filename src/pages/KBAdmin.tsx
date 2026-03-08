@@ -429,8 +429,12 @@ export default function KBAdmin() {
                 <div className="glass-card p-6 rounded-xl space-y-4">
                   <div className="flex justify-between items-center">
                     <h2 className="font-semibold text-foreground">{editingCategory.id ? "Edit Category" : "New Category"}</h2>
-                    <Button variant="ghost" size="icon" onClick={() => setEditingCategory(null)}><X className="w-4 h-4" /></Button>
+                    <div className="flex items-center gap-2">
+                      <TranslateButton onClick={handleTranslateCategory} hasTranslations={!!editingCategory.translations && Object.keys(editingCategory.translations).length > 0} />
+                      <Button variant="ghost" size="icon" onClick={() => setEditingCategory(null)}><X className="w-4 h-4" /></Button>
+                    </div>
                   </div>
+                  <TranslationStatus translations={editingCategory.translations} />
                   <div className="grid grid-cols-2 gap-4">
                     <div><Label>Name</Label><Input value={editingCategory.name || ""} onChange={(e) => setEditingCategory({ ...editingCategory, name: e.target.value })} /></div>
                     <div><Label>Slug</Label><Input value={editingCategory.slug || ""} onChange={(e) => setEditingCategory({ ...editingCategory, slug: e.target.value })} /></div>
