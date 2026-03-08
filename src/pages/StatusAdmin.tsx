@@ -69,9 +69,8 @@ export default function StatusAdmin() {
   };
 
   return (
-    <Layout>
-      <section className="pt-28 pb-20">
-        <div className="container mx-auto px-4 max-w-3xl">
+    <AdminLayout>
+      <div className="max-w-3xl mx-auto">
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <div>
