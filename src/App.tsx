@@ -95,6 +95,7 @@ const App = () => (
             {/* Admin Panel (Protected) */}
             <Route path="/admin/content" element={<AdminProtectedRoute><KBAdmin /></AdminProtectedRoute>} />
             <Route path="/admin/games" element={<AdminProtectedRoute><GameServerAdmin /></AdminProtectedRoute>} />
+            <Route path="/admin/translations" element={<AdminProtectedRoute><TranslationsAdmin /></AdminProtectedRoute>} />
             <Route path="/admin/status" element={<AdminProtectedRoute><StatusAdmin /></AdminProtectedRoute>} />
             <Route path="/admin/visitors" element={<AdminProtectedRoute><VisitorLogs /></AdminProtectedRoute>} />
             

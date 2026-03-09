@@ -23,6 +23,7 @@ interface AdminLayoutProps {
 const adminNavItems = [
   { icon: BookOpen, label: "Content (KB & Blog)", href: "/admin/content" },
   { icon: Gamepad2, label: "Game Servers", href: "/admin/games" },
+  { icon: Languages, label: "Traduceri Site", href: "/admin/translations" },
   { icon: Activity, label: "Status Monitors", href: "/admin/status" },
   { icon: ShieldCheck, label: "DDoS & Visitors", href: "/admin/visitors" },
 ];
