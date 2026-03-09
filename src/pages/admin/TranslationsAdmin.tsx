@@ -224,9 +224,9 @@ export default function TranslationsAdmin() {
                     </div>
                   </div>
                   {isComplete ? (
-                    <Check className="w-4 h-4 text-green-500" />
+                    <Check className="w-4 h-4 text-primary" />
                   ) : dbKeyCount > 0 ? (
-                    <AlertCircle className="w-4 h-4 text-yellow-500" />
+                    <AlertCircle className="w-4 h-4 text-primary/60" />
                   ) : (
                     <AlertCircle className="w-4 h-4 text-muted-foreground/30" />
                   )}
