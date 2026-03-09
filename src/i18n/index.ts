@@ -78,6 +78,10 @@ async function loadDbTranslations() {
       }
     }
 
+    // Force re-render by emitting language changed event
+    const currentLang = i18n.language;
+    i18n.changeLanguage(currentLang);
+
     if (import.meta.env.DEV) {
       console.log(`[i18n] Loaded DB translations for: ${data.map(r => r.lang).join(', ')}`);
     }
@@ -85,6 +89,9 @@ async function loadDbTranslations() {
     console.warn('[i18n] Failed to load DB translations:', err);
   }
 }
+
+// Export for manual reload (e.g. after admin saves translations)
+export const reloadTranslations = loadDbTranslations;
 
 // Load on init
 loadDbTranslations();
