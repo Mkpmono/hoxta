@@ -6,6 +6,7 @@ import {
   Activity,
   ShieldCheck,
   Gamepad2,
+  Languages,
   LogOut,
   Menu,
   X,
