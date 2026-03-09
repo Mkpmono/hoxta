@@ -265,6 +265,27 @@ export type Database = {
         }
         Relationships: []
       }
+      site_translations: {
+        Row: {
+          data: Json
+          id: string
+          lang: string
+          updated_at: string
+        }
+        Insert: {
+          data?: Json
+          id?: string
+          lang: string
+          updated_at?: string
+        }
+        Update: {
+          data?: Json
+          id?: string
+          lang?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       status_checks: {
         Row: {
           checked_at: string

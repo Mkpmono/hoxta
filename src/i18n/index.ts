@@ -1,6 +1,7 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
+import { supabase } from '@/integrations/supabase/client';
 
 import enCommon from './locales/en/common.json';
 import roCommon from './locales/ro/common.json';
@@ -60,6 +61,33 @@ i18n
         }
       : undefined,
   });
+
+// Load DB translations and merge (overrides static files)
+async function loadDbTranslations() {
+  try {
+    const { data, error } = await supabase
+      .from('site_translations')
+      .select('lang, data');
+    
+    if (error || !data || data.length === 0) return;
+
+    for (const row of data) {
+      if (row.lang && row.data && typeof row.data === 'object') {
+        // Deep merge: DB translations override static ones
+        i18n.addResourceBundle(row.lang, 'common', row.data as Record<string, any>, true, true);
+      }
+    }
+
+    if (import.meta.env.DEV) {
+      console.log(`[i18n] Loaded DB translations for: ${data.map(r => r.lang).join(', ')}`);
+    }
+  } catch (err) {
+    console.warn('[i18n] Failed to load DB translations:', err);
+  }
+}
+
+// Load on init
+loadDbTranslations();
 
 // Dev helper: log current language once
 if (import.meta.env.DEV) {

@@ -38,6 +38,7 @@ import StatusAdmin from "./pages/StatusAdmin";
 import Domains from "./pages/Domains";
 import VisitorLogs from "./pages/admin/VisitorLogs";
 import GameServerAdmin from "./pages/admin/GameServerAdmin";
+import TranslationsAdmin from "./pages/admin/TranslationsAdmin";
 
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { DiscountPopup } from "@/components/DiscountPopup";
@@ -94,6 +95,7 @@ const App = () => (
             {/* Admin Panel (Protected) */}
             <Route path="/admin/content" element={<AdminProtectedRoute><KBAdmin /></AdminProtectedRoute>} />
             <Route path="/admin/games" element={<AdminProtectedRoute><GameServerAdmin /></AdminProtectedRoute>} />
+            <Route path="/admin/translations" element={<AdminProtectedRoute><TranslationsAdmin /></AdminProtectedRoute>} />
             <Route path="/admin/status" element={<AdminProtectedRoute><StatusAdmin /></AdminProtectedRoute>} />
             <Route path="/admin/visitors" element={<AdminProtectedRoute><VisitorLogs /></AdminProtectedRoute>} />
             
