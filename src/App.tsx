@@ -38,6 +38,7 @@ import StatusAdmin from "./pages/StatusAdmin";
 import Domains from "./pages/Domains";
 import VisitorLogs from "./pages/admin/VisitorLogs";
 import GameServerAdmin from "./pages/admin/GameServerAdmin";
+import TranslationsAdmin from "./pages/admin/TranslationsAdmin";
 
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { DiscountPopup } from "@/components/DiscountPopup";
