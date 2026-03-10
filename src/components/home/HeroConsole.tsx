@@ -26,7 +26,7 @@ export function HeroConsole() {
   }, []);
 
   useEffect(() => {
-    const timers: NodeJS.Timeout[] = [];
+    const timers: ReturnType<typeof setTimeout>[] = [];
 
     consoleLines.forEach((line, index) => {
       const timer = setTimeout(() => {
