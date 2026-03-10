@@ -2,7 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 const LANGUAGE_NAMES: Record<string, string> = {
@@ -14,100 +14,16 @@ const LANGUAGE_NAMES: Record<string, string> = {
   it: "Italian",
 };
 
-const TARGET_LANGS = ["en", "de", "fr", "es", "it"];
-
-// Flatten nested JSON to dot-notation keys
-function flatten(obj: Record<string, any>, prefix = ""): Record<string, string> {
-  const result: Record<string, string> = {};
-  for (const [key, value] of Object.entries(obj)) {
-    const newKey = prefix ? `${prefix}.${key}` : key;
-    if (typeof value === "object" && value !== null && !Array.isArray(value)) {
-      Object.assign(result, flatten(value, newKey));
-    } else {
-      result[newKey] = String(value);
-    }
-  }
-  return result;
-}
-
-// Unflatten dot-notation keys back to nested JSON
-function unflatten(obj: Record<string, string>): Record<string, any> {
-  const result: Record<string, any> = {};
-  for (const [key, value] of Object.entries(obj)) {
-    const parts = key.split(".");
-    let current = result;
-    for (let i = 0; i < parts.length - 1; i++) {
-      if (!current[parts[i]]) current[parts[i]] = {};
-      current = current[parts[i]];
-    }
-    current[parts[parts.length - 1]] = value;
-  }
-  return result;
-}
-
-// Split flat keys into chunks of maxSize
-function chunkEntries(entries: [string, string][], maxSize: number): [string, string][][] {
-  const chunks: [string, string][][] = [];
-  for (let i = 0; i < entries.length; i += maxSize) {
-    chunks.push(entries.slice(i, i + maxSize));
-  }
-  return chunks;
-}
-
-async function translateChunk(
-  entries: [string, string][],
-  targetLang: string,
-  apiKey: string
-): Promise<Record<string, string>> {
-  const prompt = `You are a professional translator. Translate the following key-value pairs from Romanian to ${LANGUAGE_NAMES[targetLang]}.
-
-The keys are identifiers - DO NOT translate them. Only translate the values.
-Keep brand names like "Hoxta" unchanged.
-Keep technical terms, URLs, and placeholders like {{variable}} unchanged.
-
-Input (JSON):
-${JSON.stringify(Object.fromEntries(entries), null, 2)}
-
-Return ONLY a valid JSON object with the same keys and translated values. No markdown, no extra text.`;
-
-  const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model: "google/gemini-2.5-flash",
-      messages: [
-        { role: "system", content: "You are a professional translator. Return only valid JSON." },
-        { role: "user", content: prompt },
-      ],
-      temperature: 0.2,
-    }),
-  });
-
-  if (!response.ok) {
-    const errText = await response.text();
-    console.error(`AI error for ${targetLang}:`, errText);
-    throw new Error(`Translation API failed for ${targetLang}`);
-  }
-
-  const data = await response.json();
-  let text = data.choices?.[0]?.message?.content || "";
-  text = text.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
-  return JSON.parse(text);
-}
-
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { roData, targetLangs } = await req.json();
-    
-    if (!roData || typeof roData !== "object") {
-      return new Response(JSON.stringify({ error: "roData is required" }), {
+    const { chunk, targetLang } = await req.json();
+
+    if (!chunk || !targetLang || typeof chunk !== "object") {
+      return new Response(JSON.stringify({ error: "chunk and targetLang required" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -121,37 +37,58 @@ serve(async (req) => {
       });
     }
 
-    const langs = targetLangs || TARGET_LANGS;
-    const flat = flatten(roData);
-    const allEntries = Object.entries(flat);
-    const CHUNK_SIZE = 80; // ~80 keys per chunk to stay within token limits
-    const chunks = chunkEntries(allEntries, CHUNK_SIZE);
+    const langName = LANGUAGE_NAMES[targetLang] || targetLang;
 
-    console.log(`Translating ${allEntries.length} keys in ${chunks.length} chunks to ${langs.length} languages`);
+    const prompt = `You are a professional translator. Translate the following key-value pairs from Romanian to ${langName}.
 
-    const results: Record<string, Record<string, any>> = {};
+The keys are identifiers - DO NOT translate them. Only translate the values.
+Keep brand names like "Hoxta" unchanged.
+Keep technical terms, URLs, and placeholders like {{variable}} unchanged.
+Keep commas in values that are comma-separated lists (they are used as delimiters).
 
-    // Translate each language sequentially, chunks in parallel per language
-    for (const lang of langs) {
-      console.log(`Translating to ${lang}...`);
-      const chunkResults = await Promise.all(
-        chunks.map((chunk) => translateChunk(chunk, lang, LOVABLE_API_KEY))
-      );
+Input (JSON):
+${JSON.stringify(chunk, null, 2)}
 
-      // Merge all chunks
-      const mergedFlat: Record<string, string> = {};
-      for (const chunkResult of chunkResults) {
-        Object.assign(mergedFlat, chunkResult);
+Return ONLY a valid JSON object with the same keys and translated values. No markdown, no extra text.`;
+
+    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash",
+        messages: [
+          { role: "system", content: "You are a professional translator. Return only valid JSON." },
+          { role: "user", content: prompt },
+        ],
+        temperature: 0.2,
+      }),
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      console.error(`AI error for ${targetLang}:`, response.status, errText);
+      if (response.status === 429) {
+        return new Response(JSON.stringify({ error: "Rate limit exceeded, please wait and retry." }), {
+          status: 429,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
       }
-
-      results[lang] = unflatten(mergedFlat);
-      console.log(`✅ ${lang} done (${Object.keys(mergedFlat).length} keys)`);
+      return new Response(JSON.stringify({ error: `Translation API failed: ${response.status}` }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
-    // Also include ro
-    results["ro"] = roData;
+    const data = await response.json();
+    let text = data.choices?.[0]?.message?.content || "";
+    text = text.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
+    
+    const translated = JSON.parse(text);
 
-    return new Response(JSON.stringify({ translations: results }), {
+    return new Response(JSON.stringify({ translated }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
