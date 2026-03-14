@@ -54,6 +54,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <DiscountPopup />
+        <CookieConsent />
         <BrowserRouter>
         <ScrollToTop />
         <DDoSGate>
