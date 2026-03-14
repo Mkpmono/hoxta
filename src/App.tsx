@@ -43,6 +43,7 @@ import TranslationsAdmin from "./pages/admin/TranslationsAdmin";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { DiscountPopup } from "@/components/DiscountPopup";
 import { DDoSGate } from "@/components/DDoSGate";
+import { CookieConsent } from "@/components/CookieConsent";
 
 const queryClient = new QueryClient();
 
@@ -53,6 +54,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <DiscountPopup />
+        <CookieConsent />
         <BrowserRouter>
         <ScrollToTop />
         <DDoSGate>
