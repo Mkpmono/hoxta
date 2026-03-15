@@ -59,15 +59,31 @@ export function LiveChatButton() {
                 <p className="text-sm text-muted-foreground mt-1">How can we help you today? Our team is here for you.</p>
               </div>
               <div className="space-y-2">
+                <button
+                  onClick={() => {
+                    // TODO: Replace with your chosen live chat platform (Tawk.to, Crisp, LiveChat, etc.)
+                    alert("Live chat coming soon! Connect your preferred platform here.");
+                  }}
+                  className="w-full flex items-center gap-3 p-3 rounded-xl bg-primary/10 hover:bg-primary/20 transition-colors group text-left"
+                >
+                  <span className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary">
+                    <ChatIcon className="w-4 h-4" />
+                  </span>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">Live Chat</p>
+                    <p className="text-xs text-muted-foreground">Chat with us now</p>
+                  </div>
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                </button>
                 <a href="mailto:support@hoxta.com" className="flex items-center gap-3 p-3 rounded-xl bg-muted/30 hover:bg-muted/60 transition-colors group">
-                  <span className="text-lg">✉️</span>
+                  <span className="w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center text-base">✉️</span>
                   <div>
                     <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">Email us</p>
                     <p className="text-xs text-muted-foreground">support@hoxta.com</p>
                   </div>
                 </a>
                 <a href="https://discord.gg/hoxta" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 rounded-xl bg-muted/30 hover:bg-muted/60 transition-colors group">
-                  <span className="text-lg">💬</span>
+                  <span className="w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center text-base">💬</span>
                   <div>
                     <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">Discord</p>
                     <p className="text-xs text-muted-foreground">Join our community</p>
