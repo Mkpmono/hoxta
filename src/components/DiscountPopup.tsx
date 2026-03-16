@@ -4,6 +4,7 @@ import { X, Copy, Check, Sparkles, Gift, ArrowRight } from "lucide-react";
 
 const DISCOUNT_CODE = "HOXTA20";
 const STORAGE_KEY = "hoxta_discount_dismissed";
+const DISMISS_DURATION_MS = 3 * 60 * 60 * 1000; // 3 hours
 
 export function DiscountPopup() {
   const [isOpen, setIsOpen] = useState(false);
