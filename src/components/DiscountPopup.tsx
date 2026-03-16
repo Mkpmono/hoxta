@@ -20,7 +20,7 @@ export function DiscountPopup() {
 
   const handleClose = () => {
     setIsOpen(false);
-    sessionStorage.setItem(STORAGE_KEY, "true");
+    localStorage.setItem(STORAGE_KEY, String(Date.now()));
   };
 
   const handleCopy = async () => {
