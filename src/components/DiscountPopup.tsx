@@ -11,8 +11,8 @@ export function DiscountPopup() {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    const dismissed = sessionStorage.getItem(STORAGE_KEY);
-    if (dismissed) return;
+    const dismissedAt = localStorage.getItem(STORAGE_KEY);
+    if (dismissedAt && Date.now() - Number(dismissedAt) < DISMISS_DURATION_MS) return;
 
     const timer = setTimeout(() => setIsOpen(true), 4000);
     return () => clearTimeout(timer);
