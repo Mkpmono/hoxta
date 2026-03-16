@@ -4,14 +4,15 @@ import { X, Copy, Check, Sparkles, Gift, ArrowRight } from "lucide-react";
 
 const DISCOUNT_CODE = "HOXTA20";
 const STORAGE_KEY = "hoxta_discount_dismissed";
+const DISMISS_DURATION_MS = 3 * 60 * 60 * 1000; // 3 hours
 
 export function DiscountPopup() {
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    const dismissed = sessionStorage.getItem(STORAGE_KEY);
-    if (dismissed) return;
+    const dismissedAt = localStorage.getItem(STORAGE_KEY);
+    if (dismissedAt && Date.now() - Number(dismissedAt) < DISMISS_DURATION_MS) return;
 
     const timer = setTimeout(() => setIsOpen(true), 4000);
     return () => clearTimeout(timer);
@@ -19,7 +20,7 @@ export function DiscountPopup() {
 
   const handleClose = () => {
     setIsOpen(false);
-    sessionStorage.setItem(STORAGE_KEY, "true");
+    localStorage.setItem(STORAGE_KEY, String(Date.now()));
   };
 
   const handleCopy = async () => {
