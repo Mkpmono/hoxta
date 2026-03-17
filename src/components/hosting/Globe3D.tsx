@@ -9,6 +9,14 @@ import {
   PointLight,
   Color,
   Clock,
+  Group,
+  Mesh,
+  SphereGeometry,
+  MeshBasicMaterial,
+  BufferGeometry,
+  LineBasicMaterial,
+  Line,
+  Float32BufferAttribute,
   Vector3,
 } from "three";
 import ThreeGlobe from "three-globe";
@@ -39,6 +47,15 @@ const flights = [
   { order: 12, startLat: -33.9361, startLng: 18.4365, endLat: 21.3956, endLng: 39.8838, arcAlt: 0.3, color: "#06b6d4" },
 ];
 
+/* ── Satellite orbit configs ── */
+const satelliteOrbits = [
+  { radius: 130, speed: 0.3, tiltX: 0.4, tiltZ: 0.2, phase: 0 },
+  { radius: 140, speed: -0.25, tiltX: -0.3, tiltZ: 0.5, phase: Math.PI * 0.5 },
+  { radius: 125, speed: 0.35, tiltX: 0.6, tiltZ: -0.3, phase: Math.PI },
+  { radius: 135, speed: -0.2, tiltX: -0.5, tiltZ: -0.4, phase: Math.PI * 1.5 },
+  { radius: 145, speed: 0.22, tiltX: 0.2, tiltZ: 0.6, phase: Math.PI * 0.3 },
+];
+
 function hexToRgb(hex: string) {
   const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
   hex = hex.replace(shorthandRegex, (_m, r, g, b) => r + r + g + g + b + b);
@@ -58,6 +75,56 @@ function genRandomNumbers(min: number, max: number, count: number) {
   return arr;
 }
 
+function createSatellite() {
+  const group = new Group();
+  const bodyGeo = new SphereGeometry(1.2, 8, 8);
+  const bodyMat = new MeshBasicMaterial({ color: 0x06b6d4 });
+  group.add(new Mesh(bodyGeo, bodyMat));
+
+  // Solar panels
+  const panelGeo = new SphereGeometry(0.6, 4, 4);
+  const panelMat = new MeshBasicMaterial({ color: 0x3b82f6, transparent: true, opacity: 0.8 });
+  const p1 = new Mesh(panelGeo, panelMat);
+  p1.position.set(2.5, 0, 0);
+  p1.scale.set(3, 0.2, 1.5);
+  group.add(p1);
+  const p2 = new Mesh(panelGeo, panelMat);
+  p2.position.set(-2.5, 0, 0);
+  p2.scale.set(3, 0.2, 1.5);
+  group.add(p2);
+
+  // Glow
+  const glowGeo = new SphereGeometry(2.5, 8, 8);
+  const glowMat = new MeshBasicMaterial({ color: 0x06b6d4, transparent: true, opacity: 0.15 });
+  group.add(new Mesh(glowGeo, glowMat));
+
+  return group;
+}
+
+function tiltPoint(x: number, y: number, z: number, tiltX: number, tiltZ: number) {
+  const cosX = Math.cos(tiltX), sinX = Math.sin(tiltX);
+  const y1 = y * cosX - z * sinX;
+  const z1 = y * sinX + z * cosX;
+  const cosZ = Math.cos(tiltZ), sinZ = Math.sin(tiltZ);
+  const x2 = x * cosZ - y1 * sinZ;
+  const y2 = x * sinZ + y1 * cosZ;
+  return { x: x2, y: y2, z: z1 };
+}
+
+function createOrbitLine(radius: number, tiltX: number, tiltZ: number) {
+  const segments = 128;
+  const positions: number[] = [];
+  for (let i = 0; i <= segments; i++) {
+    const angle = (i / segments) * Math.PI * 2;
+    const p = tiltPoint(Math.cos(angle) * radius, 0, Math.sin(angle) * radius, tiltX, tiltZ);
+    positions.push(p.x, p.y, p.z);
+  }
+  const geo = new BufferGeometry();
+  geo.setAttribute("position", new Float32BufferAttribute(positions, 3));
+  const mat = new LineBasicMaterial({ color: 0x06b6d4, transparent: true, opacity: 0.06 });
+  return new Line(geo, mat);
+}
+
 export function Globe3D() {
   const containerRef = useRef<HTMLDivElement>(null);
   const worldRef = useRef<{
@@ -74,23 +141,19 @@ export function Globe3D() {
     const height = container.clientHeight;
     const aspect = width / height;
 
-    // Scene
     const scene = new Scene();
     scene.fog = new Fog(0x000000, 400, 2000);
 
-    // Renderer
     const renderer = new WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(width, height);
     renderer.setClearColor(0x000000, 0);
     container.appendChild(renderer.domElement);
 
-    // Camera
     const cameraZ = 300;
-    const camera = new PerspectiveCamera(50, aspect, 180, 1800);
+    const camera = new PerspectiveCamera(50, aspect, 1, 2000);
     camera.position.set(0, 0, cameraZ);
 
-    // Controls
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enablePan = false;
     controls.enableZoom = false;
@@ -101,9 +164,8 @@ export function Globe3D() {
     controls.minPolarAngle = Math.PI / 3.5;
     controls.maxPolarAngle = Math.PI - Math.PI / 3;
 
-    // Lights
-    const ambientLight = new AmbientLight(0x000000, 0.6);
-    const dLight = new DirectionalLight(0x000000, 0.6);
+    const ambientLight = new AmbientLight(0x111122, 0.8);
+    const dLight = new DirectionalLight(0x0066ff, 0.4);
     dLight.position.set(-400, 100, 400);
     const dLight1 = new DirectionalLight(0xffffff, 1);
     dLight1.position.set(-200, 500, 200);
@@ -111,20 +173,15 @@ export function Globe3D() {
     dLight2.position.set(-200, 500, 200);
     camera.add(ambientLight, dLight, dLight1, dLight2);
 
-    // Globe
     const globe = new ThreeGlobe({ waitForGlobeReady: true, animateIn: true });
-
-    // Material
     const globeMaterial = globe.globeMaterial() as any;
     globeMaterial.color = new Color("#062056");
     globeMaterial.emissive = new Color("#000000");
     globeMaterial.emissiveIntensity = 0.1;
     globeMaterial.shininess = 0.9;
 
-    // Points data
     const pointsData = buildPointsData();
 
-    // Countries (hexPolygons)
     setTimeout(() => {
       globe
         .hexPolygonsData(countries.features.filter((d: any) => d.properties.ISO_A2 !== "AQ"))
@@ -136,7 +193,6 @@ export function Globe3D() {
         .hexPolygonColor(() => "rgba(255,255,255,0.7)");
     }, 1000);
 
-    // Arcs + Points
     setTimeout(() => {
       globe
         .arcsData(flights)
@@ -165,17 +221,25 @@ export function Globe3D() {
 
     scene.add(camera, globe);
 
+    // ── Satellites & orbit lines ──
+    const satellites: { mesh: Group; orbit: typeof satelliteOrbits[0] }[] = [];
+    satelliteOrbits.forEach((orbit) => {
+      const sat = createSatellite();
+      scene.add(sat);
+      satellites.push({ mesh: sat, orbit });
+      scene.add(createOrbitLine(orbit.radius, orbit.tiltX, orbit.tiltZ));
+    });
+
     // Initial position - Europe focused
     const initCoords = globe.getCoords(40, 10, 0);
-    const targetPos = { x: initCoords.x, y: initCoords.y, z: initCoords.z };
     new TWEEN.Tween(camera.position)
-      .to(targetPos, 1000)
+      .to({ x: initCoords.x, y: initCoords.y, z: initCoords.z }, 1000)
       .easing(TWEEN.Easing.Cubic.InOut)
       .start();
 
-    // Animation loop
     const clock = new Clock();
     let deltaGlobe = 0;
+    let elapsed = 0;
 
     function animate() {
       const id = requestAnimationFrame(animate);
@@ -185,12 +249,28 @@ export function Globe3D() {
       controls.update();
 
       const delta = clock.getDelta();
+      elapsed += delta;
       deltaGlobe += delta;
+
       if (deltaGlobe > 2) {
         const nums = genRandomNumbers(0, pointsData.length, Math.floor((pointsData.length * 4) / 5));
         globe.ringsData(pointsData.filter((_d, i) => nums.includes(i)));
         deltaGlobe = deltaGlobe % 2;
       }
+
+      // Update satellites
+      satellites.forEach(({ mesh, orbit }) => {
+        const angle = elapsed * orbit.speed + orbit.phase;
+        const p = tiltPoint(
+          Math.cos(angle) * orbit.radius,
+          0,
+          Math.sin(angle) * orbit.radius,
+          orbit.tiltX,
+          orbit.tiltZ
+        );
+        mesh.position.set(p.x, p.y, p.z);
+        mesh.lookAt(0, 0, 0);
+      });
 
       renderer.render(scene, camera);
     }
@@ -198,7 +278,6 @@ export function Globe3D() {
     worldRef.current = { renderer, animationId: null, globe };
     animate();
 
-    // Resize handler
     const onResize = () => {
       const w = container.clientWidth;
       const h = container.clientHeight;
@@ -207,10 +286,7 @@ export function Globe3D() {
       renderer.setSize(w, h);
     };
     window.addEventListener("resize", onResize);
-
-    return () => {
-      window.removeEventListener("resize", onResize);
-    };
+    return () => { window.removeEventListener("resize", onResize); };
   }, []);
 
   useEffect(() => {
@@ -218,23 +294,55 @@ export function Globe3D() {
     return () => {
       cleanup?.();
       if (worldRef.current) {
-        if (worldRef.current.animationId) {
-          cancelAnimationFrame(worldRef.current.animationId);
-        }
+        if (worldRef.current.animationId) cancelAnimationFrame(worldRef.current.animationId);
         worldRef.current.renderer.dispose();
-        const canvas = worldRef.current.renderer.domElement;
-        canvas.parentElement?.removeChild(canvas);
+        worldRef.current.renderer.domElement.parentElement?.removeChild(worldRef.current.renderer.domElement);
         worldRef.current = null;
       }
     };
   }, [init]);
 
   return (
-    <div
-      ref={containerRef}
-      className="w-full aspect-[16/9] md:aspect-[2/1] relative"
-      style={{ minHeight: 300 }}
-    />
+    <div className="relative w-full">
+      {/* Space background with radial glow */}
+      <div
+        className="absolute inset-0 rounded-2xl overflow-hidden"
+        style={{
+          background: "radial-gradient(ellipse at center, hsl(var(--primary) / 0.08) 0%, hsl(var(--background)) 70%)",
+        }}
+      />
+      {/* Star dots */}
+      <div
+        className="absolute inset-0 rounded-2xl overflow-hidden opacity-40"
+        style={{
+          backgroundImage: `
+            radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.3) 50%, transparent 50%),
+            radial-gradient(1px 1px at 30% 65%, rgba(255,255,255,0.2) 50%, transparent 50%),
+            radial-gradient(1px 1px at 55% 15%, rgba(255,255,255,0.25) 50%, transparent 50%),
+            radial-gradient(1px 1px at 70% 80%, rgba(255,255,255,0.2) 50%, transparent 50%),
+            radial-gradient(1px 1px at 85% 35%, rgba(255,255,255,0.3) 50%, transparent 50%),
+            radial-gradient(1px 1px at 15% 90%, rgba(255,255,255,0.15) 50%, transparent 50%),
+            radial-gradient(1px 1px at 45% 45%, rgba(255,255,255,0.2) 50%, transparent 50%),
+            radial-gradient(1px 1px at 90% 60%, rgba(255,255,255,0.25) 50%, transparent 50%),
+            radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,0.15) 50%, transparent 50%),
+            radial-gradient(1px 1px at 60% 90%, rgba(255,255,255,0.2) 50%, transparent 50%),
+            radial-gradient(1px 1px at 5% 55%, rgba(255,255,255,0.3) 50%, transparent 50%),
+            radial-gradient(1px 1px at 75% 10%, rgba(255,255,255,0.2) 50%, transparent 50%),
+            radial-gradient(1px 1px at 40% 75%, rgba(255,255,255,0.15) 50%, transparent 50%),
+            radial-gradient(1px 1px at 95% 45%, rgba(255,255,255,0.25) 50%, transparent 50%),
+            radial-gradient(1px 1px at 50% 30%, rgba(255,255,255,0.2) 50%, transparent 50%),
+            radial-gradient(1.5px 1.5px at 20% 50%, rgba(255,255,255,0.35) 50%, transparent 50%),
+            radial-gradient(1.5px 1.5px at 65% 25%, rgba(255,255,255,0.3) 50%, transparent 50%),
+            radial-gradient(1.5px 1.5px at 80% 70%, rgba(255,255,255,0.25) 50%, transparent 50%)
+          `,
+        }}
+      />
+      <div
+        ref={containerRef}
+        className="relative w-full aspect-[16/9] md:aspect-[2/1] z-10"
+        style={{ minHeight: 300 }}
+      />
+    </div>
   );
 }
 
