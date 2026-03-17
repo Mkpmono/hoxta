@@ -49,9 +49,10 @@ export function GlobalInfrastructure({
           transition={{ duration: 0.6 }}
           className="mb-12"
         >
-          <div className="glass-card p-4 md:p-6 overflow-hidden">
-            <NetworkMap />
-          </div>
+          <div className="glass-card p-2 md:p-4 overflow-hidden bg-background/80">
+            <Suspense fallback={<div className="w-full aspect-[2/1] flex items-center justify-center text-muted-foreground">Loading globe...</div>}>
+              <Globe3D />
+            </Suspense>
         </motion.div>
 
         {/* Stats + Features Grid */}
