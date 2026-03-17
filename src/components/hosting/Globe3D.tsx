@@ -12,7 +12,7 @@ import {
   Vector3,
 } from "three";
 import ThreeGlobe from "three-globe";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import TWEEN from "@tweenjs/tween.js";
 import countries from "@/assets/globe/countries.json";
 
