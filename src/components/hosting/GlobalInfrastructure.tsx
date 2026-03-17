@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { MapPin, Zap, Globe, Shield, Server, Cpu, Network, RefreshCw, Activity } from "lucide-react";
-import { NetworkMap } from "./NetworkMap";
+import { lazy, Suspense } from "react";
+
+const Globe3D = lazy(() => import("./Globe3D").then(m => ({ default: m.Globe3D })));
 
 interface GlobalInfrastructureProps {
   title?: string;
@@ -47,8 +49,10 @@ export function GlobalInfrastructure({
           transition={{ duration: 0.6 }}
           className="mb-12"
         >
-          <div className="glass-card p-4 md:p-6 overflow-hidden">
-            <NetworkMap />
+          <div className="glass-card p-2 md:p-4 overflow-hidden bg-background/80">
+            <Suspense fallback={<div className="w-full aspect-[2/1] flex items-center justify-center text-muted-foreground">Loading globe...</div>}>
+              <Globe3D />
+            </Suspense>
           </div>
         </motion.div>
 
