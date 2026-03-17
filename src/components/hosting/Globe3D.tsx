@@ -13,13 +13,11 @@ import {
   Mesh,
   SphereGeometry,
   MeshBasicMaterial,
-  RingGeometry,
-  MeshStandardMaterial,
-  DoubleSide,
   BufferGeometry,
   LineBasicMaterial,
   Line,
-  EllipseCurve,
+  Float32BufferAttribute,
+  Vector3,
 } from "three";
 import ThreeGlobe from "three-globe";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -79,46 +77,52 @@ function genRandomNumbers(min: number, max: number, count: number) {
 
 function createSatellite() {
   const group = new Group();
-
-  // Satellite body
   const bodyGeo = new SphereGeometry(1.2, 8, 8);
   const bodyMat = new MeshBasicMaterial({ color: 0x06b6d4 });
-  const body = new Mesh(bodyGeo, bodyMat);
-  group.add(body);
+  group.add(new Mesh(bodyGeo, bodyMat));
 
-  // Solar panels (two flat rectangles)
+  // Solar panels
   const panelGeo = new SphereGeometry(0.6, 4, 4);
   const panelMat = new MeshBasicMaterial({ color: 0x3b82f6, transparent: true, opacity: 0.8 });
-  const panel1 = new Mesh(panelGeo, panelMat);
-  panel1.position.set(2.5, 0, 0);
-  panel1.scale.set(3, 0.2, 1.5);
-  group.add(panel1);
-
-  const panel2 = new Mesh(panelGeo, panelMat);
-  panel2.position.set(-2.5, 0, 0);
-  panel2.scale.set(3, 0.2, 1.5);
-  group.add(panel2);
+  const p1 = new Mesh(panelGeo, panelMat);
+  p1.position.set(2.5, 0, 0);
+  p1.scale.set(3, 0.2, 1.5);
+  group.add(p1);
+  const p2 = new Mesh(panelGeo, panelMat);
+  p2.position.set(-2.5, 0, 0);
+  p2.scale.set(3, 0.2, 1.5);
+  group.add(p2);
 
   // Glow
   const glowGeo = new SphereGeometry(2.5, 8, 8);
   const glowMat = new MeshBasicMaterial({ color: 0x06b6d4, transparent: true, opacity: 0.15 });
-  const glow = new Mesh(glowGeo, glowMat);
-  group.add(glow);
+  group.add(new Mesh(glowGeo, glowMat));
 
   return group;
 }
 
+function tiltPoint(x: number, y: number, z: number, tiltX: number, tiltZ: number) {
+  const cosX = Math.cos(tiltX), sinX = Math.sin(tiltX);
+  const y1 = y * cosX - z * sinX;
+  const z1 = y * sinX + z * cosX;
+  const cosZ = Math.cos(tiltZ), sinZ = Math.sin(tiltZ);
+  const x2 = x * cosZ - y1 * sinZ;
+  const y2 = x * sinZ + y1 * cosZ;
+  return { x: x2, y: y2, z: z1 };
+}
+
 function createOrbitLine(radius: number, tiltX: number, tiltZ: number) {
-  const curve = new EllipseCurve(0, 0, radius, radius, 0, 2 * Math.PI, false, 0);
-  const points = curve.getPoints(128);
-  const geometry = new BufferGeometry().setFromPoints(
-    points.map(p => new import("three").Vector3(p.x, 0, p.y))
-  );
-  const material = new LineBasicMaterial({ color: 0x06b6d4, transparent: true, opacity: 0.08 });
-  const line = new Line(geometry, material);
-  line.rotation.x = tiltX;
-  line.rotation.z = tiltZ;
-  return line;
+  const segments = 128;
+  const positions: number[] = [];
+  for (let i = 0; i <= segments; i++) {
+    const angle = (i / segments) * Math.PI * 2;
+    const p = tiltPoint(Math.cos(angle) * radius, 0, Math.sin(angle) * radius, tiltX, tiltZ);
+    positions.push(p.x, p.y, p.z);
+  }
+  const geo = new BufferGeometry();
+  geo.setAttribute("position", new Float32BufferAttribute(positions, 3));
+  const mat = new LineBasicMaterial({ color: 0x06b6d4, transparent: true, opacity: 0.06 });
+  return new Line(geo, mat);
 }
 
 export function Globe3D() {
@@ -137,23 +141,19 @@ export function Globe3D() {
     const height = container.clientHeight;
     const aspect = width / height;
 
-    // Scene
     const scene = new Scene();
     scene.fog = new Fog(0x000000, 400, 2000);
 
-    // Renderer
     const renderer = new WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(width, height);
     renderer.setClearColor(0x000000, 0);
     container.appendChild(renderer.domElement);
 
-    // Camera
     const cameraZ = 300;
     const camera = new PerspectiveCamera(50, aspect, 1, 2000);
     camera.position.set(0, 0, cameraZ);
 
-    // Controls
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enablePan = false;
     controls.enableZoom = false;
@@ -164,7 +164,6 @@ export function Globe3D() {
     controls.minPolarAngle = Math.PI / 3.5;
     controls.maxPolarAngle = Math.PI - Math.PI / 3;
 
-    // Lights
     const ambientLight = new AmbientLight(0x111122, 0.8);
     const dLight = new DirectionalLight(0x0066ff, 0.4);
     dLight.position.set(-400, 100, 400);
@@ -174,20 +173,15 @@ export function Globe3D() {
     dLight2.position.set(-200, 500, 200);
     camera.add(ambientLight, dLight, dLight1, dLight2);
 
-    // Globe
     const globe = new ThreeGlobe({ waitForGlobeReady: true, animateIn: true });
-
-    // Material
     const globeMaterial = globe.globeMaterial() as any;
     globeMaterial.color = new Color("#062056");
     globeMaterial.emissive = new Color("#000000");
     globeMaterial.emissiveIntensity = 0.1;
     globeMaterial.shininess = 0.9;
 
-    // Points data
     const pointsData = buildPointsData();
 
-    // Countries (hexPolygons)
     setTimeout(() => {
       globe
         .hexPolygonsData(countries.features.filter((d: any) => d.properties.ISO_A2 !== "AQ"))
@@ -199,7 +193,6 @@ export function Globe3D() {
         .hexPolygonColor(() => "rgba(255,255,255,0.7)");
     }, 1000);
 
-    // Arcs + Points
     setTimeout(() => {
       globe
         .arcsData(flights)
@@ -228,74 +221,22 @@ export function Globe3D() {
 
     scene.add(camera, globe);
 
-    // ── Satellites ──
+    // ── Satellites & orbit lines ──
     const satellites: { mesh: Group; orbit: typeof satelliteOrbits[0] }[] = [];
-
     satelliteOrbits.forEach((orbit) => {
       const sat = createSatellite();
       scene.add(sat);
       satellites.push({ mesh: sat, orbit });
-
-      // Orbit path line
-      const orbitPoints: import("three").Vector3[] = [];
-      for (let i = 0; i <= 128; i++) {
-        const angle = (i / 128) * Math.PI * 2;
-        const x = Math.cos(angle) * orbit.radius;
-        const z = Math.sin(angle) * orbit.radius;
-        // Apply tilt
-        const rx = orbit.tiltX;
-        const rz = orbit.tiltZ;
-        const y1 = z * Math.sin(rx);
-        const z1 = z * Math.cos(rx);
-        const x1 = x * Math.cos(rz) - y1 * Math.sin(rz);
-        const y2 = x * Math.sin(rz) + y1 * Math.cos(rz);
-        orbitPoints.push(new (await import("three")).Vector3(x1, y2, z1) as any);
-      }
-      // We'll create orbit lines inline instead
-    });
-
-    // Create orbit trail lines
-    satelliteOrbits.forEach((orbit) => {
-      const segments = 128;
-      const positions: number[] = [];
-      for (let i = 0; i <= segments; i++) {
-        const angle = (i / segments) * Math.PI * 2;
-        let x = Math.cos(angle) * orbit.radius;
-        let y = 0;
-        let z = Math.sin(angle) * orbit.radius;
-
-        // Tilt X
-        const cosX = Math.cos(orbit.tiltX);
-        const sinX = Math.sin(orbit.tiltX);
-        const y1 = y * cosX - z * sinX;
-        const z1 = y * sinX + z * cosX;
-
-        // Tilt Z
-        const cosZ = Math.cos(orbit.tiltZ);
-        const sinZ = Math.sin(orbit.tiltZ);
-        const x2 = x * cosZ - y1 * sinZ;
-        const y2 = x * sinZ + y1 * cosZ;
-
-        positions.push(x2, y2, z1);
-      }
-
-      const geo = new BufferGeometry();
-      const arr = new Float32Array(positions);
-      geo.setAttribute("position", new (await import("three")).BufferAttribute(arr, 3) as any);
-      const mat = new LineBasicMaterial({ color: 0x06b6d4, transparent: true, opacity: 0.06 });
-      const line = new Line(geo, mat);
-      scene.add(line);
+      scene.add(createOrbitLine(orbit.radius, orbit.tiltX, orbit.tiltZ));
     });
 
     // Initial position - Europe focused
     const initCoords = globe.getCoords(40, 10, 0);
-    const targetPos = { x: initCoords.x, y: initCoords.y, z: initCoords.z };
     new TWEEN.Tween(camera.position)
-      .to(targetPos, 1000)
+      .to({ x: initCoords.x, y: initCoords.y, z: initCoords.z }, 1000)
       .easing(TWEEN.Easing.Cubic.InOut)
       .start();
 
-    // Animation loop
     const clock = new Clock();
     let deltaGlobe = 0;
     let elapsed = 0;
@@ -317,26 +258,17 @@ export function Globe3D() {
         deltaGlobe = deltaGlobe % 2;
       }
 
-      // Update satellite positions
+      // Update satellites
       satellites.forEach(({ mesh, orbit }) => {
         const angle = elapsed * orbit.speed + orbit.phase;
-        let x = Math.cos(angle) * orbit.radius;
-        let y = 0;
-        let z = Math.sin(angle) * orbit.radius;
-
-        // Tilt X
-        const cosX = Math.cos(orbit.tiltX);
-        const sinX = Math.sin(orbit.tiltX);
-        const y1 = y * cosX - z * sinX;
-        const z1 = y * sinX + z * cosX;
-
-        // Tilt Z
-        const cosZ = Math.cos(orbit.tiltZ);
-        const sinZ = Math.sin(orbit.tiltZ);
-        const x2 = x * cosZ - y1 * sinZ;
-        const y2 = x * sinZ + y1 * cosZ;
-
-        mesh.position.set(x2, y2, z1);
+        const p = tiltPoint(
+          Math.cos(angle) * orbit.radius,
+          0,
+          Math.sin(angle) * orbit.radius,
+          orbit.tiltX,
+          orbit.tiltZ
+        );
+        mesh.position.set(p.x, p.y, p.z);
         mesh.lookAt(0, 0, 0);
       });
 
@@ -346,7 +278,6 @@ export function Globe3D() {
     worldRef.current = { renderer, animationId: null, globe };
     animate();
 
-    // Resize handler
     const onResize = () => {
       const w = container.clientWidth;
       const h = container.clientHeight;
@@ -355,10 +286,7 @@ export function Globe3D() {
       renderer.setSize(w, h);
     };
     window.addEventListener("resize", onResize);
-
-    return () => {
-      window.removeEventListener("resize", onResize);
-    };
+    return () => { window.removeEventListener("resize", onResize); };
   }, []);
 
   useEffect(() => {
@@ -366,12 +294,9 @@ export function Globe3D() {
     return () => {
       cleanup?.();
       if (worldRef.current) {
-        if (worldRef.current.animationId) {
-          cancelAnimationFrame(worldRef.current.animationId);
-        }
+        if (worldRef.current.animationId) cancelAnimationFrame(worldRef.current.animationId);
         worldRef.current.renderer.dispose();
-        const canvas = worldRef.current.renderer.domElement;
-        canvas.parentElement?.removeChild(canvas);
+        worldRef.current.renderer.domElement.parentElement?.removeChild(worldRef.current.renderer.domElement);
         worldRef.current = null;
       }
     };
@@ -379,14 +304,14 @@ export function Globe3D() {
 
   return (
     <div className="relative w-full">
-      {/* Starfield background */}
+      {/* Space background with radial glow */}
       <div
         className="absolute inset-0 rounded-2xl overflow-hidden"
         style={{
           background: "radial-gradient(ellipse at center, hsl(var(--primary) / 0.08) 0%, hsl(var(--background)) 70%)",
         }}
       />
-      {/* Subtle star dots via CSS */}
+      {/* Star dots */}
       <div
         className="absolute inset-0 rounded-2xl overflow-hidden opacity-40"
         style={{
