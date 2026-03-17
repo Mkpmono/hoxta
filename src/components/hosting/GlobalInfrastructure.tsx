@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { MapPin, Zap, Globe, Shield, Server, Cpu, Network, RefreshCw, Activity } from "lucide-react";
-import { NetworkMap } from "./NetworkMap";
+import { lazy, Suspense } from "react";
+
+const Globe3D = lazy(() => import("./Globe3D").then(m => ({ default: m.Globe3D })));
 
 interface GlobalInfrastructureProps {
   title?: string;
