@@ -9,7 +9,17 @@ import {
   PointLight,
   Color,
   Clock,
-  Vector3,
+  Group,
+  Mesh,
+  SphereGeometry,
+  MeshBasicMaterial,
+  RingGeometry,
+  MeshStandardMaterial,
+  DoubleSide,
+  BufferGeometry,
+  LineBasicMaterial,
+  Line,
+  EllipseCurve,
 } from "three";
 import ThreeGlobe from "three-globe";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -39,6 +49,15 @@ const flights = [
   { order: 12, startLat: -33.9361, startLng: 18.4365, endLat: 21.3956, endLng: 39.8838, arcAlt: 0.3, color: "#06b6d4" },
 ];
 
+/* ── Satellite orbit configs ── */
+const satelliteOrbits = [
+  { radius: 130, speed: 0.3, tiltX: 0.4, tiltZ: 0.2, phase: 0 },
+  { radius: 140, speed: -0.25, tiltX: -0.3, tiltZ: 0.5, phase: Math.PI * 0.5 },
+  { radius: 125, speed: 0.35, tiltX: 0.6, tiltZ: -0.3, phase: Math.PI },
+  { radius: 135, speed: -0.2, tiltX: -0.5, tiltZ: -0.4, phase: Math.PI * 1.5 },
+  { radius: 145, speed: 0.22, tiltX: 0.2, tiltZ: 0.6, phase: Math.PI * 0.3 },
+];
+
 function hexToRgb(hex: string) {
   const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
   hex = hex.replace(shorthandRegex, (_m, r, g, b) => r + r + g + g + b + b);
@@ -56,6 +75,50 @@ function genRandomNumbers(min: number, max: number, count: number) {
     if (!arr.includes(r)) arr.push(r);
   }
   return arr;
+}
+
+function createSatellite() {
+  const group = new Group();
+
+  // Satellite body
+  const bodyGeo = new SphereGeometry(1.2, 8, 8);
+  const bodyMat = new MeshBasicMaterial({ color: 0x06b6d4 });
+  const body = new Mesh(bodyGeo, bodyMat);
+  group.add(body);
+
+  // Solar panels (two flat rectangles)
+  const panelGeo = new SphereGeometry(0.6, 4, 4);
+  const panelMat = new MeshBasicMaterial({ color: 0x3b82f6, transparent: true, opacity: 0.8 });
+  const panel1 = new Mesh(panelGeo, panelMat);
+  panel1.position.set(2.5, 0, 0);
+  panel1.scale.set(3, 0.2, 1.5);
+  group.add(panel1);
+
+  const panel2 = new Mesh(panelGeo, panelMat);
+  panel2.position.set(-2.5, 0, 0);
+  panel2.scale.set(3, 0.2, 1.5);
+  group.add(panel2);
+
+  // Glow
+  const glowGeo = new SphereGeometry(2.5, 8, 8);
+  const glowMat = new MeshBasicMaterial({ color: 0x06b6d4, transparent: true, opacity: 0.15 });
+  const glow = new Mesh(glowGeo, glowMat);
+  group.add(glow);
+
+  return group;
+}
+
+function createOrbitLine(radius: number, tiltX: number, tiltZ: number) {
+  const curve = new EllipseCurve(0, 0, radius, radius, 0, 2 * Math.PI, false, 0);
+  const points = curve.getPoints(128);
+  const geometry = new BufferGeometry().setFromPoints(
+    points.map(p => new import("three").Vector3(p.x, 0, p.y))
+  );
+  const material = new LineBasicMaterial({ color: 0x06b6d4, transparent: true, opacity: 0.08 });
+  const line = new Line(geometry, material);
+  line.rotation.x = tiltX;
+  line.rotation.z = tiltZ;
+  return line;
 }
 
 export function Globe3D() {
@@ -87,7 +150,7 @@ export function Globe3D() {
 
     // Camera
     const cameraZ = 300;
-    const camera = new PerspectiveCamera(50, aspect, 180, 1800);
+    const camera = new PerspectiveCamera(50, aspect, 1, 2000);
     camera.position.set(0, 0, cameraZ);
 
     // Controls
@@ -102,8 +165,8 @@ export function Globe3D() {
     controls.maxPolarAngle = Math.PI - Math.PI / 3;
 
     // Lights
-    const ambientLight = new AmbientLight(0x000000, 0.6);
-    const dLight = new DirectionalLight(0x000000, 0.6);
+    const ambientLight = new AmbientLight(0x111122, 0.8);
+    const dLight = new DirectionalLight(0x0066ff, 0.4);
     dLight.position.set(-400, 100, 400);
     const dLight1 = new DirectionalLight(0xffffff, 1);
     dLight1.position.set(-200, 500, 200);
@@ -165,6 +228,65 @@ export function Globe3D() {
 
     scene.add(camera, globe);
 
+    // ── Satellites ──
+    const satellites: { mesh: Group; orbit: typeof satelliteOrbits[0] }[] = [];
+
+    satelliteOrbits.forEach((orbit) => {
+      const sat = createSatellite();
+      scene.add(sat);
+      satellites.push({ mesh: sat, orbit });
+
+      // Orbit path line
+      const orbitPoints: import("three").Vector3[] = [];
+      for (let i = 0; i <= 128; i++) {
+        const angle = (i / 128) * Math.PI * 2;
+        const x = Math.cos(angle) * orbit.radius;
+        const z = Math.sin(angle) * orbit.radius;
+        // Apply tilt
+        const rx = orbit.tiltX;
+        const rz = orbit.tiltZ;
+        const y1 = z * Math.sin(rx);
+        const z1 = z * Math.cos(rx);
+        const x1 = x * Math.cos(rz) - y1 * Math.sin(rz);
+        const y2 = x * Math.sin(rz) + y1 * Math.cos(rz);
+        orbitPoints.push(new (await import("three")).Vector3(x1, y2, z1) as any);
+      }
+      // We'll create orbit lines inline instead
+    });
+
+    // Create orbit trail lines
+    satelliteOrbits.forEach((orbit) => {
+      const segments = 128;
+      const positions: number[] = [];
+      for (let i = 0; i <= segments; i++) {
+        const angle = (i / segments) * Math.PI * 2;
+        let x = Math.cos(angle) * orbit.radius;
+        let y = 0;
+        let z = Math.sin(angle) * orbit.radius;
+
+        // Tilt X
+        const cosX = Math.cos(orbit.tiltX);
+        const sinX = Math.sin(orbit.tiltX);
+        const y1 = y * cosX - z * sinX;
+        const z1 = y * sinX + z * cosX;
+
+        // Tilt Z
+        const cosZ = Math.cos(orbit.tiltZ);
+        const sinZ = Math.sin(orbit.tiltZ);
+        const x2 = x * cosZ - y1 * sinZ;
+        const y2 = x * sinZ + y1 * cosZ;
+
+        positions.push(x2, y2, z1);
+      }
+
+      const geo = new BufferGeometry();
+      const arr = new Float32Array(positions);
+      geo.setAttribute("position", new (await import("three")).BufferAttribute(arr, 3) as any);
+      const mat = new LineBasicMaterial({ color: 0x06b6d4, transparent: true, opacity: 0.06 });
+      const line = new Line(geo, mat);
+      scene.add(line);
+    });
+
     // Initial position - Europe focused
     const initCoords = globe.getCoords(40, 10, 0);
     const targetPos = { x: initCoords.x, y: initCoords.y, z: initCoords.z };
@@ -176,6 +298,7 @@ export function Globe3D() {
     // Animation loop
     const clock = new Clock();
     let deltaGlobe = 0;
+    let elapsed = 0;
 
     function animate() {
       const id = requestAnimationFrame(animate);
@@ -185,12 +308,37 @@ export function Globe3D() {
       controls.update();
 
       const delta = clock.getDelta();
+      elapsed += delta;
       deltaGlobe += delta;
+
       if (deltaGlobe > 2) {
         const nums = genRandomNumbers(0, pointsData.length, Math.floor((pointsData.length * 4) / 5));
         globe.ringsData(pointsData.filter((_d, i) => nums.includes(i)));
         deltaGlobe = deltaGlobe % 2;
       }
+
+      // Update satellite positions
+      satellites.forEach(({ mesh, orbit }) => {
+        const angle = elapsed * orbit.speed + orbit.phase;
+        let x = Math.cos(angle) * orbit.radius;
+        let y = 0;
+        let z = Math.sin(angle) * orbit.radius;
+
+        // Tilt X
+        const cosX = Math.cos(orbit.tiltX);
+        const sinX = Math.sin(orbit.tiltX);
+        const y1 = y * cosX - z * sinX;
+        const z1 = y * sinX + z * cosX;
+
+        // Tilt Z
+        const cosZ = Math.cos(orbit.tiltZ);
+        const sinZ = Math.sin(orbit.tiltZ);
+        const x2 = x * cosZ - y1 * sinZ;
+        const y2 = x * sinZ + y1 * cosZ;
+
+        mesh.position.set(x2, y2, z1);
+        mesh.lookAt(0, 0, 0);
+      });
 
       renderer.render(scene, camera);
     }
@@ -230,11 +378,46 @@ export function Globe3D() {
   }, [init]);
 
   return (
-    <div
-      ref={containerRef}
-      className="w-full aspect-[16/9] md:aspect-[2/1] relative"
-      style={{ minHeight: 300 }}
-    />
+    <div className="relative w-full">
+      {/* Starfield background */}
+      <div
+        className="absolute inset-0 rounded-2xl overflow-hidden"
+        style={{
+          background: "radial-gradient(ellipse at center, hsl(var(--primary) / 0.08) 0%, hsl(var(--background)) 70%)",
+        }}
+      />
+      {/* Subtle star dots via CSS */}
+      <div
+        className="absolute inset-0 rounded-2xl overflow-hidden opacity-40"
+        style={{
+          backgroundImage: `
+            radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.3) 50%, transparent 50%),
+            radial-gradient(1px 1px at 30% 65%, rgba(255,255,255,0.2) 50%, transparent 50%),
+            radial-gradient(1px 1px at 55% 15%, rgba(255,255,255,0.25) 50%, transparent 50%),
+            radial-gradient(1px 1px at 70% 80%, rgba(255,255,255,0.2) 50%, transparent 50%),
+            radial-gradient(1px 1px at 85% 35%, rgba(255,255,255,0.3) 50%, transparent 50%),
+            radial-gradient(1px 1px at 15% 90%, rgba(255,255,255,0.15) 50%, transparent 50%),
+            radial-gradient(1px 1px at 45% 45%, rgba(255,255,255,0.2) 50%, transparent 50%),
+            radial-gradient(1px 1px at 90% 60%, rgba(255,255,255,0.25) 50%, transparent 50%),
+            radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,0.15) 50%, transparent 50%),
+            radial-gradient(1px 1px at 60% 90%, rgba(255,255,255,0.2) 50%, transparent 50%),
+            radial-gradient(1px 1px at 5% 55%, rgba(255,255,255,0.3) 50%, transparent 50%),
+            radial-gradient(1px 1px at 75% 10%, rgba(255,255,255,0.2) 50%, transparent 50%),
+            radial-gradient(1px 1px at 40% 75%, rgba(255,255,255,0.15) 50%, transparent 50%),
+            radial-gradient(1px 1px at 95% 45%, rgba(255,255,255,0.25) 50%, transparent 50%),
+            radial-gradient(1px 1px at 50% 30%, rgba(255,255,255,0.2) 50%, transparent 50%),
+            radial-gradient(1.5px 1.5px at 20% 50%, rgba(255,255,255,0.35) 50%, transparent 50%),
+            radial-gradient(1.5px 1.5px at 65% 25%, rgba(255,255,255,0.3) 50%, transparent 50%),
+            radial-gradient(1.5px 1.5px at 80% 70%, rgba(255,255,255,0.25) 50%, transparent 50%)
+          `,
+        }}
+      />
+      <div
+        ref={containerRef}
+        className="relative w-full aspect-[16/9] md:aspect-[2/1] z-10"
+        style={{ minHeight: 300 }}
+      />
+    </div>
   );
 }
 
