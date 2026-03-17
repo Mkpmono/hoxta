@@ -53,6 +53,7 @@ export function GlobalInfrastructure({
             <Suspense fallback={<div className="w-full aspect-[2/1] flex items-center justify-center text-muted-foreground">Loading globe...</div>}>
               <Globe3D />
             </Suspense>
+          </div>
         </motion.div>
 
         {/* Stats + Features Grid */}
