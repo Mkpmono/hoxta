@@ -13,11 +13,16 @@ import {
   Mesh,
   SphereGeometry,
   MeshBasicMaterial,
+  MeshPhongMaterial,
   BufferGeometry,
   LineBasicMaterial,
   Line,
   Float32BufferAttribute,
   Vector3,
+  CylinderGeometry,
+  BoxGeometry,
+  RingGeometry,
+  DoubleSide,
 } from "three";
 import ThreeGlobe from "three-globe";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
