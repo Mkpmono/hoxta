@@ -391,37 +391,57 @@ export function Globe3D() {
 
   return (
     <div className="relative w-full">
-      {/* Space background with radial glow */}
+      {/* Deep space background blending into theme */}
       <div
         className="absolute inset-0 rounded-2xl overflow-hidden"
         style={{
-          background: "radial-gradient(ellipse at center, hsl(var(--primary) / 0.08) 0%, hsl(var(--background)) 70%)",
+          background: `
+            radial-gradient(ellipse 80% 60% at 50% 50%, hsl(195 100% 55% / 0.06) 0%, transparent 60%),
+            radial-gradient(ellipse 50% 40% at 30% 40%, hsl(210 60% 30% / 0.08) 0%, transparent 50%),
+            radial-gradient(ellipse 50% 40% at 70% 60%, hsl(200 100% 45% / 0.05) 0%, transparent 50%),
+            radial-gradient(circle at 50% 50%, hsl(210 60% 6%) 0%, hsl(210 50% 4%) 100%)
+          `,
         }}
       />
-      {/* Star dots */}
+      {/* Nebula-like subtle color wash */}
       <div
-        className="absolute inset-0 rounded-2xl overflow-hidden opacity-40"
+        className="absolute inset-0 rounded-2xl overflow-hidden opacity-30"
+        style={{
+          background: `
+            radial-gradient(ellipse 40% 30% at 20% 30%, hsl(195 100% 55% / 0.08) 0%, transparent 70%),
+            radial-gradient(ellipse 35% 25% at 80% 70%, hsl(210 60% 40% / 0.06) 0%, transparent 70%)
+          `,
+        }}
+      />
+      {/* Star field */}
+      <div
+        className="absolute inset-0 rounded-2xl overflow-hidden opacity-50"
         style={{
           backgroundImage: `
-            radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.3) 50%, transparent 50%),
-            radial-gradient(1px 1px at 30% 65%, rgba(255,255,255,0.2) 50%, transparent 50%),
-            radial-gradient(1px 1px at 55% 15%, rgba(255,255,255,0.25) 50%, transparent 50%),
-            radial-gradient(1px 1px at 70% 80%, rgba(255,255,255,0.2) 50%, transparent 50%),
-            radial-gradient(1px 1px at 85% 35%, rgba(255,255,255,0.3) 50%, transparent 50%),
-            radial-gradient(1px 1px at 15% 90%, rgba(255,255,255,0.15) 50%, transparent 50%),
-            radial-gradient(1px 1px at 45% 45%, rgba(255,255,255,0.2) 50%, transparent 50%),
-            radial-gradient(1px 1px at 90% 60%, rgba(255,255,255,0.25) 50%, transparent 50%),
-            radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,0.15) 50%, transparent 50%),
-            radial-gradient(1px 1px at 60% 90%, rgba(255,255,255,0.2) 50%, transparent 50%),
-            radial-gradient(1px 1px at 5% 55%, rgba(255,255,255,0.3) 50%, transparent 50%),
-            radial-gradient(1px 1px at 75% 10%, rgba(255,255,255,0.2) 50%, transparent 50%),
-            radial-gradient(1px 1px at 40% 75%, rgba(255,255,255,0.15) 50%, transparent 50%),
-            radial-gradient(1px 1px at 95% 45%, rgba(255,255,255,0.25) 50%, transparent 50%),
-            radial-gradient(1px 1px at 50% 30%, rgba(255,255,255,0.2) 50%, transparent 50%),
-            radial-gradient(1.5px 1.5px at 20% 50%, rgba(255,255,255,0.35) 50%, transparent 50%),
-            radial-gradient(1.5px 1.5px at 65% 25%, rgba(255,255,255,0.3) 50%, transparent 50%),
-            radial-gradient(1.5px 1.5px at 80% 70%, rgba(255,255,255,0.25) 50%, transparent 50%)
+            radial-gradient(1px 1px at 10% 20%, hsl(210 20% 95% / 0.4) 50%, transparent 50%),
+            radial-gradient(1px 1px at 30% 65%, hsl(210 20% 95% / 0.25) 50%, transparent 50%),
+            radial-gradient(1px 1px at 55% 15%, hsl(195 100% 55% / 0.35) 50%, transparent 50%),
+            radial-gradient(1px 1px at 70% 80%, hsl(210 20% 95% / 0.2) 50%, transparent 50%),
+            radial-gradient(1px 1px at 85% 35%, hsl(210 20% 95% / 0.35) 50%, transparent 50%),
+            radial-gradient(1px 1px at 15% 90%, hsl(210 20% 95% / 0.15) 50%, transparent 50%),
+            radial-gradient(1px 1px at 45% 45%, hsl(195 100% 55% / 0.3) 50%, transparent 50%),
+            radial-gradient(1px 1px at 90% 60%, hsl(210 20% 95% / 0.25) 50%, transparent 50%),
+            radial-gradient(1px 1px at 25% 40%, hsl(210 20% 95% / 0.2) 50%, transparent 50%),
+            radial-gradient(1px 1px at 60% 90%, hsl(195 100% 55% / 0.2) 50%, transparent 50%),
+            radial-gradient(1px 1px at 5% 55%, hsl(210 20% 95% / 0.3) 50%, transparent 50%),
+            radial-gradient(1px 1px at 75% 10%, hsl(210 20% 95% / 0.2) 50%, transparent 50%),
+            radial-gradient(1.5px 1.5px at 40% 75%, hsl(195 100% 55% / 0.3) 50%, transparent 50%),
+            radial-gradient(1.5px 1.5px at 20% 50%, hsl(210 20% 95% / 0.35) 50%, transparent 50%),
+            radial-gradient(1.5px 1.5px at 65% 25%, hsl(195 100% 55% / 0.25) 50%, transparent 50%),
+            radial-gradient(1.5px 1.5px at 80% 70%, hsl(210 20% 95% / 0.3) 50%, transparent 50%)
           `,
+        }}
+      />
+      {/* Edge vignette to blend into surrounding section */}
+      <div
+        className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none"
+        style={{
+          boxShadow: "inset 0 0 80px 40px hsl(210 60% 6%)",
         }}
       />
       <div
