@@ -13,11 +13,16 @@ import {
   Mesh,
   SphereGeometry,
   MeshBasicMaterial,
+  MeshPhongMaterial,
   BufferGeometry,
   LineBasicMaterial,
   Line,
   Float32BufferAttribute,
   Vector3,
+  CylinderGeometry,
+  BoxGeometry,
+  RingGeometry,
+  DoubleSide,
 } from "three";
 import ThreeGlobe from "three-globe";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -77,26 +82,108 @@ function genRandomNumbers(min: number, max: number, count: number) {
 
 function createSatellite() {
   const group = new Group();
-  const bodyGeo = new SphereGeometry(1.2, 8, 8);
-  const bodyMat = new MeshBasicMaterial({ color: 0x06b6d4 });
-  group.add(new Mesh(bodyGeo, bodyMat));
 
-  // Solar panels
-  const panelGeo = new SphereGeometry(0.6, 4, 4);
-  const panelMat = new MeshBasicMaterial({ color: 0x3b82f6, transparent: true, opacity: 0.8 });
-  const p1 = new Mesh(panelGeo, panelMat);
-  p1.position.set(2.5, 0, 0);
-  p1.scale.set(3, 0.2, 1.5);
-  group.add(p1);
-  const p2 = new Mesh(panelGeo, panelMat);
-  p2.position.set(-2.5, 0, 0);
-  p2.scale.set(3, 0.2, 1.5);
-  group.add(p2);
+  // Main cylindrical body
+  const bodyGeo = new CylinderGeometry(0.8, 0.8, 4, 8);
+  const bodyMat = new MeshPhongMaterial({ color: 0xc0c8d4, emissive: 0x222833, shininess: 80 });
+  const body = new Mesh(bodyGeo, bodyMat);
+  body.rotation.z = Math.PI / 4;
+  group.add(body);
 
-  // Glow
-  const glowGeo = new SphereGeometry(2.5, 8, 8);
-  const glowMat = new MeshBasicMaterial({ color: 0x06b6d4, transparent: true, opacity: 0.15 });
+  // Body bands/rings
+  const bandGeo = new CylinderGeometry(0.9, 0.9, 0.3, 8);
+  const bandMat = new MeshPhongMaterial({ color: 0x8899aa, emissive: 0x111822 });
+  for (const yOff of [-1.2, 0, 1.2]) {
+    const band = new Mesh(bandGeo, bandMat);
+    band.rotation.z = Math.PI / 4;
+    band.position.set(yOff * Math.cos(Math.PI / 4) * -1, yOff * Math.cos(Math.PI / 4), 0);
+    group.add(band);
+  }
+
+  // Solar panels (flat boxes with grid look)
+  const panelGeo = new BoxGeometry(5, 0.15, 2.8);
+  const panelMat = new MeshPhongMaterial({ color: 0x1e3a5f, emissive: 0x0a1628, shininess: 40 });
+  const panelFrameMat = new MeshPhongMaterial({ color: 0x8899aa });
+
+  // Panel 1 (right)
+  const panel1 = new Mesh(panelGeo, panelMat);
+  panel1.position.set(4.5, 0, 0);
+  group.add(panel1);
+  // Panel frame
+  const frame1 = new Mesh(new BoxGeometry(5.2, 0.2, 3), panelFrameMat);
+  frame1.position.set(4.5, 0, 0);
+  group.add(frame1);
+  // Panel grid lines
+  for (let i = -2; i <= 2; i++) {
+    const lineH = new Mesh(new BoxGeometry(5, 0.22, 0.04), panelFrameMat);
+    lineH.position.set(4.5, 0, i * 0.65);
+    group.add(lineH);
+    const lineV = new Mesh(new BoxGeometry(0.04, 0.22, 2.8), panelFrameMat);
+    lineV.position.set(4.5 + i * 1.1, 0, 0);
+    group.add(lineV);
+  }
+
+  // Panel 2 (left)
+  const panel2 = new Mesh(panelGeo, panelMat);
+  panel2.position.set(-4.5, 0, 0);
+  group.add(panel2);
+  const frame2 = new Mesh(new BoxGeometry(5.2, 0.2, 3), panelFrameMat);
+  frame2.position.set(-4.5, 0, 0);
+  group.add(frame2);
+  for (let i = -2; i <= 2; i++) {
+    const lineH = new Mesh(new BoxGeometry(5, 0.22, 0.04), panelFrameMat);
+    lineH.position.set(-4.5, 0, i * 0.65);
+    group.add(lineH);
+    const lineV = new Mesh(new BoxGeometry(0.04, 0.22, 2.8), panelFrameMat);
+    lineV.position.set(-4.5 + i * 1.1, 0, 0);
+    group.add(lineV);
+  }
+
+  // Panel arms connecting to body
+  const armGeo = new CylinderGeometry(0.12, 0.12, 2, 6);
+  const armMat = new MeshPhongMaterial({ color: 0x8899aa });
+  const arm1 = new Mesh(armGeo, armMat);
+  arm1.rotation.z = Math.PI / 2;
+  arm1.position.set(2, 0, 0);
+  group.add(arm1);
+  const arm2 = new Mesh(armGeo, armMat);
+  arm2.rotation.z = Math.PI / 2;
+  arm2.position.set(-2, 0, 0);
+  group.add(arm2);
+
+  // Satellite dish (parabolic antenna)
+  const dishGeo = new SphereGeometry(1.5, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2.5);
+  const dishMat = new MeshPhongMaterial({ color: 0xd8dde4, emissive: 0x222833, side: DoubleSide, shininess: 60 });
+  const dish = new Mesh(dishGeo, dishMat);
+  dish.rotation.x = -Math.PI / 2;
+  dish.position.set(0, 2.8, 0);
+  group.add(dish);
+
+  // Dish antenna rod
+  const rodGeo = new CylinderGeometry(0.06, 0.06, 2, 4);
+  const rodMat = new MeshPhongMaterial({ color: 0x06b6d4 });
+  const rod = new Mesh(rodGeo, rodMat);
+  rod.position.set(0, 3.5, 0);
+  group.add(rod);
+
+  // Dish antenna cross-supports
+  for (let a = 0; a < 3; a++) {
+    const supportGeo = new CylinderGeometry(0.04, 0.04, 2.2, 4);
+    const support = new Mesh(supportGeo, rodMat);
+    const angle = (a / 3) * Math.PI * 2;
+    support.position.set(Math.cos(angle) * 0.5, 3.2, Math.sin(angle) * 0.5);
+    support.rotation.z = Math.cos(angle) * 0.4;
+    support.rotation.x = Math.sin(angle) * 0.4;
+    group.add(support);
+  }
+
+  // Small glow around satellite
+  const glowGeo = new SphereGeometry(3, 8, 8);
+  const glowMat = new MeshBasicMaterial({ color: 0x06b6d4, transparent: true, opacity: 0.08 });
   group.add(new Mesh(glowGeo, glowMat));
+
+  // Scale down for orbit
+  group.scale.setScalar(0.6);
 
   return group;
 }
