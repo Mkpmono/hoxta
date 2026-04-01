@@ -446,7 +446,7 @@ export function Globe3D() {
       />
       <div
         ref={containerRef}
-        className="relative w-full aspect-[16/9] md:aspect-[2/1] z-10"
+        className="relative w-full aspect-[4/3] md:aspect-[16/10] z-10"
         style={{ minHeight: 300 }}
       />
     </div>
