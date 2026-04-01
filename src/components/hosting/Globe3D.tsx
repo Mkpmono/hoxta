@@ -184,9 +184,45 @@ function createSatellite() {
   group.add(new Mesh(glowGeo, glowMat));
 
   // Scale down for orbit
-  group.scale.setScalar(0.6);
+  group.scale.setScalar(0.8);
 
   return group;
+}
+
+function createDistantPlanet(radius: number, color: number, x: number, y: number, z: number, hasRing = false) {
+  const group = new Group();
+  const geo = new SphereGeometry(radius, 16, 16);
+  const mat = new MeshPhongMaterial({ color, emissive: color, emissiveIntensity: 0.15, shininess: 20 });
+  group.add(new Mesh(geo, mat));
+
+  // Subtle glow
+  const glowGeo = new SphereGeometry(radius * 1.6, 12, 12);
+  const glowMat = new MeshBasicMaterial({ color, transparent: true, opacity: 0.06 });
+  group.add(new Mesh(glowGeo, glowMat));
+
+  if (hasRing) {
+    const ringGeo = new RingGeometry(radius * 1.4, radius * 2.2, 32);
+    const ringMat = new MeshBasicMaterial({ color, transparent: true, opacity: 0.12, side: DoubleSide });
+    const ring = new Mesh(ringGeo, ringMat);
+    ring.rotation.x = Math.PI / 2.5;
+    group.add(ring);
+  }
+
+  group.position.set(x, y, z);
+  return group;
+}
+
+function createSignalBeam(satellite: Group) {
+  const positions = new Float32Array(6); // 2 points
+  const geo = new BufferGeometry();
+  geo.setAttribute("position", new Float32BufferAttribute(positions, 3));
+  const mat = new LineBasicMaterial({
+    color: 0x06b6d4,
+    transparent: true,
+    opacity: 0.0,
+  });
+  const line = new Line(geo, mat);
+  return { line, geo, mat, satellite };
 }
 
 function tiltPoint(x: number, y: number, z: number, tiltX: number, tiltZ: number) {
