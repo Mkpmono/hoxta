@@ -354,6 +354,20 @@ export function Globe3D() {
       scene.add(createOrbitLine(orbit.radius, orbit.tiltX, orbit.tiltZ));
     });
 
+    // ── Distant planets ──
+    scene.add(createDistantPlanet(3, 0x1a3a5c, -280, 120, -350, true));
+    scene.add(createDistantPlanet(2, 0x2a4a6a, 320, -80, -400));
+    scene.add(createDistantPlanet(4.5, 0x0d2944, -200, -160, -500, true));
+    scene.add(createDistantPlanet(1.5, 0x3a5a7a, 250, 180, -300));
+
+    // ── Signal beams from satellites ──
+    const signalBeams: ReturnType<typeof createSignalBeam>[] = [];
+    satellites.forEach(({ mesh }) => {
+      const beam = createSignalBeam(mesh);
+      scene.add(beam.line);
+      signalBeams.push(beam);
+    });
+
     // Initial position - Europe focused
     const initCoords = globe.getCoords(40, 10, 0);
     new TWEEN.Tween(camera.position)
@@ -382,8 +396,8 @@ export function Globe3D() {
         deltaGlobe = deltaGlobe % 2;
       }
 
-      // Update satellites
-      satellites.forEach(({ mesh, orbit }) => {
+      // Update satellites & signal beams
+      satellites.forEach(({ mesh, orbit }, idx) => {
         const angle = elapsed * orbit.speed + orbit.phase;
         const p = tiltPoint(
           Math.cos(angle) * orbit.radius,
@@ -394,6 +408,22 @@ export function Globe3D() {
         );
         mesh.position.set(p.x, p.y, p.z);
         mesh.lookAt(0, 0, 0);
+
+        // Signal beam: pulse opacity and update positions
+        const beam = signalBeams[idx];
+        if (beam) {
+          const positions = beam.geo.attributes.position as any;
+          positions.array[0] = p.x;
+          positions.array[1] = p.y;
+          positions.array[2] = p.z;
+          positions.array[3] = 0;
+          positions.array[4] = 0;
+          positions.array[5] = 0;
+          positions.needsUpdate = true;
+          // Pulse: each satellite has different phase
+          const pulse = Math.sin(elapsed * 2 + idx * 1.3);
+          beam.mat.opacity = pulse > 0.3 ? pulse * 0.25 : 0;
+        }
       });
 
       renderer.render(scene, camera);
