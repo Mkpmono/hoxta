@@ -251,21 +251,21 @@ export function Globe3D() {
     controls.minPolarAngle = Math.PI / 3.5;
     controls.maxPolarAngle = Math.PI - Math.PI / 3;
 
-    const ambientLight = new AmbientLight(0x0a1628, 1.2);
-    const dLight = new DirectionalLight(0x06b6d4, 0.15);
+    const ambientLight = new AmbientLight(0x112244, 1.5);
+    const dLight = new DirectionalLight(0x06b6d4, 0.25);
     dLight.position.set(-400, 100, 400);
-    const dLight1 = new DirectionalLight(0xc0d8e8, 0.5);
+    const dLight1 = new DirectionalLight(0xd0e4f0, 0.7);
     dLight1.position.set(-200, 500, 200);
-    const dLight2 = new PointLight(0x06b6d4, 0.3);
+    const dLight2 = new PointLight(0x06b6d4, 0.4);
     dLight2.position.set(-200, 500, 200);
     camera.add(ambientLight, dLight, dLight1, dLight2);
 
     const globe = new ThreeGlobe({ waitForGlobeReady: true, animateIn: true });
     const globeMaterial = globe.globeMaterial() as any;
-    globeMaterial.color = new Color("#071a2e");
-    globeMaterial.emissive = new Color("#040e1a");
-    globeMaterial.emissiveIntensity = 0.15;
-    globeMaterial.shininess = 0.3;
+    globeMaterial.color = new Color("#0a2540");
+    globeMaterial.emissive = new Color("#061a2e");
+    globeMaterial.emissiveIntensity = 0.25;
+    globeMaterial.shininess = 0.5;
 
     const pointsData = buildPointsData();
 
