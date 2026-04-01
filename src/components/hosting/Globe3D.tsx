@@ -251,21 +251,21 @@ export function Globe3D() {
     controls.minPolarAngle = Math.PI / 3.5;
     controls.maxPolarAngle = Math.PI - Math.PI / 3;
 
-    const ambientLight = new AmbientLight(0x111122, 0.8);
-    const dLight = new DirectionalLight(0x0066ff, 0.4);
+    const ambientLight = new AmbientLight(0x0a1628, 1.2);
+    const dLight = new DirectionalLight(0x06b6d4, 0.15);
     dLight.position.set(-400, 100, 400);
-    const dLight1 = new DirectionalLight(0xffffff, 1);
+    const dLight1 = new DirectionalLight(0xc0d8e8, 0.5);
     dLight1.position.set(-200, 500, 200);
-    const dLight2 = new PointLight(0xffffff, 0.8);
+    const dLight2 = new PointLight(0x06b6d4, 0.3);
     dLight2.position.set(-200, 500, 200);
     camera.add(ambientLight, dLight, dLight1, dLight2);
 
     const globe = new ThreeGlobe({ waitForGlobeReady: true, animateIn: true });
     const globeMaterial = globe.globeMaterial() as any;
-    globeMaterial.color = new Color("#062056");
-    globeMaterial.emissive = new Color("#000000");
-    globeMaterial.emissiveIntensity = 0.1;
-    globeMaterial.shininess = 0.9;
+    globeMaterial.color = new Color("#071a2e");
+    globeMaterial.emissive = new Color("#040e1a");
+    globeMaterial.emissiveIntensity = 0.15;
+    globeMaterial.shininess = 0.3;
 
     const pointsData = buildPointsData();
 
@@ -275,9 +275,9 @@ export function Globe3D() {
         .hexPolygonResolution(3)
         .hexPolygonMargin(0.7)
         .showAtmosphere(true)
-        .atmosphereColor("#ffffff")
-        .atmosphereAltitude(0.1)
-        .hexPolygonColor(() => "rgba(255,255,255,0.7)");
+        .atmosphereColor("#06b6d4")
+        .atmosphereAltitude(0.12)
+        .hexPolygonColor(() => "rgba(6, 182, 212, 0.35)");
     }, 1000);
 
     setTimeout(() => {
