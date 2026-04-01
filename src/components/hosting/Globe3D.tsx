@@ -237,7 +237,7 @@ export function Globe3D() {
     renderer.setClearColor(0x000000, 0);
     container.appendChild(renderer.domElement);
 
-    const cameraZ = 300;
+    const cameraZ = 380;
     const camera = new PerspectiveCamera(50, aspect, 1, 2000);
     camera.position.set(0, 0, cameraZ);
 
