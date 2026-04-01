@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useMemo } from "react";
 import {
   Fog,
   PerspectiveCamera,
@@ -23,6 +23,7 @@ import {
   BoxGeometry,
   RingGeometry,
   DoubleSide,
+  AdditiveBlending,
 } from "three";
 import ThreeGlobe from "three-globe";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -183,9 +184,45 @@ function createSatellite() {
   group.add(new Mesh(glowGeo, glowMat));
 
   // Scale down for orbit
-  group.scale.setScalar(0.6);
+  group.scale.setScalar(0.8);
 
   return group;
+}
+
+function createDistantPlanet(radius: number, color: number, x: number, y: number, z: number, hasRing = false) {
+  const group = new Group();
+  const geo = new SphereGeometry(radius, 16, 16);
+  const mat = new MeshPhongMaterial({ color, emissive: color, emissiveIntensity: 0.15, shininess: 20 });
+  group.add(new Mesh(geo, mat));
+
+  // Subtle glow
+  const glowGeo = new SphereGeometry(radius * 1.6, 12, 12);
+  const glowMat = new MeshBasicMaterial({ color, transparent: true, opacity: 0.06 });
+  group.add(new Mesh(glowGeo, glowMat));
+
+  if (hasRing) {
+    const ringGeo = new RingGeometry(radius * 1.4, radius * 2.2, 32);
+    const ringMat = new MeshBasicMaterial({ color, transparent: true, opacity: 0.12, side: DoubleSide });
+    const ring = new Mesh(ringGeo, ringMat);
+    ring.rotation.x = Math.PI / 2.5;
+    group.add(ring);
+  }
+
+  group.position.set(x, y, z);
+  return group;
+}
+
+function createSignalBeam(satellite: Group) {
+  const positions = new Float32Array(6); // 2 points
+  const geo = new BufferGeometry();
+  geo.setAttribute("position", new Float32BufferAttribute(positions, 3));
+  const mat = new LineBasicMaterial({
+    color: 0x06b6d4,
+    transparent: true,
+    opacity: 0.0,
+  });
+  const line = new Line(geo, mat);
+  return { line, geo, mat, satellite };
 }
 
 function tiltPoint(x: number, y: number, z: number, tiltX: number, tiltZ: number) {
@@ -317,6 +354,20 @@ export function Globe3D() {
       scene.add(createOrbitLine(orbit.radius, orbit.tiltX, orbit.tiltZ));
     });
 
+    // ── Distant planets ──
+    scene.add(createDistantPlanet(3, 0x1a3a5c, -280, 120, -350, true));
+    scene.add(createDistantPlanet(2, 0x2a4a6a, 320, -80, -400));
+    scene.add(createDistantPlanet(4.5, 0x0d2944, -200, -160, -500, true));
+    scene.add(createDistantPlanet(1.5, 0x3a5a7a, 250, 180, -300));
+
+    // ── Signal beams from satellites ──
+    const signalBeams: ReturnType<typeof createSignalBeam>[] = [];
+    satellites.forEach(({ mesh }) => {
+      const beam = createSignalBeam(mesh);
+      scene.add(beam.line);
+      signalBeams.push(beam);
+    });
+
     // Initial position - Europe focused
     const initCoords = globe.getCoords(40, 10, 0);
     new TWEEN.Tween(camera.position)
@@ -345,8 +396,8 @@ export function Globe3D() {
         deltaGlobe = deltaGlobe % 2;
       }
 
-      // Update satellites
-      satellites.forEach(({ mesh, orbit }) => {
+      // Update satellites & signal beams
+      satellites.forEach(({ mesh, orbit }, idx) => {
         const angle = elapsed * orbit.speed + orbit.phase;
         const p = tiltPoint(
           Math.cos(angle) * orbit.radius,
@@ -357,6 +408,22 @@ export function Globe3D() {
         );
         mesh.position.set(p.x, p.y, p.z);
         mesh.lookAt(0, 0, 0);
+
+        // Signal beam: pulse opacity and update positions
+        const beam = signalBeams[idx];
+        if (beam) {
+          const positions = beam.geo.attributes.position as any;
+          positions.array[0] = p.x;
+          positions.array[1] = p.y;
+          positions.array[2] = p.z;
+          positions.array[3] = 0;
+          positions.array[4] = 0;
+          positions.array[5] = 0;
+          positions.needsUpdate = true;
+          // Pulse: each satellite has different phase
+          const pulse = Math.sin(elapsed * 2 + idx * 1.3);
+          beam.mat.opacity = pulse > 0.3 ? pulse * 0.25 : 0;
+        }
       });
 
       renderer.render(scene, camera);
@@ -389,8 +456,49 @@ export function Globe3D() {
     };
   }, [init]);
 
+  const shootingStars = useMemo(() => {
+    const stars = [];
+    const configs = [
+      { top: '12%', left: '5%', angle: 35, delay: 0, duration: 3 },
+      { top: '25%', left: '75%', angle: 210, delay: 4, duration: 2.5 },
+      { top: '60%', left: '10%', angle: 30, delay: 7, duration: 3.5 },
+      { top: '8%', left: '55%', angle: 200, delay: 2, duration: 2.8 },
+      { top: '70%', left: '85%', angle: 220, delay: 9, duration: 3.2 },
+      { top: '40%', left: '92%', angle: 215, delay: 5.5, duration: 2.6 },
+    ];
+    for (const c of configs) {
+      stars.push(
+        <div
+          key={`ss-${c.delay}`}
+          className="absolute rounded-full"
+          style={{
+            top: c.top,
+            left: c.left,
+            width: '2px',
+            height: '2px',
+            background: 'hsl(195 100% 80%)',
+            boxShadow: '0 0 4px 1px hsl(195 100% 55% / 0.6)',
+            opacity: 0,
+            animation: `shootingStar ${c.duration}s ${c.delay}s infinite`,
+            transform: `rotate(${c.angle}deg)`,
+          }}
+        />
+      );
+    }
+    return stars;
+  }, []);
+
   return (
     <div className="relative w-full">
+      <style>{`
+        @keyframes shootingStar {
+          0% { opacity: 0; transform: translate(0, 0) scale(1); }
+          5% { opacity: 1; }
+          20% { opacity: 0.8; transform: translate(120px, 80px) scale(0.5); }
+          25% { opacity: 0; transform: translate(160px, 110px) scale(0); }
+          100% { opacity: 0; }
+        }
+      `}</style>
       {/* Deep space background blending into theme */}
       <div
         className="absolute inset-0 rounded-2xl overflow-hidden"
@@ -437,6 +545,10 @@ export function Globe3D() {
           `,
         }}
       />
+      {/* Shooting stars */}
+      <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none z-[5]">
+        {shootingStars}
+      </div>
       {/* Edge vignette to blend into surrounding section */}
       <div
         className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none"
