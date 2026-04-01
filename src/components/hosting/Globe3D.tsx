@@ -456,8 +456,49 @@ export function Globe3D() {
     };
   }, [init]);
 
+  const shootingStars = useMemo(() => {
+    const stars = [];
+    const configs = [
+      { top: '12%', left: '5%', angle: 35, delay: 0, duration: 3 },
+      { top: '25%', left: '75%', angle: 210, delay: 4, duration: 2.5 },
+      { top: '60%', left: '10%', angle: 30, delay: 7, duration: 3.5 },
+      { top: '8%', left: '55%', angle: 200, delay: 2, duration: 2.8 },
+      { top: '70%', left: '85%', angle: 220, delay: 9, duration: 3.2 },
+      { top: '40%', left: '92%', angle: 215, delay: 5.5, duration: 2.6 },
+    ];
+    for (const c of configs) {
+      stars.push(
+        <div
+          key={`ss-${c.delay}`}
+          className="absolute rounded-full"
+          style={{
+            top: c.top,
+            left: c.left,
+            width: '2px',
+            height: '2px',
+            background: 'hsl(195 100% 80%)',
+            boxShadow: '0 0 4px 1px hsl(195 100% 55% / 0.6)',
+            opacity: 0,
+            animation: `shootingStar ${c.duration}s ${c.delay}s infinite`,
+            transform: `rotate(${c.angle}deg)`,
+          }}
+        />
+      );
+    }
+    return stars;
+  }, []);
+
   return (
     <div className="relative w-full">
+      <style>{`
+        @keyframes shootingStar {
+          0% { opacity: 0; transform: translate(0, 0) scale(1); }
+          5% { opacity: 1; }
+          20% { opacity: 0.8; transform: translate(120px, 80px) scale(0.5); }
+          25% { opacity: 0; transform: translate(160px, 110px) scale(0); }
+          100% { opacity: 0; }
+        }
+      `}</style>
       {/* Deep space background blending into theme */}
       <div
         className="absolute inset-0 rounded-2xl overflow-hidden"
@@ -504,6 +545,10 @@ export function Globe3D() {
           `,
         }}
       />
+      {/* Shooting stars */}
+      <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none z-[5]">
+        {shootingStars}
+      </div>
       {/* Edge vignette to blend into surrounding section */}
       <div
         className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none"
