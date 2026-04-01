@@ -262,10 +262,10 @@ export function Globe3D() {
 
     const globe = new ThreeGlobe({ waitForGlobeReady: true, animateIn: true });
     const globeMaterial = globe.globeMaterial() as any;
-    globeMaterial.color = new Color("#0a2540");
-    globeMaterial.emissive = new Color("#061a2e");
-    globeMaterial.emissiveIntensity = 0.25;
-    globeMaterial.shininess = 0.5;
+    globeMaterial.color = new Color("#081e38");
+    globeMaterial.emissive = new Color("#051528");
+    globeMaterial.emissiveIntensity = 0.2;
+    globeMaterial.shininess = 0.4;
 
     const pointsData = buildPointsData();
 
