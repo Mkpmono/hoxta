@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useMemo } from "react";
 import {
   Fog,
   PerspectiveCamera,
@@ -23,6 +23,7 @@ import {
   BoxGeometry,
   RingGeometry,
   DoubleSide,
+  AdditiveBlending,
 } from "three";
 import ThreeGlobe from "three-globe";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
