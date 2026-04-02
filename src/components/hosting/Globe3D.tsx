@@ -418,20 +418,20 @@ export function Globe3D() {
         mesh.position.set(p.x, p.y, p.z);
         mesh.lookAt(0, 0, 0);
 
-        // Signal beam: pulse opacity and update positions
-        const beam = signalBeams[idx];
-        if (beam) {
-          const positions = beam.geo.attributes.position as any;
-          positions.array[0] = p.x;
-          positions.array[1] = p.y;
-          positions.array[2] = p.z;
-          positions.array[3] = 0;
-          positions.array[4] = 0;
-          positions.array[5] = 0;
-          positions.needsUpdate = true;
-          // Pulse: each satellite has different phase
-          const pulse = Math.sin(elapsed * 2 + idx * 1.3);
-          beam.mat.opacity = pulse > 0.3 ? pulse * 0.25 : 0;
+        // WiFi waves: position between satellite and globe center, face the satellite
+        const wifi = wifiSignals[idx];
+        if (wifi) {
+          // Position wifi waves halfway between satellite and globe
+          const dist = Math.sqrt(p.x * p.x + p.y * p.y + p.z * p.z);
+          const midFactor = 0.55;
+          wifi.waveGroup.position.set(p.x * midFactor, p.y * midFactor, p.z * midFactor);
+          // Point waves toward globe center
+          wifi.waveGroup.lookAt(0, 0, 0);
+          // Animate wave opacities in sequence
+          wifi.waveMats.forEach((mat, wIdx) => {
+            const wave = Math.sin(elapsed * 3 - wIdx * 0.8 + idx * 1.3);
+            mat.opacity = wave > 0 ? wave * 0.35 : 0;
+          });
         }
       });
 
