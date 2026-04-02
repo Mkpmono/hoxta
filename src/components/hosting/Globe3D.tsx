@@ -215,22 +215,24 @@ function createDistantPlanet(radius: number, color: number, x: number, y: number
 function createWifiWaves() {
   const group = new Group();
   const waveMats: MeshBasicMaterial[] = [];
-  // Create 4 concentric WiFi arcs
-  for (let i = 0; i < 4; i++) {
-    const innerR = 4 + i * 3.5;
-    const outerR = innerR + 1.8;
-    const arcGeo = new RingGeometry(innerR, outerR, 24, 1, -Math.PI / 3, Math.PI / 1.5);
-    const arcMat = new MeshBasicMaterial({
-      color: 0x06b6d4,
+
+  for (let i = 0; i < 3; i++) {
+    const ringGeo = new RingGeometry(7 + i * 6, 8.6 + i * 6, 48, 1, -Math.PI / 3.2, Math.PI / 1.6);
+    const ringMat = new MeshBasicMaterial({
+      color: 0x22d3ee,
       transparent: true,
       opacity: 0,
       side: DoubleSide,
       blending: AdditiveBlending,
+      depthWrite: false,
     });
-    const arc = new Mesh(arcGeo, arcMat);
-    group.add(arc);
-    waveMats.push(arcMat);
+
+    const ring = new Mesh(ringGeo, ringMat);
+    ring.renderOrder = 12;
+    group.add(ring);
+    waveMats.push(ringMat);
   }
+
   return { group, waveMats };
 }
 
