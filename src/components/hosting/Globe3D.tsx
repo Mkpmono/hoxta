@@ -346,7 +346,7 @@ export function Globe3D() {
         .pointAltitude(0.0)
         .pointRadius(0.25)
         .ringsData([])
-        .ringColor(() => "rgba(6, 182, 212, 0.6)")
+        .ringColor((d: any) => typeof d.color === 'function' ? d.color(0) : d.color)
         .ringMaxRadius(3)
         .ringPropagationSpeed(3)
         .ringRepeatPeriod((1000 * 0.9) / 1);
