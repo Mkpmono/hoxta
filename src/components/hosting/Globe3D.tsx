@@ -183,8 +183,8 @@ function createSatellite() {
   const glowMat = new MeshBasicMaterial({ color: 0x06b6d4, transparent: true, opacity: 0.08 });
   group.add(new Mesh(glowGeo, glowMat));
 
-  // Scale down for orbit
-  group.scale.setScalar(0.8);
+  // Scale up for visibility
+  group.scale.setScalar(1.4);
 
   return group;
 }
@@ -212,17 +212,26 @@ function createDistantPlanet(radius: number, color: number, x: number, y: number
   return group;
 }
 
-function createSignalBeam(satellite: Group) {
-  const positions = new Float32Array(6); // 2 points
-  const geo = new BufferGeometry();
-  geo.setAttribute("position", new Float32BufferAttribute(positions, 3));
-  const mat = new LineBasicMaterial({
-    color: 0x06b6d4,
-    transparent: true,
-    opacity: 0.0,
-  });
-  const line = new Line(geo, mat);
-  return { line, geo, mat, satellite };
+function createWifiWaves() {
+  const group = new Group();
+  const waveMats: MeshBasicMaterial[] = [];
+  // Create 4 concentric WiFi arcs
+  for (let i = 0; i < 4; i++) {
+    const innerR = 4 + i * 3.5;
+    const outerR = innerR + 1.8;
+    const arcGeo = new RingGeometry(innerR, outerR, 24, 1, -Math.PI / 3, Math.PI / 1.5);
+    const arcMat = new MeshBasicMaterial({
+      color: 0x06b6d4,
+      transparent: true,
+      opacity: 0,
+      side: DoubleSide,
+      blending: AdditiveBlending,
+    });
+    const arc = new Mesh(arcGeo, arcMat);
+    group.add(arc);
+    waveMats.push(arcMat);
+  }
+  return { group, waveMats };
 }
 
 function tiltPoint(x: number, y: number, z: number, tiltX: number, tiltZ: number) {
@@ -337,7 +346,7 @@ export function Globe3D() {
         .pointAltitude(0.0)
         .pointRadius(0.25)
         .ringsData([])
-        .ringColor((e: any) => (t: any) => e.color(t))
+        .ringColor(() => "rgba(6, 182, 212, 0.6)")
         .ringMaxRadius(3)
         .ringPropagationSpeed(3)
         .ringRepeatPeriod((1000 * 0.9) / 1);
@@ -360,12 +369,12 @@ export function Globe3D() {
     scene.add(createDistantPlanet(4.5, 0x0d2944, -200, -160, -500, true));
     scene.add(createDistantPlanet(1.5, 0x3a5a7a, 250, 180, -300));
 
-    // ── Signal beams from satellites ──
-    const signalBeams: ReturnType<typeof createSignalBeam>[] = [];
-    satellites.forEach(({ mesh }) => {
-      const beam = createSignalBeam(mesh);
-      scene.add(beam.line);
-      signalBeams.push(beam);
+    // ── WiFi wave signals from satellites ──
+    const wifiSignals: { waveGroup: Group; waveMats: MeshBasicMaterial[]; satIdx: number }[] = [];
+    satellites.forEach(({ mesh }, idx) => {
+      const { group: waveGroup, waveMats } = createWifiWaves();
+      scene.add(waveGroup);
+      wifiSignals.push({ waveGroup, waveMats, satIdx: idx });
     });
 
     // Initial position - Europe focused
@@ -409,20 +418,20 @@ export function Globe3D() {
         mesh.position.set(p.x, p.y, p.z);
         mesh.lookAt(0, 0, 0);
 
-        // Signal beam: pulse opacity and update positions
-        const beam = signalBeams[idx];
-        if (beam) {
-          const positions = beam.geo.attributes.position as any;
-          positions.array[0] = p.x;
-          positions.array[1] = p.y;
-          positions.array[2] = p.z;
-          positions.array[3] = 0;
-          positions.array[4] = 0;
-          positions.array[5] = 0;
-          positions.needsUpdate = true;
-          // Pulse: each satellite has different phase
-          const pulse = Math.sin(elapsed * 2 + idx * 1.3);
-          beam.mat.opacity = pulse > 0.3 ? pulse * 0.25 : 0;
+        // WiFi waves: position between satellite and globe center, face the satellite
+        const wifi = wifiSignals[idx];
+        if (wifi) {
+          // Position wifi waves halfway between satellite and globe
+          const dist = Math.sqrt(p.x * p.x + p.y * p.y + p.z * p.z);
+          const midFactor = 0.55;
+          wifi.waveGroup.position.set(p.x * midFactor, p.y * midFactor, p.z * midFactor);
+          // Point waves toward globe center
+          wifi.waveGroup.lookAt(0, 0, 0);
+          // Animate wave opacities in sequence
+          wifi.waveMats.forEach((mat, wIdx) => {
+            const wave = Math.sin(elapsed * 3 - wIdx * 0.8 + idx * 1.3);
+            mat.opacity = wave > 0 ? wave * 0.35 : 0;
+          });
         }
       });
 
