@@ -183,8 +183,8 @@ function createSatellite() {
   const glowMat = new MeshBasicMaterial({ color: 0x06b6d4, transparent: true, opacity: 0.08 });
   group.add(new Mesh(glowGeo, glowMat));
 
-  // Scale down for orbit
-  group.scale.setScalar(0.8);
+  // Scale up for visibility
+  group.scale.setScalar(1.4);
 
   return group;
 }
