@@ -212,17 +212,26 @@ function createDistantPlanet(radius: number, color: number, x: number, y: number
   return group;
 }
 
-function createSignalBeam(satellite: Group) {
-  const positions = new Float32Array(6); // 2 points
-  const geo = new BufferGeometry();
-  geo.setAttribute("position", new Float32BufferAttribute(positions, 3));
-  const mat = new LineBasicMaterial({
-    color: 0x06b6d4,
-    transparent: true,
-    opacity: 0.0,
-  });
-  const line = new Line(geo, mat);
-  return { line, geo, mat, satellite };
+function createWifiWaves() {
+  const group = new Group();
+  const waveMats: MeshBasicMaterial[] = [];
+  // Create 4 concentric WiFi arcs
+  for (let i = 0; i < 4; i++) {
+    const innerR = 4 + i * 3.5;
+    const outerR = innerR + 1.8;
+    const arcGeo = new RingGeometry(innerR, outerR, 24, 1, -Math.PI / 3, Math.PI / 1.5);
+    const arcMat = new MeshBasicMaterial({
+      color: 0x06b6d4,
+      transparent: true,
+      opacity: 0,
+      side: DoubleSide,
+      blending: AdditiveBlending,
+    });
+    const arc = new Mesh(arcGeo, arcMat);
+    group.add(arc);
+    waveMats.push(arcMat);
+  }
+  return { group, waveMats };
 }
 
 function tiltPoint(x: number, y: number, z: number, tiltX: number, tiltZ: number) {
