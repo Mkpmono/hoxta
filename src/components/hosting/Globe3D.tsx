@@ -215,22 +215,24 @@ function createDistantPlanet(radius: number, color: number, x: number, y: number
 function createWifiWaves() {
   const group = new Group();
   const waveMats: MeshBasicMaterial[] = [];
-  // Create 4 concentric WiFi arcs
-  for (let i = 0; i < 4; i++) {
-    const innerR = 4 + i * 3.5;
-    const outerR = innerR + 1.8;
-    const arcGeo = new RingGeometry(innerR, outerR, 24, 1, -Math.PI / 3, Math.PI / 1.5);
-    const arcMat = new MeshBasicMaterial({
-      color: 0x06b6d4,
+
+  for (let i = 0; i < 3; i++) {
+    const ringGeo = new RingGeometry(7 + i * 6, 8.6 + i * 6, 48, 1, -Math.PI / 3.2, Math.PI / 1.6);
+    const ringMat = new MeshBasicMaterial({
+      color: 0x22d3ee,
       transparent: true,
       opacity: 0,
       side: DoubleSide,
       blending: AdditiveBlending,
+      depthWrite: false,
     });
-    const arc = new Mesh(arcGeo, arcMat);
-    group.add(arc);
-    waveMats.push(arcMat);
+
+    const ring = new Mesh(ringGeo, ringMat);
+    ring.renderOrder = 12;
+    group.add(ring);
+    waveMats.push(ringMat);
   }
+
   return { group, waveMats };
 }
 
@@ -370,11 +372,11 @@ export function Globe3D() {
     scene.add(createDistantPlanet(1.5, 0x3a5a7a, 250, 180, -300));
 
     // ── WiFi wave signals from satellites ──
-    const wifiSignals: { waveGroup: Group; waveMats: MeshBasicMaterial[]; satIdx: number }[] = [];
-    satellites.forEach(({ mesh }, idx) => {
+    const wifiSignals: { waveGroup: Group; waveMats: MeshBasicMaterial[] }[] = [];
+    satellites.forEach(() => {
       const { group: waveGroup, waveMats } = createWifiWaves();
       scene.add(waveGroup);
-      wifiSignals.push({ waveGroup, waveMats, satIdx: idx });
+      wifiSignals.push({ waveGroup, waveMats });
     });
 
     // Initial position - Europe focused
@@ -405,7 +407,6 @@ export function Globe3D() {
         deltaGlobe = deltaGlobe % 2;
       }
 
-      // Update satellites & signal beams
       satellites.forEach(({ mesh, orbit }, idx) => {
         const angle = elapsed * orbit.speed + orbit.phase;
         const p = tiltPoint(
@@ -418,19 +419,17 @@ export function Globe3D() {
         mesh.position.set(p.x, p.y, p.z);
         mesh.lookAt(0, 0, 0);
 
-        // WiFi waves: position between satellite and globe center, face the satellite
         const wifi = wifiSignals[idx];
         if (wifi) {
-          // Position wifi waves halfway between satellite and globe
-          const dist = Math.sqrt(p.x * p.x + p.y * p.y + p.z * p.z);
-          const midFactor = 0.55;
-          wifi.waveGroup.position.set(p.x * midFactor, p.y * midFactor, p.z * midFactor);
-          // Point waves toward globe center
-          wifi.waveGroup.lookAt(0, 0, 0);
-          // Animate wave opacities in sequence
-          wifi.waveMats.forEach((mat, wIdx) => {
-            const wave = Math.sin(elapsed * 3 - wIdx * 0.8 + idx * 1.3);
-            mat.opacity = wave > 0 ? wave * 0.35 : 0;
+          wifi.waveGroup.position.copy(mesh.position);
+          wifi.waveGroup.quaternion.copy(mesh.quaternion);
+          wifi.waveGroup.rotateY(Math.PI);
+          wifi.waveGroup.translateZ(-14);
+          wifi.waveGroup.translateY(4.5);
+
+          wifi.waveMats.forEach((mat, waveIdx) => {
+            const pulse = (elapsed * 1.8 - waveIdx * 0.34 + idx * 0.28) % 1.6;
+            mat.opacity = pulse > 0.08 && pulse < 1.05 ? 0.88 - pulse * 0.45 : 0;
           });
         }
       });
