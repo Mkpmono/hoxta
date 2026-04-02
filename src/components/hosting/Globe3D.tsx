@@ -213,11 +213,10 @@ function createDistantPlanet(radius: number, color: number, x: number, y: number
 }
 
 function createWifiWaves() {
-  const group = new Group();
-  const waveMats: MeshBasicMaterial[] = [];
+  const waves: { mesh: Mesh; mat: MeshBasicMaterial; offset: number }[] = [];
 
   for (let i = 0; i < 3; i++) {
-    const ringGeo = new RingGeometry(7 + i * 6, 8.6 + i * 6, 48, 1, -Math.PI / 3.2, Math.PI / 1.6);
+    const ringGeo = new RingGeometry(4.8 + i * 3.8, 5.8 + i * 3.8, 48, 1, -Math.PI / 3.15, Math.PI / 1.58);
     const ringMat = new MeshBasicMaterial({
       color: 0x22d3ee,
       transparent: true,
@@ -229,11 +228,10 @@ function createWifiWaves() {
 
     const ring = new Mesh(ringGeo, ringMat);
     ring.renderOrder = 12;
-    group.add(ring);
-    waveMats.push(ringMat);
+    waves.push({ mesh: ring, mat: ringMat, offset: i * 0.22 });
   }
 
-  return { group, waveMats };
+  return waves;
 }
 
 function tiltPoint(x: number, y: number, z: number, tiltX: number, tiltZ: number) {
@@ -348,7 +346,7 @@ export function Globe3D() {
         .pointAltitude(0.0)
         .pointRadius(0.25)
         .ringsData([])
-        .ringColor((d: any) => typeof d.color === 'function' ? d.color(0) : d.color)
+        .ringColor((d: any) => typeof d.color === "function" ? d.color(0) : d.color)
         .ringMaxRadius(3)
         .ringPropagationSpeed(3)
         .ringRepeatPeriod((1000 * 0.9) / 1);
@@ -356,7 +354,6 @@ export function Globe3D() {
 
     scene.add(camera, globe);
 
-    // ── Satellites & orbit lines ──
     const satellites: { mesh: Group; orbit: typeof satelliteOrbits[0] }[] = [];
     satelliteOrbits.forEach((orbit) => {
       const sat = createSatellite();
@@ -365,21 +362,17 @@ export function Globe3D() {
       scene.add(createOrbitLine(orbit.radius, orbit.tiltX, orbit.tiltZ));
     });
 
-    // ── Distant planets ──
     scene.add(createDistantPlanet(3, 0x1a3a5c, -280, 120, -350, true));
     scene.add(createDistantPlanet(2, 0x2a4a6a, 320, -80, -400));
     scene.add(createDistantPlanet(4.5, 0x0d2944, -200, -160, -500, true));
     scene.add(createDistantPlanet(1.5, 0x3a5a7a, 250, 180, -300));
 
-    // ── WiFi wave signals from satellites ──
-    const wifiSignals: { waveGroup: Group; waveMats: MeshBasicMaterial[] }[] = [];
-    satellites.forEach(() => {
-      const { group: waveGroup, waveMats } = createWifiWaves();
-      scene.add(waveGroup);
-      wifiSignals.push({ waveGroup, waveMats });
+    const wifiSignals = satellites.map(() => {
+      const waves = createWifiWaves();
+      waves.forEach(({ mesh }) => scene.add(mesh));
+      return waves;
     });
 
-    // Initial position - Europe focused
     const initCoords = globe.getCoords(40, 10, 0);
     new TWEEN.Tween(camera.position)
       .to({ x: initCoords.x, y: initCoords.y, z: initCoords.z }, 1000)
@@ -419,19 +412,24 @@ export function Globe3D() {
         mesh.position.set(p.x, p.y, p.z);
         mesh.lookAt(0, 0, 0);
 
+        const satellitePos = new Vector3(p.x, p.y, p.z);
+        const targetPos = satellitePos.clone().setLength(112);
         const wifi = wifiSignals[idx];
-        if (wifi) {
-          wifi.waveGroup.position.copy(mesh.position);
-          wifi.waveGroup.quaternion.copy(mesh.quaternion);
-          wifi.waveGroup.rotateY(Math.PI);
-          wifi.waveGroup.translateZ(-14);
-          wifi.waveGroup.translateY(4.5);
 
-          wifi.waveMats.forEach((mat, waveIdx) => {
-            const pulse = (elapsed * 1.8 - waveIdx * 0.34 + idx * 0.28) % 1.6;
-            mat.opacity = pulse > 0.08 && pulse < 1.05 ? 0.88 - pulse * 0.45 : 0;
-          });
-        }
+        wifi.forEach(({ mesh: waveMesh, mat, offset }, waveIdx) => {
+          const cycle = (elapsed * 0.58 + idx * 0.16 - offset) % 1;
+          const travel = cycle < 0 ? cycle + 1 : cycle;
+
+          waveMesh.position.copy(satellitePos).lerp(targetPos, travel);
+          waveMesh.lookAt(camera.position);
+
+          const scale = 1.02 - travel * 0.24 + waveIdx * 0.04;
+          waveMesh.scale.setScalar(scale);
+
+          const fadeIn = Math.min(travel / 0.16, 1);
+          const fadeOut = Math.min((1 - travel) / 0.2, 1);
+          mat.opacity = Math.max(0, Math.min(fadeIn, fadeOut)) * 0.92;
+        });
       });
 
       renderer.render(scene, camera);
