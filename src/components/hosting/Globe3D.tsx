@@ -369,12 +369,12 @@ export function Globe3D() {
     scene.add(createDistantPlanet(4.5, 0x0d2944, -200, -160, -500, true));
     scene.add(createDistantPlanet(1.5, 0x3a5a7a, 250, 180, -300));
 
-    // ── Signal beams from satellites ──
-    const signalBeams: ReturnType<typeof createSignalBeam>[] = [];
-    satellites.forEach(({ mesh }) => {
-      const beam = createSignalBeam(mesh);
-      scene.add(beam.line);
-      signalBeams.push(beam);
+    // ── WiFi wave signals from satellites ──
+    const wifiSignals: { waveGroup: Group; waveMats: MeshBasicMaterial[]; satIdx: number }[] = [];
+    satellites.forEach(({ mesh }, idx) => {
+      const { group: waveGroup, waveMats } = createWifiWaves();
+      scene.add(waveGroup);
+      wifiSignals.push({ waveGroup, waveMats, satIdx: idx });
     });
 
     // Initial position - Europe focused
