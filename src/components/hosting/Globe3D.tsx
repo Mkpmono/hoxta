@@ -257,20 +257,22 @@ function createSignalBeam() {
   glow.renderOrder = 13;
   group.add(glow);
 
-  // Traveling pulse particles (3 staggered)
+  // Traveling signal wave arcs (3 staggered) - concentric arcs like WiFi waves
   const pulses: { mesh: Mesh; mat: MeshBasicMaterial; offset: number }[] = [];
   for (let i = 0; i < 3; i++) {
-    const pulseGeo = new SphereGeometry(0.8, 8, 8);
-    const pulseMat = new MeshBasicMaterial({
+    // Arc wave: partial ring that looks like a signal wave
+    const arcGeo = new RingGeometry(2.0 + i * 1.4, 2.5 + i * 1.4, 24, 1, -Math.PI * 0.35, Math.PI * 0.7);
+    const arcMat = new MeshBasicMaterial({
       color: 0x67e8f9,
       transparent: true,
       opacity: 0,
       blending: AdditiveBlending,
       depthWrite: false,
+      side: DoubleSide,
     });
-    const pulse = new Mesh(pulseGeo, pulseMat);
-    pulse.renderOrder = 14;
-    pulses.push({ mesh: pulse, mat: pulseMat, offset: i * 0.33 });
+    const arc = new Mesh(arcGeo, arcMat);
+    arc.renderOrder = 14;
+    pulses.push({ mesh: arc, mat: arcMat, offset: i * 0.33 });
   }
 
   // Impact glow at earth surface
