@@ -212,26 +212,37 @@ function createDistantPlanet(radius: number, color: number, x: number, y: number
   return group;
 }
 
-function createWifiWaves() {
-  const waves: { mesh: Mesh; mat: MeshBasicMaterial; offset: number }[] = [];
+function createSignalBeam() {
+  const pulses: { mesh: Mesh; mat: MeshBasicMaterial; offset: number }[] = [];
 
-  for (let i = 0; i < 3; i++) {
-    const ringGeo = new RingGeometry(4.8 + i * 3.8, 5.8 + i * 3.8, 48, 1, -Math.PI / 3.15, Math.PI / 1.58);
-    const ringMat = new MeshBasicMaterial({
+  // 4 small glowing spheres that travel from satellite to earth
+  for (let i = 0; i < 4; i++) {
+    const geo = new SphereGeometry(1.2, 8, 8);
+    const mat = new MeshBasicMaterial({
       color: 0x22d3ee,
       transparent: true,
       opacity: 0,
-      side: DoubleSide,
       blending: AdditiveBlending,
       depthWrite: false,
     });
-
-    const ring = new Mesh(ringGeo, ringMat);
-    ring.renderOrder = 12;
-    waves.push({ mesh: ring, mat: ringMat, offset: i * 0.22 });
+    const sphere = new Mesh(geo, mat);
+    sphere.renderOrder = 12;
+    pulses.push({ mesh: sphere, mat, offset: i * 0.25 });
   }
 
-  return waves;
+  // A thin beam line from satellite toward earth
+  const beamGeo = new CylinderGeometry(0.3, 0.15, 1, 6);
+  const beamMat = new MeshBasicMaterial({
+    color: 0x06b6d4,
+    transparent: true,
+    opacity: 0,
+    blending: AdditiveBlending,
+    depthWrite: false,
+  });
+  const beam = new Mesh(beamGeo, beamMat);
+  beam.renderOrder = 11;
+
+  return { pulses, beam, beamMat };
 }
 
 function tiltPoint(x: number, y: number, z: number, tiltX: number, tiltZ: number) {
@@ -368,9 +379,10 @@ export function Globe3D() {
     scene.add(createDistantPlanet(1.5, 0x3a5a7a, 250, 180, -300));
 
     const wifiSignals = satellites.map(() => {
-      const waves = createWifiWaves();
-      waves.forEach(({ mesh }) => scene.add(mesh));
-      return waves;
+      const signal = createSignalBeam();
+      signal.pulses.forEach(({ mesh }) => scene.add(mesh));
+      scene.add(signal.beam);
+      return signal;
     });
 
     const initCoords = globe.getCoords(40, 10, 0);
@@ -414,21 +426,31 @@ export function Globe3D() {
 
         const satellitePos = new Vector3(p.x, p.y, p.z);
         const targetPos = satellitePos.clone().setLength(112);
-        const wifi = wifiSignals[idx];
+        const signal = wifiSignals[idx];
+        const dir = targetPos.clone().sub(satellitePos);
+        const dist = dir.length();
 
-        wifi.forEach(({ mesh: waveMesh, mat, offset }, waveIdx) => {
-          const cycle = (elapsed * 0.58 + idx * 0.16 - offset) % 1;
-          const travel = cycle < 0 ? cycle + 1 : cycle;
+        // Animate beam line stretching from satellite to earth
+        signal.beam.position.copy(satellitePos).lerp(targetPos, 0.5);
+        signal.beam.scale.set(1, dist, 1);
+        signal.beam.lookAt(targetPos);
+        signal.beam.rotateX(Math.PI / 2);
+        signal.beamMat.opacity = 0.12 + Math.sin(elapsed * 3 + idx) * 0.06;
 
-          waveMesh.position.copy(satellitePos).lerp(targetPos, travel);
-          waveMesh.lookAt(camera.position);
+        // Animate pulse spheres traveling from satellite to earth
+        signal.pulses.forEach(({ mesh: pulseMesh, mat, offset }) => {
+          const cycle = ((elapsed * 0.7 + idx * 0.2 - offset) % 1 + 1) % 1;
 
-          const scale = 1.02 - travel * 0.24 + waveIdx * 0.04;
-          waveMesh.scale.setScalar(scale);
+          pulseMesh.position.copy(satellitePos).lerp(targetPos, cycle);
 
-          const fadeIn = Math.min(travel / 0.16, 1);
-          const fadeOut = Math.min((1 - travel) / 0.2, 1);
-          mat.opacity = Math.max(0, Math.min(fadeIn, fadeOut)) * 0.92;
+          // Scale: start small, grow slightly, shrink near earth
+          const s = 0.6 + Math.sin(cycle * Math.PI) * 0.5;
+          pulseMesh.scale.setScalar(s);
+
+          // Opacity: fade in, stay, fade out
+          const fadeIn = Math.min(cycle / 0.12, 1);
+          const fadeOut = Math.min((1 - cycle) / 0.15, 1);
+          mat.opacity = Math.max(0, Math.min(fadeIn, fadeOut)) * 0.85;
         });
       });
 
