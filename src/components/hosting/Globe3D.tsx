@@ -24,6 +24,7 @@ import {
   RingGeometry,
   DoubleSide,
   AdditiveBlending,
+  ConeGeometry,
 } from "three";
 import ThreeGlobe from "three-globe";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -213,36 +214,78 @@ function createDistantPlanet(radius: number, color: number, x: number, y: number
 }
 
 function createSignalBeam() {
-  const pulses: { mesh: Mesh; mat: MeshBasicMaterial; offset: number }[] = [];
+  const group = new Group();
 
-  // 4 small glowing spheres that travel from satellite to earth
-  for (let i = 0; i < 4; i++) {
-    const geo = new SphereGeometry(1.2, 8, 8);
-    const mat = new MeshBasicMaterial({
-      color: 0x22d3ee,
+  // Conical beam (wide at satellite, narrow toward earth)
+  const coneGeo = new ConeGeometry(3.5, 18, 12, 1, true);
+  const coneMat = new MeshBasicMaterial({
+    color: 0x06b6d4,
+    transparent: true,
+    opacity: 0.07,
+    blending: AdditiveBlending,
+    depthWrite: false,
+    side: DoubleSide,
+  });
+  const cone = new Mesh(coneGeo, coneMat);
+  cone.renderOrder = 10;
+  group.add(cone);
+
+  // Inner brighter cone core
+  const coreGeo = new ConeGeometry(1.2, 18, 8, 1, true);
+  const coreMat = new MeshBasicMaterial({
+    color: 0x22d3ee,
+    transparent: true,
+    opacity: 0.15,
+    blending: AdditiveBlending,
+    depthWrite: false,
+    side: DoubleSide,
+  });
+  const core = new Mesh(coreGeo, coreMat);
+  core.renderOrder = 11;
+  group.add(core);
+
+  // Emission glow at satellite origin
+  const glowGeo = new SphereGeometry(2.2, 10, 10);
+  const glowMat = new MeshBasicMaterial({
+    color: 0x22d3ee,
+    transparent: true,
+    opacity: 0.4,
+    blending: AdditiveBlending,
+    depthWrite: false,
+  });
+  const glow = new Mesh(glowGeo, glowMat);
+  glow.renderOrder = 13;
+  group.add(glow);
+
+  // Traveling pulse particles (3 staggered)
+  const pulses: { mesh: Mesh; mat: MeshBasicMaterial; offset: number }[] = [];
+  for (let i = 0; i < 3; i++) {
+    const pulseGeo = new SphereGeometry(0.8, 8, 8);
+    const pulseMat = new MeshBasicMaterial({
+      color: 0x67e8f9,
       transparent: true,
       opacity: 0,
       blending: AdditiveBlending,
       depthWrite: false,
     });
-    const sphere = new Mesh(geo, mat);
-    sphere.renderOrder = 12;
-    pulses.push({ mesh: sphere, mat, offset: i * 0.25 });
+    const pulse = new Mesh(pulseGeo, pulseMat);
+    pulse.renderOrder = 14;
+    pulses.push({ mesh: pulse, mat: pulseMat, offset: i * 0.33 });
   }
 
-  // A thin beam line from satellite toward earth
-  const beamGeo = new CylinderGeometry(0.3, 0.15, 1, 6);
-  const beamMat = new MeshBasicMaterial({
+  // Impact glow at earth surface
+  const impactGeo = new SphereGeometry(1.8, 8, 8);
+  const impactMat = new MeshBasicMaterial({
     color: 0x06b6d4,
     transparent: true,
     opacity: 0,
     blending: AdditiveBlending,
     depthWrite: false,
   });
-  const beam = new Mesh(beamGeo, beamMat);
-  beam.renderOrder = 11;
+  const impact = new Mesh(impactGeo, impactMat);
+  impact.renderOrder = 13;
 
-  return { pulses, beam, beamMat };
+  return { group, coneMat, coreMat, glowMat, glow, pulses, impact, impactMat };
 }
 
 function tiltPoint(x: number, y: number, z: number, tiltX: number, tiltZ: number) {
@@ -357,7 +400,11 @@ export function Globe3D() {
         .pointAltitude(0.0)
         .pointRadius(0.25)
         .ringsData([])
-        .ringColor((d: any) => typeof d.color === "function" ? d.color(0) : d.color)
+        .ringColor((d: any) => {
+          if (typeof d.color === "function") return d.color(0);
+          if (typeof d.color === "string") return d.color;
+          return "#06b6d4";
+        })
         .ringMaxRadius(3)
         .ringPropagationSpeed(3)
         .ringRepeatPeriod((1000 * 0.9) / 1);
@@ -380,8 +427,9 @@ export function Globe3D() {
 
     const wifiSignals = satellites.map(() => {
       const signal = createSignalBeam();
+      scene.add(signal.group);
       signal.pulses.forEach(({ mesh }) => scene.add(mesh));
-      scene.add(signal.beam);
+      scene.add(signal.impact);
       return signal;
     });
 
@@ -408,7 +456,13 @@ export function Globe3D() {
 
       if (deltaGlobe > 2) {
         const nums = genRandomNumbers(0, pointsData.length, Math.floor((pointsData.length * 4) / 5));
-        globe.ringsData(pointsData.filter((_d, i) => nums.includes(i)));
+        const ringsData = pointsData.filter((_d, i) => nums.includes(i)).map(d => ({
+          lat: d.lat,
+          lng: d.lng,
+          color: typeof d.color === "function" ? d.color(0) : d.color,
+          maxR: 3,
+        }));
+        globe.ringsData(ringsData);
         deltaGlobe = deltaGlobe % 2;
       }
 
@@ -427,30 +481,39 @@ export function Globe3D() {
         const satellitePos = new Vector3(p.x, p.y, p.z);
         const targetPos = satellitePos.clone().setLength(112);
         const signal = wifiSignals[idx];
-        const dir = targetPos.clone().sub(satellitePos);
-        const dist = dir.length();
+        const dir = targetPos.clone().sub(satellitePos).normalize();
 
-        // Animate beam line stretching from satellite to earth
-        signal.beam.position.copy(satellitePos).lerp(targetPos, 0.5);
-        signal.beam.scale.set(1, dist, 1);
-        signal.beam.lookAt(targetPos);
-        signal.beam.rotateX(Math.PI / 2);
-        signal.beamMat.opacity = 0.12 + Math.sin(elapsed * 3 + idx) * 0.06;
+        // Position cone beam from satellite toward earth
+        const midPoint = satellitePos.clone().lerp(targetPos, 0.45);
+        signal.group.position.copy(midPoint);
+        signal.group.lookAt(targetPos);
+        signal.group.rotateX(Math.PI / 2);
 
-        // Animate pulse spheres traveling from satellite to earth
+        // Pulsing opacity for beam
+        const pulse = 0.5 + Math.sin(elapsed * 2.5 + idx * 1.2) * 0.5;
+        signal.coneMat.opacity = 0.04 + pulse * 0.06;
+        signal.coreMat.opacity = 0.08 + pulse * 0.12;
+
+        // Emission glow stays at satellite
+        signal.glow.position.copy(satellitePos);
+        signal.glowMat.opacity = 0.2 + pulse * 0.25;
+
+        // Impact glow at earth surface
+        signal.impact.position.copy(targetPos);
+        signal.impactMat.opacity = 0.1 + pulse * 0.2;
+        signal.impact.scale.setScalar(0.8 + pulse * 0.4);
+
+        // Traveling pulse particles
         signal.pulses.forEach(({ mesh: pulseMesh, mat, offset }) => {
-          const cycle = ((elapsed * 0.7 + idx * 0.2 - offset) % 1 + 1) % 1;
-
+          const cycle = ((elapsed * 0.6 + idx * 0.18 - offset) % 1 + 1) % 1;
           pulseMesh.position.copy(satellitePos).lerp(targetPos, cycle);
 
-          // Scale: start small, grow slightly, shrink near earth
-          const s = 0.6 + Math.sin(cycle * Math.PI) * 0.5;
+          const s = 0.5 + Math.sin(cycle * Math.PI) * 0.6;
           pulseMesh.scale.setScalar(s);
 
-          // Opacity: fade in, stay, fade out
-          const fadeIn = Math.min(cycle / 0.12, 1);
-          const fadeOut = Math.min((1 - cycle) / 0.15, 1);
-          mat.opacity = Math.max(0, Math.min(fadeIn, fadeOut)) * 0.85;
+          const fadeIn = Math.min(cycle / 0.1, 1);
+          const fadeOut = Math.min((1 - cycle) / 0.12, 1);
+          mat.opacity = Math.max(0, Math.min(fadeIn, fadeOut)) * 0.9;
         });
       });
 
