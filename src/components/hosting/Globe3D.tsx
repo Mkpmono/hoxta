@@ -212,26 +212,37 @@ function createDistantPlanet(radius: number, color: number, x: number, y: number
   return group;
 }
 
-function createWifiWaves() {
-  const waves: { mesh: Mesh; mat: MeshBasicMaterial; offset: number }[] = [];
+function createSignalBeam() {
+  const pulses: { mesh: Mesh; mat: MeshBasicMaterial; offset: number }[] = [];
 
-  for (let i = 0; i < 3; i++) {
-    const ringGeo = new RingGeometry(4.8 + i * 3.8, 5.8 + i * 3.8, 48, 1, -Math.PI / 3.15, Math.PI / 1.58);
-    const ringMat = new MeshBasicMaterial({
+  // 4 small glowing spheres that travel from satellite to earth
+  for (let i = 0; i < 4; i++) {
+    const geo = new SphereGeometry(1.2, 8, 8);
+    const mat = new MeshBasicMaterial({
       color: 0x22d3ee,
       transparent: true,
       opacity: 0,
-      side: DoubleSide,
       blending: AdditiveBlending,
       depthWrite: false,
     });
-
-    const ring = new Mesh(ringGeo, ringMat);
-    ring.renderOrder = 12;
-    waves.push({ mesh: ring, mat: ringMat, offset: i * 0.22 });
+    const sphere = new Mesh(geo, mat);
+    sphere.renderOrder = 12;
+    pulses.push({ mesh: sphere, mat, offset: i * 0.25 });
   }
 
-  return waves;
+  // A thin beam line from satellite toward earth
+  const beamGeo = new CylinderGeometry(0.3, 0.15, 1, 6);
+  const beamMat = new MeshBasicMaterial({
+    color: 0x06b6d4,
+    transparent: true,
+    opacity: 0,
+    blending: AdditiveBlending,
+    depthWrite: false,
+  });
+  const beam = new Mesh(beamGeo, beamMat);
+  beam.renderOrder = 11;
+
+  return { pulses, beam, beamMat };
 }
 
 function tiltPoint(x: number, y: number, z: number, tiltX: number, tiltZ: number) {
