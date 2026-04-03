@@ -379,9 +379,10 @@ export function Globe3D() {
     scene.add(createDistantPlanet(1.5, 0x3a5a7a, 250, 180, -300));
 
     const wifiSignals = satellites.map(() => {
-      const waves = createWifiWaves();
-      waves.forEach(({ mesh }) => scene.add(mesh));
-      return waves;
+      const signal = createSignalBeam();
+      signal.pulses.forEach(({ mesh }) => scene.add(mesh));
+      scene.add(signal.beam);
+      return signal;
     });
 
     const initCoords = globe.getCoords(40, 10, 0);
