@@ -426,21 +426,31 @@ export function Globe3D() {
 
         const satellitePos = new Vector3(p.x, p.y, p.z);
         const targetPos = satellitePos.clone().setLength(112);
-        const wifi = wifiSignals[idx];
+        const signal = wifiSignals[idx];
+        const dir = targetPos.clone().sub(satellitePos);
+        const dist = dir.length();
 
-        wifi.forEach(({ mesh: waveMesh, mat, offset }, waveIdx) => {
-          const cycle = (elapsed * 0.58 + idx * 0.16 - offset) % 1;
-          const travel = cycle < 0 ? cycle + 1 : cycle;
+        // Animate beam line stretching from satellite to earth
+        signal.beam.position.copy(satellitePos).lerp(targetPos, 0.5);
+        signal.beam.scale.set(1, dist, 1);
+        signal.beam.lookAt(targetPos);
+        signal.beam.rotateX(Math.PI / 2);
+        signal.beamMat.opacity = 0.12 + Math.sin(elapsed * 3 + idx) * 0.06;
 
-          waveMesh.position.copy(satellitePos).lerp(targetPos, travel);
-          waveMesh.lookAt(camera.position);
+        // Animate pulse spheres traveling from satellite to earth
+        signal.pulses.forEach(({ mesh: pulseMesh, mat, offset }) => {
+          const cycle = ((elapsed * 0.7 + idx * 0.2 - offset) % 1 + 1) % 1;
 
-          const scale = 1.02 - travel * 0.24 + waveIdx * 0.04;
-          waveMesh.scale.setScalar(scale);
+          pulseMesh.position.copy(satellitePos).lerp(targetPos, cycle);
 
-          const fadeIn = Math.min(travel / 0.16, 1);
-          const fadeOut = Math.min((1 - travel) / 0.2, 1);
-          mat.opacity = Math.max(0, Math.min(fadeIn, fadeOut)) * 0.92;
+          // Scale: start small, grow slightly, shrink near earth
+          const s = 0.6 + Math.sin(cycle * Math.PI) * 0.5;
+          pulseMesh.scale.setScalar(s);
+
+          // Opacity: fade in, stay, fade out
+          const fadeIn = Math.min(cycle / 0.12, 1);
+          const fadeOut = Math.min((1 - cycle) / 0.15, 1);
+          mat.opacity = Math.max(0, Math.min(fadeIn, fadeOut)) * 0.85;
         });
       });
 
