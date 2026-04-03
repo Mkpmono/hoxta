@@ -400,7 +400,7 @@ export function Globe3D() {
         .arcDashGap(15)
         .arcDashAnimateTime(() => 1000)
         .pointsData(pointsData)
-        .pointColor((d: any) => d.color)
+        .pointColor((d: any) => typeof d.color === "function" ? d.color(0) : d.color)
         .pointsMerge(true)
         .pointAltitude(0.0)
         .pointRadius(0.25)
