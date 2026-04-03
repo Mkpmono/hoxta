@@ -412,7 +412,13 @@ export function Globe3D() {
 
       if (deltaGlobe > 2) {
         const nums = genRandomNumbers(0, pointsData.length, Math.floor((pointsData.length * 4) / 5));
-        globe.ringsData(pointsData.filter((_d, i) => nums.includes(i)));
+        const ringsData = pointsData.filter((_d, i) => nums.includes(i)).map(d => ({
+          lat: d.lat,
+          lng: d.lng,
+          color: typeof d.color === "function" ? d.color(0) : d.color,
+          maxR: 3,
+        }));
+        globe.ringsData(ringsData);
         deltaGlobe = deltaGlobe % 2;
       }
 
