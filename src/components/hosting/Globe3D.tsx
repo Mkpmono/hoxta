@@ -257,20 +257,22 @@ function createSignalBeam() {
   glow.renderOrder = 13;
   group.add(glow);
 
-  // Traveling pulse particles (3 staggered)
+  // Traveling signal wave arcs (3 staggered) - concentric arcs like WiFi waves
   const pulses: { mesh: Mesh; mat: MeshBasicMaterial; offset: number }[] = [];
   for (let i = 0; i < 3; i++) {
-    const pulseGeo = new SphereGeometry(0.8, 8, 8);
-    const pulseMat = new MeshBasicMaterial({
+    // Arc wave: partial ring that looks like a signal wave
+    const arcGeo = new RingGeometry(2.0 + i * 1.4, 2.5 + i * 1.4, 24, 1, -Math.PI * 0.35, Math.PI * 0.7);
+    const arcMat = new MeshBasicMaterial({
       color: 0x67e8f9,
       transparent: true,
       opacity: 0,
       blending: AdditiveBlending,
       depthWrite: false,
+      side: DoubleSide,
     });
-    const pulse = new Mesh(pulseGeo, pulseMat);
-    pulse.renderOrder = 14;
-    pulses.push({ mesh: pulse, mat: pulseMat, offset: i * 0.33 });
+    const arc = new Mesh(arcGeo, arcMat);
+    arc.renderOrder = 14;
+    pulses.push({ mesh: arc, mat: arcMat, offset: i * 0.33 });
   }
 
   // Impact glow at earth surface
@@ -503,17 +505,23 @@ export function Globe3D() {
         signal.impactMat.opacity = 0.1 + pulse * 0.2;
         signal.impact.scale.setScalar(0.8 + pulse * 0.4);
 
-        // Traveling pulse particles
-        signal.pulses.forEach(({ mesh: pulseMesh, mat, offset }) => {
-          const cycle = ((elapsed * 0.6 + idx * 0.18 - offset) % 1 + 1) % 1;
-          pulseMesh.position.copy(satellitePos).lerp(targetPos, cycle);
+        // Traveling signal wave arcs
+        signal.pulses.forEach(({ mesh: waveMesh, mat, offset }, waveIdx) => {
+          const cycle = ((elapsed * 0.5 + idx * 0.18 - offset) % 1 + 1) % 1;
+          waveMesh.position.copy(satellitePos).lerp(targetPos, cycle);
 
-          const s = 0.5 + Math.sin(cycle * Math.PI) * 0.6;
-          pulseMesh.scale.setScalar(s);
+          // Face the wave perpendicular to travel direction (toward camera)
+          waveMesh.lookAt(camera.position);
 
-          const fadeIn = Math.min(cycle / 0.1, 1);
-          const fadeOut = Math.min((1 - cycle) / 0.12, 1);
-          mat.opacity = Math.max(0, Math.min(fadeIn, fadeOut)) * 0.9;
+          // Scale: grow as they travel outward, largest wave is outermost
+          const s = 0.7 + cycle * 0.8;
+          waveMesh.scale.setScalar(s);
+
+          // Opacity: sequential fade - inner waves brighter, fade out near earth
+          const fadeIn = Math.min(cycle / 0.08, 1);
+          const fadeOut = Math.min((1 - cycle) / 0.15, 1);
+          const brightness = 1 - waveIdx * 0.2; // inner arcs brighter
+          mat.opacity = Math.max(0, Math.min(fadeIn, fadeOut)) * 0.75 * brightness;
         });
       });
 
