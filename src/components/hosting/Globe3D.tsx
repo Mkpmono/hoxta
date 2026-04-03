@@ -505,17 +505,23 @@ export function Globe3D() {
         signal.impactMat.opacity = 0.1 + pulse * 0.2;
         signal.impact.scale.setScalar(0.8 + pulse * 0.4);
 
-        // Traveling pulse particles
-        signal.pulses.forEach(({ mesh: pulseMesh, mat, offset }) => {
-          const cycle = ((elapsed * 0.6 + idx * 0.18 - offset) % 1 + 1) % 1;
-          pulseMesh.position.copy(satellitePos).lerp(targetPos, cycle);
+        // Traveling signal wave arcs
+        signal.pulses.forEach(({ mesh: waveMesh, mat, offset }, waveIdx) => {
+          const cycle = ((elapsed * 0.5 + idx * 0.18 - offset) % 1 + 1) % 1;
+          waveMesh.position.copy(satellitePos).lerp(targetPos, cycle);
 
-          const s = 0.5 + Math.sin(cycle * Math.PI) * 0.6;
-          pulseMesh.scale.setScalar(s);
+          // Face the wave perpendicular to travel direction (toward camera)
+          waveMesh.lookAt(camera.position);
 
-          const fadeIn = Math.min(cycle / 0.1, 1);
-          const fadeOut = Math.min((1 - cycle) / 0.12, 1);
-          mat.opacity = Math.max(0, Math.min(fadeIn, fadeOut)) * 0.9;
+          // Scale: grow as they travel outward, largest wave is outermost
+          const s = 0.7 + cycle * 0.8;
+          waveMesh.scale.setScalar(s);
+
+          // Opacity: sequential fade - inner waves brighter, fade out near earth
+          const fadeIn = Math.min(cycle / 0.08, 1);
+          const fadeOut = Math.min((1 - cycle) / 0.15, 1);
+          const brightness = 1 - waveIdx * 0.2; // inner arcs brighter
+          mat.opacity = Math.max(0, Math.min(fadeIn, fadeOut)) * 0.75 * brightness;
         });
       });
 
