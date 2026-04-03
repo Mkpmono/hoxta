@@ -427,8 +427,9 @@ export function Globe3D() {
 
     const wifiSignals = satellites.map(() => {
       const signal = createSignalBeam();
+      scene.add(signal.group);
       signal.pulses.forEach(({ mesh }) => scene.add(mesh));
-      scene.add(signal.beam);
+      scene.add(signal.impact);
       return signal;
     });
 
