@@ -24,6 +24,7 @@ import {
   RingGeometry,
   DoubleSide,
   AdditiveBlending,
+  ConeGeometry,
 } from "three";
 import ThreeGlobe from "three-globe";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
