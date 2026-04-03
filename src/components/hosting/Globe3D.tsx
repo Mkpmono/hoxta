@@ -214,36 +214,78 @@ function createDistantPlanet(radius: number, color: number, x: number, y: number
 }
 
 function createSignalBeam() {
-  const pulses: { mesh: Mesh; mat: MeshBasicMaterial; offset: number }[] = [];
+  const group = new Group();
 
-  // 4 small glowing spheres that travel from satellite to earth
-  for (let i = 0; i < 4; i++) {
-    const geo = new SphereGeometry(1.2, 8, 8);
-    const mat = new MeshBasicMaterial({
-      color: 0x22d3ee,
+  // Conical beam (wide at satellite, narrow toward earth)
+  const coneGeo = new ConeGeometry(3.5, 18, 12, 1, true);
+  const coneMat = new MeshBasicMaterial({
+    color: 0x06b6d4,
+    transparent: true,
+    opacity: 0.07,
+    blending: AdditiveBlending,
+    depthWrite: false,
+    side: DoubleSide,
+  });
+  const cone = new Mesh(coneGeo, coneMat);
+  cone.renderOrder = 10;
+  group.add(cone);
+
+  // Inner brighter cone core
+  const coreGeo = new ConeGeometry(1.2, 18, 8, 1, true);
+  const coreMat = new MeshBasicMaterial({
+    color: 0x22d3ee,
+    transparent: true,
+    opacity: 0.15,
+    blending: AdditiveBlending,
+    depthWrite: false,
+    side: DoubleSide,
+  });
+  const core = new Mesh(coreGeo, coreMat);
+  core.renderOrder = 11;
+  group.add(core);
+
+  // Emission glow at satellite origin
+  const glowGeo = new SphereGeometry(2.2, 10, 10);
+  const glowMat = new MeshBasicMaterial({
+    color: 0x22d3ee,
+    transparent: true,
+    opacity: 0.4,
+    blending: AdditiveBlending,
+    depthWrite: false,
+  });
+  const glow = new Mesh(glowGeo, glowMat);
+  glow.renderOrder = 13;
+  group.add(glow);
+
+  // Traveling pulse particles (3 staggered)
+  const pulses: { mesh: Mesh; mat: MeshBasicMaterial; offset: number }[] = [];
+  for (let i = 0; i < 3; i++) {
+    const pulseGeo = new SphereGeometry(0.8, 8, 8);
+    const pulseMat = new MeshBasicMaterial({
+      color: 0x67e8f9,
       transparent: true,
       opacity: 0,
       blending: AdditiveBlending,
       depthWrite: false,
     });
-    const sphere = new Mesh(geo, mat);
-    sphere.renderOrder = 12;
-    pulses.push({ mesh: sphere, mat, offset: i * 0.25 });
+    const pulse = new Mesh(pulseGeo, pulseMat);
+    pulse.renderOrder = 14;
+    pulses.push({ mesh: pulse, mat: pulseMat, offset: i * 0.33 });
   }
 
-  // A thin beam line from satellite toward earth
-  const beamGeo = new CylinderGeometry(0.3, 0.15, 1, 6);
-  const beamMat = new MeshBasicMaterial({
+  // Impact glow at earth surface
+  const impactGeo = new SphereGeometry(1.8, 8, 8);
+  const impactMat = new MeshBasicMaterial({
     color: 0x06b6d4,
     transparent: true,
     opacity: 0,
     blending: AdditiveBlending,
     depthWrite: false,
   });
-  const beam = new Mesh(beamGeo, beamMat);
-  beam.renderOrder = 11;
+  const impact = new Mesh(impactGeo, impactMat);
+  impact.renderOrder = 13;
 
-  return { pulses, beam, beamMat };
+  return { group, coneMat, coreMat, glowMat, glow, pulses, impact, impactMat };
 }
 
 function tiltPoint(x: number, y: number, z: number, tiltX: number, tiltZ: number) {
