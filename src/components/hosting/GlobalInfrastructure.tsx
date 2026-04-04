@@ -32,7 +32,7 @@ export function GlobalInfrastructure({
   ];
 
   return (
-    <section className="py-20 md:py-28 bg-gradient-to-b from-card/30 via-transparent to-card/30 overflow-hidden">
+    <section className="py-14 md:py-20 bg-gradient-to-b from-card/30 via-transparent to-card/30 overflow-hidden">
       <div className="container mx-auto px-4 md:px-6">
         <div
           className="text-center mb-12"
@@ -49,8 +49,8 @@ export function GlobalInfrastructure({
           transition={{ duration: 0.6 }}
           className="mb-12"
         >
-          <div className="glass-card p-2 md:p-4 overflow-hidden bg-background/80">
-            <Suspense fallback={<div className="w-full aspect-[2/1] flex items-center justify-center text-muted-foreground">Loading globe...</div>}>
+          <div className="glass-card p-1.5 md:p-3 overflow-hidden bg-background/80 max-w-5xl mx-auto">
+            <Suspense fallback={<div className="w-full aspect-[5/2] flex items-center justify-center text-muted-foreground">Loading globe...</div>}>
               <Globe3D />
             </Suspense>
           </div>
