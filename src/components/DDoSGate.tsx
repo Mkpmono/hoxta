@@ -70,6 +70,19 @@ function detectSuspiciousBehavior(): { isBot: boolean; reasons: string[] } {
 }
 
 async function fetchClientInfo(): Promise<ClientInfo> {
+  // 1. Try Cloudflare's built-in trace endpoint (works when site is behind CF proxy)
+  try {
+    const res = await fetch("/cdn-cgi/trace", { signal: AbortSignal.timeout(3000) });
+    if (res.ok) {
+      const text = await res.text();
+      const lines = Object.fromEntries(text.trim().split("\n").map(l => l.split("=")));
+      if (lines.ip) {
+        return { ip: lines.ip, country: lines.loc || undefined };
+      }
+    }
+  } catch { /* CF trace not available, fallback */ }
+
+  // 2. Fallback to ipapi.co
   try {
     const res = await fetch("https://ipapi.co/json/", { signal: AbortSignal.timeout(5000) });
     if (!res.ok) throw new Error("IP fetch failed");
