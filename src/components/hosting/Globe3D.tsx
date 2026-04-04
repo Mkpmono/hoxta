@@ -379,11 +379,11 @@ export function Globe3D() {
       globe
         .hexPolygonsData(countries.features.filter((d: any) => d.properties.ISO_A2 !== "AQ"))
         .hexPolygonResolution(3)
-        .hexPolygonMargin(0.7)
+        .hexPolygonMargin(0.55)
         .showAtmosphere(true)
         .atmosphereColor("#06b6d4")
-        .atmosphereAltitude(0.12)
-        .hexPolygonColor(() => "rgba(6, 182, 212, 0.35)");
+        .atmosphereAltitude(0.15)
+        .hexPolygonColor(() => "rgba(6, 210, 235, 0.7)");
     }, 1000);
 
     setTimeout(() => {
