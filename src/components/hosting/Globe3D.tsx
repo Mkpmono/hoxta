@@ -1,3 +1,4 @@
+/* Globe3D v2 */
 import { useEffect, useRef, useCallback, useMemo } from "react";
 import {
   Fog,
