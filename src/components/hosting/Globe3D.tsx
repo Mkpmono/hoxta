@@ -651,8 +651,8 @@ export function Globe3D() {
       />
       <div
         ref={containerRef}
-        className="relative w-full aspect-[4/3] md:aspect-[16/10] z-10"
-        style={{ minHeight: 300 }}
+        className="relative w-full aspect-[2/1] md:aspect-[5/2] z-10"
+        style={{ minHeight: 220, maxHeight: 420 }}
       />
     </div>
   );
