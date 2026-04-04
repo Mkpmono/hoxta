@@ -32,7 +32,7 @@ export function GlobalInfrastructure({
   ];
 
   return (
-    <section className="py-20 md:py-28 bg-gradient-to-b from-card/30 via-transparent to-card/30 overflow-hidden">
+    <section className="py-14 md:py-20 bg-gradient-to-b from-card/30 via-transparent to-card/30 overflow-hidden">
       <div className="container mx-auto px-4 md:px-6">
         <div
           className="text-center mb-12"
