@@ -69,7 +69,9 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const { ip_address, country_code, isp, user_agent, is_bot, bot_reasons, canvas_fingerprint, ray_id, result } = body;
 
-    const cleanIp = ip_address || "Unknown";
+    // Prefer Cloudflare headers for real IP, then fallback to body
+    const cfIp = req.headers.get("CF-Connecting-IP") || req.headers.get("X-Real-IP") || req.headers.get("X-Forwarded-For")?.split(",")[0]?.trim();
+    const cleanIp = cfIp || ip_address || "Unknown";
 
     const { error } = await supabase.from("visitor_logs").insert({
       ip_address: cleanIp,
