@@ -38,7 +38,7 @@ export default function GameServerDetail() {
     id: dbGame.slug,
     slug: dbGame.slug,
     title: getTranslatedField(dbGame, "title") || dbGame.title,
-    coverImage: dbGame.cover_image_url || "",
+    coverImage: gameCoverImages[dbGame.cover_image_url || ""] || gameCoverImages[dbGame.slug] || dbGame.cover_image_url || "",
     pricingDisplay: dbGame.pricing_display,
     priceValue: Number(dbGame.price_value),
     pricingUnit: dbGame.pricing_unit as any,

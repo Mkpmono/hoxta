@@ -258,7 +258,29 @@ export default function GameServerAdmin() {
               </div>
               <div><Label>Sort Order</Label><Input type="number" value={editing.sort_order ?? 0} onChange={(e) => setEditing({ ...editing, sort_order: parseInt(e.target.value) || 0 })} /></div>
             </div>
-            <div><Label>Cover Image URL</Label><Input value={editing.cover_image_url || ""} onChange={(e) => setEditing({ ...editing, cover_image_url: e.target.value })} /></div>
+            {/* Cover Image Picker */}
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2"><Image className="w-4 h-4" /> Cover Image</Label>
+              <div className="grid grid-cols-6 gap-2 max-h-48 overflow-y-auto p-2 rounded-lg border border-border bg-card/50">
+                {COVER_IMAGE_OPTIONS.map((key) => (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => setEditing({ ...editing, cover_image_url: key })}
+                    className={cn(
+                      "relative rounded-lg overflow-hidden border-2 transition-all aspect-video",
+                      editing.cover_image_url === key ? "border-primary ring-2 ring-primary/30" : "border-transparent hover:border-muted-foreground/30"
+                    )}
+                  >
+                    <img src={gameCoverImages[key]} alt={key} className="w-full h-full object-cover" loading="lazy" />
+                    <span className="absolute bottom-0 left-0 right-0 bg-black/70 text-[9px] text-white px-1 py-0.5 truncate">{key}</span>
+                  </button>
+                ))}
+              </div>
+              {editing.cover_image_url && (
+                <p className="text-xs text-muted-foreground">Selected: <span className="text-primary font-medium">{editing.cover_image_url}</span></p>
+              )}
+            </div>
             <div><Label>Features (comma separated)</Label><Input value={editing.features?.join(", ") || ""} onChange={(e) => setEditing({ ...editing, features: e.target.value.split(",").map(t => t.trim()).filter(Boolean) })} /></div>
             <div><Label>Hero Points (comma separated)</Label><Input value={editing.hero_points?.join(", ") || ""} onChange={(e) => setEditing({ ...editing, hero_points: e.target.value.split(",").map(t => t.trim()).filter(Boolean) })} /></div>
             <div><Label>Tags (comma separated)</Label><Input value={editing.tags?.join(", ") || ""} onChange={(e) => setEditing({ ...editing, tags: e.target.value.split(",").map(t => t.trim()).filter(Boolean) })} /></div>
