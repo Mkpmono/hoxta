@@ -7,6 +7,7 @@ import { Gamepad2, Shield, Zap, Globe, Settings, HardDrive, Clock, Check, Server
 import { gameServers } from "@/data/gameServersData";
 import { getProductBySlug, getPlanPrice } from "@/data/products";
 import { useGameServerBySlug } from "@/hooks/useGameServers";
+import { gameCoverImages } from "@/assets/games";
 import {
   HostingHero,
   TrustBar,
