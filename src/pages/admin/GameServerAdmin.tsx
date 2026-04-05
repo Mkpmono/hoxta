@@ -6,9 +6,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Pencil, Trash2, Save, X, Gamepad2, Languages, Loader2, Eye, ExternalLink, ChevronDown, ChevronUp } from "lucide-react";
+import { Plus, Pencil, Trash2, Save, X, Gamepad2, Languages, Loader2, Eye, ExternalLink, ChevronDown, ChevronUp, Image } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
+import { gameCoverImages } from "@/assets/games";
+
+// Available cover image keys for the picker
+const COVER_IMAGE_OPTIONS = Object.keys(gameCoverImages).filter((key, i, arr) => {
+  // Deduplicate by image value (some slugs point to same image)
+  return arr.findIndex(k => gameCoverImages[k] === gameCoverImages[key]) === i;
+}).sort();
 import { useTranslateContent } from "@/hooks/useTranslateContent";
 
 interface GamePlan {
