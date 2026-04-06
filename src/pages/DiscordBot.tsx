@@ -1,177 +1,66 @@
 import { Layout } from "@/components/layout/Layout";
+import { useTranslation } from "react-i18next";
 import { Bot, Shield, Zap, Clock, Terminal, RefreshCw, BarChart3, Code } from "lucide-react";
 import {
-  HostingHero,
-  TrustBar,
-  PricingPlans,
-  FeatureGrid,
-  ContentSection,
-  HowItWorks,
-  GlobalInfrastructure,
-  FAQAccordion,
-  FinalCTA,
+  HostingHero, TrustBar, PricingPlans, FeatureGrid, ContentSection,
+  HowItWorks, GlobalInfrastructure, FAQAccordion, FinalCTA,
 } from "@/components/hosting";
 import { SEOHead, ServiceSchema, FAQSchema, OrganizationSchema } from "@/components/seo";
 import { discordBotProduct } from "@/data/products";
 
-// Convert product plans to PricingPlans format
 const discordBotPlans = discordBotProduct.plans.map((plan) => ({
-  id: plan.id,
-  productSlug: discordBotProduct.slug,
-  name: plan.name,
-  description: plan.description,
-  monthlyPrice: plan.pricing.monthly,
-  yearlyPrice: plan.pricing.annually,
-  popular: plan.popular,
-  features: plan.features,
+  id: plan.id, productSlug: discordBotProduct.slug, name: plan.name, description: plan.description,
+  monthlyPrice: plan.pricing.monthly, yearlyPrice: plan.pricing.annually, popular: plan.popular, features: plan.features,
 }));
 
-const discordBotFeatures = [
-  {
-    icon: Clock,
-    title: "24/7 Uptime",
-    description: "Your bot stays online around the clock. No more downtime from sleeping servers.",
-  },
-  {
-    icon: RefreshCw,
-    title: "Auto-Restart",
-    description: "Automatic restart on crashes with smart health monitoring and notifications.",
-  },
-  {
-    icon: Terminal,
-    title: "Console Access",
-    description: "Full console access to view logs, debug issues, and monitor performance in real-time.",
-  },
-  {
-    icon: Code,
-    title: "Any Language",
-    description: "Support for Node.js, Python, Java, and more. Run Discord.js, Discord.py, JDA, and others.",
-  },
-  {
-    icon: BarChart3,
-    title: "Resource Monitoring",
-    description: "Real-time CPU, RAM, and network usage graphs to optimize your bot's performance.",
-  },
-  {
-    icon: Shield,
-    title: "DDoS Protected",
-    description: "Enterprise-grade protection for your bot's web dashboard and API endpoints.",
-  },
-];
-
-const discordBotFAQs = [
-  {
-    question: "Which languages and libraries are supported?",
-    answer: "We support all major programming languages and Discord libraries including Node.js (Discord.js, Eris), Python (Discord.py, Nextcord, Pycord), Java (JDA), and more. If it can run on Linux, we can host it.",
-  },
-  {
-    question: "How do I deploy my bot?",
-    answer: "Simply upload your bot files via our web panel, SFTP, or Git integration. Set your start command, add your environment variables (like bot token), and click deploy. It's that simple.",
-  },
-  {
-    question: "What happens if my bot crashes?",
-    answer: "Our watchdog system automatically restarts crashed bots within seconds. You'll receive a notification with crash logs so you can debug the issue.",
-  },
-  {
-    question: "Can I use databases with my bot?",
-    answer: "Yes! All plans support SQLite out of the box. Standard and above include MySQL/PostgreSQL access. You can also connect to external database services.",
-  },
-  {
-    question: "Do you support sharding for large bots?",
-    answer: "Absolutely! Our Professional and Enterprise plans are designed for bots in thousands of servers. We support Discord's sharding and can help optimize your shard distribution.",
-  },
-  {
-    question: "Can I access my bot's logs?",
-    answer: "Yes, you have full console access with real-time log streaming. Logs are retained for 7 days, and you can download them anytime for debugging.",
-  },
-];
-
 export default function DiscordBot() {
+  const { t } = useTranslation();
+
+  const discordBotFeatures = [
+    { icon: Clock, title: t("pages.discordBot.features.uptime", "24/7 Uptime"), description: t("pages.discordBot.features.uptimeDesc", "Your bot stays online around the clock.") },
+    { icon: RefreshCw, title: t("pages.discordBot.features.autoRestart", "Auto-Restart"), description: t("pages.discordBot.features.autoRestartDesc", "Automatic restart on crashes with smart health monitoring.") },
+    { icon: Terminal, title: t("pages.discordBot.features.console", "Console Access"), description: t("pages.discordBot.features.consoleDesc", "Full console access to view logs, debug issues, and monitor performance.") },
+    { icon: Code, title: t("pages.discordBot.features.anyLang", "Any Language"), description: t("pages.discordBot.features.anyLangDesc", "Support for Node.js, Python, Java, and more.") },
+    { icon: BarChart3, title: t("pages.discordBot.features.monitoring", "Resource Monitoring"), description: t("pages.discordBot.features.monitoringDesc", "Real-time CPU, RAM, and network usage graphs.") },
+    { icon: Shield, title: t("pages.discordBot.features.ddos", "DDoS Protected"), description: t("pages.discordBot.features.ddosDesc", "Enterprise-grade protection for your bot's web dashboard and API endpoints.") },
+  ];
+
+  const discordBotFAQs = [
+    { question: t("pages.discordBot.faq.q1", "Which languages and libraries are supported?"), answer: t("pages.discordBot.faq.a1", "We support all major programming languages and Discord libraries including Node.js, Python, Java, and more.") },
+    { question: t("pages.discordBot.faq.q2", "How do I deploy my bot?"), answer: t("pages.discordBot.faq.a2", "Simply upload your bot files via our web panel, SFTP, or Git integration.") },
+    { question: t("pages.discordBot.faq.q3", "What happens if my bot crashes?"), answer: t("pages.discordBot.faq.a3", "Our watchdog system automatically restarts crashed bots within seconds.") },
+    { question: t("pages.discordBot.faq.q4", "Can I use databases with my bot?"), answer: t("pages.discordBot.faq.a4", "Yes! All plans support SQLite out of the box. Standard and above include MySQL/PostgreSQL.") },
+    { question: t("pages.discordBot.faq.q5", "Do you support sharding for large bots?"), answer: t("pages.discordBot.faq.a5", "Absolutely! Our Professional and Enterprise plans are designed for bots in thousands of servers.") },
+    { question: t("pages.discordBot.faq.q6", "Can I access my bot's logs?"), answer: t("pages.discordBot.faq.a6", "Yes, you have full console access with real-time log streaming.") },
+  ];
+
   return (
     <Layout>
-      <SEOHead
-        title="Discord Bot Hosting - 24/7 Uptime, Auto-Restart | Hoxta"
-        description="Reliable Discord bot hosting with 24/7 uptime, auto-restart, and full console access. Support for Node.js, Python, and more. From $3/month."
-        canonicalUrl="https://hoxta.com/discord-bot"
-      />
-      <ServiceSchema
-        name="Hoxta Discord Bot Hosting"
-        description="Reliable Discord bot hosting with 24/7 uptime, auto-restart, monitoring, and support for all major languages and libraries."
-        priceRange="$3 - $35"
-      />
+      <SEOHead title="Discord Bot Hosting - 24/7 Uptime, Auto-Restart | Hoxta" description="Reliable Discord bot hosting with 24/7 uptime, auto-restart, and full console access." canonicalUrl="https://hoxta.com/discord-bot" />
+      <ServiceSchema name="Hoxta Discord Bot Hosting" description="Reliable Discord bot hosting with 24/7 uptime, auto-restart, monitoring." priceRange="$3 - $35" />
       <FAQSchema faqs={discordBotFAQs} />
       <OrganizationSchema />
 
       <HostingHero
-        badge="Bot Hosting"
-        headline={
-          <>
-            Discord Bot <span className="text-gradient">Hosting</span>
-          </>
-        }
-        description="Keep your Discord bot online 24/7 with automatic restarts, real-time monitoring, and support for any programming language."
-        primaryCTA={{ text: "Get Started", href: "#pricing" }}
-        secondaryCTA={{ text: "View Features", href: "#features" }}
+        badge={t("pages.discordBot.badge")}
+        headline={<>{t("pages.discordBot.headline")} <span className="text-gradient">{t("pages.discordBot.highlightedText")}</span></>}
+        description={t("pages.discordBot.description")}
+        primaryCTA={{ text: t("buttons.getStarted"), href: "#pricing" }}
+        secondaryCTA={{ text: t("buttons.viewPlans"), href: "#features" }}
       />
-
       <TrustBar />
-
       <div id="pricing">
-        <PricingPlans
-          title="Discord Bot Hosting Plans"
-          subtitle="From hobby projects to verified bots with millions of users."
-          plans={discordBotPlans}
-          productSlug="discord-bot"
-        />
+        <PricingPlans title={t("pages.discordBot.plansTitle")} subtitle={t("pages.discordBot.plansSubtitle")} plans={discordBotPlans} productSlug="discord-bot" />
       </div>
-
       <div id="features">
-        <FeatureGrid
-          title="Everything Your Bot Needs"
-          subtitle="Built for developers who want their bots to just work."
-          features={discordBotFeatures}
-        />
+        <FeatureGrid title={t("pages.discordBot.whyTitle")} subtitle={t("pages.discordBot.whySubtitle")} features={discordBotFeatures} />
       </div>
-
-      <ContentSection
-        title="Always Online"
-        description="No more 'why is the bot offline?' questions. Our infrastructure is designed for 24/7 operation with multiple redundancy layers and instant crash recovery."
-        points={[
-          "99.9%+ uptime guarantee",
-          "Automatic crash recovery",
-          "Health monitoring alerts",
-          "Zero-downtime deploys",
-        ]}
-        icon={Clock}
-      />
-
-      <ContentSection
-        title="Developer Friendly"
-        description="We built this for developers. Full SSH access, Git deployments, environment variables, custom domains for dashboards, and everything else you need."
-        points={[
-          "Git push deployments",
-          "Environment variables",
-          "SSH and SFTP access",
-          "Custom start commands",
-        ]}
-        icon={Terminal}
-        reverse
-      />
-
+      <ContentSection title={t("pages.discordBot.alwaysOnline")} description={t("pages.discordBot.alwaysOnlineDesc")} points={t("pages.discordBot.alwaysOnlinePoints", { returnObjects: true }) as string[]} icon={Clock} />
+      <ContentSection title={t("pages.discordBot.devFriendly")} description={t("pages.discordBot.devFriendlyDesc")} points={t("pages.discordBot.devFriendlyPoints", { returnObjects: true }) as string[]} icon={Terminal} reverse />
       <HowItWorks />
-
       <GlobalInfrastructure />
-
-      <FAQAccordion
-        title="Discord Bot Hosting FAQ"
-        subtitle="Common questions about our bot hosting service."
-        items={discordBotFAQs}
-      />
-
-      <FinalCTA
-        title="Ready to Deploy?"
-        subtitle="Get your Discord bot online in minutes with our developer-friendly hosting platform."
-      />
+      <FAQAccordion title={t("pages.discordBot.faqTitle")} subtitle={t("pages.discordBot.faqSubtitle")} items={discordBotFAQs} />
+      <FinalCTA title={t("pages.discordBot.ctaTitle")} subtitle={t("pages.discordBot.ctaSubtitle")} />
     </Layout>
   );
 }
