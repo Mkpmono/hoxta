@@ -5,6 +5,104 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Trusted reverse-DNS suffixes for legitimate search engine bots
+const TRUSTED_BOT_DOMAINS: Record<string, string[]> = {
+  googlebot: ["googlebot.com", "google.com"],
+  "google-inspectiontool": ["google.com"],
+  bingbot: ["search.msn.com"],
+  duckduckbot: ["duckduckgo.com"],
+  yandexbot: ["yandex.com", "yandex.net", "yandex.ru"],
+  baiduspider: ["baidu.com", "baidu.jp"],
+  applebot: ["applebot.apple.com", "apple.com"],
+  facebookexternalhit: ["facebook.com", "fbsv.net"],
+  twitterbot: ["twitter.com", "twttr.com"],
+  linkedinbot: ["linkedin.com"],
+};
+
+// In-memory cache: ip -> { verified: bool, expiresAt: number }
+const verifyCache = new Map<string, { verified: boolean; expiresAt: number }>();
+const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
+
+function getCachedVerify(ip: string): boolean | null {
+  const entry = verifyCache.get(ip);
+  if (!entry || Date.now() > entry.expiresAt) {
+    verifyCache.delete(ip);
+    return null;
+  }
+  return entry.verified;
+}
+
+function setCachedVerify(ip: string, verified: boolean) {
+  verifyCache.set(ip, { verified, expiresAt: Date.now() + CACHE_TTL_MS });
+  // Garbage collect when too big
+  if (verifyCache.size > 5000) {
+    const now = Date.now();
+    for (const [k, v] of verifyCache) if (v.expiresAt < now) verifyCache.delete(k);
+  }
+}
+
+/**
+ * Verify a bot via reverse + forward DNS lookup (RFC-recommended method).
+ * Anti-spoofing: even if UA says "Googlebot", we confirm IP truly belongs to Google.
+ */
+async function verifyLegitimateBot(ip: string, userAgent: string): Promise<boolean> {
+  const cached = getCachedVerify(ip);
+  if (cached !== null) return cached;
+
+  const ua = userAgent.toLowerCase();
+  const matchedBot = Object.keys(TRUSTED_BOT_DOMAINS).find((bot) => ua.includes(bot));
+  if (!matchedBot) {
+    setCachedVerify(ip, false);
+    return false;
+  }
+  const allowedDomains = TRUSTED_BOT_DOMAINS[matchedBot];
+
+  try {
+    // 1) Reverse DNS via Google DNS-over-HTTPS
+    const reverseIp = ip.includes(":")
+      ? ip.split(":").reverse().join(".") + ".ip6.arpa"
+      : ip.split(".").reverse().join(".") + ".in-addr.arpa";
+
+    const ptrRes = await fetch(`https://dns.google/resolve?name=${reverseIp}&type=PTR`, {
+      signal: AbortSignal.timeout(3000),
+    });
+    if (!ptrRes.ok) {
+      setCachedVerify(ip, false);
+      return false;
+    }
+    const ptrData = await ptrRes.json();
+    const hostname = ptrData.Answer?.[0]?.data?.replace(/\.$/, "")?.toLowerCase();
+    if (!hostname) {
+      setCachedVerify(ip, false);
+      return false;
+    }
+
+    // 2) Hostname must end with one of the allowed domains
+    const hostMatches = allowedDomains.some((d) => hostname.endsWith("." + d) || hostname === d);
+    if (!hostMatches) {
+      setCachedVerify(ip, false);
+      return false;
+    }
+
+    // 3) Forward DNS: hostname must resolve back to the same IP
+    const fwdRes = await fetch(`https://dns.google/resolve?name=${hostname}&type=${ip.includes(":") ? "AAAA" : "A"}`, {
+      signal: AbortSignal.timeout(3000),
+    });
+    if (!fwdRes.ok) {
+      setCachedVerify(ip, false);
+      return false;
+    }
+    const fwdData = await fwdRes.json();
+    const resolvedIps: string[] = (fwdData.Answer || []).map((a: any) => a.data);
+    const verified = resolvedIps.includes(ip);
+    setCachedVerify(ip, verified);
+    return verified;
+  } catch {
+    setCachedVerify(ip, false);
+    return false;
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -17,10 +115,28 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // GET /log-visitor?action=check-blocked&ip=xxx
+    // GET endpoints
     if (req.method === "GET") {
       const action = url.searchParams.get("action");
-      
+
+      // Verify a claimed bot via reverse DNS (anti-spoofing)
+      if (action === "verify-bot") {
+        const ip = url.searchParams.get("ip") || "";
+        const ua = url.searchParams.get("ua") || "";
+        // Cloudflare's verified bot signal — instant trust
+        const cfVerifiedBot = req.headers.get("cf-verified-bot") === "true";
+        if (cfVerifiedBot) {
+          setCachedVerify(ip, true);
+          return new Response(JSON.stringify({ verified: true, source: "cloudflare" }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        const verified = ip && ua ? await verifyLegitimateBot(ip, ua) : false;
+        return new Response(JSON.stringify({ verified, source: "rdns" }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
       if (action === "check-blocked") {
         const ip = url.searchParams.get("ip");
         if (!ip) {
@@ -87,13 +203,16 @@ Deno.serve(async (req) => {
 
     if (error) throw error;
 
-    // Auto-block detected bots
+    // Auto-block ONLY if confirmed bot AND not a verified legitimate crawler
     if (is_bot && cleanIp !== "Unknown" && cleanIp !== "Unable to detect") {
-      const reasons = Array.isArray(bot_reasons) ? bot_reasons.join(", ") : "bot-detected";
-      await supabase.from("blocked_ips").upsert(
-        { ip_address: cleanIp, reason: `Auto-blocked: ${reasons}` },
-        { onConflict: "ip_address" }
-      );
+      const isLegit = user_agent ? await verifyLegitimateBot(cleanIp, user_agent) : false;
+      if (!isLegit) {
+        const reasons = Array.isArray(bot_reasons) ? bot_reasons.join(", ") : "bot-detected";
+        await supabase.from("blocked_ips").upsert(
+          { ip_address: cleanIp, reason: `Auto-blocked: ${reasons}` },
+          { onConflict: "ip_address" }
+        );
+      }
     }
 
     return new Response(JSON.stringify({ ok: true }), {
