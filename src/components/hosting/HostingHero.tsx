@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles, Check } from "lucide-react";
 import { useEffect, useState, ReactNode } from "react";
 
 interface HostingHeroProps {
@@ -8,6 +8,7 @@ interface HostingHeroProps {
   headline: ReactNode;
   highlightedText?: string;
   description: string;
+  heroPoints?: string[];
   promotion?: {
     text: string;
     discount: string;
