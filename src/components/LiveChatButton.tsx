@@ -1,6 +1,7 @@
 import { useState, forwardRef } from "react";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSupportSettings } from "@/hooks/useSupportSettings";
 
 const ChatIcon = forwardRef<SVGSVGElement, { className?: string }>(({ className }, ref) => {
   return (
