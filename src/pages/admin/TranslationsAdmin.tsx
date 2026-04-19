@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { AdminLayout } from "@/components/panel/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import { Languages, RefreshCw, Check, AlertCircle, Download, Sparkles, Plus, Trash2 } from "lucide-react";
+import { Languages, RefreshCw, Check, AlertCircle, Download, Sparkles, Plus, Trash2, X } from "lucide-react";
 import enCommon from "@/i18n/locales/en/common.json";
 import { reloadTranslations } from "@/i18n";
 import { useSiteLanguages, type SiteLanguage } from "@/hooks/useSiteLanguages";
@@ -58,22 +58,31 @@ function chunkObject(obj: Record<string, string>, size: number): Record<string, 
   return chunks;
 }
 
+function deepMerge(a: any, b: any): any {
+  if (typeof a !== "object" || a === null || Array.isArray(a)) return b;
+  if (typeof b !== "object" || b === null || Array.isArray(b)) return b;
+  const out: Record<string, any> = { ...a };
+  for (const k of Object.keys(b)) {
+    out[k] = k in a ? deepMerge(a[k], b[k]) : b[k];
+  }
+  return out;
+}
+
 const CHUNK_SIZE = 50;
 const RETRY_DELAY = 3000;
 
 async function translateChunkWithRetry(
   chunk: Record<string, string>,
   targetLang: string,
+  targetLangName: string,
   retries = 3
 ): Promise<Record<string, string>> {
   for (let attempt = 0; attempt < retries; attempt++) {
     const { data, error } = await supabase.functions.invoke("translate-i18n", {
-      body: { chunk, targetLang, sourceLang: "en" },
+      body: { chunk, targetLang, targetLangName, sourceLang: "en" },
     });
 
-    if (!error && data?.translated) {
-      return data.translated;
-    }
+    if (!error && data?.translated) return data.translated;
 
     if (error?.message?.includes("429") || data?.error?.includes("Rate limit")) {
       await new Promise((r) => setTimeout(r, RETRY_DELAY * (attempt + 1)));
@@ -89,21 +98,28 @@ async function translateChunkWithRetry(
 }
 
 export default function TranslationsAdmin() {
+  const { languages, refetch: refetchLanguages } = useSiteLanguages();
   const [translating, setTranslating] = useState(false);
   const [progress, setProgress] = useState("");
   const [progressPercent, setProgressPercent] = useState(0);
   const [dbTranslations, setDbTranslations] = useState<Record<string, { data: any; updated_at: string }>>({});
-  const [loading, setLoading] = useState(true);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newLang, setNewLang] = useState({ code: "", name: "", flag_code: "" });
+  const [adding, setAdding] = useState(false);
 
   const totalKeys = countKeys(enCommon);
   const sourceFlat = flatten(enCommon);
+
+  const targetLangs = useMemo(
+    () => languages.filter((l) => l.code !== "en").map((l) => l.code),
+    [languages]
+  );
 
   useEffect(() => {
     loadTranslations();
   }, []);
 
   const loadTranslations = async () => {
-    setLoading(true);
     const { data, error } = await supabase.from("site_translations").select("*");
     if (!error && data) {
       const map: Record<string, { data: any; updated_at: string }> = {};
@@ -112,84 +128,62 @@ export default function TranslationsAdmin() {
       }
       setDbTranslations(map);
     }
-    setLoading(false);
   };
 
-  // Compute missing keys for a given language by comparing EN flat vs DB flat
   const getMissingKeys = (langCode: string): Record<string, string> => {
     const dbData = dbTranslations[langCode]?.data || {};
     const dbFlat = flatten(dbData);
     const missing: Record<string, string> = {};
     for (const [key, value] of Object.entries(sourceFlat)) {
-      if (!(key in dbFlat) || !dbFlat[key]) {
-        missing[key] = value;
-      }
+      if (!(key in dbFlat) || !dbFlat[key]) missing[key] = value;
     }
     return missing;
   };
 
-  const totalMissing = TARGET_LANGS.reduce((sum, l) => sum + Object.keys(getMissingKeys(l)).length, 0);
+  const totalMissing = targetLangs.reduce((sum, l) => sum + Object.keys(getMissingKeys(l)).length, 0);
 
   const translateLanguage = async (
-    langCode: string,
+    lang: SiteLanguage,
     langIndex: number,
     totalLangs: number,
     onlyMissing = false
   ) => {
-    const flat = onlyMissing ? getMissingKeys(langCode) : sourceFlat;
-    if (Object.keys(flat).length === 0) {
-      return null;
-    }
+    const flat = onlyMissing ? getMissingKeys(lang.code) : sourceFlat;
+    if (Object.keys(flat).length === 0) return null;
     const chunks = chunkObject(flat, CHUNK_SIZE);
     const mergedFlat: Record<string, string> = {};
 
     for (let i = 0; i < chunks.length; i++) {
-      const langName = LANGUAGES.find((l) => l.code === langCode)?.name || langCode;
       const overallProgress = ((langIndex * chunks.length + i) / (totalLangs * chunks.length)) * 100;
-      setProgress(`${langName}: ${i + 1}/${chunks.length} bucăți (${Object.keys(chunks[i]).length} chei)...`);
+      setProgress(`${lang.name}: ${i + 1}/${chunks.length} bucăți (${Object.keys(chunks[i]).length} chei)...`);
       setProgressPercent(Math.round(overallProgress));
 
-      const result = await translateChunkWithRetry(chunks[i], langCode);
+      const result = await translateChunkWithRetry(chunks[i], lang.code, lang.name);
       Object.assign(mergedFlat, result);
 
-      if (i < chunks.length - 1) {
-        await new Promise((r) => setTimeout(r, 500));
-      }
+      if (i < chunks.length - 1) await new Promise((r) => setTimeout(r, 500));
     }
 
     const newNested = unflatten(mergedFlat);
-
-    // Deep merge with existing DB data so we don't lose anything
-    const existing = dbTranslations[langCode]?.data || {};
+    const existing = dbTranslations[lang.code]?.data || {};
     const merged = deepMerge(existing, newNested);
 
     await supabase
       .from("site_translations")
       .upsert(
-        { lang: langCode, data: merged as any, updated_at: new Date().toISOString() },
+        { lang: lang.code, data: merged as any, updated_at: new Date().toISOString() },
         { onConflict: "lang" }
       );
 
     return merged;
   };
 
-  function deepMerge(a: any, b: any): any {
-    if (typeof a !== "object" || a === null || Array.isArray(a)) return b;
-    if (typeof b !== "object" || b === null || Array.isArray(b)) return b;
-    const out: Record<string, any> = { ...a };
-    for (const k of Object.keys(b)) {
-      out[k] = k in a ? deepMerge(a[k], b[k]) : b[k];
-    }
-    return out;
-  }
-
   const handleTranslateAll = async () => {
-    if (!confirm(`Aceasta va RE-TRADUCE toate ${totalKeys} cheile pentru toate cele 5 limbi. Operațiunea durează câteva minute. Continui?`)) return;
+    if (!confirm(`Aceasta va RE-TRADUCE toate ${totalKeys} cheile pentru toate limbile țintă. Continui?`)) return;
     setTranslating(true);
     setProgressPercent(0);
 
     try {
-      // Save EN as source-of-truth first
       await supabase
         .from("site_translations")
         .upsert(
@@ -197,12 +191,13 @@ export default function TranslationsAdmin() {
           { onConflict: "lang" }
         );
 
-      for (let i = 0; i < TARGET_LANGS.length; i++) {
-        await translateLanguage(TARGET_LANGS[i], i, TARGET_LANGS.length, false);
+      const targets = languages.filter((l) => l.code !== "en");
+      for (let i = 0; i < targets.length; i++) {
+        await translateLanguage(targets[i], i, targets.length, false);
       }
 
       setProgressPercent(100);
-      toast({ title: "✅ Traducere completă!", description: `Toate cele ${LANGUAGES.length} limbi au fost traduse.` });
+      toast({ title: "✅ Traducere completă!" });
       await loadTranslations();
       await reloadTranslations();
     } catch (err: any) {
@@ -216,14 +211,13 @@ export default function TranslationsAdmin() {
 
   const handleSyncMissing = async () => {
     if (totalMissing === 0) {
-      toast({ title: "Nimic de sincronizat", description: "Toate limbile sunt la zi cu EN." });
+      toast({ title: "Nimic de sincronizat" });
       return;
     }
     setTranslating(true);
     setProgressPercent(0);
 
     try {
-      // Always save EN snapshot
       await supabase
         .from("site_translations")
         .upsert(
@@ -231,9 +225,11 @@ export default function TranslationsAdmin() {
           { onConflict: "lang" }
         );
 
-      const langsToSync = TARGET_LANGS.filter((l) => Object.keys(getMissingKeys(l)).length > 0);
-      for (let i = 0; i < langsToSync.length; i++) {
-        await translateLanguage(langsToSync[i], i, langsToSync.length, true);
+      const targets = languages.filter(
+        (l) => l.code !== "en" && Object.keys(getMissingKeys(l.code)).length > 0
+      );
+      for (let i = 0; i < targets.length; i++) {
+        await translateLanguage(targets[i], i, targets.length, true);
       }
 
       setProgressPercent(100);
@@ -249,17 +245,16 @@ export default function TranslationsAdmin() {
     }
   };
 
-  const handleTranslateSingle = async (langCode: string, onlyMissing = false) => {
+  const handleTranslateSingle = async (lang: SiteLanguage, onlyMissing = false) => {
     setTranslating(true);
     setProgressPercent(0);
-
     try {
-      const result = await translateLanguage(langCode, 0, 1, onlyMissing);
+      const result = await translateLanguage(lang, 0, 1, onlyMissing);
       if (result === null) {
-        toast({ title: "Nimic de tradus", description: "Această limbă este deja completă." });
+        toast({ title: "Nimic de tradus" });
       } else {
         setProgressPercent(100);
-        toast({ title: "✅ Tradus!", description: `${LANGUAGES.find((l) => l.code === langCode)?.name} actualizat.` });
+        toast({ title: "✅ Tradus!", description: `${lang.name} actualizat.` });
       }
       await loadTranslations();
       await reloadTranslations();
@@ -270,6 +265,70 @@ export default function TranslationsAdmin() {
       setProgress("");
       setProgressPercent(0);
     }
+  };
+
+  const handleAddLanguage = async () => {
+    const code = newLang.code.trim().toLowerCase();
+    const name = newLang.name.trim();
+    const flag = newLang.flag_code.trim().toLowerCase();
+    if (!code || !name || !flag) {
+      toast({ title: "Câmpuri lipsă", description: "Cod, nume și steag obligatorii.", variant: "destructive" });
+      return;
+    }
+    if (languages.some((l) => l.code === code)) {
+      toast({ title: "Există deja", description: `Limba ${code} este deja adăugată.`, variant: "destructive" });
+      return;
+    }
+
+    setAdding(true);
+    try {
+      const maxOrder = Math.max(0, ...languages.map((l) => l.sort_order));
+      const { error } = await supabase.from("site_languages").insert({
+        code,
+        name,
+        flag_code: flag,
+        sort_order: maxOrder + 1,
+        is_enabled: true,
+      });
+      if (error) throw error;
+
+      toast({ title: "✅ Limbă adăugată", description: `${name} (${code}). Începe traducerea automată...` });
+      setShowAddModal(false);
+      setNewLang({ code: "", name: "", flag_code: "" });
+      await refetchLanguages();
+
+      // Auto-translate immediately
+      const newLangObj: SiteLanguage = {
+        id: code,
+        code,
+        name,
+        flag_code: flag,
+        sort_order: maxOrder + 1,
+        is_enabled: true,
+      };
+      await handleTranslateSingle(newLangObj, false);
+    } catch (err: any) {
+      toast({ title: "Eroare", description: err.message, variant: "destructive" });
+    } finally {
+      setAdding(false);
+    }
+  };
+
+  const handleDeleteLanguage = async (lang: SiteLanguage) => {
+    if (lang.code === "en") {
+      toast({ title: "Nu poți șterge EN", description: "Engleza este limba sursă.", variant: "destructive" });
+      return;
+    }
+    if (!confirm(`Sigur vrei să ștergi limba ${lang.name} (${lang.code})? Traducerile vor fi păstrate în DB dar nu mai apar în meniu.`)) return;
+
+    const { error } = await supabase.from("site_languages").delete().eq("id", lang.id);
+    if (error) {
+      toast({ title: "Eroare", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Limbă eliminată", description: `${lang.name} nu mai apare în meniu.` });
+    await refetchLanguages();
+    await reloadTranslations();
   };
 
   const downloadJson = (lang: string) => {
@@ -287,25 +346,31 @@ export default function TranslationsAdmin() {
   return (
     <AdminLayout>
       <div className="max-w-4xl mx-auto space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
             <h1 className="text-2xl font-bold text-foreground flex items-center gap-3">
               <Languages className="w-7 h-7 text-primary" />
               Traduceri Automate Site
             </h1>
             <p className="text-muted-foreground mt-1">
-              Detectează automat texte noi adăugate pe site și le traduce în toate limbile.
+              Detectează automat texte noi și le traduce. Adaugă limbi noi cu auto-traducere AI.
             </p>
           </div>
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="flex items-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            Adaugă limbă
+          </button>
         </div>
 
-        {/* Source info + actions */}
         <div className="bg-card border border-border/50 rounded-xl p-5 space-y-4">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
               <h3 className="font-semibold text-foreground">🇬🇧 Limba sursă: English</h3>
               <p className="text-sm text-muted-foreground mt-1">
-                {totalKeys} chei totale • Fișier <code className="bg-muted px-1.5 py-0.5 rounded text-xs">en/common.json</code>
+                {totalKeys} chei totale • {languages.length} limbi active
               </p>
             </div>
             <div className="flex gap-2 flex-wrap">
@@ -313,7 +378,6 @@ export default function TranslationsAdmin() {
                 onClick={handleSyncMissing}
                 disabled={translating || totalMissing === 0}
                 className="flex items-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
-                title="Detectează și traduce doar cheile noi care lipsesc"
               >
                 {translating ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
                 {totalMissing > 0 ? `Sincronizează (${totalMissing} chei noi)` : "Totul e la zi ✓"}
@@ -322,7 +386,6 @@ export default function TranslationsAdmin() {
                 onClick={handleTranslateAll}
                 disabled={translating}
                 className="flex items-center gap-2 px-4 py-2.5 bg-muted text-muted-foreground rounded-lg font-medium hover:bg-muted/80 transition-colors disabled:opacity-50"
-                title="Re-traduce TOTUL de la zero"
               >
                 <Languages className="w-4 h-4" />
                 Re-traduce tot
@@ -349,9 +412,8 @@ export default function TranslationsAdmin() {
           )}
         </div>
 
-        {/* Languages grid */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {LANGUAGES.map((lang) => {
+          {languages.map((lang) => {
             const isSource = lang.code === "en";
             const dbData = dbTranslations[lang.code];
             const dbKeyCount = isSource ? totalKeys : (dbData ? countKeys(dbData.data) : 0);
@@ -367,19 +429,29 @@ export default function TranslationsAdmin() {
               <div key={lang.code} className="bg-card border border-border/50 rounded-xl p-4 hover:border-primary/30 transition-colors">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
-                    <span className="text-xl">{lang.flag}</span>
+                    <span className={`fi fi-${lang.flag_code} rounded-sm`} style={{ fontSize: "20px" }} />
                     <div>
                       <h4 className="font-medium text-foreground text-sm">{lang.name}</h4>
                       <span className="text-xs text-muted-foreground uppercase">{lang.code}{isSource && " • sursă"}</span>
                     </div>
                   </div>
-                  {isComplete || isSource ? (
-                    <Check className="w-4 h-4 text-primary" />
-                  ) : missingCount > 0 ? (
-                    <AlertCircle className="w-4 h-4 text-primary/70" />
-                  ) : (
-                    <AlertCircle className="w-4 h-4 text-muted-foreground/30" />
-                  )}
+                  <div className="flex items-center gap-1">
+                    {isComplete || isSource ? (
+                      <Check className="w-4 h-4 text-primary" />
+                    ) : (
+                      <AlertCircle className="w-4 h-4 text-primary/70" />
+                    )}
+                    {!isSource && (
+                      <button
+                        onClick={() => handleDeleteLanguage(lang)}
+                        disabled={translating}
+                        className="p-1 text-muted-foreground/50 hover:text-destructive transition-colors disabled:opacity-30"
+                        title="Elimină limba din meniu"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 <div className="space-y-2">
@@ -404,7 +476,7 @@ export default function TranslationsAdmin() {
                     <>
                       {missingCount > 0 && (
                         <button
-                          onClick={() => handleTranslateSingle(lang.code, true)}
+                          onClick={() => handleTranslateSingle(lang, true)}
                           disabled={translating}
                           className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors disabled:opacity-50"
                         >
@@ -413,7 +485,7 @@ export default function TranslationsAdmin() {
                         </button>
                       )}
                       <button
-                        onClick={() => handleTranslateSingle(lang.code, false)}
+                        onClick={() => handleTranslateSingle(lang, false)}
                         disabled={translating}
                         className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-muted text-muted-foreground rounded-lg hover:bg-muted/80 transition-colors disabled:opacity-50"
                       >
@@ -437,15 +509,83 @@ export default function TranslationsAdmin() {
         </div>
 
         <div className="bg-muted/30 border border-border/30 rounded-xl p-4 text-sm text-muted-foreground space-y-2">
-          <p><strong className="text-foreground">Cum funcționează pentru pagini noi:</strong></p>
-          <ul className="list-disc list-inside space-y-1">
-            <li>Adaugă chei noi în <code className="bg-muted px-1 rounded">en/common.json</code> și folosește <code className="bg-muted px-1 rounded">{`t("noua.cheie")`}</code> în componente</li>
-            <li>Vino aici și apasă <strong>"Sincronizează"</strong> — sistemul detectează automat cheile noi și le traduce în toate limbile</li>
-            <li>Cheile existente NU sunt re-traduse (economie de timp și API calls)</li>
-            <li>Traducerile sunt salvate în baza de date și fac override pe fișierele JSON statice</li>
-          </ul>
+          <p><strong className="text-foreground">Auto-detecție regiune:</strong> site-ul detectează automat țara vizitatorului prin Cloudflare și setează limba: RO→Română, DE/AT/CH→Germană, FR→Franceză, ES/Mexic/LATAM→Spaniolă, IT→Italiană, NL/BE→Olandeză, restul→Engleză. Detecția se reaplică la fiecare vizită până când userul alege manual o limbă din switcher.</p>
         </div>
       </div>
+
+      {/* Add Language Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-card border border-border rounded-xl p-6 w-full max-w-md space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-foreground">Adaugă limbă nouă</h3>
+              <button onClick={() => setShowAddModal(false)} className="text-muted-foreground hover:text-foreground">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <div>
+                <label className="text-xs text-muted-foreground">Cod ISO 639-1 (2 litere)</label>
+                <input
+                  type="text"
+                  maxLength={3}
+                  placeholder="ex: pt, pl, ja"
+                  value={newLang.code}
+                  onChange={(e) => setNewLang({ ...newLang, code: e.target.value.toLowerCase() })}
+                  className="w-full mt-1 px-3 py-2 bg-background border border-border rounded-lg text-sm"
+                />
+              </div>
+              <div>
+                <label className="text-xs text-muted-foreground">Nume afișat</label>
+                <input
+                  type="text"
+                  placeholder="ex: Português, Polski, 日本語"
+                  value={newLang.name}
+                  onChange={(e) => setNewLang({ ...newLang, name: e.target.value })}
+                  className="w-full mt-1 px-3 py-2 bg-background border border-border rounded-lg text-sm"
+                />
+              </div>
+              <div>
+                <label className="text-xs text-muted-foreground">Cod steag ISO 3166-1 alpha-2 (2 litere)</label>
+                <input
+                  type="text"
+                  maxLength={2}
+                  placeholder="ex: pt, pl, jp"
+                  value={newLang.flag_code}
+                  onChange={(e) => setNewLang({ ...newLang, flag_code: e.target.value.toLowerCase() })}
+                  className="w-full mt-1 px-3 py-2 bg-background border border-border rounded-lg text-sm"
+                />
+                {newLang.flag_code && (
+                  <span className={`fi fi-${newLang.flag_code} rounded-sm mt-2 inline-block`} style={{ fontSize: "24px" }} />
+                )}
+              </div>
+            </div>
+
+            <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 text-xs text-foreground">
+              💡 După adăugare, AI va traduce automat toate cele {totalKeys} chei. Durează 1-3 minute.
+            </div>
+
+            <div className="flex gap-2 justify-end">
+              <button
+                onClick={() => setShowAddModal(false)}
+                disabled={adding}
+                className="px-4 py-2 text-sm bg-muted text-muted-foreground rounded-lg hover:bg-muted/80"
+              >
+                Anulează
+              </button>
+              <button
+                onClick={handleAddLanguage}
+                disabled={adding}
+                className="px-4 py-2 text-sm bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 flex items-center gap-2"
+              >
+                {adding ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+                Adaugă & traduce
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </AdminLayout>
   );
 }
