@@ -3,6 +3,7 @@ import { Layout } from "@/components/layout/Layout";
 import { SEOHead } from "@/components/seo";
 import { Link } from "react-router-dom";
 import { useKBAdmin } from "@/hooks/useKBAdmin";
+import { useTranslation } from "react-i18next";
 import { 
   Search, BookOpen, Server, Shield, Settings, Users, Zap,
   HelpCircle, ChevronRight, Clock, Eye, ArrowRight, Gamepad2,
@@ -48,6 +49,7 @@ interface Article {
 }
 
 const KnowledgeBase = () => {
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
   const [articles, setArticles] = useState<Article[]>([]);
@@ -115,14 +117,14 @@ const KnowledgeBase = () => {
           <div className="text-center max-w-3xl mx-auto">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6">
               <BookOpen className="w-4 h-4 text-primary" />
-              <span className="text-sm font-medium text-primary">Knowledge Base</span>
+              <span className="text-sm font-medium text-primary">{t("pages.kbPage.badge")}</span>
             </div>
             
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-              How Can We <span className="text-primary">Help You?</span>
+              {t("pages.kbPage.headlineStart")} <span className="text-primary">{t("pages.kbPage.headlineHighlight")}</span>
             </h1>
             <p className="text-lg text-muted-foreground mb-8">
-              Browse tutorials, guides, and troubleshooting articles to get the most out of your hosting services.
+              {t("pages.kbPage.subtitle")}
             </p>
             
             {/* Search Bar */}
@@ -130,7 +132,7 @@ const KnowledgeBase = () => {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <Input
                 type="text"
-                placeholder="Search for articles, tutorials, or topics..."
+                placeholder={t("pages.kbPage.searchPlaceholder")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-12 pr-4 py-6 text-base bg-card/60 border-border/50 focus:border-primary/50"
@@ -142,7 +144,7 @@ const KnowledgeBase = () => {
               <div className="mt-4">
                 <Link to="/kb-admin">
                   <Button size="sm" variant="outline" className="gap-1 border-primary/30 text-primary">
-                    <Pencil className="w-3.5 h-3.5" /> Manage Articles
+                    <Pencil className="w-3.5 h-3.5" /> {t("pages.kbPage.manageArticles")}
                   </Button>
                 </Link>
               </div>
@@ -156,7 +158,7 @@ const KnowledgeBase = () => {
         <section className="pb-12">
           <div className="container mx-auto px-4 md:px-6">
             <h2 className="text-xl font-semibold text-foreground mb-6">
-              Search Results ({filteredArticles.length} articles)
+              {t("pages.kbPage.searchResults")} ({filteredArticles.length} {t("pages.kbPage.articles")})
             </h2>
             {filteredArticles.length > 0 ? (
               <div className="grid md:grid-cols-2 gap-5">
@@ -176,7 +178,7 @@ const KnowledgeBase = () => {
                 ))}
               </div>
             ) : (
-              <p className="text-muted-foreground">No articles found matching your search.</p>
+              <p className="text-muted-foreground">{t("pages.kbPage.noResults")}</p>
             )}
           </div>
         </section>
@@ -188,10 +190,10 @@ const KnowledgeBase = () => {
           <div className="container mx-auto px-4 md:px-6">
             <div className="flex flex-wrap justify-center gap-3">
               {[
-                { icon: Terminal, label: "API Documentation", href: "/knowledge-base" },
-                { icon: Database, label: "Database Guides", href: "/knowledge-base" },
-                { icon: Globe, label: "Domain Setup", href: "/knowledge-base" },
-                { icon: Settings, label: "Control Panel", href: "/knowledge-base" },
+                { icon: Terminal, label: t("pages.kbPage.quickLinks.apiDocs"), href: "/knowledge-base" },
+                { icon: Database, label: t("pages.kbPage.quickLinks.dbGuides"), href: "/knowledge-base" },
+                { icon: Globe, label: t("pages.kbPage.quickLinks.domainSetup"), href: "/knowledge-base" },
+                { icon: Settings, label: t("pages.kbPage.quickLinks.controlPanel"), href: "/knowledge-base" },
               ].map((link, index) => (
                 <Link key={index} to={link.href}>
                   <Button variant="outline" className="btn-outline gap-2">
@@ -210,8 +212,8 @@ const KnowledgeBase = () => {
         <section className="py-16">
           <div className="container mx-auto px-4 md:px-6">
             <div className="text-center mb-10">
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">Browse by Category</h2>
-              <p className="text-muted-foreground">Find articles organized by topic</p>
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">{t("pages.kbPage.browseByCategory")}</h2>
+              <p className="text-muted-foreground">{t("pages.kbPage.browseSubtitle")}</p>
             </div>
             
             {loading ? (
@@ -234,7 +236,7 @@ const KnowledgeBase = () => {
                         <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">{category.name}</h3>
                         <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{category.description}</p>
                         <div className="flex items-center justify-between text-sm">
-                          <span className="text-muted-foreground">{category.article_count || 0} articles</span>
+                          <span className="text-muted-foreground">{category.article_count || 0} {t("pages.kbPage.articles")}</span>
                           <ChevronRight className="w-4 h-4 text-primary opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                         </div>
                       </div>
@@ -245,7 +247,7 @@ const KnowledgeBase = () => {
             ) : (
               <div className="text-center py-12">
                 <BookOpen className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
-                <p className="text-muted-foreground">No categories available yet.</p>
+                <p className="text-muted-foreground">{t("pages.kbPage.noCategories")}</p>
               </div>
             )}
           </div>
@@ -257,8 +259,8 @@ const KnowledgeBase = () => {
         <section className="py-16 bg-card/30">
           <div className="container mx-auto px-4 md:px-6">
             <div className="mb-10">
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">Popular Articles</h2>
-              <p className="text-muted-foreground">Most viewed guides and tutorials</p>
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">{t("pages.kbPage.popularArticles")}</h2>
+              <p className="text-muted-foreground">{t("pages.kbPage.popularSubtitle")}</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {featuredArticles.map((article) => (
@@ -287,7 +289,7 @@ const KnowledgeBase = () => {
             <div className="grid lg:grid-cols-3 gap-8">
               {/* Recent Articles */}
               <div className="lg:col-span-2">
-                <h2 className="text-2xl font-bold text-foreground mb-6">Recently Updated</h2>
+                <h2 className="text-2xl font-bold text-foreground mb-6">{t("pages.kbPage.recentlyUpdated")}</h2>
                 <div className="space-y-3">
                   {recentArticles.length > 0 ? recentArticles.map((article) => (
                     <Link key={article.id} to={`/knowledge-base/article/${article.slug}`} className="block">
@@ -303,7 +305,7 @@ const KnowledgeBase = () => {
                       </div>
                     </Link>
                   )) : (
-                    <p className="text-muted-foreground">No articles published yet.</p>
+                    <p className="text-muted-foreground">{t("pages.kbPage.noPublished")}</p>
                   )}
                 </div>
               </div>
@@ -311,14 +313,14 @@ const KnowledgeBase = () => {
               {/* Support Sidebar */}
               <div>
                 <div className="glass-card p-6 sticky top-24">
-                  <h3 className="text-lg font-semibold text-foreground mb-3">Need More Help?</h3>
-                  <p className="text-sm text-muted-foreground mb-6">Can't find what you're looking for? Our support team is available 24/7.</p>
+                  <h3 className="text-lg font-semibold text-foreground mb-3">{t("pages.kbPage.needHelp")}</h3>
+                  <p className="text-sm text-muted-foreground mb-6">{t("pages.kbPage.needHelpDesc")}</p>
                   <div className="space-y-3">
                     <Link to="/contact" className="block">
-                      <Button className="w-full btn-glow">Open Support Ticket</Button>
+                      <Button className="w-full btn-glow">{t("pages.kbPage.openTicket")}</Button>
                     </Link>
                     <Link to="/contact" className="block">
-                      <Button variant="outline" className="w-full btn-outline">Contact Us</Button>
+                      <Button variant="outline" className="w-full btn-outline">{t("pages.kbPage.contactUs")}</Button>
                     </Link>
                   </div>
                 </div>
