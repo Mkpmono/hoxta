@@ -2,20 +2,11 @@ import { useState, useEffect } from "react";
 import { AdminLayout } from "@/components/panel/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import { Languages, RefreshCw, Check, AlertCircle, Download, Sparkles } from "lucide-react";
+import { Languages, RefreshCw, Check, AlertCircle, Download, Sparkles, Plus, Trash2 } from "lucide-react";
 import enCommon from "@/i18n/locales/en/common.json";
 import { reloadTranslations } from "@/i18n";
-
-const LANGUAGES = [
-  { code: "en", name: "English", flag: "🇬🇧" },
-  { code: "ro", name: "Română", flag: "🇷🇴" },
-  { code: "de", name: "Deutsch", flag: "🇩🇪" },
-  { code: "fr", name: "Français", flag: "🇫🇷" },
-  { code: "es", name: "Español", flag: "🇪🇸" },
-  { code: "it", name: "Italiano", flag: "🇮🇹" },
-];
-
-const TARGET_LANGS = ["ro", "de", "fr", "es", "it"];
+import { useSiteLanguages, type SiteLanguage } from "@/hooks/useSiteLanguages";
+import "flag-icons/css/flag-icons.min.css";
 
 function countKeys(obj: any): number {
   let count = 0;
