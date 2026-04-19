@@ -7,9 +7,12 @@ import {
 import { webHostingPlans, webHostingFeatures, webHostingFAQs, webHostingComparison } from "@/data/hostingData";
 import { Globe, Zap, Shield, Server } from "lucide-react";
 import { SEOHead, ServiceSchema, FAQSchema, OrganizationSchema } from "@/components/seo";
+import { useHostingPlans, rowToPlan } from "@/hooks/useHostingPlans";
 
 export default function WebHosting() {
   const { t } = useTranslation();
+  const { plans: dbPlans } = useHostingPlans("web-hosting");
+  const livePlans = dbPlans.length > 0 ? dbPlans.map(rowToPlan) : webHostingPlans;
   return (
     <Layout>
       <SEOHead title="Web Hosting - Fast, Secure & Reliable | Hoxta" description="Launch your website with Hoxta's blazing-fast NVMe web hosting. Free SSL, daily backups, 24/7 support, and 99.9% uptime. Plans from $2.99/mo." canonicalUrl="https://hoxta.com/web-hosting" />
