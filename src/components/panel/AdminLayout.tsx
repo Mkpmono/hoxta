@@ -11,14 +11,34 @@ import {
   Menu,
   X,
   ChevronDown,
+  ChevronRight,
   Shield,
   ExternalLink,
+  Server,
+  Globe,
+  HardDrive,
+  Cpu,
+  Users,
+  Bot,
+  Mic,
+  Package,
 } from "lucide-react";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
 }
+
+const hostingItems = [
+  { icon: Globe, label: "Web Hosting", href: "/admin/hosting/web" },
+  { icon: Users, label: "Reseller", href: "/admin/hosting/reseller" },
+  { icon: Server, label: "VPS", href: "/admin/hosting/vps" },
+  { icon: Cpu, label: "Dedicated", href: "/admin/hosting/dedicated" },
+  { icon: Globe, label: "Domenii", href: "/admin/hosting/domains" },
+  { icon: Bot, label: "Discord Bot", href: "/admin/hosting/discord-bot" },
+  { icon: Mic, label: "TeamSpeak", href: "/admin/hosting/teamspeak" },
+  { icon: HardDrive, label: "Colocation", href: "/admin/hosting/colocation" },
+];
 
 const adminNavItems = [
   { icon: BookOpen, label: "Content (KB & Blog)", href: "/admin/content" },
