@@ -9,7 +9,6 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSupportSettings } from "@/hooks/useSupportSettings";
-import { openExternalUrl } from "@/lib/openExternalUrl";
 
 export default function Contact() {
   const { t } = useTranslation();
@@ -174,13 +173,14 @@ export default function Contact() {
                     <div key={j} className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">{line.label}</span>
                       {"href" in line && line.href ? (
-                        /^https?:\/\/(www\.)?(discord\.gg|discord\.com\/invite)\//i.test(line.href) ? (
-                          <button type="button" onClick={() => openExternalUrl(line.href!)} className="text-primary hover:underline">
-                            {line.value}
-                          </button>
-                        ) : (
-                          <a href={line.href} className="text-primary hover:underline">{line.value}</a>
-                        )
+                        <a
+                          href={line.href}
+                          target={line.href.startsWith("http") ? "_blank" : undefined}
+                          rel={line.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                          className="text-primary hover:underline"
+                        >
+                          {line.value}
+                        </a>
                       ) : (
                         <span className="text-foreground font-medium">{line.value}</span>
                       )}

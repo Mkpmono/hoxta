@@ -2,7 +2,6 @@ import { useState, forwardRef } from "react";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSupportSettings } from "@/hooks/useSupportSettings";
-import { openExternalUrl } from "@/lib/openExternalUrl";
 
 const ChatIcon = forwardRef<SVGSVGElement, { className?: string }>(({ className }, ref) => {
   return (
@@ -109,12 +108,11 @@ export function LiveChatButton() {
                   </a>
                 )}
                 {discordEnabled && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      openExternalUrl(settings!.discord_url);
-                      setOpen(false);
-                    }}
+                  <a
+                    href={settings!.discord_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setOpen(false)}
                     className="w-full flex items-center gap-3 p-3 rounded-xl bg-muted/30 hover:bg-muted/60 transition-colors group text-left"
                   >
                     <span className="w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center text-base">💬</span>
@@ -122,7 +120,7 @@ export function LiveChatButton() {
                       <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">Discord</p>
                       <p className="text-xs text-muted-foreground">Join our community</p>
                     </div>
-                  </button>
+                  </a>
                 )}
               </div>
             </div>
