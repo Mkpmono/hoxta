@@ -25,12 +25,13 @@ export default function WebHosting() {
         headline={t("pages.webHosting.headline")}
         highlightedText={t("pages.webHosting.highlightedText")}
         description={t("pages.webHosting.description")}
+        heroPoints={dbPlans[0]?.hero_points || undefined}
         promotion={{ text: t("pages.webHosting.promoText"), discount: t("pages.webHosting.promoDiscount"), endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) }}
         primaryCTA={{ text: t("buttons.getStarted"), href: "#pricing" }}
         secondaryCTA={{ text: t("buttons.comparePlans"), href: "#comparison" }}
       />
       <TrustBar />
-      <PricingPlans title={t("pages.webHosting.plansTitle")} subtitle={t("pages.webHosting.plansSubtitle")} plans={livePlans} productSlug="web-hosting" />
+      <PricingPlans title={t("pages.webHosting.plansTitle")} subtitle={t("pages.webHosting.plansSubtitle")} plans={livePlans} productSlug="web-hosting" detailsBasePath="/web-hosting" />
       <FeatureGrid title={t("pages.webHosting.whyTitle")} subtitle={t("pages.webHosting.whySubtitle")} features={webHostingFeatures} />
       <ContentSection title={t("pages.webHosting.whatIsTitle")} description={t("pages.webHosting.whatIsDesc")} points={t("pages.webHosting.whatIsPoints", { returnObjects: true }) as string[]} icon={Globe} />
       <ContentSection title={t("pages.webHosting.perfTitle")} description={t("pages.webHosting.perfDesc")} points={t("pages.webHosting.perfPoints", { returnObjects: true }) as string[]} icon={Zap} reverse />
