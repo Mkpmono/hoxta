@@ -12,6 +12,27 @@ const LANGUAGE_NAMES: Record<string, string> = {
   fr: "French",
   es: "Spanish",
   it: "Italian",
+  nl: "Dutch",
+  pt: "Portuguese",
+  pl: "Polish",
+  ru: "Russian",
+  uk: "Ukrainian",
+  hu: "Hungarian",
+  cs: "Czech",
+  sk: "Slovak",
+  bg: "Bulgarian",
+  el: "Greek",
+  tr: "Turkish",
+  sv: "Swedish",
+  no: "Norwegian",
+  da: "Danish",
+  fi: "Finnish",
+  ja: "Japanese",
+  zh: "Chinese",
+  ko: "Korean",
+  ar: "Arabic",
+  he: "Hebrew",
+  hi: "Hindi",
 };
 
 serve(async (req) => {
@@ -20,8 +41,8 @@ serve(async (req) => {
   }
 
   try {
-    const { chunk, targetLang, sourceLang } = await req.json();
-    const srcLang = sourceLang || "ro";
+    const { chunk, targetLang, sourceLang, targetLangName } = await req.json();
+    const srcLang = sourceLang || "en";
     const srcName = LANGUAGE_NAMES[srcLang] || srcLang;
 
     if (!chunk || !targetLang || typeof chunk !== "object") {
@@ -39,7 +60,7 @@ serve(async (req) => {
       });
     }
 
-    const langName = LANGUAGE_NAMES[targetLang] || targetLang;
+    const langName = targetLangName || LANGUAGE_NAMES[targetLang] || targetLang;
 
     const prompt = `You are a professional translator. Translate the following key-value pairs from ${srcName} to ${langName}.
 

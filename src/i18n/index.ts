@@ -2,6 +2,7 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { supabase } from '@/integrations/supabase/client';
+import { detectCountryFromCloudflare, mapCountryToLanguage } from '@/lib/geoLanguage';
 
 import enCommon from './locales/en/common.json';
 import roCommon from './locales/ro/common.json';
@@ -10,10 +11,11 @@ import frCommon from './locales/fr/common.json';
 import esCommon from './locales/es/common.json';
 import itCommon from './locales/it/common.json';
 
-export const supportedLanguages = ['en', 'ro', 'de', 'fr', 'es', 'it'] as const;
-export type SupportedLanguage = typeof supportedLanguages[number];
+// Static fallback list — DB drives the actual list of available languages at runtime
+export const supportedLanguages = ['en', 'ro', 'de', 'fr', 'es', 'it', 'nl'] as const;
+export type SupportedLanguage = string;
 
-const resources = {
+const resources: Record<string, { common: any }> = {
   en: { common: enCommon },
   ro: { common: roCommon },
   de: { common: deCommon },
@@ -22,16 +24,8 @@ const resources = {
   it: { common: itCommon },
 };
 
-// Map browser language codes to our supported languages
-function mapBrowserLanguage(browserLang: string): SupportedLanguage {
-  const langCode = browserLang.toLowerCase().split('-')[0];
-  
-  if (supportedLanguages.includes(langCode as SupportedLanguage)) {
-    return langCode as SupportedLanguage;
-  }
-  
-  return 'en'; // Default fallback
-}
+const MANUAL_KEY = 'lang_manual';
+const LANG_KEY = 'lang';
 
 i18n
   .use(LanguageDetector)
@@ -42,64 +36,67 @@ i18n
     defaultNS: 'common',
     ns: ['common'],
     detection: {
-      order: ['localStorage', 'navigator', 'htmlTag'],
-      lookupLocalStorage: 'lang',
+      order: ['localStorage', 'htmlTag'],
+      lookupLocalStorage: LANG_KEY,
       caches: ['localStorage'],
-      convertDetectedLanguage: (lng) => mapBrowserLanguage(lng),
     },
-    interpolation: {
-      escapeValue: false,
-    },
-    react: {
-      useSuspense: false,
-    },
-    // Show missing key warning in dev
+    interpolation: { escapeValue: false },
+    react: { useSuspense: false },
     saveMissing: import.meta.env.DEV,
-    missingKeyHandler: import.meta.env.DEV
-      ? (lngs, ns, key) => {
-          console.warn(`[i18n] Missing translation key: "${key}" for languages: ${lngs.join(', ')}`);
-        }
-      : undefined,
   });
+
+// Geo-detect (only if user hasn't picked manually). Runs every visit.
+async function applyGeoDetectionIfNeeded(availableCodes: string[]) {
+  try {
+    const manual = localStorage.getItem(MANUAL_KEY) === '1';
+    if (manual) return;
+
+    const country = await detectCountryFromCloudflare();
+    const target = mapCountryToLanguage(country, availableCodes);
+    if (target && target !== i18n.language) {
+      localStorage.setItem(LANG_KEY, target);
+      await i18n.changeLanguage(target);
+    }
+  } catch (err) {
+    console.warn('[i18n] geo-detect failed', err);
+  }
+}
 
 // Load DB translations and merge (overrides static files)
 async function loadDbTranslations() {
   try {
-    const { data, error } = await supabase
-      .from('site_translations')
-      .select('lang, data');
-    
-    if (error || !data || data.length === 0) return;
+    const [{ data: tData }, { data: lData }] = await Promise.all([
+      supabase.from('site_translations').select('lang, data'),
+      supabase.from('site_languages').select('code').eq('is_enabled', true),
+    ]);
 
-    for (const row of data) {
-      if (row.lang && row.data && typeof row.data === 'object') {
-        // Deep merge: DB translations override static ones
-        i18n.addResourceBundle(row.lang, 'common', row.data as Record<string, any>, true, true);
+    if (tData) {
+      for (const row of tData) {
+        if (row.lang && row.data && typeof row.data === 'object') {
+          i18n.addResourceBundle(row.lang, 'common', row.data as Record<string, any>, true, true);
+        }
       }
     }
 
-    // Force re-render by emitting language changed event
-    const currentLang = i18n.language;
-    i18n.changeLanguage(currentLang);
-
-    if (import.meta.env.DEV) {
-      console.log(`[i18n] Loaded DB translations for: ${data.map(r => r.lang).join(', ')}`);
+    const availableCodes = (lData || []).map((r: any) => r.code);
+    if (availableCodes.length > 0) {
+      // If current language is no longer available, fall back to en
+      if (!availableCodes.includes(i18n.language)) {
+        await i18n.changeLanguage('en');
+      }
+      await applyGeoDetectionIfNeeded(availableCodes);
     }
   } catch (err) {
     console.warn('[i18n] Failed to load DB translations:', err);
   }
 }
 
-// Export for manual reload (e.g. after admin saves translations)
 export const reloadTranslations = loadDbTranslations;
 
-// Load on init
 loadDbTranslations();
 
-// Dev helper: log current language once
 if (import.meta.env.DEV) {
   console.log(`[i18n] Current language: ${i18n.language}`);
-  console.log(`[i18n] Supported languages: ${supportedLanguages.join(', ')}`);
 }
 
 export default i18n;
