@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, forwardRef } from "react";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { openChatwoot } from "@/components/ChatwootWidget";
 
-function ChatIcon({ className }: { className?: string }) {
+const ChatIcon = forwardRef<SVGSVGElement, { className?: string }>(({ className }, ref) => {
   return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
+    <svg ref={ref} viewBox="0 0 24 24" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
       <path
         d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z"
         fill="currentColor"
@@ -23,7 +23,8 @@ function ChatIcon({ className }: { className?: string }) {
       <circle cx="15.5" cy="11.5" r="1" fill="currentColor" />
     </svg>
   );
-}
+});
+ChatIcon.displayName = "ChatIcon";
 
 export function LiveChatButton() {
   const [open, setOpen] = useState(false);
