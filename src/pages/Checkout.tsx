@@ -9,6 +9,7 @@ import { CustomerData } from "@/components/checkout/CustomerForm";
 import { Loader2, ArrowLeft, Edit3 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 type CheckoutStepId = "plan" | "details" | "payment";
 
@@ -26,6 +27,7 @@ const fullCheckoutSteps = [
 ];
 
 export default function Checkout() {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   
@@ -226,7 +228,7 @@ export default function Checkout() {
         <div className="min-h-screen py-12">
           <div className="container">
             <Button variant="ghost" onClick={() => navigate(-1)} className="mb-6">
-              <ArrowLeft className="w-4 h-4 mr-2" /> Back
+              <ArrowLeft className="w-4 h-4 mr-2" /> {t("pages.checkoutPage.back")}
             </Button>
 
             <motion.div
@@ -235,7 +237,7 @@ export default function Checkout() {
               className="text-center mb-12"
             >
               <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                Order {productForSelection.name}
+                {t("pages.checkoutPage.order")} {productForSelection.name}
               </h1>
               <p className="text-muted-foreground max-w-2xl mx-auto">{productForSelection.shortDescription}</p>
             </motion.div>
@@ -310,7 +312,7 @@ export default function Checkout() {
           {/* Back & Change Plan */}
           <div className="flex items-center justify-between mb-6">
             <Button variant="ghost" onClick={() => navigate(-1)}>
-              <ArrowLeft className="w-4 h-4 mr-2" /> Back
+              <ArrowLeft className="w-4 h-4 mr-2" /> {t("pages.checkoutPage.back")}
             </Button>
             <button
               type="button"
@@ -322,7 +324,7 @@ export default function Checkout() {
               className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
             >
               <Edit3 className="w-4 h-4" />
-              Change Plan
+              {t("pages.checkoutPage.changePlan")}
             </button>
           </div>
           
@@ -333,7 +335,7 @@ export default function Checkout() {
             className="text-center mb-8"
           >
             <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-              Complete Your Order
+              {t("pages.checkoutPage.completeOrder")}
             </h1>
             <p className="text-muted-foreground">
               {currentProduct.name} — {currentPlan.name}
@@ -355,14 +357,14 @@ export default function Checkout() {
                 >
                   {step === "details" && (
                     <>
-                        <h2 className="text-2xl font-bold text-foreground mb-6">Your Details</h2>
+                        <h2 className="text-2xl font-bold text-foreground mb-6">{t("pages.checkoutPage.yourDetails")}</h2>
                         <CustomerForm onSubmit={handleCustomerSubmit} isLoading={isProcessing} />
                     </>
                   )}
                   
                   {step === "payment" && (
                     <>
-                      <h2 className="text-2xl font-bold text-foreground mb-6">Payment Method</h2>
+                      <h2 className="text-2xl font-bold text-foreground mb-6">{t("pages.checkoutPage.paymentMethod")}</h2>
                       <PaymentMethods
                         selectedMethod={selectedPayment}
                         onSelect={setSelectedPayment}
