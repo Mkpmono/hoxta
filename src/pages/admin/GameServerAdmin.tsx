@@ -27,6 +27,7 @@ interface GamePlan {
   slots: number;
   features: string[];
   popular?: boolean;
+  order_url?: string;
 }
 
 interface GameFAQ {
@@ -48,6 +49,7 @@ interface GameServer {
   popular: boolean;
   is_published: boolean;
   cover_image_url: string | null;
+  whmcs_url: string | null;
   features: string[] | null;
   hero_points: string[] | null;
   tags: string[] | null;
@@ -57,7 +59,7 @@ interface GameServer {
   translations?: Record<string, any>;
 }
 
-const emptyPlan: GamePlan = { name: "", price: 0, ram: "", cpu: "", storage: "", slots: 0, features: [], popular: false };
+const emptyPlan: GamePlan = { name: "", price: 0, ram: "", cpu: "", storage: "", slots: 0, features: [], popular: false, order_url: "" };
 const emptyFAQ: GameFAQ = { question: "", answer: "" };
 
 export default function GameServerAdmin() {
@@ -118,6 +120,7 @@ export default function GameServerAdmin() {
       popular: editing.popular ?? false,
       is_published: editing.is_published ?? false,
       cover_image_url: editing.cover_image_url || null,
+      whmcs_url: editing.whmcs_url?.trim() || null,
       features: editing.features || [],
       hero_points: editing.hero_points || [],
       tags: editing.tags || [],
@@ -284,6 +287,15 @@ export default function GameServerAdmin() {
             <div><Label>Features (comma separated)</Label><Input value={editing.features?.join(", ") || ""} onChange={(e) => setEditing({ ...editing, features: e.target.value.split(",").map(t => t.trim()).filter(Boolean) })} /></div>
             <div><Label>Hero Points (comma separated)</Label><Input value={editing.hero_points?.join(", ") || ""} onChange={(e) => setEditing({ ...editing, hero_points: e.target.value.split(",").map(t => t.trim()).filter(Boolean) })} /></div>
             <div><Label>Tags (comma separated)</Label><Input value={editing.tags?.join(", ") || ""} onChange={(e) => setEditing({ ...editing, tags: e.target.value.split(",").map(t => t.trim()).filter(Boolean) })} /></div>
+            <div>
+              <Label>WHMCS Order URL (fallback for all plans)</Label>
+              <Input
+                value={editing.whmcs_url || ""}
+                onChange={(e) => setEditing({ ...editing, whmcs_url: e.target.value })}
+                placeholder="https://billing.hoxta.com/cart.php?gid=1"
+              />
+              <p className="text-xs text-muted-foreground mt-1">Used when a plan has no Order URL set. Opens in a new tab.</p>
+            </div>
             
             <div className="flex gap-6">
               <div className="flex items-center gap-2"><Switch checked={editing.is_published ?? false} onCheckedChange={(v) => setEditing({ ...editing, is_published: v })} /><Label>Published</Label></div>
@@ -318,6 +330,14 @@ export default function GameServerAdmin() {
                         <div><Label className="text-xs">Slots</Label><Input type="number" value={plan.slots} onChange={(e) => updatePlan(i, "slots", parseInt(e.target.value) || 0)} /></div>
                       </div>
                       <div><Label className="text-xs">Plan Features (comma separated)</Label><Input value={plan.features?.join(", ") || ""} onChange={(e) => updatePlan(i, "features", e.target.value.split(",").map(t => t.trim()).filter(Boolean))} placeholder="DDoS Protection, Daily Backups, Mod Support..." /></div>
+                      <div>
+                        <Label className="text-xs">WHMCS Order URL (this plan)</Label>
+                        <Input
+                          value={plan.order_url || ""}
+                          onChange={(e) => updatePlan(i, "order_url", e.target.value)}
+                          placeholder="https://billing.hoxta.com/cart.php?a=add&pid=12"
+                        />
+                      </div>
                     </div>
                   ))}
                   <Button variant="outline" size="sm" onClick={addPlan} className="gap-1">

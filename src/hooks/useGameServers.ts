@@ -7,6 +7,7 @@ export interface DBGameServer {
   slug: string;
   title: string;
   cover_image_url: string | null;
+  whmcs_url: string | null;
   pricing_display: string;
   price_value: number;
   pricing_unit: string;
