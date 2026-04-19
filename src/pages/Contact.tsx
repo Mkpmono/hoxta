@@ -173,14 +173,20 @@ export default function Contact() {
                     <div key={j} className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">{line.label}</span>
                       {"href" in line && line.href ? (
-                        <a
-                          href={line.href}
-                          target={line.href.startsWith("http") ? "_blank" : undefined}
-                          rel={line.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                          className="text-primary hover:underline"
-                        >
-                          {line.value}
-                        </a>
+                        /^https?:\/\/(www\.)?(discord\.gg|discord\.com\/invite)\//i.test(line.href) ? (
+                          <a href={line.href} target="_blank" className="text-primary hover:underline">
+                            {line.value}
+                          </a>
+                        ) : (
+                          <a
+                            href={line.href}
+                            target={line.href.startsWith("http") ? "_blank" : undefined}
+                            rel={line.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                            className="text-primary hover:underline"
+                          >
+                            {line.value}
+                          </a>
+                        )
                       ) : (
                         <span className="text-foreground font-medium">{line.value}</span>
                       )}

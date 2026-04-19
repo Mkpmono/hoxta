@@ -96,7 +96,6 @@ export const Footer = forwardRef<HTMLElement>(function Footer(_props, ref) {
               <a
                 href={supportSettings?.discord_url || brand.socials.discord}
                 target="_blank"
-                rel="noopener noreferrer"
                 className="rounded-lg bg-muted p-2 text-muted-foreground transition-colors hover:bg-primary/20 hover:text-primary"
                 aria-label="Discord"
               >

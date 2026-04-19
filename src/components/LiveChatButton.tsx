@@ -111,7 +111,6 @@ export function LiveChatButton() {
                   <a
                     href={settings!.discord_url}
                     target="_blank"
-                    rel="noopener noreferrer"
                     onClick={() => setOpen(false)}
                     className="w-full flex items-center gap-3 p-3 rounded-xl bg-muted/30 hover:bg-muted/60 transition-colors group text-left"
                   >
