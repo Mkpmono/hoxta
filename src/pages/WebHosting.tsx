@@ -30,7 +30,7 @@ export default function WebHosting() {
         secondaryCTA={{ text: t("buttons.comparePlans"), href: "#comparison" }}
       />
       <TrustBar />
-      <PricingPlans title={t("pages.webHosting.plansTitle")} subtitle={t("pages.webHosting.plansSubtitle")} plans={webHostingPlans} productSlug="web-hosting" />
+      <PricingPlans title={t("pages.webHosting.plansTitle")} subtitle={t("pages.webHosting.plansSubtitle")} plans={livePlans} productSlug="web-hosting" />
       <FeatureGrid title={t("pages.webHosting.whyTitle")} subtitle={t("pages.webHosting.whySubtitle")} features={webHostingFeatures} />
       <ContentSection title={t("pages.webHosting.whatIsTitle")} description={t("pages.webHosting.whatIsDesc")} points={t("pages.webHosting.whatIsPoints", { returnObjects: true }) as string[]} icon={Globe} />
       <ContentSection title={t("pages.webHosting.perfTitle")} description={t("pages.webHosting.perfDesc")} points={t("pages.webHosting.perfPoints", { returnObjects: true }) as string[]} icon={Zap} reverse />
