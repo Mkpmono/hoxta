@@ -125,7 +125,23 @@ async function checkBlockedIP(ip: string): Promise<boolean> {
   }
 }
 
-const initialChecks: CheckItem[] = [
+async function checkRateLimit(ip: string): Promise<{ allowed: boolean; blocked?: boolean }> {
+  try {
+    const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+    const ua = encodeURIComponent(navigator.userAgent || "");
+    const res = await fetch(
+      `https://${projectId}.supabase.co/functions/v1/log-visitor?action=rate-limit&ip=${encodeURIComponent(ip)}&ua=${ua}`,
+      { signal: AbortSignal.timeout(3000) }
+    );
+    if (res.status === 429) {
+      const data = await res.json().catch(() => ({}));
+      return { allowed: false, blocked: data.blocked === true };
+    }
+    return { allowed: true };
+  } catch {
+    return { allowed: true }; // fail-open: don't lock users out on network glitch
+  }
+}
   { label: "Detecting client IP address", status: "pending" },
   { label: "Checking IP blacklist", status: "pending" },
   { label: "Verifying browser environment", status: "pending" },
