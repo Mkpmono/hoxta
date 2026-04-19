@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Activity, Globe, Shield, TrendingUp, AlertTriangle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const attackVectors = [
   { name: "SYN Flood", percent: 42 },
@@ -68,6 +69,7 @@ function MiniSparkline({ data }: { data: number[] }) {
 }
 
 export function MonitoringPreview() {
+  const { t } = useTranslation();
   const sparklineData = [12, 45, 32, 67, 54, 89, 76, 98, 65, 87, 72, 91, 45, 78, 56];
 
   return (

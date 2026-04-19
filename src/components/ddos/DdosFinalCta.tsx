@@ -1,8 +1,10 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight, MessageSquare, Shield, Zap, Clock } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export function DdosFinalCta() {
+  const { t } = useTranslation();
   return (
     <section className="py-20 md:py-28">
       <div className="container mx-auto px-4 md:px-6">
@@ -12,26 +14,16 @@ export function DdosFinalCta() {
           viewport={{ once: true }}
           className="relative overflow-hidden rounded-3xl"
         >
-          {/* Background */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-transparent" />
           <div className="absolute inset-0 bg-card/80 backdrop-blur-sm" />
 
-          {/* Decorative elements */}
           <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/5 rounded-full blur-2xl" />
 
-          {/* Animated shield */}
           <motion.div
             className="absolute right-10 top-1/2 -translate-y-1/2 opacity-10"
-            animate={{
-              scale: [1, 1.1, 1],
-              rotate: [0, 5, -5, 0],
-            }}
-            transition={{
-              duration: 6,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
+            animate={{ scale: [1, 1.1, 1], rotate: [0, 5, -5, 0] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
           >
             <Shield className="w-64 h-64" />
           </motion.div>
@@ -44,7 +36,7 @@ export function DdosFinalCta() {
               transition={{ delay: 0.1 }}
               className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6"
             >
-              Ready to Stop Downtime?
+              {t("ddos.finalCta.title")}
             </motion.h2>
 
             <motion.p
@@ -54,11 +46,9 @@ export function DdosFinalCta() {
               transition={{ delay: 0.2 }}
               className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8"
             >
-              Thousands of businesses trust Hoxta to keep them online.
-              Get protected in minutes with always-on DDoS mitigation.
+              {t("ddos.finalCta.subtitle")}
             </motion.p>
 
-            {/* CTAs */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -70,7 +60,7 @@ export function DdosFinalCta() {
                 to="/checkout?category=security&product=ddos-protection&plan=ddos-advanced&billing=monthly"
                 className="btn-glow px-8 py-4 text-lg font-semibold inline-flex items-center gap-2 group"
               >
-                Start Now
+                {t("ddos.finalCta.ctaStart")}
                 <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
               </Link>
               <Link
@@ -78,11 +68,10 @@ export function DdosFinalCta() {
                 className="btn-outline px-8 py-4 text-lg font-medium inline-flex items-center gap-2"
               >
                 <MessageSquare className="w-5 h-5" />
-                Request a Quote
+                {t("ddos.finalCta.ctaQuote")}
               </Link>
             </motion.div>
 
-            {/* Trust badges */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -92,15 +81,15 @@ export function DdosFinalCta() {
             >
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Shield className="w-4 h-4 text-primary" />
-                <span>30-Day Money Back</span>
+                <span>{t("ddos.finalCta.moneyBack")}</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Zap className="w-4 h-4 text-primary" />
-                <span>Instant Activation</span>
+                <span>{t("ddos.finalCta.instantActivation")}</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Clock className="w-4 h-4 text-primary" />
-                <span>24/7 Expert Support</span>
+                <span>{t("ddos.finalCta.expertSupport")}</span>
               </div>
             </motion.div>
           </div>

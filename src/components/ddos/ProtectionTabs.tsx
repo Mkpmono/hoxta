@@ -1,20 +1,18 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Shield, Globe, Bot, Lock, Gauge, Check } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface ProtectionLayer {
   id: string;
-  label: string;
   icon: React.ReactNode;
   features: string[];
   attacks: string[];
-  bestFor: string;
 }
 
-const layers: ProtectionLayer[] = [
+const layerData: ProtectionLayer[] = [
   {
     id: "l3l4",
-    label: "L3/L4",
     icon: <Shield className="w-5 h-5" />,
     features: [
       "Volumetric attack mitigation",
@@ -24,11 +22,9 @@ const layers: ProtectionLayer[] = [
       "IP reputation scoring",
     ],
     attacks: ["SYN Floods", "UDP Floods", "DNS Amplification", "NTP Reflection", "SSDP Attacks"],
-    bestFor: "Network infrastructure & game servers",
   },
   {
     id: "l7",
-    label: "L7",
     icon: <Globe className="w-5 h-5" />,
     features: [
       "HTTP/HTTPS flood protection",
@@ -38,11 +34,9 @@ const layers: ProtectionLayer[] = [
       "Session fingerprinting",
     ],
     attacks: ["HTTP Floods", "Slowloris", "RUDY", "Apache Killer", "WordPress Pingback"],
-    bestFor: "Web applications & APIs",
   },
   {
     id: "bot",
-    label: "Bot Mitigation",
     icon: <Bot className="w-5 h-5" />,
     features: [
       "Behavioral analysis",
@@ -52,11 +46,9 @@ const layers: ProtectionLayer[] = [
       "Credential stuffing protection",
     ],
     attacks: ["Scraping Bots", "Credential Stuffing", "Account Takeover", "Spam Bots", "Click Fraud"],
-    bestFor: "E-commerce & login pages",
   },
   {
     id: "waf",
-    label: "WAF/Rules",
     icon: <Lock className="w-5 h-5" />,
     features: [
       "OWASP Top 10 protection",
@@ -66,11 +58,9 @@ const layers: ProtectionLayer[] = [
       "Request inspection",
     ],
     attacks: ["SQL Injection", "XSS", "Path Traversal", "RCE Attempts", "Zero-day Exploits"],
-    bestFor: "Sensitive applications & compliance",
   },
   {
     id: "rate",
-    label: "Rate Limiting",
     icon: <Gauge className="w-5 h-5" />,
     features: [
       "Requests per second limits",
@@ -80,13 +70,13 @@ const layers: ProtectionLayer[] = [
       "Burst allowance",
     ],
     attacks: ["Brute Force", "API Abuse", "Resource Exhaustion", "Login Attempts", "Enumeration"],
-    bestFor: "APIs & authentication endpoints",
   },
 ];
 
 export function ProtectionTabs() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState("l3l4");
-  const activeLayer = layers.find((l) => l.id === activeTab)!;
+  const activeLayer = layerData.find((l) => l.id === activeTab)!;
 
   return (
     <section className="py-20 md:py-28 bg-gradient-to-b from-transparent via-primary/5 to-transparent">
@@ -98,16 +88,15 @@ export function ProtectionTabs() {
           className="text-center mb-12"
         >
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Multi-Layer Protection
+            {t("ddos.tabs.title")}
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Comprehensive defense across all attack vectors with specialized protection at every layer.
+            {t("ddos.tabs.subtitle")}
           </p>
         </motion.div>
 
-        {/* Tabs */}
         <div className="flex flex-wrap justify-center gap-2 mb-10">
-          {layers.map((layer) => (
+          {layerData.map((layer) => (
             <button
               key={layer.id}
               onClick={() => setActiveTab(layer.id)}
@@ -118,12 +107,11 @@ export function ProtectionTabs() {
               }`}
             >
               {layer.icon}
-              <span>{layer.label}</span>
+              <span>{t(`ddos.tabs.labels.${layer.id}`)}</span>
             </button>
           ))}
         </div>
 
-        {/* Content */}
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
@@ -134,9 +122,8 @@ export function ProtectionTabs() {
             className="glass-card p-8 max-w-4xl mx-auto"
           >
             <div className="grid md:grid-cols-2 gap-8">
-              {/* Features */}
               <div>
-                <h3 className="text-lg font-semibold text-foreground mb-4">Features</h3>
+                <h3 className="text-lg font-semibold text-foreground mb-4">{t("ddos.tabs.features")}</h3>
                 <ul className="space-y-3">
                   {activeLayer.features.map((feature, i) => (
                     <li key={i} className="flex items-center gap-3 text-muted-foreground">
@@ -147,9 +134,8 @@ export function ProtectionTabs() {
                 </ul>
               </div>
 
-              {/* Attacks Blocked */}
               <div>
-                <h3 className="text-lg font-semibold text-foreground mb-4">Attacks Blocked</h3>
+                <h3 className="text-lg font-semibold text-foreground mb-4">{t("ddos.tabs.attacksBlocked")}</h3>
                 <div className="flex flex-wrap gap-2 mb-6">
                   {activeLayer.attacks.map((attack, i) => (
                     <span
@@ -162,8 +148,12 @@ export function ProtectionTabs() {
                 </div>
 
                 <div className="p-4 rounded-xl bg-primary/10 border border-primary/20">
-                  <span className="text-xs font-medium text-primary uppercase tracking-wide">Best For</span>
-                  <p className="text-foreground mt-1">{activeLayer.bestFor}</p>
+                  <span className="text-xs font-medium text-primary uppercase tracking-wide">
+                    {t("ddos.tabs.bestFor")}
+                  </span>
+                  <p className="text-foreground mt-1">
+                    {t(`ddos.tabs.bestForText.${activeLayer.id}`)}
+                  </p>
                 </div>
               </div>
             </div>
