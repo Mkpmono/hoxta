@@ -22,6 +22,7 @@ declare global {
       position?: "left" | "right";
       locale?: string;
       type?: "standard" | "expanded_bubble";
+      darkMode?: "light" | "dark" | "auto";
     };
   }
 }
@@ -40,6 +41,7 @@ export function ChatwootWidget() {
       position: "right",
       locale: "en",
       type: "standard",
+      darkMode: "auto", // "light" | "dark" | "auto" — follows site/browser theme
     };
 
     const script = document.createElement("script");
