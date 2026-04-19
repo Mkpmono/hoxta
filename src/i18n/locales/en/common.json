@@ -1119,7 +1119,60 @@
       "paymentMethod": "Payment Method",
       "changePlan": "Change Plan",
       "back": "Back",
-      "order": "Order"
+      "order": "Order",
+      "loading": "Loading checkout...",
+      "successTitle": "Payment Successful!",
+      "successMessage": "Thank you for your order. Your service is being activated and will be ready shortly.",
+      "orderReference": "Order Reference",
+      "goToPanel": "Go to Client Panel",
+      "viewInvoice": "View Invoice",
+      "failedTitle": "Payment Failed",
+      "failedDefault": "Payment was not completed",
+      "tryAgain": "Try Again",
+      "contactSupport": "Contact Support"
+    },
+    "kbPage": {
+      "badge": "Knowledge Base",
+      "headlineStart": "How Can We",
+      "headlineHighlight": "Help You?",
+      "subtitle": "Browse tutorials, guides, and troubleshooting articles to get the most out of your hosting services.",
+      "searchPlaceholder": "Search for articles, tutorials, or topics...",
+      "manageArticles": "Manage Articles",
+      "searchResults": "Search Results",
+      "articles": "articles",
+      "noResults": "No articles found matching your search.",
+      "browseByCategory": "Browse by Category",
+      "browseSubtitle": "Find articles organized by topic",
+      "noCategories": "No categories available yet.",
+      "popularArticles": "Popular Articles",
+      "popularSubtitle": "Most viewed guides and tutorials",
+      "recentlyUpdated": "Recently Updated",
+      "noPublished": "No articles published yet.",
+      "needHelp": "Need More Help?",
+      "needHelpDesc": "Can't find what you're looking for? Our support team is available 24/7.",
+      "openTicket": "Open Support Ticket",
+      "contactUs": "Contact Us",
+      "quickLinks": {
+        "apiDocs": "API Documentation",
+        "dbGuides": "Database Guides",
+        "domainSetup": "Domain Setup",
+        "controlPanel": "Control Panel"
+      }
+    },
+    "kbArticle": {
+      "knowledgeBase": "Knowledge Base",
+      "notFound": "Article Not Found",
+      "back": "Back to Knowledge Base"
+    },
+    "blogPost": {
+      "back": "Back to Blog",
+      "notFound": "Post Not Found",
+      "notFoundDesc": "The blog post you're looking for doesn't exist.",
+      "backToBlog": "Back to Blog",
+      "shareArticle": "Share this article",
+      "linkCopied": "Link copied!",
+      "relatedArticles": "Related Articles",
+      "team": "Team"
     }
   },
   "ddos": {

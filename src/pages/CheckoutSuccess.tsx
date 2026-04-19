@@ -3,10 +3,12 @@ import { motion } from "framer-motion";
 import { Layout } from "@/components/layout/Layout";
 import { CheckCircle, ArrowRight, FileText, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 export default function CheckoutSuccess() {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("session") || "N/A";
+  const { t } = useTranslation();
   
   return (
     <Layout>
@@ -26,25 +28,25 @@ export default function CheckoutSuccess() {
               <CheckCircle className="w-10 h-10 text-green-500" />
             </motion.div>
             
-            <h1 className="text-3xl font-bold text-foreground mb-4">Payment Successful!</h1>
+            <h1 className="text-3xl font-bold text-foreground mb-4">{t("pages.checkoutPage.successTitle")}</h1>
             <p className="text-muted-foreground mb-8">
-              Thank you for your order. Your service is being activated and will be ready shortly.
+              {t("pages.checkoutPage.successMessage")}
             </p>
             
             <div className="glass-card p-4 mb-8 inline-block">
-              <p className="text-sm text-muted-foreground">Order Reference</p>
+              <p className="text-sm text-muted-foreground">{t("pages.checkoutPage.orderReference")}</p>
               <p className="text-lg font-mono font-bold text-primary">{sessionId}</p>
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button asChild className="btn-glow">
                 <a href="https://billing.hoxta.com" target="_blank" rel="noopener noreferrer">
-                  Go to Client Panel <ArrowRight className="w-4 h-4 ml-2" />
+                  {t("pages.checkoutPage.goToPanel")} <ArrowRight className="w-4 h-4 ml-2" />
                 </a>
               </Button>
               <Button asChild variant="outline">
                 <a href="https://billing.hoxta.com" target="_blank" rel="noopener noreferrer">
-                  <FileText className="w-4 h-4 mr-2" /> View Invoice
+                  <FileText className="w-4 h-4 mr-2" /> {t("pages.checkoutPage.viewInvoice")}
                 </a>
               </Button>
             </div>

@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import DOMPurify from "dompurify";
 import { getTranslatedField } from "@/lib/translations";
+import { useTranslation } from "react-i18next";
 
 interface BlogPostData {
   id: string;
@@ -52,6 +53,7 @@ function markdownToHtml(md: string): string {
 }
 
 export default function BlogPost() {
+  const { t } = useTranslation();
   const { postId } = useParams();
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
@@ -99,9 +101,9 @@ export default function BlogPost() {
     return (
       <Layout>
         <div className="pt-32 pb-16 text-center">
-          <h1 className="text-4xl font-bold text-foreground mb-4">Post Not Found</h1>
-          <p className="text-muted-foreground mb-8">The blog post you're looking for doesn't exist.</p>
-          <Link to="/blog" className="btn-glow">Back to Blog</Link>
+          <h1 className="text-4xl font-bold text-foreground mb-4">{t("pages.blogPost.notFound")}</h1>
+          <p className="text-muted-foreground mb-8">{t("pages.blogPost.notFoundDesc")}</p>
+          <Link to="/blog" className="btn-glow">{t("pages.blogPost.backToBlog")}</Link>
         </div>
       </Layout>
     );
@@ -112,7 +114,7 @@ export default function BlogPost() {
   const shareToTwitter = () => window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareTitle)}`, "_blank");
   const shareToFacebook = () => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, "_blank");
   const shareToLinkedIn = () => window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`, "_blank");
-  const copyLink = () => { navigator.clipboard.writeText(shareUrl); setCopied(true); toast.success("Link copied!"); setTimeout(() => setCopied(false), 2000); };
+  const copyLink = () => { navigator.clipboard.writeText(shareUrl); setCopied(true); toast.success(t("pages.blogPost.linkCopied")); setTimeout(() => setCopied(false), 2000); };
 
   const defaultImage = "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&h=600&fit=crop";
 
@@ -122,7 +124,7 @@ export default function BlogPost() {
         <div className="container mx-auto px-4 md:px-6">
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3 }}>
             <button onClick={() => navigate("/blog")} className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors">
-              <ArrowLeft className="w-4 h-4" /> Back to Blog
+              <ArrowLeft className="w-4 h-4" /> {t("pages.blogPost.back")}
             </button>
           </motion.div>
 
@@ -137,7 +139,7 @@ export default function BlogPost() {
                 </div>
                 <div>
                   <p className="font-medium text-foreground">{post.author}</p>
-                  <p className="text-xs">{post.author_role || "Team"}</p>
+                  <p className="text-xs">{post.author_role || t("pages.blogPost.team")}</p>
                 </div>
               </div>
               <span className="w-1 h-1 rounded-full bg-muted-foreground" />
@@ -156,7 +158,7 @@ export default function BlogPost() {
             <div className="flex items-center justify-between py-4 border-y border-border/50 mb-10">
               <div className="flex items-center gap-2">
                 <Share2 className="w-4 h-4 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">Share this article</span>
+                <span className="text-sm text-muted-foreground">{t("pages.blogPost.shareArticle")}</span>
               </div>
               <div className="flex items-center gap-2">
                 <ShareButton icon={Twitter} label="Share on Twitter" onClick={shareToTwitter} />
@@ -205,7 +207,7 @@ export default function BlogPost() {
 
           {relatedPosts.length > 0 && (
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} viewport={{ once: true }} className="max-w-6xl mx-auto mt-16 pt-16 border-t border-border/50">
-              <h2 className="text-2xl font-bold text-foreground mb-8">Related Articles</h2>
+              <h2 className="text-2xl font-bold text-foreground mb-8">{t("pages.blogPost.relatedArticles")}</h2>
               <div className="grid md:grid-cols-3 gap-6">
                 {relatedPosts.map((relatedPost) => (
                   <Link key={relatedPost.id} to={`/blog/${relatedPost.slug}`} className="group block bg-card rounded-xl border border-border/50 overflow-hidden hover:border-primary/30 transition-all duration-300">

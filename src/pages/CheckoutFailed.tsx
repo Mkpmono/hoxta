@@ -3,10 +3,12 @@ import { motion } from "framer-motion";
 import { Layout } from "@/components/layout/Layout";
 import { XCircle, RefreshCw, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 export default function CheckoutFailed() {
   const [searchParams] = useSearchParams();
-  const error = searchParams.get("error") || "Payment was not completed";
+  const { t } = useTranslation();
+  const error = searchParams.get("error") || t("pages.checkoutPage.failedDefault");
   
   return (
     <Layout>
@@ -26,18 +28,18 @@ export default function CheckoutFailed() {
               <XCircle className="w-10 h-10 text-destructive" />
             </motion.div>
             
-            <h1 className="text-3xl font-bold text-foreground mb-4">Payment Failed</h1>
+            <h1 className="text-3xl font-bold text-foreground mb-4">{t("pages.checkoutPage.failedTitle")}</h1>
             <p className="text-muted-foreground mb-8">{error}</p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button asChild className="btn-glow">
                 <Link to="/order">
-                  <RefreshCw className="w-4 h-4 mr-2" /> Try Again
+                  <RefreshCw className="w-4 h-4 mr-2" /> {t("pages.checkoutPage.tryAgain")}
                 </Link>
               </Button>
               <Button asChild variant="outline">
                 <Link to="/contact">
-                  <MessageSquare className="w-4 h-4 mr-2" /> Contact Support
+                  <MessageSquare className="w-4 h-4 mr-2" /> {t("pages.checkoutPage.contactSupport")}
                 </Link>
               </Button>
             </div>

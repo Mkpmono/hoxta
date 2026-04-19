@@ -4,6 +4,7 @@ import { useStatusMonitors, MonitorWithChecks, TimeRange } from "@/hooks/useStat
 import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 function UptimeBar({ monitor }: { monitor: MonitorWithChecks }) {
   const checks = monitor.checks;
@@ -89,6 +90,7 @@ function UptimeBar({ monitor }: { monitor: MonitorWithChecks }) {
 }
 
 function StatusBadge({ uptimePercent }: { uptimePercent: number }) {
+  const { t } = useTranslation();
   const isUp = uptimePercent >= 99;
   const isDown = uptimePercent < 95;
 
@@ -101,7 +103,7 @@ function StatusBadge({ uptimePercent }: { uptimePercent: number }) {
         "w-2 h-2 rounded-full animate-pulse",
         isUp ? "bg-emerald-400" : isDown ? "bg-red-400" : "bg-amber-400"
       )} />
-      {isUp ? "Operational" : isDown ? "Outage" : "Degraded"}
+      {isUp ? t("pages.statusPage.operational") : isDown ? t("pages.statusPage.outage") : t("pages.statusPage.degraded")}
       {isUp ? (
         <CheckCircle className="w-3.5 h-3.5" />
       ) : isDown ? (
@@ -151,6 +153,7 @@ function MonitorCard({ monitor, index }: { monitor: MonitorWithChecks; index: nu
 }
 
 export default function Status() {
+  const { t } = useTranslation();
   const [timeRange] = useState<TimeRange>("24h");
   const { monitors, loading, lastUpdated, refetch } = useStatusMonitors(timeRange);
 
@@ -177,16 +180,16 @@ export default function Status() {
           >
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-5">
               <Sparkles className="w-4 h-4" />
-              System Status
+              {t("pages.statusPage.badge")}
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-5">
-              <span className="text-foreground">Service </span>
-              <span className="text-gradient">Status</span>
+              <span className="text-foreground">{t("pages.statusPage.headline")} </span>
+              <span className="text-gradient">{t("pages.statusPage.headlineHighlight")}</span>
             </h1>
             <p className="text-muted-foreground text-lg max-w-lg mx-auto leading-relaxed">
-              Real-time monitoring of all Hoxta infrastructure services.
+              {t("pages.statusPage.subtitle")}
               <br />
-              <span className="text-foreground/70">Updated every 30 seconds.</span>
+              <span className="text-foreground/70">{t("pages.statusPage.updatedEvery")}</span>
             </p>
           </motion.div>
 
@@ -220,13 +223,13 @@ export default function Status() {
                 "font-bold text-lg",
                 allUp ? "text-emerald-300" : anyDown ? "text-red-300" : "text-amber-300"
               )}>
-                {allUp ? "All Systems Operational" : anyDown ? "Some Systems Down" : "Partial Degradation"}
+                {allUp ? t("pages.statusPage.allOperational") : anyDown ? t("pages.statusPage.someDown") : t("pages.statusPage.partialDegradation")}
               </span>
             </div>
             <div className="flex items-center gap-5 text-sm text-foreground/80">
               <span className="flex items-center gap-1.5">
                 <RefreshCw className={cn("w-3.5 h-3.5 text-primary", loading && "animate-spin")} />
-                {avgUptime}% uptime (30 days)
+                {avgUptime}% {t("pages.statusPage.uptime30d")}
               </span>
               <span className="flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5 text-primary" />
@@ -258,10 +261,10 @@ export default function Status() {
               transition={{ delay: 0.6 }}
               className="flex flex-wrap items-center justify-center gap-6 mt-12 text-sm text-foreground/70"
             >
-              <span className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-emerald-400" /> Operational</span>
-              <span className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-amber-400" /> Degraded</span>
-              <span className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-red-400" /> Outage</span>
-              <span className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-white/15" /> Unknown</span>
+              <span className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-emerald-400" /> {t("pages.statusPage.operational")}</span>
+              <span className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-amber-400" /> {t("pages.statusPage.degraded")}</span>
+              <span className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-red-400" /> {t("pages.statusPage.outage")}</span>
+              <span className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-white/15" /> {t("pages.statusPage.unknown")}</span>
             </motion.div>
           )}
 
@@ -269,7 +272,7 @@ export default function Status() {
             className="text-center text-sm text-muted-foreground mt-4 cursor-pointer hover:text-primary transition-colors duration-200"
             onClick={refetch}
           >
-            Auto-refreshes every minute · <span className="underline underline-offset-2">Click to refresh now</span>
+            {t("pages.statusPage.autoRefresh")} · <span className="underline underline-offset-2">{t("pages.statusPage.clickRefresh")}</span>
           </p>
         </div>
       </section>
