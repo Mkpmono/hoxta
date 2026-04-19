@@ -29,6 +29,7 @@ export function HostingHero({
   headline,
   highlightedText,
   description,
+  heroPoints,
   promotion,
   primaryCTA = { text: "Get Started", href: "#pricing" },
   secondaryCTA = { text: "Compare Plans", href: "#comparison" },
