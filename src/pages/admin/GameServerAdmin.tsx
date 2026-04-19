@@ -27,6 +27,7 @@ interface GamePlan {
   slots: number;
   features: string[];
   popular?: boolean;
+  order_url?: string;
 }
 
 interface GameFAQ {
@@ -48,6 +49,7 @@ interface GameServer {
   popular: boolean;
   is_published: boolean;
   cover_image_url: string | null;
+  whmcs_url: string | null;
   features: string[] | null;
   hero_points: string[] | null;
   tags: string[] | null;
@@ -57,7 +59,7 @@ interface GameServer {
   translations?: Record<string, any>;
 }
 
-const emptyPlan: GamePlan = { name: "", price: 0, ram: "", cpu: "", storage: "", slots: 0, features: [], popular: false };
+const emptyPlan: GamePlan = { name: "", price: 0, ram: "", cpu: "", storage: "", slots: 0, features: [], popular: false, order_url: "" };
 const emptyFAQ: GameFAQ = { question: "", answer: "" };
 
 export default function GameServerAdmin() {
@@ -118,6 +120,7 @@ export default function GameServerAdmin() {
       popular: editing.popular ?? false,
       is_published: editing.is_published ?? false,
       cover_image_url: editing.cover_image_url || null,
+      whmcs_url: editing.whmcs_url?.trim() || null,
       features: editing.features || [],
       hero_points: editing.hero_points || [],
       tags: editing.tags || [],
