@@ -10,12 +10,22 @@ import visaSvg from "@/assets/payments/visa.svg";
 import mastercardSvg from "@/assets/payments/mastercard.svg";
 import maestroSvg from "@/assets/payments/maestro.svg";
 import paypalSvg from "@/assets/payments/paypal.svg";
+import bitcoinSvg from "@/assets/payments/bitcoin.svg";
+import ethereumSvg from "@/assets/payments/ethereum.svg";
+import litecoinSvg from "@/assets/payments/litecoin.svg";
+import stripeSvg from "@/assets/payments/stripe.svg";
+import bankSvg from "@/assets/payments/bank.svg";
 
 const paymentMethods = [
   { name: "Visa", src: visaSvg },
   { name: "Mastercard", src: mastercardSvg },
   { name: "Maestro", src: maestroSvg },
   { name: "PayPal", src: paypalSvg },
+  { name: "Bitcoin", src: bitcoinSvg },
+  { name: "Ethereum", src: ethereumSvg },
+  { name: "Litecoin", src: litecoinSvg },
+  { name: "Stripe", src: stripeSvg },
+  { name: "Bank Transfer", src: bankSvg },
 ];
 
 export const Footer = forwardRef<HTMLElement>(function Footer(_props, ref) {
