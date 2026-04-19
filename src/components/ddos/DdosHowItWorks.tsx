@@ -1,35 +1,17 @@
 import { motion } from "framer-motion";
 import { Search, Filter, Trash2, Workflow, BarChart3 } from "lucide-react";
-
-const steps = [
-  {
-    icon: <Search className="w-6 h-6" />,
-    title: "Detection",
-    description: "We analyze your traffic in real-time to spot threats instantly.",
-  },
-  {
-    icon: <Filter className="w-6 h-6" />,
-    title: "Classification",
-    description: "Attack types are identified and sorted within milliseconds.",
-  },
-  {
-    icon: <Trash2 className="w-6 h-6" />,
-    title: "Scrubbing",
-    description: "Bad traffic is filtered at the edge before it reaches your server.",
-  },
-  {
-    icon: <Workflow className="w-6 h-6" />,
-    title: "Clean Pipe",
-    description: "Only legitimate traffic gets through to your infrastructure.",
-  },
-  {
-    icon: <BarChart3 className="w-6 h-6" />,
-    title: "Reporting",
-    description: "Get full attack analytics and insights in real-time.",
-  },
-];
+import { useTranslation } from "react-i18next";
 
 export function DdosHowItWorks() {
+  const { t } = useTranslation();
+  const steps = [
+    { icon: <Search className="w-6 h-6" />, title: t("ddos.howItWorks.step1Title"), description: t("ddos.howItWorks.step1Desc") },
+    { icon: <Filter className="w-6 h-6" />, title: t("ddos.howItWorks.step2Title"), description: t("ddos.howItWorks.step2Desc") },
+    { icon: <Trash2 className="w-6 h-6" />, title: t("ddos.howItWorks.step3Title"), description: t("ddos.howItWorks.step3Desc") },
+    { icon: <Workflow className="w-6 h-6" />, title: t("ddos.howItWorks.step4Title"), description: t("ddos.howItWorks.step4Desc") },
+    { icon: <BarChart3 className="w-6 h-6" />, title: t("ddos.howItWorks.step5Title"), description: t("ddos.howItWorks.step5Desc") },
+  ];
+
   return (
     <section className="py-20 md:py-28">
       <div className="container mx-auto px-4 md:px-6">
@@ -40,16 +22,14 @@ export function DdosHowItWorks() {
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            How It Works
+            {t("ddos.howItWorks.title")}
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Our 5-step process stops L3/L4/L7 attacks before they reach you.
+            {t("ddos.howItWorks.subtitle")}
           </p>
         </motion.div>
 
-        {/* Desktop: Horizontal Timeline */}
         <div className="hidden md:block relative max-w-5xl mx-auto">
-          {/* Connection line */}
           <div className="absolute top-16 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
 
           <div className="grid grid-cols-5 gap-4">
@@ -62,12 +42,10 @@ export function DdosHowItWorks() {
                 transition={{ delay: index * 0.1 }}
                 className="relative text-center"
               >
-                {/* Step number */}
                 <div className="relative z-10 w-8 h-8 mx-auto mb-4 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center text-primary text-sm font-bold">
                   {index + 1}
                 </div>
 
-                {/* Icon */}
                 <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-card/80 border border-border/50 flex items-center justify-center text-primary">
                   {step.icon}
                 </div>
@@ -79,7 +57,6 @@ export function DdosHowItWorks() {
           </div>
         </div>
 
-        {/* Mobile: Vertical Timeline */}
         <div className="md:hidden space-y-6">
           {steps.map((step, index) => (
             <motion.div
