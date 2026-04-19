@@ -4,7 +4,8 @@ import { CheckCircle, AlertTriangle, Globe, Lock, Fingerprint, ShieldCheck } fro
 import { HoxtaLogo } from "@/components/HoxtaLogo";
 
 const VERIFICATION_KEY = "hoxta_ddos_verified";
-const VERIFICATION_TTL_MS = 15 * 60 * 1000;
+// 24 hours: legitimate users won't see the challenge again for a full day
+const VERIFICATION_TTL_MS = 24 * 60 * 60 * 1000;
 
 interface CheckItem {
   label: string;
