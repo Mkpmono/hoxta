@@ -122,6 +122,7 @@ export type Database = {
           title: string
           translations: Json | null
           updated_at: string
+          whmcs_url: string | null
         }
         Insert: {
           category?: string
@@ -146,6 +147,7 @@ export type Database = {
           title: string
           translations?: Json | null
           updated_at?: string
+          whmcs_url?: string | null
         }
         Update: {
           category?: string
@@ -170,6 +172,7 @@ export type Database = {
           title?: string
           translations?: Json | null
           updated_at?: string
+          whmcs_url?: string | null
         }
         Relationships: []
       }
