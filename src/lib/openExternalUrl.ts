@@ -22,15 +22,8 @@ function escapeHtml(value: string) {
 function openDiscordPreviewFallback(url: string) {
   navigator.clipboard?.writeText(url).catch(() => undefined);
 
-  const popup = window.open("", "_blank", "noopener,noreferrer");
-  if (!popup) {
-    window.prompt("Copy this Discord invite link", url);
-    return;
-  }
-
-  popup.opener = null;
   const safeUrl = escapeHtml(url);
-  popup.document.write(`<!doctype html>
+  const html = `<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -61,8 +54,19 @@ function openDiscordPreviewFallback(url: string) {
     <p class="note">On the published site, the Discord link should open normally outside the preview sandbox.</p>
   </div>
 </body>
-</html>`);
-  popup.document.close();
+</html>`;
+
+  const blobUrl = URL.createObjectURL(new Blob([html], { type: "text/html" }));
+  const popup = window.open(blobUrl, "_blank", "noopener,noreferrer");
+
+  if (popup) {
+    popup.opener = null;
+    window.setTimeout(() => URL.revokeObjectURL(blobUrl), 60_000);
+    return;
+  }
+
+  URL.revokeObjectURL(blobUrl);
+  window.prompt("Copy this Discord invite link", url);
 }
 
 export function openExternalUrl(url: string) {
