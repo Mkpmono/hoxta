@@ -2,6 +2,7 @@ import { useState, forwardRef } from "react";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSupportSettings } from "@/hooks/useSupportSettings";
+import { openExternalUrl } from "@/lib/openExternalUrl";
 
 const ChatIcon = forwardRef<SVGSVGElement, { className?: string }>(({ className }, ref) => {
   return (
@@ -35,7 +36,6 @@ export function LiveChatButton() {
   const liveChatEnabled = !!settings?.live_chat_enabled && !!settings?.live_chat_embed_script?.trim();
   const liveChatLabel = settings?.live_chat_label || "Live Chat";
 
-  // If everything is disabled, hide the FAB completely
   if (!discordEnabled && !emailEnabled && !liveChatEnabled) return null;
 
   return (
@@ -73,7 +73,6 @@ export function LiveChatButton() {
                 {liveChatEnabled && (
                   <button
                     onClick={() => {
-                      // Most embedded chat providers expose a global API. We try the common ones.
                       const w = window as unknown as {
                         Tawk_API?: { maximize?: () => void };
                         $crisp?: unknown[];
@@ -110,13 +109,20 @@ export function LiveChatButton() {
                   </a>
                 )}
                 {discordEnabled && (
-                  <a href={settings!.discord_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 rounded-xl bg-muted/30 hover:bg-muted/60 transition-colors group">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      openExternalUrl(settings!.discord_url);
+                      setOpen(false);
+                    }}
+                    className="w-full flex items-center gap-3 p-3 rounded-xl bg-muted/30 hover:bg-muted/60 transition-colors group text-left"
+                  >
                     <span className="w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center text-base">💬</span>
                     <div>
                       <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">Discord</p>
                       <p className="text-xs text-muted-foreground">Join our community</p>
                     </div>
-                  </a>
+                  </button>
                 )}
               </div>
             </div>
@@ -124,8 +130,6 @@ export function LiveChatButton() {
         )}
       </AnimatePresence>
 
-
-      {/* FAB */}
       <motion.button
         whileHover={{ scale: 1.06, boxShadow: "0 8px 30px hsl(var(--primary) / 0.5)" }}
         whileTap={{ scale: 0.93 }}
@@ -137,10 +141,8 @@ export function LiveChatButton() {
         }}
         aria-label="Live Chat"
       >
-        {/* Shine effect */}
         <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent pointer-events-none" />
 
-        {/* Subtle pulse when closed */}
         {!open && (
           <motion.span
             className="absolute inset-0 rounded-[20px]"
