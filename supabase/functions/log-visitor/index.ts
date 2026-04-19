@@ -154,6 +154,66 @@ Deno.serve(async (req) => {
         });
       }
 
+      // Rate limit check + auto-block (called from client before sensitive actions)
+      if (action === "rate-limit") {
+        const cfIp = req.headers.get("CF-Connecting-IP") || req.headers.get("X-Real-IP") || req.headers.get("X-Forwarded-For")?.split(",")[0]?.trim();
+        const ip = cfIp || url.searchParams.get("ip") || "";
+        const ua = url.searchParams.get("ua") || req.headers.get("user-agent") || "";
+
+        if (!ip) {
+          return new Response(JSON.stringify({ allowed: true, count: 0 }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+
+        // Skip rate limiting for verified legitimate bots (SEO indexing)
+        const cfVerifiedBot = req.headers.get("cf-verified-bot") === "true";
+        const isLegitBot = cfVerifiedBot || (ua ? await verifyLegitimateBot(ip, ua) : false);
+        if (isLegitBot) {
+          return new Response(JSON.stringify({ allowed: true, count: 0, bot: true }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+
+        // Already blocked?
+        const { data: blocked } = await supabase
+          .from("blocked_ips")
+          .select("id")
+          .eq("ip_address", ip)
+          .maybeSingle();
+        if (blocked) {
+          return new Response(JSON.stringify({ allowed: false, blocked: true, reason: "ip_blocked" }), {
+            status: 429,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+
+        // Increment counter for current minute
+        const { data: countData, error: rpcErr } = await supabase.rpc("record_request_and_check", { _ip: ip });
+        const count = (countData as number) || 0;
+
+        // Opportunistic cleanup ~1% of the time
+        if (Math.random() < 0.01) {
+          await supabase.rpc("cleanup_old_request_counts");
+        }
+
+        const LIMIT = 60; // 60 requests / minute / IP
+        if (!rpcErr && count > LIMIT) {
+          await supabase.from("blocked_ips").upsert(
+            { ip_address: ip, reason: `Auto-blocked: rate limit exceeded (${count} req/min)` },
+            { onConflict: "ip_address" }
+          );
+          return new Response(JSON.stringify({ allowed: false, blocked: true, count, reason: "rate_limit" }), {
+            status: 429,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+
+        return new Response(JSON.stringify({ allowed: true, count, limit: LIMIT }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
       if (action === "stats") {
         const { count: totalVisitors } = await supabase
           .from("visitor_logs")

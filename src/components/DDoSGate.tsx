@@ -125,9 +125,28 @@ async function checkBlockedIP(ip: string): Promise<boolean> {
   }
 }
 
+async function checkRateLimit(ip: string): Promise<{ allowed: boolean; blocked?: boolean }> {
+  try {
+    const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+    const ua = encodeURIComponent(navigator.userAgent || "");
+    const res = await fetch(
+      `https://${projectId}.supabase.co/functions/v1/log-visitor?action=rate-limit&ip=${encodeURIComponent(ip)}&ua=${ua}`,
+      { signal: AbortSignal.timeout(3000) }
+    );
+    if (res.status === 429) {
+      const data = await res.json().catch(() => ({}));
+      return { allowed: false, blocked: data.blocked === true };
+    }
+    return { allowed: true };
+  } catch {
+    return { allowed: true }; // fail-open: don't lock users out on network glitch
+  }
+}
+
 const initialChecks: CheckItem[] = [
   { label: "Detecting client IP address", status: "pending" },
   { label: "Checking IP blacklist", status: "pending" },
+  { label: "Verifying request rate", status: "pending" },
   { label: "Verifying browser environment", status: "pending" },
   { label: "Scanning for automation tools", status: "pending" },
   { label: "Running behavioral analysis", status: "pending" },
@@ -177,26 +196,37 @@ export function DDoSGate({ children }: { children: React.ReactNode }) {
     }
     setChecks((prev) => prev.map((c, j) => (j === 1 ? { ...c, status: "pass" } : c)));
 
-    // Steps 3-4: Browser checks
-    for (let i = 2; i < 4; i++) {
+    // Step 3: Rate limit check (auto-blocks if >60 req/min from this IP)
+    setChecks((prev) => prev.map((c, j) => (j === 2 ? { ...c, status: "running" } : c)));
+    const rl = await checkRateLimit(info.ip);
+    if (!rl.allowed) {
+      setChecks((prev) => prev.map((c, j) => (j === 2 ? { ...c, status: "fail" } : c)));
+      setPhase("blocked");
+      logVisitor(info, { isBot: true, reasons: ["rate-limit-exceeded"] });
+      return;
+    }
+    setChecks((prev) => prev.map((c, j) => (j === 2 ? { ...c, status: "pass" } : c)));
+
+    // Steps 4-5: Browser checks
+    for (let i = 3; i < 5; i++) {
       setChecks((prev) => prev.map((c, j) => (j === i ? { ...c, status: "running" } : c)));
       await new Promise((r) => setTimeout(r, 400 + Math.random() * 300));
       setChecks((prev) => prev.map((c, j) => (j === i ? { ...c, status: "pass" } : c)));
     }
 
-    // Step 5: Behavioral analysis
-    setChecks((prev) => prev.map((c, j) => (j === 4 ? { ...c, status: "running" } : c)));
+    // Step 6: Behavioral analysis
+    setChecks((prev) => prev.map((c, j) => (j === 5 ? { ...c, status: "running" } : c)));
     await new Promise((r) => setTimeout(r, 500));
     const botResult = detectSuspiciousBehavior();
 
     if (botResult.isBot) {
-      setChecks((prev) => prev.map((c, j) => (j === 4 ? { ...c, status: "fail" } : c)));
+      setChecks((prev) => prev.map((c, j) => (j === 5 ? { ...c, status: "fail" } : c)));
       setPhase("blocked");
       logVisitor(info, botResult);
       return;
     }
 
-    setChecks((prev) => prev.map((c, j) => (j === 4 ? { ...c, status: "pass" } : c)));
+    setChecks((prev) => prev.map((c, j) => (j === 5 ? { ...c, status: "pass" } : c)));
     setPhase("verified");
     logVisitor(info, { isBot: false, reasons: [] });
   }, []);

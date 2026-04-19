@@ -265,6 +265,30 @@ export type Database = {
         }
         Relationships: []
       }
+      request_counts: {
+        Row: {
+          created_at: string
+          id: string
+          ip_address: string
+          request_count: number
+          window_start: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ip_address: string
+          request_count?: number
+          window_start: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ip_address?: string
+          request_count?: number
+          window_start?: string
+        }
+        Relationships: []
+      }
       site_translations: {
         Row: {
           data: Json
@@ -458,6 +482,7 @@ export type Database = {
       }
     }
     Functions: {
+      cleanup_old_request_counts: { Args: never; Returns: undefined }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -466,6 +491,7 @@ export type Database = {
         Returns: boolean
       }
       jsonb_deep_merge: { Args: { a: Json; b: Json }; Returns: Json }
+      record_request_and_check: { Args: { _ip: string }; Returns: number }
     }
     Enums: {
       app_role: "admin" | "user"
