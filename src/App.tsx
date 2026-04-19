@@ -65,7 +65,6 @@ const App = () => (
         <DiscountPopup />
         <BrowserRouter>
         <CookieConsent />
-        <ChatwootWidget />
         <LiveChatButton />
         <ScrollToTop />
         <DDoSGate>
