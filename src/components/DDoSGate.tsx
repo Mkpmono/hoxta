@@ -145,6 +145,7 @@ export function DDoSGate({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!passed) return;
+    // Re-verify every 5 minutes — verification is valid for 24h, so this just refreshes state
     const interval = setInterval(() => {
       if (!isVerified()) {
         setPassed(false);
@@ -153,7 +154,7 @@ export function DDoSGate({ children }: { children: React.ReactNode }) {
         setCountdown(3);
         rayId.current = Math.random().toString(36).substring(2, 14);
       }
-    }, 10_000);
+    }, 5 * 60 * 1000);
     return () => clearInterval(interval);
   }, [passed]);
 
