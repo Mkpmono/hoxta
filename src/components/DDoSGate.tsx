@@ -142,8 +142,11 @@ async function checkRateLimit(ip: string): Promise<{ allowed: boolean; blocked?:
     return { allowed: true }; // fail-open: don't lock users out on network glitch
   }
 }
+
+const initialChecks: CheckItem[] = [
   { label: "Detecting client IP address", status: "pending" },
   { label: "Checking IP blacklist", status: "pending" },
+  { label: "Verifying request rate", status: "pending" },
   { label: "Verifying browser environment", status: "pending" },
   { label: "Scanning for automation tools", status: "pending" },
   { label: "Running behavioral analysis", status: "pending" },
