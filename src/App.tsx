@@ -76,6 +76,7 @@ const App = () => (
             {/* Public Routes */}
             <Route path="/" element={<Index />} />
             <Route path="/web-hosting" element={<WebHosting />} />
+            <Route path="/web-hosting/:slug" element={<HostingPlanDetail category="web-hosting" backHref="/web-hosting" backLabel="Back to Web Hosting" />} />
             <Route path="/reseller-hosting" element={<ResellerHosting />} />
             <Route path="/game-servers" element={<GameServers />} />
             <Route path="/game-servers/:gameSlug" element={<GameServerDetail />} />
