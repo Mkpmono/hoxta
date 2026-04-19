@@ -20,7 +20,9 @@ serve(async (req) => {
   }
 
   try {
-    const { chunk, targetLang } = await req.json();
+    const { chunk, targetLang, sourceLang } = await req.json();
+    const srcLang = sourceLang || "ro";
+    const srcName = LANGUAGE_NAMES[srcLang] || srcLang;
 
     if (!chunk || !targetLang || typeof chunk !== "object") {
       return new Response(JSON.stringify({ error: "chunk and targetLang required" }), {
@@ -39,7 +41,7 @@ serve(async (req) => {
 
     const langName = LANGUAGE_NAMES[targetLang] || targetLang;
 
-    const prompt = `You are a professional translator. Translate the following key-value pairs from Romanian to ${langName}.
+    const prompt = `You are a professional translator. Translate the following key-value pairs from ${srcName} to ${langName}.
 
 The keys are identifiers - DO NOT translate them. Only translate the values.
 Keep brand names like "Hoxta" unchanged.
