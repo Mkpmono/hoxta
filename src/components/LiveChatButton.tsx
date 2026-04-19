@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { openChatwoot } from "@/components/ChatwootWidget";
 
 function ChatIcon({ className }: { className?: string }) {
   return (
@@ -61,8 +62,16 @@ export function LiveChatButton() {
               <div className="space-y-2">
                 <button
                   onClick={() => {
-                    // TODO: Replace with your chosen live chat platform (Tawk.to, Crisp, LiveChat, etc.)
-                    alert("Live chat coming soon! Connect your preferred platform here.");
+                    const opened = openChatwoot();
+                    if (!opened) {
+                      // SDK not yet loaded — retry shortly
+                      setTimeout(() => {
+                        if (!openChatwoot()) {
+                          alert("Live chat is still loading. Please try again in a moment.");
+                        }
+                      }, 800);
+                    }
+                    setOpen(false);
                   }}
                   className="w-full flex items-center gap-3 p-3 rounded-xl bg-primary/10 hover:bg-primary/20 transition-colors group text-left"
                 >
