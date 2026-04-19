@@ -54,14 +54,14 @@ export const Footer = forwardRef<HTMLElement>(function Footer(_props, ref) {
             </div>
             <div>
               <h5 className="mb-2 text-sm font-medium text-foreground">{t("sections.paymentMethods")}</h5>
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="flex flex-nowrap items-center gap-1.5 overflow-x-auto">
                 {paymentMethods.map((method) => (
                   <img
                     key={method.name}
                     src={method.src}
                     alt={method.name}
                     loading="lazy"
-                    className="h-7 w-10 rounded-sm opacity-80 transition-opacity hover:opacity-100"
+                    className="h-6 w-9 shrink-0 rounded-sm opacity-80 transition-opacity hover:opacity-100"
                   />
                 ))}
               </div>
