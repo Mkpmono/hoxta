@@ -173,6 +173,96 @@ export type Database = {
         }
         Relationships: []
       }
+      hosting_plans: {
+        Row: {
+          bandwidth: string | null
+          billing_cycle: string
+          category: string
+          cover_image_url: string | null
+          cpu: string | null
+          created_at: string
+          faqs: Json
+          features: string[]
+          full_description: string
+          hero_points: string[] | null
+          id: string
+          is_published: boolean
+          locations: string[] | null
+          name: string
+          order_url: string | null
+          os: string | null
+          popular: boolean
+          price_value: number
+          pricing_display: string
+          ram: string | null
+          short_description: string
+          slug: string
+          sort_order: number | null
+          storage: string | null
+          tags: string[] | null
+          translations: Json | null
+          updated_at: string
+        }
+        Insert: {
+          bandwidth?: string | null
+          billing_cycle?: string
+          category: string
+          cover_image_url?: string | null
+          cpu?: string | null
+          created_at?: string
+          faqs?: Json
+          features?: string[]
+          full_description?: string
+          hero_points?: string[] | null
+          id?: string
+          is_published?: boolean
+          locations?: string[] | null
+          name: string
+          order_url?: string | null
+          os?: string | null
+          popular?: boolean
+          price_value?: number
+          pricing_display?: string
+          ram?: string | null
+          short_description?: string
+          slug: string
+          sort_order?: number | null
+          storage?: string | null
+          tags?: string[] | null
+          translations?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          bandwidth?: string | null
+          billing_cycle?: string
+          category?: string
+          cover_image_url?: string | null
+          cpu?: string | null
+          created_at?: string
+          faqs?: Json
+          features?: string[]
+          full_description?: string
+          hero_points?: string[] | null
+          id?: string
+          is_published?: boolean
+          locations?: string[] | null
+          name?: string
+          order_url?: string | null
+          os?: string | null
+          popular?: boolean
+          price_value?: number
+          pricing_display?: string
+          ram?: string | null
+          short_description?: string
+          slug?: string
+          sort_order?: number | null
+          storage?: string | null
+          tags?: string[] | null
+          translations?: Json | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       kb_articles: {
         Row: {
           category_id: string | null
