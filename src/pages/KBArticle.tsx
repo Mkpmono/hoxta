@@ -6,6 +6,7 @@ import { ArrowLeft, Clock, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DOMPurify from "dompurify";
 import { getTranslatedField } from "@/lib/translations";
+import { useTranslation } from "react-i18next";
 
 // Simple markdown to HTML converter
 function markdownToHtml(md: string): string {
@@ -35,6 +36,7 @@ function markdownToHtml(md: string): string {
 }
 
 export default function KBArticle() {
+  const { t } = useTranslation();
   const { articleSlug } = useParams();
   const [article, setArticle] = useState<any>(null);
   const [category, setCategory] = useState<any>(null);
@@ -85,9 +87,9 @@ export default function KBArticle() {
       <Layout>
         <section className="pt-32 pb-20">
           <div className="container mx-auto px-4 text-center">
-            <h1 className="text-2xl font-bold text-foreground mb-4">Article Not Found</h1>
+            <h1 className="text-2xl font-bold text-foreground mb-4">{t("pages.kbArticle.notFound")}</h1>
             <Link to="/knowledge-base">
-              <Button variant="outline">Back to Knowledge Base</Button>
+              <Button variant="outline">{t("pages.kbArticle.back")}</Button>
             </Link>
           </div>
         </section>
@@ -107,7 +109,7 @@ export default function KBArticle() {
         <div className="container mx-auto px-4 md:px-6 max-w-3xl">
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
-            <Link to="/knowledge-base" className="hover:text-primary transition-colors">Knowledge Base</Link>
+            <Link to="/knowledge-base" className="hover:text-primary transition-colors">{t("pages.kbArticle.knowledgeBase")}</Link>
             {category && (
               <>
                 <span>/</span>
@@ -134,7 +136,7 @@ export default function KBArticle() {
           <div className="mt-6">
             <Link to="/knowledge-base">
               <Button variant="outline" className="gap-1">
-                <ArrowLeft className="w-4 h-4" /> Back to Knowledge Base
+                <ArrowLeft className="w-4 h-4" /> {t("pages.kbArticle.back")}
               </Button>
             </Link>
           </div>
