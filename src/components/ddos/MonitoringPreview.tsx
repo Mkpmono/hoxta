@@ -82,10 +82,10 @@ export function MonitoringPreview() {
           className="text-center mb-12"
         >
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Live Attack Dashboard
+            {t("ddos.monitoring.title")}
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Real-time visibility into threats and mitigation status across your protected infrastructure.
+            {t("ddos.monitoring.subtitle")}
           </p>
         </motion.div>
 
@@ -99,9 +99,9 @@ export function MonitoringPreview() {
           <div className="flex items-center justify-between mb-8 pb-4 border-b border-border/50">
             <div className="flex items-center gap-3">
               <div className="w-3 h-3 rounded-full bg-primary animate-pulse" />
-              <span className="text-sm font-medium text-foreground">All Systems Protected</span>
+              <span className="text-sm font-medium text-foreground">{t("ddos.monitoring.allProtected")}</span>
             </div>
-            <div className="text-xs text-muted-foreground">Last updated: Just now</div>
+            <div className="text-xs text-muted-foreground">{t("ddos.monitoring.lastUpdated")}</div>
           </div>
 
           {/* Main stats */}
@@ -109,45 +109,45 @@ export function MonitoringPreview() {
             <div className="p-4 rounded-xl bg-card/50 border border-border/30">
               <div className="flex items-center gap-2 mb-2">
                 <Shield className="w-4 h-4 text-primary" />
-                <span className="text-xs text-muted-foreground">Attacks Mitigated</span>
+                <span className="text-xs text-muted-foreground">{t("ddos.monitoring.attacksMitigated")}</span>
               </div>
               <div className="text-2xl font-bold text-foreground">
                 <AnimatedCounter end={12847} />
               </div>
-              <div className="text-xs text-primary mt-1">+23% from last week</div>
+              <div className="text-xs text-primary mt-1">{t("ddos.monitoring.fromLastWeek")}</div>
             </div>
 
             <div className="p-4 rounded-xl bg-card/50 border border-border/30">
               <div className="flex items-center gap-2 mb-2">
                 <TrendingUp className="w-4 h-4 text-primary" />
-                <span className="text-xs text-muted-foreground">Peak Bandwidth</span>
+                <span className="text-xs text-muted-foreground">{t("ddos.monitoring.peakBandwidth")}</span>
               </div>
               <div className="text-2xl font-bold text-foreground">
                 <AnimatedCounter end={847} suffix=" Gbps" />
               </div>
-              <div className="text-xs text-muted-foreground mt-1">Largest attack today</div>
+              <div className="text-xs text-muted-foreground mt-1">{t("ddos.monitoring.largestToday")}</div>
             </div>
 
             <div className="p-4 rounded-xl bg-card/50 border border-border/30">
               <div className="flex items-center gap-2 mb-2">
                 <Activity className="w-4 h-4 text-primary" />
-                <span className="text-xs text-muted-foreground">Avg Mitigation</span>
+                <span className="text-xs text-muted-foreground">{t("ddos.monitoring.avgMitigation")}</span>
               </div>
               <div className="text-2xl font-bold text-foreground">
                 <AnimatedCounter end={8} suffix="ms" />
               </div>
-              <div className="text-xs text-muted-foreground mt-1">Time to mitigate</div>
+              <div className="text-xs text-muted-foreground mt-1">{t("ddos.monitoring.timeToMitigate")}</div>
             </div>
 
             <div className="p-4 rounded-xl bg-card/50 border border-border/30">
               <div className="flex items-center gap-2 mb-2">
                 <Globe className="w-4 h-4 text-primary" />
-                <span className="text-xs text-muted-foreground">Active POPs</span>
+                <span className="text-xs text-muted-foreground">{t("ddos.monitoring.activePops")}</span>
               </div>
               <div className="text-2xl font-bold text-foreground">
                 <AnimatedCounter end={28} />
               </div>
-              <div className="text-xs text-muted-foreground mt-1">Scrubbing centers</div>
+              <div className="text-xs text-muted-foreground mt-1">{t("ddos.monitoring.scrubbingCenters")}</div>
             </div>
           </div>
 
@@ -157,7 +157,7 @@ export function MonitoringPreview() {
             <div className="p-4 rounded-xl bg-card/30 border border-border/30">
               <h4 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4 text-primary" />
-                Top Attack Vectors
+                {t("ddos.monitoring.topVectors")}
               </h4>
               <div className="space-y-3">
                 {attackVectors.map((vector) => (
@@ -184,7 +184,7 @@ export function MonitoringPreview() {
             <div className="p-4 rounded-xl bg-card/30 border border-border/30">
               <h4 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
                 <Activity className="w-4 h-4 text-primary" />
-                Traffic (Last 24h)
+                {t("ddos.monitoring.trafficLast24")}
               </h4>
               <div className="mb-4">
                 <MiniSparkline data={sparklineData} />
@@ -192,15 +192,15 @@ export function MonitoringPreview() {
               <div className="grid grid-cols-3 gap-2 text-center">
                 <div>
                   <div className="text-lg font-bold text-foreground">2.4 TB</div>
-                  <div className="text-xs text-muted-foreground">Total Clean</div>
+                  <div className="text-xs text-muted-foreground">{t("ddos.monitoring.totalClean")}</div>
                 </div>
                 <div>
                   <div className="text-lg font-bold text-primary">847 GB</div>
-                  <div className="text-xs text-muted-foreground">Total Blocked</div>
+                  <div className="text-xs text-muted-foreground">{t("ddos.monitoring.totalBlocked")}</div>
                 </div>
                 <div>
                   <div className="text-lg font-bold text-primary">99.9%</div>
-                  <div className="text-xs text-muted-foreground">Uptime</div>
+                  <div className="text-xs text-muted-foreground">{t("ddos.monitoring.uptime")}</div>
                 </div>
               </div>
             </div>
@@ -210,7 +210,7 @@ export function MonitoringPreview() {
           <div className="mt-6 p-4 rounded-xl bg-card/30 border border-border/30">
             <h4 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
               <Globe className="w-4 h-4 text-primary" />
-              Attack Origins
+              {t("ddos.monitoring.attackOrigins")}
             </h4>
             <div className="flex flex-wrap gap-3">
               {topCountries.map((country) => (
