@@ -6,6 +6,7 @@ import { Search, Calendar, Clock, ArrowRight, Tag, User, TrendingUp } from "luci
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { getTranslatedField } from "@/lib/translations";
+import { useTranslation } from "react-i18next";
 
 interface BlogPost {
   id: string;
@@ -22,6 +23,7 @@ interface BlogPost {
 }
 
 export default function Blog() {
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -69,13 +71,13 @@ export default function Blog() {
           >
             <Badge variant="outline" className="mb-4 border-primary/30 text-primary">
               <TrendingUp className="w-3 h-3 mr-1" />
-              Blog & Resources
+              {t("pages.blogPage.badge")}
             </Badge>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4">
-              Hosting Tips & <span className="text-primary">Tutorials</span>
+              {t("pages.blogPage.headline")} <span className="text-primary">{t("pages.blogPage.headlineHighlight")}</span>
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Expert guides, tutorials, and company updates to help you get the most out of your hosting experience.
+              {t("pages.blogPage.subtitle")}
             </p>
           </motion.div>
 
@@ -90,7 +92,7 @@ export default function Blog() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <Input
                 type="text"
-                placeholder="Search articles..."
+                placeholder={t("pages.blogPage.searchArticles")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10 bg-card/50 border-border/50"
@@ -129,7 +131,7 @@ export default function Blog() {
             >
               <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-primary" />
-                Featured Articles
+                {t("pages.blogPage.featuredArticles")}
               </h2>
               <div className="grid md:grid-cols-2 gap-6">
                 {featuredPosts.map((post) => (
@@ -190,7 +192,7 @@ export default function Blog() {
 
           {!loading && filteredPosts.length === 0 && (
             <div className="text-center py-16">
-              <p className="text-muted-foreground">No articles found matching your criteria.</p>
+              <p className="text-muted-foreground">{t("pages.blogPage.noArticles")}</p>
             </div>
           )}
 
@@ -202,14 +204,14 @@ export default function Blog() {
             viewport={{ once: true }}
             className="mt-16 p-8 rounded-2xl bg-gradient-to-br from-primary/10 via-card to-card border border-primary/20 text-center"
           >
-            <h3 className="text-2xl font-bold text-foreground mb-2">Stay Updated</h3>
+            <h3 className="text-2xl font-bold text-foreground mb-2">{t("pages.blogPage.stayUpdated")}</h3>
             <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
-              Get the latest hosting tips, tutorials, and company news delivered to your inbox.
+              {t("pages.blogPage.stayUpdatedDesc")}
             </p>
             <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-              <Input type="email" placeholder="Enter your email" className="flex-1 bg-background/50" />
+              <Input type="email" placeholder={t("pages.blogPage.enterEmail")} className="flex-1 bg-background/50" />
               <button className="px-6 py-2 rounded-lg bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-colors shadow-[0_0_20px_rgba(25,195,255,0.3)]">
-                Subscribe
+                {t("pages.blogPage.subscribe")}
               </button>
             </div>
           </motion.div>
