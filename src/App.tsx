@@ -47,12 +47,14 @@ import DomainsAdmin from "./pages/admin/hosting/DomainsAdmin";
 import DiscordBotAdmin from "./pages/admin/hosting/DiscordBotAdmin";
 import TeamSpeakAdmin from "./pages/admin/hosting/TeamSpeakAdmin";
 import ColocationAdmin from "./pages/admin/hosting/ColocationAdmin";
+import SupportSettingsAdmin from "./pages/admin/SupportSettingsAdmin";
 
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { DiscountPopup } from "@/components/DiscountPopup";
 import { DDoSGate } from "@/components/DDoSGate";
 import { CookieConsent } from "@/components/CookieConsent";
 import { LiveChatButton } from "@/components/LiveChatButton";
+import { LiveChatScript } from "@/components/LiveChatScript";
 
 const queryClient = new QueryClient();
 
@@ -65,6 +67,7 @@ const App = () => (
         <DiscountPopup />
         <BrowserRouter>
         <CookieConsent />
+        <LiveChatScript />
         <LiveChatButton />
         <ScrollToTop />
         <DDoSGate>
@@ -120,7 +123,8 @@ const App = () => (
             <Route path="/admin/hosting/discord-bot" element={<AdminProtectedRoute><DiscordBotAdmin /></AdminProtectedRoute>} />
             <Route path="/admin/hosting/teamspeak" element={<AdminProtectedRoute><TeamSpeakAdmin /></AdminProtectedRoute>} />
             <Route path="/admin/hosting/colocation" element={<AdminProtectedRoute><ColocationAdmin /></AdminProtectedRoute>} />
-            
+            <Route path="/admin/support" element={<AdminProtectedRoute><SupportSettingsAdmin /></AdminProtectedRoute>} />
+
             <Route path="*" element={<NotFound />} />
           </Routes>
         </DDoSGate>

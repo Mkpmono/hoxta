@@ -1,6 +1,7 @@
 import { useState, forwardRef } from "react";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSupportSettings } from "@/hooks/useSupportSettings";
 
 const ChatIcon = forwardRef<SVGSVGElement, { className?: string }>(({ className }, ref) => {
   return (
@@ -27,6 +28,15 @@ ChatIcon.displayName = "ChatIcon";
 
 export function LiveChatButton() {
   const [open, setOpen] = useState(false);
+  const { data: settings } = useSupportSettings();
+
+  const discordEnabled = !!settings?.discord_enabled && !!settings?.discord_url;
+  const emailEnabled = !!settings?.email_enabled && !!settings?.email_address;
+  const liveChatEnabled = !!settings?.live_chat_enabled && !!settings?.live_chat_embed_script?.trim();
+  const liveChatLabel = settings?.live_chat_label || "Live Chat";
+
+  // If everything is disabled, hide the FAB completely
+  if (!discordEnabled && !emailEnabled && !liveChatEnabled) return null;
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
@@ -60,25 +70,60 @@ export function LiveChatButton() {
                 <p className="text-sm text-muted-foreground mt-1">How can we help you today? Our team is here for you.</p>
               </div>
               <div className="space-y-2">
-                <a href="mailto:support@hoxta.com" className="flex items-center gap-3 p-3 rounded-xl bg-muted/30 hover:bg-muted/60 transition-colors group">
-                  <span className="w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center text-base">✉️</span>
-                  <div>
-                    <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">Email us</p>
-                    <p className="text-xs text-muted-foreground">support@hoxta.com</p>
-                  </div>
-                </a>
-                <a href="https://discord.gg/ju7ADq4ZqY" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 rounded-xl bg-muted/30 hover:bg-muted/60 transition-colors group">
-                  <span className="w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center text-base">💬</span>
-                  <div>
-                    <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">Discord</p>
-                    <p className="text-xs text-muted-foreground">Join our community</p>
-                  </div>
-                </a>
+                {liveChatEnabled && (
+                  <button
+                    onClick={() => {
+                      // Most embedded chat providers expose a global API. We try the common ones.
+                      const w = window as unknown as {
+                        Tawk_API?: { maximize?: () => void };
+                        $crisp?: unknown[];
+                        tidioChatApi?: { open?: () => void };
+                        $chatwoot?: { toggle?: (s: string) => void };
+                        Intercom?: (cmd: string) => void;
+                      };
+                      if (w.Tawk_API?.maximize) w.Tawk_API.maximize();
+                      else if (Array.isArray(w.$crisp)) w.$crisp.push(["do", "chat:open"]);
+                      else if (w.tidioChatApi?.open) w.tidioChatApi.open();
+                      else if (w.$chatwoot?.toggle) w.$chatwoot.toggle("open");
+                      else if (w.Intercom) w.Intercom("show");
+                      setOpen(false);
+                    }}
+                    className="w-full flex items-center gap-3 p-3 rounded-xl bg-primary/10 hover:bg-primary/20 transition-colors group text-left"
+                  >
+                    <span className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary">
+                      <ChatIcon className="w-4 h-4" />
+                    </span>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{liveChatLabel}</p>
+                      <p className="text-xs text-muted-foreground">Chat with us now</p>
+                    </div>
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  </button>
+                )}
+                {emailEnabled && (
+                  <a href={`mailto:${settings!.email_address}`} className="flex items-center gap-3 p-3 rounded-xl bg-muted/30 hover:bg-muted/60 transition-colors group">
+                    <span className="w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center text-base">✉️</span>
+                    <div>
+                      <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">Email us</p>
+                      <p className="text-xs text-muted-foreground">{settings!.email_address}</p>
+                    </div>
+                  </a>
+                )}
+                {discordEnabled && (
+                  <a href={settings!.discord_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 rounded-xl bg-muted/30 hover:bg-muted/60 transition-colors group">
+                    <span className="w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center text-base">💬</span>
+                    <div>
+                      <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">Discord</p>
+                      <p className="text-xs text-muted-foreground">Join our community</p>
+                    </div>
+                  </a>
+                )}
               </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
+
 
       {/* FAB */}
       <motion.button

@@ -478,6 +478,45 @@ export type Database = {
         }
         Relationships: []
       }
+      support_settings: {
+        Row: {
+          discord_enabled: boolean
+          discord_url: string | null
+          email_address: string | null
+          email_enabled: boolean
+          id: string
+          live_chat_embed_script: string | null
+          live_chat_enabled: boolean
+          live_chat_label: string | null
+          singleton: boolean
+          updated_at: string
+        }
+        Insert: {
+          discord_enabled?: boolean
+          discord_url?: string | null
+          email_address?: string | null
+          email_enabled?: boolean
+          id?: string
+          live_chat_embed_script?: string | null
+          live_chat_enabled?: boolean
+          live_chat_label?: string | null
+          singleton?: boolean
+          updated_at?: string
+        }
+        Update: {
+          discord_enabled?: boolean
+          discord_url?: string | null
+          email_address?: string | null
+          email_enabled?: boolean
+          id?: string
+          live_chat_embed_script?: string | null
+          live_chat_enabled?: boolean
+          live_chat_label?: string | null
+          singleton?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
