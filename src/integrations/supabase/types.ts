@@ -465,6 +465,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      jsonb_deep_merge: { Args: { a: Json; b: Json }; Returns: Json }
     }
     Enums: {
       app_role: "admin" | "user"
