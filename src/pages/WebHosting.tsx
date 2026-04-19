@@ -7,9 +7,12 @@ import {
 import { webHostingPlans, webHostingFeatures, webHostingFAQs, webHostingComparison } from "@/data/hostingData";
 import { Globe, Zap, Shield, Server } from "lucide-react";
 import { SEOHead, ServiceSchema, FAQSchema, OrganizationSchema } from "@/components/seo";
+import { useHostingPlans, rowToPlan } from "@/hooks/useHostingPlans";
 
 export default function WebHosting() {
   const { t } = useTranslation();
+  const { plans: dbPlans } = useHostingPlans("web-hosting");
+  const livePlans = dbPlans.length > 0 ? dbPlans.map(rowToPlan) : webHostingPlans;
   return (
     <Layout>
       <SEOHead title="Web Hosting - Fast, Secure & Reliable | Hoxta" description="Launch your website with Hoxta's blazing-fast NVMe web hosting. Free SSL, daily backups, 24/7 support, and 99.9% uptime. Plans from $2.99/mo." canonicalUrl="https://hoxta.com/web-hosting" />
@@ -27,7 +30,7 @@ export default function WebHosting() {
         secondaryCTA={{ text: t("buttons.comparePlans"), href: "#comparison" }}
       />
       <TrustBar />
-      <PricingPlans title={t("pages.webHosting.plansTitle")} subtitle={t("pages.webHosting.plansSubtitle")} plans={webHostingPlans} productSlug="web-hosting" />
+      <PricingPlans title={t("pages.webHosting.plansTitle")} subtitle={t("pages.webHosting.plansSubtitle")} plans={livePlans} productSlug="web-hosting" />
       <FeatureGrid title={t("pages.webHosting.whyTitle")} subtitle={t("pages.webHosting.whySubtitle")} features={webHostingFeatures} />
       <ContentSection title={t("pages.webHosting.whatIsTitle")} description={t("pages.webHosting.whatIsDesc")} points={t("pages.webHosting.whatIsPoints", { returnObjects: true }) as string[]} icon={Globe} />
       <ContentSection title={t("pages.webHosting.perfTitle")} description={t("pages.webHosting.perfDesc")} points={t("pages.webHosting.perfPoints", { returnObjects: true }) as string[]} icon={Zap} reverse />
