@@ -382,6 +382,39 @@ export type Database = {
         }
         Relationships: []
       }
+      site_languages: {
+        Row: {
+          code: string
+          created_at: string
+          flag_code: string
+          id: string
+          is_enabled: boolean
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          flag_code: string
+          id?: string
+          is_enabled?: boolean
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          flag_code?: string
+          id?: string
+          is_enabled?: boolean
+          name?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       site_translations: {
         Row: {
           data: Json
