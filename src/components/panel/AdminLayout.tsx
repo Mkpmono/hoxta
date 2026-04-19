@@ -208,3 +208,44 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     </div>
   );
 }
+
+function HostingPlansGroup({ pathname, onNavigate }: { pathname: string; onNavigate: () => void }) {
+  const isInGroup = pathname.startsWith("/admin/hosting/");
+  const [open, setOpen] = useState(isInGroup);
+  return (
+    <div>
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className={`w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+          isInGroup ? "bg-primary/10 text-primary border border-primary/20" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+        }`}
+      >
+        <span className="flex items-center gap-3">
+          <Package className="w-4 h-4" />
+          Pachete Hosting
+        </span>
+        {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+      </button>
+      {open && (
+        <div className="mt-1 ml-4 pl-3 border-l border-border/50 space-y-0.5">
+          {hostingItems.map((item) => {
+            const active = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                to={item.href}
+                onClick={onNavigate}
+                className={`flex items-center gap-2 px-2.5 py-2 rounded-md text-xs font-medium transition-all ${
+                  active ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                }`}
+              >
+                <item.icon className="w-3.5 h-3.5" />
+                {item.label}
+              </Link>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}

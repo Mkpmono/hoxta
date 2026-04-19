@@ -39,6 +39,14 @@ import Domains from "./pages/Domains";
 import VisitorLogs from "./pages/admin/VisitorLogs";
 import GameServerAdmin from "./pages/admin/GameServerAdmin";
 import TranslationsAdmin from "./pages/admin/TranslationsAdmin";
+import WebHostingAdmin from "./pages/admin/hosting/WebHostingAdmin";
+import ResellerAdmin from "./pages/admin/hosting/ResellerAdmin";
+import VpsAdmin from "./pages/admin/hosting/VpsAdmin";
+import DedicatedAdmin from "./pages/admin/hosting/DedicatedAdmin";
+import DomainsAdmin from "./pages/admin/hosting/DomainsAdmin";
+import DiscordBotAdmin from "./pages/admin/hosting/DiscordBotAdmin";
+import TeamSpeakAdmin from "./pages/admin/hosting/TeamSpeakAdmin";
+import ColocationAdmin from "./pages/admin/hosting/ColocationAdmin";
 
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { DiscountPopup } from "@/components/DiscountPopup";
@@ -104,6 +112,16 @@ const App = () => (
             <Route path="/admin/translations" element={<AdminProtectedRoute><TranslationsAdmin /></AdminProtectedRoute>} />
             <Route path="/admin/status" element={<AdminProtectedRoute><StatusAdmin /></AdminProtectedRoute>} />
             <Route path="/admin/visitors" element={<AdminProtectedRoute><VisitorLogs /></AdminProtectedRoute>} />
+
+            {/* Hosting Plans Admin */}
+            <Route path="/admin/hosting/web" element={<AdminProtectedRoute><WebHostingAdmin /></AdminProtectedRoute>} />
+            <Route path="/admin/hosting/reseller" element={<AdminProtectedRoute><ResellerAdmin /></AdminProtectedRoute>} />
+            <Route path="/admin/hosting/vps" element={<AdminProtectedRoute><VpsAdmin /></AdminProtectedRoute>} />
+            <Route path="/admin/hosting/dedicated" element={<AdminProtectedRoute><DedicatedAdmin /></AdminProtectedRoute>} />
+            <Route path="/admin/hosting/domains" element={<AdminProtectedRoute><DomainsAdmin /></AdminProtectedRoute>} />
+            <Route path="/admin/hosting/discord-bot" element={<AdminProtectedRoute><DiscordBotAdmin /></AdminProtectedRoute>} />
+            <Route path="/admin/hosting/teamspeak" element={<AdminProtectedRoute><TeamSpeakAdmin /></AdminProtectedRoute>} />
+            <Route path="/admin/hosting/colocation" element={<AdminProtectedRoute><ColocationAdmin /></AdminProtectedRoute>} />
             
             <Route path="*" element={<NotFound />} />
           </Routes>
