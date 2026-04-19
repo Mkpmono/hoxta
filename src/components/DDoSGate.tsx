@@ -4,7 +4,8 @@ import { CheckCircle, AlertTriangle, Globe, Lock, Fingerprint, ShieldCheck } fro
 import { HoxtaLogo } from "@/components/HoxtaLogo";
 
 const VERIFICATION_KEY = "hoxta_ddos_verified";
-const VERIFICATION_TTL_MS = 15 * 60 * 1000;
+// 24 hours: legitimate users won't see the challenge again for a full day
+const VERIFICATION_TTL_MS = 24 * 60 * 60 * 1000;
 
 interface CheckItem {
   label: string;
@@ -19,7 +20,7 @@ interface ClientInfo {
 
 function isVerified(): boolean {
   try {
-    const raw = sessionStorage.getItem(VERIFICATION_KEY);
+    const raw = localStorage.getItem(VERIFICATION_KEY) || sessionStorage.getItem(VERIFICATION_KEY);
     if (!raw) return false;
     const { ts } = JSON.parse(raw);
     return Date.now() - ts < VERIFICATION_TTL_MS;
@@ -29,7 +30,9 @@ function isVerified(): boolean {
 }
 
 function markVerified() {
-  sessionStorage.setItem(VERIFICATION_KEY, JSON.stringify({ ts: Date.now() }));
+  const payload = JSON.stringify({ ts: Date.now() });
+  try { localStorage.setItem(VERIFICATION_KEY, payload); } catch { /* ignore */ }
+  try { sessionStorage.setItem(VERIFICATION_KEY, payload); } catch { /* ignore */ }
 }
 
 function getCanvasFingerprint(): string {
@@ -142,6 +145,7 @@ export function DDoSGate({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!passed) return;
+    // Re-verify every 5 minutes — verification is valid for 24h, so this just refreshes state
     const interval = setInterval(() => {
       if (!isVerified()) {
         setPassed(false);
@@ -150,7 +154,7 @@ export function DDoSGate({ children }: { children: React.ReactNode }) {
         setCountdown(3);
         rayId.current = Math.random().toString(36).substring(2, 14);
       }
-    }, 10_000);
+    }, 5 * 60 * 1000);
     return () => clearInterval(interval);
   }, [passed]);
 
