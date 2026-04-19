@@ -385,7 +385,7 @@ export default function TranslationsAdmin() {
                   {isComplete || isSource ? (
                     <Check className="w-4 h-4 text-primary" />
                   ) : missingCount > 0 ? (
-                    <AlertCircle className="w-4 h-4 text-amber-500" />
+                    <AlertCircle className="w-4 h-4 text-primary/70" />
                   ) : (
                     <AlertCircle className="w-4 h-4 text-muted-foreground/30" />
                   )}
@@ -403,7 +403,7 @@ export default function TranslationsAdmin() {
                     />
                   </div>
                   {missingCount > 0 && (
-                    <p className="text-xs text-amber-600 dark:text-amber-400">⚠ {missingCount} chei noi de tradus</p>
+                    <p className="text-xs text-primary/80">⚠ {missingCount} chei noi de tradus</p>
                   )}
                   {lastUpdated && <p className="text-xs text-muted-foreground">Actualizat: {lastUpdated}</p>}
                 </div>
