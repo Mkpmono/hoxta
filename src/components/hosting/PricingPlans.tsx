@@ -72,6 +72,7 @@ export function PricingPlans({
   plans,
   productSlug,
   category,
+  detailsBasePath,
 }: PricingPlansProps) {
   const { t } = useTranslation();
 
