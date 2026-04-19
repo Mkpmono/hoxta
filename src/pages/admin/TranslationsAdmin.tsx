@@ -2,23 +2,24 @@ import { useState, useEffect } from "react";
 import { AdminLayout } from "@/components/panel/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import { Languages, RefreshCw, Check, AlertCircle, Download } from "lucide-react";
-import roCommon from "@/i18n/locales/ro/common.json";
+import { Languages, RefreshCw, Check, AlertCircle, Download, Sparkles } from "lucide-react";
+import enCommon from "@/i18n/locales/en/common.json";
 import { reloadTranslations } from "@/i18n";
 
 const LANGUAGES = [
-  { code: "ro", name: "Română", flag: "🇷🇴" },
   { code: "en", name: "English", flag: "🇬🇧" },
+  { code: "ro", name: "Română", flag: "🇷🇴" },
   { code: "de", name: "Deutsch", flag: "🇩🇪" },
   { code: "fr", name: "Français", flag: "🇫🇷" },
   { code: "es", name: "Español", flag: "🇪🇸" },
   { code: "it", name: "Italiano", flag: "🇮🇹" },
 ];
 
-const TARGET_LANGS = ["en", "de", "fr", "es", "it"];
+const TARGET_LANGS = ["ro", "de", "fr", "es", "it"];
 
 function countKeys(obj: any): number {
   let count = 0;
+  if (!obj || typeof obj !== "object") return 0;
   for (const value of Object.values(obj)) {
     if (typeof value === "object" && value !== null && !Array.isArray(value)) {
       count += countKeys(value);
@@ -29,9 +30,9 @@ function countKeys(obj: any): number {
   return count;
 }
 
-// Flatten nested JSON to dot-notation
 function flatten(obj: Record<string, any>, prefix = ""): Record<string, string> {
   const result: Record<string, string> = {};
+  if (!obj || typeof obj !== "object") return result;
   for (const [key, value] of Object.entries(obj)) {
     const newKey = prefix ? `${prefix}.${key}` : key;
     if (typeof value === "object" && value !== null && !Array.isArray(value)) {
@@ -43,7 +44,6 @@ function flatten(obj: Record<string, any>, prefix = ""): Record<string, string> 
   return result;
 }
 
-// Unflatten dot-notation back to nested
 function unflatten(obj: Record<string, string>): Record<string, any> {
   const result: Record<string, any> = {};
   for (const [key, value] of Object.entries(obj)) {
@@ -77,14 +77,13 @@ async function translateChunkWithRetry(
 ): Promise<Record<string, string>> {
   for (let attempt = 0; attempt < retries; attempt++) {
     const { data, error } = await supabase.functions.invoke("translate-i18n", {
-      body: { chunk, targetLang },
+      body: { chunk, targetLang, sourceLang: "en" },
     });
 
     if (!error && data?.translated) {
       return data.translated;
     }
 
-    // Rate limit - wait longer
     if (error?.message?.includes("429") || data?.error?.includes("Rate limit")) {
       await new Promise((r) => setTimeout(r, RETRY_DELAY * (attempt + 1)));
       continue;
@@ -105,7 +104,8 @@ export default function TranslationsAdmin() {
   const [dbTranslations, setDbTranslations] = useState<Record<string, { data: any; updated_at: string }>>({});
   const [loading, setLoading] = useState(true);
 
-  const totalKeys = countKeys(roCommon);
+  const totalKeys = countKeys(enCommon);
+  const sourceFlat = flatten(enCommon);
 
   useEffect(() => {
     loadTranslations();
@@ -124,53 +124,90 @@ export default function TranslationsAdmin() {
     setLoading(false);
   };
 
-  const translateLanguage = async (langCode: string, langIndex: number, totalLangs: number) => {
-    const flat = flatten(roCommon);
+  // Compute missing keys for a given language by comparing EN flat vs DB flat
+  const getMissingKeys = (langCode: string): Record<string, string> => {
+    const dbData = dbTranslations[langCode]?.data || {};
+    const dbFlat = flatten(dbData);
+    const missing: Record<string, string> = {};
+    for (const [key, value] of Object.entries(sourceFlat)) {
+      if (!(key in dbFlat) || !dbFlat[key]) {
+        missing[key] = value;
+      }
+    }
+    return missing;
+  };
+
+  const totalMissing = TARGET_LANGS.reduce((sum, l) => sum + Object.keys(getMissingKeys(l)).length, 0);
+
+  const translateLanguage = async (
+    langCode: string,
+    langIndex: number,
+    totalLangs: number,
+    onlyMissing = false
+  ) => {
+    const flat = onlyMissing ? getMissingKeys(langCode) : sourceFlat;
+    if (Object.keys(flat).length === 0) {
+      return null;
+    }
     const chunks = chunkObject(flat, CHUNK_SIZE);
     const mergedFlat: Record<string, string> = {};
 
     for (let i = 0; i < chunks.length; i++) {
       const langName = LANGUAGES.find((l) => l.code === langCode)?.name || langCode;
       const overallProgress = ((langIndex * chunks.length + i) / (totalLangs * chunks.length)) * 100;
-      setProgress(`${langName}: ${i + 1}/${chunks.length} bucăți...`);
+      setProgress(`${langName}: ${i + 1}/${chunks.length} bucăți (${Object.keys(chunks[i]).length} chei)...`);
       setProgressPercent(Math.round(overallProgress));
 
       const result = await translateChunkWithRetry(chunks[i], langCode);
       Object.assign(mergedFlat, result);
 
-      // Small delay between chunks to avoid rate limits
       if (i < chunks.length - 1) {
         await new Promise((r) => setTimeout(r, 500));
       }
     }
 
-    const nested = unflatten(mergedFlat);
+    const newNested = unflatten(mergedFlat);
+
+    // Deep merge with existing DB data so we don't lose anything
+    const existing = dbTranslations[langCode]?.data || {};
+    const merged = deepMerge(existing, newNested);
 
     await supabase
       .from("site_translations")
       .upsert(
-        { lang: langCode, data: nested as any, updated_at: new Date().toISOString() },
+        { lang: langCode, data: merged as any, updated_at: new Date().toISOString() },
         { onConflict: "lang" }
       );
 
-    return nested;
+    return merged;
   };
 
+  function deepMerge(a: any, b: any): any {
+    if (typeof a !== "object" || a === null || Array.isArray(a)) return b;
+    if (typeof b !== "object" || b === null || Array.isArray(b)) return b;
+    const out: Record<string, any> = { ...a };
+    for (const k of Object.keys(b)) {
+      out[k] = k in a ? deepMerge(a[k], b[k]) : b[k];
+    }
+    return out;
+  }
+
   const handleTranslateAll = async () => {
+    if (!confirm(`Aceasta va RE-TRADUCE toate ${totalKeys} cheile pentru toate cele 5 limbi. Operațiunea durează câteva minute. Continui?`)) return;
     setTranslating(true);
     setProgressPercent(0);
 
     try {
-      // Save RO first
+      // Save EN as source-of-truth first
       await supabase
         .from("site_translations")
         .upsert(
-          { lang: "ro", data: roCommon as any, updated_at: new Date().toISOString() },
+          { lang: "en", data: enCommon as any, updated_at: new Date().toISOString() },
           { onConflict: "lang" }
         );
 
       for (let i = 0; i < TARGET_LANGS.length; i++) {
-        await translateLanguage(TARGET_LANGS[i], i, TARGET_LANGS.length);
+        await translateLanguage(TARGET_LANGS[i], i, TARGET_LANGS.length, false);
       }
 
       setProgressPercent(100);
@@ -186,14 +223,53 @@ export default function TranslationsAdmin() {
     }
   };
 
-  const handleTranslateSingle = async (langCode: string) => {
+  const handleSyncMissing = async () => {
+    if (totalMissing === 0) {
+      toast({ title: "Nimic de sincronizat", description: "Toate limbile sunt la zi cu EN." });
+      return;
+    }
     setTranslating(true);
     setProgressPercent(0);
 
     try {
-      await translateLanguage(langCode, 0, 1);
+      // Always save EN snapshot
+      await supabase
+        .from("site_translations")
+        .upsert(
+          { lang: "en", data: enCommon as any, updated_at: new Date().toISOString() },
+          { onConflict: "lang" }
+        );
+
+      const langsToSync = TARGET_LANGS.filter((l) => Object.keys(getMissingKeys(l)).length > 0);
+      for (let i = 0; i < langsToSync.length; i++) {
+        await translateLanguage(langsToSync[i], i, langsToSync.length, true);
+      }
+
       setProgressPercent(100);
-      toast({ title: "✅ Tradus!", description: `${LANGUAGES.find((l) => l.code === langCode)?.name} actualizat.` });
+      toast({ title: "✅ Sincronizat!", description: `${totalMissing} chei noi traduse.` });
+      await loadTranslations();
+      await reloadTranslations();
+    } catch (err: any) {
+      toast({ title: "Eroare", description: err.message, variant: "destructive" });
+    } finally {
+      setTranslating(false);
+      setProgress("");
+      setProgressPercent(0);
+    }
+  };
+
+  const handleTranslateSingle = async (langCode: string, onlyMissing = false) => {
+    setTranslating(true);
+    setProgressPercent(0);
+
+    try {
+      const result = await translateLanguage(langCode, 0, 1, onlyMissing);
+      if (result === null) {
+        toast({ title: "Nimic de tradus", description: "Această limbă este deja completă." });
+      } else {
+        setProgressPercent(100);
+        toast({ title: "✅ Tradus!", description: `${LANGUAGES.find((l) => l.code === langCode)?.name} actualizat.` });
+      }
       await loadTranslations();
       await reloadTranslations();
     } catch (err: any) {
@@ -206,7 +282,7 @@ export default function TranslationsAdmin() {
   };
 
   const downloadJson = (lang: string) => {
-    const data = dbTranslations[lang]?.data;
+    const data = lang === "en" ? enCommon : dbTranslations[lang]?.data;
     if (!data) return;
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
@@ -227,33 +303,44 @@ export default function TranslationsAdmin() {
               Traduceri Automate Site
             </h1>
             <p className="text-muted-foreground mt-1">
-              Traduce automat toate textele din interfață din Română în toate limbile suportate.
+              Detectează automat texte noi adăugate pe site și le traduce în toate limbile.
             </p>
           </div>
         </div>
 
-        {/* Source info + translate all */}
-        <div className="bg-card border border-border/50 rounded-xl p-5">
-          <div className="flex items-center justify-between">
+        {/* Source info + actions */}
+        <div className="bg-card border border-border/50 rounded-xl p-5 space-y-4">
+          <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
-              <h3 className="font-semibold text-foreground">🇷🇴 Limba sursă: Română</h3>
+              <h3 className="font-semibold text-foreground">🇬🇧 Limba sursă: English</h3>
               <p className="text-sm text-muted-foreground mt-1">
-                {totalKeys} chei de traducere • Fișierul <code className="bg-muted px-1.5 py-0.5 rounded text-xs">ro/common.json</code>
+                {totalKeys} chei totale • Fișier <code className="bg-muted px-1.5 py-0.5 rounded text-xs">en/common.json</code>
               </p>
             </div>
-            <button
-              onClick={handleTranslateAll}
-              disabled={translating}
-              className="flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
-            >
-              {translating ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Languages className="w-4 h-4" />}
-              {translating ? "Se traduce..." : "Traduce Toate Limbile"}
-            </button>
+            <div className="flex gap-2 flex-wrap">
+              <button
+                onClick={handleSyncMissing}
+                disabled={translating || totalMissing === 0}
+                className="flex items-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
+                title="Detectează și traduce doar cheile noi care lipsesc"
+              >
+                {translating ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                {totalMissing > 0 ? `Sincronizează (${totalMissing} chei noi)` : "Totul e la zi ✓"}
+              </button>
+              <button
+                onClick={handleTranslateAll}
+                disabled={translating}
+                className="flex items-center gap-2 px-4 py-2.5 bg-muted text-muted-foreground rounded-lg font-medium hover:bg-muted/80 transition-colors disabled:opacity-50"
+                title="Re-traduce TOTUL de la zero"
+              >
+                <Languages className="w-4 h-4" />
+                Re-traduce tot
+              </button>
+            </div>
           </div>
 
-          {/* Progress bar */}
           {translating && (
-            <div className="mt-4 space-y-2">
+            <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-primary flex items-center gap-2">
                   <RefreshCw className="w-3.5 h-3.5 animate-spin" />
@@ -274,9 +361,11 @@ export default function TranslationsAdmin() {
         {/* Languages grid */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {LANGUAGES.map((lang) => {
+            const isSource = lang.code === "en";
             const dbData = dbTranslations[lang.code];
-            const dbKeyCount = dbData ? countKeys(dbData.data) : 0;
-            const isComplete = dbKeyCount >= totalKeys * 0.9;
+            const dbKeyCount = isSource ? totalKeys : (dbData ? countKeys(dbData.data) : 0);
+            const missingCount = isSource ? 0 : Object.keys(getMissingKeys(lang.code)).length;
+            const isComplete = missingCount === 0 && dbKeyCount > 0;
             const lastUpdated = dbData?.updated_at
               ? new Date(dbData.updated_at).toLocaleDateString("ro-RO", {
                   day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit",
@@ -290,13 +379,13 @@ export default function TranslationsAdmin() {
                     <span className="text-xl">{lang.flag}</span>
                     <div>
                       <h4 className="font-medium text-foreground text-sm">{lang.name}</h4>
-                      <span className="text-xs text-muted-foreground uppercase">{lang.code}</span>
+                      <span className="text-xs text-muted-foreground uppercase">{lang.code}{isSource && " • sursă"}</span>
                     </div>
                   </div>
-                  {isComplete ? (
+                  {isComplete || isSource ? (
                     <Check className="w-4 h-4 text-primary" />
-                  ) : dbKeyCount > 0 ? (
-                    <AlertCircle className="w-4 h-4 text-primary/60" />
+                  ) : missingCount > 0 ? (
+                    <AlertCircle className="w-4 h-4 text-primary/70" />
                   ) : (
                     <AlertCircle className="w-4 h-4 text-muted-foreground/30" />
                   )}
@@ -313,27 +402,41 @@ export default function TranslationsAdmin() {
                       style={{ width: `${Math.min((dbKeyCount / totalKeys) * 100, 100)}%` }}
                     />
                   </div>
+                  {missingCount > 0 && (
+                    <p className="text-xs text-primary/80">⚠ {missingCount} chei noi de tradus</p>
+                  )}
                   {lastUpdated && <p className="text-xs text-muted-foreground">Actualizat: {lastUpdated}</p>}
                 </div>
 
                 <div className="flex gap-2 mt-3">
-                  {lang.code !== "ro" && (
-                    <button
-                      onClick={() => handleTranslateSingle(lang.code)}
-                      disabled={translating}
-                      className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors disabled:opacity-50"
-                    >
-                      <RefreshCw className={`w-3 h-3 ${translating ? "animate-spin" : ""}`} />
-                      Retraduce
-                    </button>
+                  {!isSource && (
+                    <>
+                      {missingCount > 0 && (
+                        <button
+                          onClick={() => handleTranslateSingle(lang.code, true)}
+                          disabled={translating}
+                          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors disabled:opacity-50"
+                        >
+                          <Sparkles className="w-3 h-3" />
+                          Doar lipsuri
+                        </button>
+                      )}
+                      <button
+                        onClick={() => handleTranslateSingle(lang.code, false)}
+                        disabled={translating}
+                        className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-muted text-muted-foreground rounded-lg hover:bg-muted/80 transition-colors disabled:opacity-50"
+                      >
+                        <RefreshCw className={`w-3 h-3 ${translating ? "animate-spin" : ""}`} />
+                        Re-traduce
+                      </button>
+                    </>
                   )}
-                  {dbKeyCount > 0 && (
+                  {(dbKeyCount > 0 || isSource) && (
                     <button
                       onClick={() => downloadJson(lang.code)}
                       className="flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-muted text-muted-foreground rounded-lg hover:bg-muted/80 transition-colors"
                     >
                       <Download className="w-3 h-3" />
-                      JSON
                     </button>
                   )}
                 </div>
@@ -343,13 +446,12 @@ export default function TranslationsAdmin() {
         </div>
 
         <div className="bg-muted/30 border border-border/30 rounded-xl p-4 text-sm text-muted-foreground space-y-2">
-          <p><strong>Cum funcționează:</strong></p>
+          <p><strong className="text-foreground">Cum funcționează pentru pagini noi:</strong></p>
           <ul className="list-disc list-inside space-y-1">
-            <li>Textele din <code className="bg-muted px-1 rounded">ro/common.json</code> sunt sursa principală</li>
-            <li>Traducerea se face în bucăți mici (~50 chei) pentru a evita timeout-urile</li>
-            <li>Progresul este vizibil în timp real pe bara de progres</li>
-            <li>Traducerile sunt salvate în baza de date și încărcate automat pe site</li>
-            <li>Dacă apare rate-limit, sistemul reîncearcă automat după câteva secunde</li>
+            <li>Adaugă chei noi în <code className="bg-muted px-1 rounded">en/common.json</code> și folosește <code className="bg-muted px-1 rounded">{`t("noua.cheie")`}</code> în componente</li>
+            <li>Vino aici și apasă <strong>"Sincronizează"</strong> — sistemul detectează automat cheile noi și le traduce în toate limbile</li>
+            <li>Cheile existente NU sunt re-traduse (economie de timp și API calls)</li>
+            <li>Traducerile sunt salvate în baza de date și fac override pe fișierele JSON statice</li>
           </ul>
         </div>
       </div>
