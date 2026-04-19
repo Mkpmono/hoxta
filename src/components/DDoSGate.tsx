@@ -53,6 +53,14 @@ function getCanvasFingerprint(): string {
   }
 }
 
+// Whitelist of legitimate search engine / SEO crawlers — never block these
+const SEO_BOT_REGEX = /(googlebot|google-inspectiontool|google-extended|bingbot|slurp|duckduckbot|baiduspider|yandex(bot|images|mobilebot)|sogou|exabot|facebot|facebookexternalhit|ia_archiver|applebot|petalbot|semrushbot|ahrefsbot|mj12bot|dotbot|seznambot|linkedinbot|twitterbot|pinterestbot|telegrambot|whatsapp|discordbot|slackbot|w3c_validator|chrome-lighthouse|gtmetrix|pingdom|uptimerobot|statuscake|site24x7)/i;
+
+function isLegitimateSEOBot(): boolean {
+  const ua = navigator.userAgent || "";
+  return SEO_BOT_REGEX.test(ua);
+}
+
 function detectSuspiciousBehavior(): { isBot: boolean; reasons: string[] } {
   const reasons: string[] = [];
   const ua = navigator.userAgent || "";
