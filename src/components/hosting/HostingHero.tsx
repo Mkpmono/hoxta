@@ -134,10 +134,26 @@ export function HostingHero({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10"
+            className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8"
           >
             {description}
           </motion.p>
+
+          {heroPoints && heroPoints.length > 0 && (
+            <motion.ul
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.35 }}
+              className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mb-10 max-w-3xl mx-auto"
+            >
+              {heroPoints.map((p, i) => (
+                <li key={i} className="inline-flex items-center gap-2 text-sm text-muted-foreground">
+                  <Check className="w-4 h-4 text-primary flex-shrink-0" />
+                  <span>{p}</span>
+                </li>
+              ))}
+            </motion.ul>
+          )}
 
           {/* CTAs */}
           <motion.div
