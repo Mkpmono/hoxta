@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { brand } from "@/config/brand";
 import { HoxtaLogo } from "@/components/HoxtaLogo";
 import { openExternalUrl } from "@/lib/openExternalUrl";
+import { useSupportSettings } from "@/hooks/useSupportSettings";
 import { MapPin, Clock, MessageCircle, Twitter, Github, Youtube, Instagram } from "lucide-react";
 
 import visaSvg from "@/assets/payments/visa.svg";
@@ -20,6 +21,7 @@ const paymentMethods = [
 
 export const Footer = forwardRef<HTMLElement>(function Footer(_props, ref) {
   const { t } = useTranslation();
+  const { data: supportSettings } = useSupportSettings();
   const year = new Date().getFullYear();
 
   return (
@@ -94,7 +96,7 @@ export const Footer = forwardRef<HTMLElement>(function Footer(_props, ref) {
             <div className="mt-5 flex items-center gap-3">
               <button
                 type="button"
-                onClick={() => openExternalUrl(brand.socials.discord)}
+                onClick={() => openExternalUrl(supportSettings?.discord_url || brand.socials.discord)}
                 className="rounded-lg bg-muted p-2 text-muted-foreground transition-colors hover:bg-primary/20 hover:text-primary"
                 aria-label="Discord"
               >

@@ -8,9 +8,12 @@ import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useSupportSettings } from "@/hooks/useSupportSettings";
+import { openExternalUrl } from "@/lib/openExternalUrl";
 
 export default function Contact() {
   const { t } = useTranslation();
+  const { data: supportSettings } = useSupportSettings();
   const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
 
   const contactMethods = [
@@ -51,7 +54,7 @@ export default function Contact() {
     {
       icon: Globe, title: t("pages.contact.connect"),
       lines: [
-        { label: "Discord", value: t("pages.contact.community"), href: brand.socials.discord },
+        { label: "Discord", value: t("pages.contact.community"), href: supportSettings?.discord_url || brand.socials.discord },
         { label: t("pages.contact.twitterX"), value: "@hoxta", href: brand.socials.twitter },
         { label: t("pages.contact.statusPage"), value: "status.hoxta.com", href: "/status" },
       ],
@@ -171,7 +174,13 @@ export default function Contact() {
                     <div key={j} className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">{line.label}</span>
                       {"href" in line && line.href ? (
-                        <a href={line.href} className="text-primary hover:underline">{line.value}</a>
+                        /^https?:\/\/(www\.)?(discord\.gg|discord\.com\/invite)\//i.test(line.href) ? (
+                          <button type="button" onClick={() => openExternalUrl(line.href!)} className="text-primary hover:underline">
+                            {line.value}
+                          </button>
+                        ) : (
+                          <a href={line.href} className="text-primary hover:underline">{line.value}</a>
+                        )
                       ) : (
                         <span className="text-foreground font-medium">{line.value}</span>
                       )}
