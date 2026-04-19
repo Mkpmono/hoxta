@@ -11,14 +11,34 @@ import {
   Menu,
   X,
   ChevronDown,
+  ChevronRight,
   Shield,
   ExternalLink,
+  Server,
+  Globe,
+  HardDrive,
+  Cpu,
+  Users,
+  Bot,
+  Mic,
+  Package,
 } from "lucide-react";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
 }
+
+const hostingItems = [
+  { icon: Globe, label: "Web Hosting", href: "/admin/hosting/web" },
+  { icon: Users, label: "Reseller", href: "/admin/hosting/reseller" },
+  { icon: Server, label: "VPS", href: "/admin/hosting/vps" },
+  { icon: Cpu, label: "Dedicated", href: "/admin/hosting/dedicated" },
+  { icon: Globe, label: "Domenii", href: "/admin/hosting/domains" },
+  { icon: Bot, label: "Discord Bot", href: "/admin/hosting/discord-bot" },
+  { icon: Mic, label: "TeamSpeak", href: "/admin/hosting/teamspeak" },
+  { icon: HardDrive, label: "Colocation", href: "/admin/hosting/colocation" },
+];
 
 const adminNavItems = [
   { icon: BookOpen, label: "Content (KB & Blog)", href: "/admin/content" },
@@ -77,6 +97,8 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
           {/* Navigation */}
           <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+            <HostingPlansGroup pathname={location.pathname} onNavigate={() => setSidebarOpen(false)} />
+            <div className="h-px bg-border/50 my-2" />
             {adminNavItems.map((item) => {
               const isActive = location.pathname === item.href;
               return (
@@ -183,6 +205,47 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           {children}
         </main>
       </div>
+    </div>
+  );
+}
+
+function HostingPlansGroup({ pathname, onNavigate }: { pathname: string; onNavigate: () => void }) {
+  const isInGroup = pathname.startsWith("/admin/hosting/");
+  const [open, setOpen] = useState(isInGroup);
+  return (
+    <div>
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className={`w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+          isInGroup ? "bg-primary/10 text-primary border border-primary/20" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+        }`}
+      >
+        <span className="flex items-center gap-3">
+          <Package className="w-4 h-4" />
+          Pachete Hosting
+        </span>
+        {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+      </button>
+      {open && (
+        <div className="mt-1 ml-4 pl-3 border-l border-border/50 space-y-0.5">
+          {hostingItems.map((item) => {
+            const active = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                to={item.href}
+                onClick={onNavigate}
+                className={`flex items-center gap-2 px-2.5 py-2 rounded-md text-xs font-medium transition-all ${
+                  active ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                }`}
+              >
+                <item.icon className="w-3.5 h-3.5" />
+                {item.label}
+              </Link>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

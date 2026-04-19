@@ -31,30 +31,38 @@ interface PricingPlansProps {
   category?: string; // Category for checkout URL (e.g., "games")
 }
 
+interface CheckoutTarget {
+  href: string;
+  external: boolean;
+}
+
 function generateCheckoutUrl(
-  plan: Plan, 
-  productSlug: string | undefined, 
+  plan: Plan,
+  productSlug: string | undefined,
   category?: string
-): string {
+): CheckoutTarget {
+  // 1. Custom WHMCS link from admin (highest priority — opens external)
+  if (plan.cta?.href) {
+    const isExternal = /^https?:\/\//i.test(plan.cta.href);
+    return { href: plan.cta.href, external: isExternal };
+  }
+
   const slug = plan.productSlug || productSlug;
   const billing = "monthly";
-  
-  if (plan.cta?.href) {
-    const url = new URL(plan.cta.href, window.location.origin);
-    url.searchParams.set("billing", billing);
-    return url.pathname + url.search;
-  }
-  
+
   if (slug && plan.id) {
     const categoryParam = category ? `category=${category}&` : "";
-    return `/checkout?${categoryParam}product=${slug}&plan=${plan.id}&billing=${billing}`;
+    return {
+      href: `/checkout?${categoryParam}product=${slug}&plan=${plan.id}&billing=${billing}`,
+      external: false,
+    };
   }
-  
+
   if (slug) {
-    return `/order?product=${slug}&billing=${billing}`;
+    return { href: `/order?product=${slug}&billing=${billing}`, external: false };
   }
-  
-  return "/contact";
+
+  return { href: "/contact", external: false };
 }
 
 export function PricingPlans({
@@ -128,16 +136,27 @@ export function PricingPlans({
                   ))}
                 </ul>
 
-                <Link
-                  to={generateCheckoutUrl(plan, productSlug, category)}
-                  className={`block w-full py-3 text-center rounded-lg font-medium transition-all ${
-                    plan.popular
-                      ? "btn-glow"
-                      : "btn-outline"
-                  }`}
-                >
-                  {plan.cta?.text || t("buttons.orderNow")}
-                </Link>
+                {(() => {
+                  const target = generateCheckoutUrl(plan, productSlug, category);
+                  const className = `block w-full py-3 text-center rounded-lg font-medium transition-all ${
+                    plan.popular ? "btn-glow" : "btn-outline"
+                  }`;
+                  const label = plan.cta?.text || t("buttons.orderNow");
+                  return target.external ? (
+                    <a
+                      href={target.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={className}
+                    >
+                      {label}
+                    </a>
+                  ) : (
+                    <Link to={target.href} className={className}>
+                      {label}
+                    </Link>
+                  );
+                })()}
               </motion.div>
             ))}
           </AnimatePresence>
