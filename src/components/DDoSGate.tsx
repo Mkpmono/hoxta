@@ -196,26 +196,37 @@ export function DDoSGate({ children }: { children: React.ReactNode }) {
     }
     setChecks((prev) => prev.map((c, j) => (j === 1 ? { ...c, status: "pass" } : c)));
 
-    // Steps 3-4: Browser checks
-    for (let i = 2; i < 4; i++) {
+    // Step 3: Rate limit check (auto-blocks if >60 req/min from this IP)
+    setChecks((prev) => prev.map((c, j) => (j === 2 ? { ...c, status: "running" } : c)));
+    const rl = await checkRateLimit(info.ip);
+    if (!rl.allowed) {
+      setChecks((prev) => prev.map((c, j) => (j === 2 ? { ...c, status: "fail" } : c)));
+      setPhase("blocked");
+      logVisitor(info, { isBot: true, reasons: ["rate-limit-exceeded"] });
+      return;
+    }
+    setChecks((prev) => prev.map((c, j) => (j === 2 ? { ...c, status: "pass" } : c)));
+
+    // Steps 4-5: Browser checks
+    for (let i = 3; i < 5; i++) {
       setChecks((prev) => prev.map((c, j) => (j === i ? { ...c, status: "running" } : c)));
       await new Promise((r) => setTimeout(r, 400 + Math.random() * 300));
       setChecks((prev) => prev.map((c, j) => (j === i ? { ...c, status: "pass" } : c)));
     }
 
-    // Step 5: Behavioral analysis
-    setChecks((prev) => prev.map((c, j) => (j === 4 ? { ...c, status: "running" } : c)));
+    // Step 6: Behavioral analysis
+    setChecks((prev) => prev.map((c, j) => (j === 5 ? { ...c, status: "running" } : c)));
     await new Promise((r) => setTimeout(r, 500));
     const botResult = detectSuspiciousBehavior();
 
     if (botResult.isBot) {
-      setChecks((prev) => prev.map((c, j) => (j === 4 ? { ...c, status: "fail" } : c)));
+      setChecks((prev) => prev.map((c, j) => (j === 5 ? { ...c, status: "fail" } : c)));
       setPhase("blocked");
       logVisitor(info, botResult);
       return;
     }
 
-    setChecks((prev) => prev.map((c, j) => (j === 4 ? { ...c, status: "pass" } : c)));
+    setChecks((prev) => prev.map((c, j) => (j === 5 ? { ...c, status: "pass" } : c)));
     setPhase("verified");
     logVisitor(info, { isBot: false, reasons: [] });
   }, []);
