@@ -27,7 +27,7 @@ export const brand = {
   },
 
   socials: {
-    discord: "https://discord.gg/hoxta",
+    discord: "https://discord.gg/ju7ADq4ZqY",
     twitter: "https://twitter.com/hoxta",
     github: "https://github.com/hoxta",
     youtube: "https://youtube.com/@hoxta",

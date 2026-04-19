@@ -67,7 +67,7 @@ export function LiveChatButton() {
                     <p className="text-xs text-muted-foreground">support@hoxta.com</p>
                   </div>
                 </a>
-                <a href="https://discord.gg/hoxta" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 rounded-xl bg-muted/30 hover:bg-muted/60 transition-colors group">
+                <a href="https://discord.gg/ju7ADq4ZqY" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 rounded-xl bg-muted/30 hover:bg-muted/60 transition-colors group">
                   <span className="w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center text-base">💬</span>
                   <div>
                     <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">Discord</p>
