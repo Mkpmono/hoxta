@@ -22,6 +22,7 @@ import {
   Bot,
   Mic,
   Package,
+  MessageCircle,
 } from "lucide-react";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 
@@ -46,6 +47,7 @@ const adminNavItems = [
   { icon: Languages, label: "Traduceri Site", href: "/admin/translations" },
   { icon: Activity, label: "Status Monitors", href: "/admin/status" },
   { icon: ShieldCheck, label: "DDoS & Visitors", href: "/admin/visitors" },
+  { icon: MessageCircle, label: "Chat & Support", href: "/admin/support" },
 ];
 
 export function AdminLayout({ children }: AdminLayoutProps) {
