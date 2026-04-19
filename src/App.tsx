@@ -53,7 +53,6 @@ import { DiscountPopup } from "@/components/DiscountPopup";
 import { DDoSGate } from "@/components/DDoSGate";
 import { CookieConsent } from "@/components/CookieConsent";
 import { LiveChatButton } from "@/components/LiveChatButton";
-import { ChatwootWidget } from "@/components/ChatwootWidget";
 
 const queryClient = new QueryClient();
 
@@ -66,7 +65,6 @@ const App = () => (
         <DiscountPopup />
         <BrowserRouter>
         <CookieConsent />
-        <ChatwootWidget />
         <LiveChatButton />
         <ScrollToTop />
         <DDoSGate>

@@ -1,7 +1,6 @@
 import { useState, forwardRef } from "react";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { openChatwoot } from "@/components/ChatwootWidget";
 
 const ChatIcon = forwardRef<SVGSVGElement, { className?: string }>(({ className }, ref) => {
   return (
@@ -61,30 +60,6 @@ export function LiveChatButton() {
                 <p className="text-sm text-muted-foreground mt-1">How can we help you today? Our team is here for you.</p>
               </div>
               <div className="space-y-2">
-                <button
-                  onClick={() => {
-                    const opened = openChatwoot();
-                    if (!opened) {
-                      // SDK not yet loaded — retry shortly
-                      setTimeout(() => {
-                        if (!openChatwoot()) {
-                          alert("Live chat is still loading. Please try again in a moment.");
-                        }
-                      }, 800);
-                    }
-                    setOpen(false);
-                  }}
-                  className="w-full flex items-center gap-3 p-3 rounded-xl bg-primary/10 hover:bg-primary/20 transition-colors group text-left"
-                >
-                  <span className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary">
-                    <ChatIcon className="w-4 h-4" />
-                  </span>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">Live Chat</p>
-                    <p className="text-xs text-muted-foreground">Chat with us now</p>
-                  </div>
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                </button>
                 <a href="mailto:support@hoxta.com" className="flex items-center gap-3 p-3 rounded-xl bg-muted/30 hover:bg-muted/60 transition-colors group">
                   <span className="w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center text-base">✉️</span>
                   <div>
