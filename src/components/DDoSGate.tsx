@@ -131,7 +131,12 @@ const initialChecks: CheckItem[] = [
 ];
 
 export function DDoSGate({ children }: { children: React.ReactNode }) {
-  const [passed, setPassed] = useState(() => isVerified());
+  // Bypass entirely for legitimate SEO/search engine bots — let them index freely
+  const isSEOBot = typeof navigator !== "undefined" && isLegitimateSEOBot();
+  const [passed, setPassed] = useState(() => isSEOBot || isVerified());
+
+  if (isSEOBot) return <>{children}</>;
+
   const [phase, setPhase] = useState<"checking" | "verified" | "blocked">("checking");
   const [checks, setChecks] = useState<CheckItem[]>(initialChecks);
   const [countdown, setCountdown] = useState(3);
