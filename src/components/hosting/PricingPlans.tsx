@@ -159,6 +159,15 @@ export function PricingPlans({
                     </Link>
                   );
                 })()}
+
+                {detailsBasePath && plan.id && (
+                  <Link
+                    to={`${detailsBasePath}/${plan.id}`}
+                    className="mt-3 block text-center text-sm text-primary hover:underline"
+                  >
+                    View details →
+                  </Link>
+                )}
               </motion.div>
             ))}
           </AnimatePresence>
