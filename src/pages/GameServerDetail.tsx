@@ -52,7 +52,8 @@ export default function GameServerDetail() {
     plans: dbGame.plans || [],
     faqs: dbGame.faqs || [],
     heroPoints: dbGame.hero_points || [],
-  } : staticGame;
+    whmcsUrl: dbGame.whmcs_url || null,
+  } : (staticGame ? { ...staticGame, whmcsUrl: null as string | null } : undefined);
 
   if (!game) {
     return <Navigate to="/game-servers" replace />;
@@ -75,16 +76,21 @@ export default function GameServerDetail() {
           value: typeof f.value === "boolean" ? f.value : String(f.value),
         })),
       }))
-    : (game.plans || []).map((p: any, i: number) => ({
-        id: `${game.slug}-plan-${i}`,
-        productSlug: game.slug,
-        name: p.name || `Plan ${i + 1}`,
-        description: p.ram ? `${p.ram} RAM` : undefined,
-        monthlyPrice: p.price || 0,
-        yearlyPrice: (p.price || 0) * 10,
-        popular: p.popular || false,
-        features: (p.features || []).map((f: string) => ({ label: f, value: true })),
-      }));
+    : (game.plans || []).map((p: any, i: number) => {
+        const orderUrl = (p.order_url && String(p.order_url).trim()) || (game as any).whmcsUrl || "";
+        const cta = orderUrl ? { text: "Order Now", href: orderUrl } : undefined;
+        return {
+          id: `${game.slug}-plan-${i}`,
+          productSlug: game.slug,
+          name: p.name || `Plan ${i + 1}`,
+          description: p.ram ? `${p.ram} RAM` : undefined,
+          monthlyPrice: p.price || 0,
+          yearlyPrice: (p.price || 0) * 10,
+          popular: p.popular || false,
+          features: (p.features || []).map((f: string) => ({ label: f, value: true })),
+          cta,
+        };
+      });
 
   // Build feature grid from game features
   const featureIcons = [Settings, Shield, HardDrive, Clock, Zap, Globe, Server, Check];
