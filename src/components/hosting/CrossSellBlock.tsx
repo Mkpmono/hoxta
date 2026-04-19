@@ -56,7 +56,7 @@ export const CrossSellBlock = forwardRef<HTMLElement, CrossSellBlockProps>(funct
 
               {/* Benefits */}
               <ul className="flex flex-wrap justify-center lg:justify-start gap-x-6 gap-y-2 mb-6">
-                {benefits.map((benefit, index) => (
+                {(Array.isArray(benefits) ? benefits : []).map((benefit, index) => (
                   <li
                     key={benefit}
                     className="flex items-center gap-2 text-sm text-muted-foreground"
