@@ -41,7 +41,7 @@ export function ChatwootWidget() {
       position: "right",
       locale: "en",
       type: "standard",
-      darkMode: "auto", // "light" | "dark" | "auto" — follows site/browser theme
+      darkMode: "dark", // forțat dark ca să se asorteze cu tema site-ului
     };
 
     const script = document.createElement("script");
