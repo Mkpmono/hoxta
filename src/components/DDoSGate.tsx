@@ -20,7 +20,7 @@ interface ClientInfo {
 
 function isVerified(): boolean {
   try {
-    const raw = sessionStorage.getItem(VERIFICATION_KEY);
+    const raw = localStorage.getItem(VERIFICATION_KEY) || sessionStorage.getItem(VERIFICATION_KEY);
     if (!raw) return false;
     const { ts } = JSON.parse(raw);
     return Date.now() - ts < VERIFICATION_TTL_MS;
@@ -30,7 +30,9 @@ function isVerified(): boolean {
 }
 
 function markVerified() {
-  sessionStorage.setItem(VERIFICATION_KEY, JSON.stringify({ ts: Date.now() }));
+  const payload = JSON.stringify({ ts: Date.now() });
+  try { localStorage.setItem(VERIFICATION_KEY, payload); } catch { /* ignore */ }
+  try { sessionStorage.setItem(VERIFICATION_KEY, payload); } catch { /* ignore */ }
 }
 
 function getCanvasFingerprint(): string {
