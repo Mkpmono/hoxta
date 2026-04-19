@@ -136,16 +136,27 @@ export function PricingPlans({
                   ))}
                 </ul>
 
-                <Link
-                  to={generateCheckoutUrl(plan, productSlug, category)}
-                  className={`block w-full py-3 text-center rounded-lg font-medium transition-all ${
-                    plan.popular
-                      ? "btn-glow"
-                      : "btn-outline"
-                  }`}
-                >
-                  {plan.cta?.text || t("buttons.orderNow")}
-                </Link>
+                {(() => {
+                  const target = generateCheckoutUrl(plan, productSlug, category);
+                  const className = `block w-full py-3 text-center rounded-lg font-medium transition-all ${
+                    plan.popular ? "btn-glow" : "btn-outline"
+                  }`;
+                  const label = plan.cta?.text || t("buttons.orderNow");
+                  return target.external ? (
+                    <a
+                      href={target.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={className}
+                    >
+                      {label}
+                    </a>
+                  ) : (
+                    <Link to={target.href} className={className}>
+                      {label}
+                    </Link>
+                  );
+                })()}
               </motion.div>
             ))}
           </AnimatePresence>
