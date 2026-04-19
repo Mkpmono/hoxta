@@ -29,6 +29,7 @@ interface PricingPlansProps {
   plans: Plan[];
   productSlug?: string; // Default product slug if not set on individual plans
   category?: string; // Category for checkout URL (e.g., "games")
+  detailsBasePath?: string; // If set, shows a "View details" link to `${detailsBasePath}/${plan.id}`
 }
 
 interface CheckoutTarget {
@@ -71,6 +72,7 @@ export function PricingPlans({
   plans,
   productSlug,
   category,
+  detailsBasePath,
 }: PricingPlansProps) {
   const { t } = useTranslation();
 
@@ -157,6 +159,15 @@ export function PricingPlans({
                     </Link>
                   );
                 })()}
+
+                {detailsBasePath && plan.id && (
+                  <Link
+                    to={`${detailsBasePath}/${plan.id}`}
+                    className="mt-3 block text-center text-sm text-primary hover:underline"
+                  >
+                    View details →
+                  </Link>
+                )}
               </motion.div>
             ))}
           </AnimatePresence>

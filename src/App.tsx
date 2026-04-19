@@ -7,6 +7,7 @@ import { AdminAuthProvider } from "@/contexts/AdminAuthContext";
 import { AdminProtectedRoute } from "@/components/auth/AdminProtectedRoute";
 import Index from "./pages/Index";
 import WebHosting from "./pages/WebHosting";
+import HostingPlanDetail from "./pages/HostingPlanDetail";
 import ResellerHosting from "./pages/ResellerHosting";
 import GameServers from "./pages/GameServers";
 import GameServerDetail from "./pages/GameServerDetail";
@@ -75,6 +76,7 @@ const App = () => (
             {/* Public Routes */}
             <Route path="/" element={<Index />} />
             <Route path="/web-hosting" element={<WebHosting />} />
+            <Route path="/web-hosting/:slug" element={<HostingPlanDetail category="web-hosting" backHref="/web-hosting" backLabel="Back to Web Hosting" />} />
             <Route path="/reseller-hosting" element={<ResellerHosting />} />
             <Route path="/game-servers" element={<GameServers />} />
             <Route path="/game-servers/:gameSlug" element={<GameServerDetail />} />
