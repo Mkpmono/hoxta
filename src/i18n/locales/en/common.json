@@ -1123,6 +1123,142 @@
     }
   },
   "ddos": {
+    "hero": {
+      "badge": "Enterprise DDoS Protection",
+      "titleStart": "Stop Attacks.",
+      "titleHighlight": "Stay Online.",
+      "subtitle": "Powerful DDoS protection that keeps your services running. Always-on mitigation with zero slowdown and real-time threat alerts.",
+      "ctaProtected": "Get Protected",
+      "ctaEngineer": "Talk to an Engineer",
+      "badgeCapacity": "400+ Gbps Capacity",
+      "badgeSoc": "24/7 SOC",
+      "badgeMitigation": "<10s Mitigation"
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "subtitle": "Our 5-step process stops L3/L4/L7 attacks before they reach you.",
+      "step1Title": "Detection",
+      "step1Desc": "We analyze your traffic in real-time to spot threats instantly.",
+      "step2Title": "Classification",
+      "step2Desc": "Attack types are identified and sorted within milliseconds.",
+      "step3Title": "Scrubbing",
+      "step3Desc": "Bad traffic is filtered at the edge before it reaches your server.",
+      "step4Title": "Clean Pipe",
+      "step4Desc": "Only legitimate traffic gets through to your infrastructure.",
+      "step5Title": "Reporting",
+      "step5Desc": "Get full attack analytics and insights in real-time."
+    },
+    "tabs": {
+      "title": "Multi-Layer Protection",
+      "subtitle": "Comprehensive defense across all attack vectors with specialized protection at every layer.",
+      "features": "Features",
+      "attacksBlocked": "Attacks Blocked",
+      "bestFor": "Best For",
+      "labels": {
+        "l3l4": "L3/L4",
+        "l7": "L7",
+        "bot": "Bot Mitigation",
+        "waf": "WAF/Rules",
+        "rate": "Rate Limiting"
+      },
+      "bestForText": {
+        "l3l4": "Network infrastructure & game servers",
+        "l7": "Web applications & APIs",
+        "bot": "E-commerce & login pages",
+        "waf": "Sensitive applications & compliance",
+        "rate": "APIs & authentication endpoints"
+      }
+    },
+    "monitoring": {
+      "title": "Live Attack Dashboard",
+      "subtitle": "Real-time visibility into threats and mitigation status across your protected infrastructure.",
+      "allProtected": "All Systems Protected",
+      "lastUpdated": "Last updated: Just now",
+      "attacksMitigated": "Attacks Mitigated",
+      "fromLastWeek": "+23% from last week",
+      "peakBandwidth": "Peak Bandwidth",
+      "largestToday": "Largest attack today",
+      "avgMitigation": "Avg Mitigation",
+      "timeToMitigate": "Time to mitigate",
+      "activePops": "Active POPs",
+      "scrubbingCenters": "Scrubbing centers",
+      "topVectors": "Top Attack Vectors",
+      "trafficLast24": "Traffic (Last 24h)",
+      "totalClean": "Total Clean",
+      "totalBlocked": "Total Blocked",
+      "uptime": "Uptime",
+      "attackOrigins": "Attack Origins"
+    },
+    "useCases": {
+      "title": "Protection for Every Use Case",
+      "subtitle": "From game servers to enterprise infrastructure, we've got you covered.",
+      "pain": "Pain",
+      "solution": "Solution",
+      "outcome": "Outcome",
+      "items": {
+        "games": {
+          "title": "Game Servers",
+          "pain": "Players experience lag and disconnects during attacks",
+          "solution": "Sub-10ms mitigation keeps gameplay smooth",
+          "outcome": "Zero downtime, happy players"
+        },
+        "web": {
+          "title": "Web Applications",
+          "pain": "Sites become unavailable during HTTP floods",
+          "solution": "L7 protection filters malicious requests",
+          "outcome": "Consistent uptime and performance"
+        },
+        "api": {
+          "title": "APIs",
+          "pain": "Rate-limited by attackers, not by design",
+          "solution": "Intelligent rate limiting and bot detection",
+          "outcome": "APIs remain responsive for real users"
+        },
+        "voip": {
+          "title": "VoIP Services",
+          "pain": "Call quality degrades under SIP floods",
+          "solution": "Protocol-aware mitigation for VoIP traffic",
+          "outcome": "Crystal-clear calls, no interruptions"
+        },
+        "vpn": {
+          "title": "Corporate VPN",
+          "pain": "Remote workers can't connect during attacks",
+          "solution": "Always-on protection for VPN endpoints",
+          "outcome": "Secure, reliable remote access"
+        },
+        "ecommerce": {
+          "title": "E-commerce",
+          "pain": "Revenue lost during checkout attacks",
+          "solution": "Bot mitigation protects transactions",
+          "outcome": "Secure shopping, maximized revenue"
+        }
+      }
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "subtitle": "Everything you need to know about our DDoS protection services.",
+      "items": [
+        { "q": "What is the difference between L3/L4 and L7 DDoS protection?", "a": "L3/L4 protection handles volumetric attacks targeting the network and transport layers (like SYN floods, UDP amplification). L7 protection focuses on application-layer attacks (like HTTP floods, Slowloris) that try to exhaust server resources. For complete coverage, we recommend both." },
+        { "q": "Do you support game-specific DDoS protection?", "a": "Yes! Our game server protection is optimized for popular titles including Minecraft, FiveM, Rust, ARK, and more. We use protocol-aware filtering that understands game traffic patterns to minimize false positives while blocking attacks." },
+        { "q": "Will DDoS mitigation add latency to my traffic?", "a": "Our always-on mitigation adds less than 1ms of latency in normal conditions. During active attacks, clean traffic is routed through our nearest scrubbing center with minimal impact. Most users experience no noticeable difference." },
+        { "q": "How do I onboard my infrastructure?", "a": "Onboarding is simple: 1) Sign up and configure your protected IPs in our dashboard. 2) Update your DNS or BGP routing to point to our network. 3) We'll provision your protection within minutes. Our team can assist with complex setups." },
+        { "q": "Do I need to change my DNS records?", "a": "For most setups, yes—you'll point your DNS to our protected IPs. For larger deployments, we support BGP-based routing where you announce your prefixes through our network. We provide detailed migration guides for both methods." },
+        { "q": "What kind of reports and analytics do I get?", "a": "You get real-time dashboards showing traffic patterns, attack vectors, blocked threats, and bandwidth usage. Historical reports are available for compliance. Enterprise plans include custom reporting and API access for integration with your monitoring tools." },
+        { "q": "Can I protect multiple IPs or entire subnets?", "a": "Absolutely. Standard plans protect 1 IP, Advanced protects 5 IPs, and Enterprise supports unlimited IPs including full /24 subnets or larger. Contact us for custom configurations covering your entire infrastructure." },
+        { "q": "What happens during a large-scale attack?", "a": "Our network automatically scales to absorb attacks up to 500+ Gbps. Traffic is distributed across multiple scrubbing centers. Enterprise customers have access to our 24/7 SOC team who actively monitor and tune mitigation in real-time." },
+        { "q": "Is there a money-back guarantee?", "a": "Yes, we offer a 30-day money-back guarantee on all plans. If you're not satisfied with our protection, contact support within 30 days for a full refund—no questions asked." },
+        { "q": "How quickly can I get started?", "a": "Protection can be active within minutes of signup. Simply configure your IPs in our dashboard, update your DNS, and you're protected. For complex enterprise setups, our onboarding team typically completes deployment within 24 hours." }
+      ]
+    },
+    "finalCta": {
+      "title": "Ready to Stop Downtime?",
+      "subtitle": "Thousands of businesses trust Hoxta to keep them online. Get protected in minutes with always-on DDoS mitigation.",
+      "ctaStart": "Start Now",
+      "ctaQuote": "Request a Quote",
+      "moneyBack": "30-Day Money Back",
+      "instantActivation": "Instant Activation",
+      "expertSupport": "24/7 Expert Support"
+    },
     "infrastructure": {
       "title": "Global Network & SLA",
       "subtitle": "Enterprise-grade infrastructure with guaranteed performance and reliability.",
