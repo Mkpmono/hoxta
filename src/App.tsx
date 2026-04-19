@@ -7,6 +7,7 @@ import { AdminAuthProvider } from "@/contexts/AdminAuthContext";
 import { AdminProtectedRoute } from "@/components/auth/AdminProtectedRoute";
 import Index from "./pages/Index";
 import WebHosting from "./pages/WebHosting";
+import HostingPlanDetail from "./pages/HostingPlanDetail";
 import ResellerHosting from "./pages/ResellerHosting";
 import GameServers from "./pages/GameServers";
 import GameServerDetail from "./pages/GameServerDetail";
