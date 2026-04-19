@@ -97,6 +97,8 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
           {/* Navigation */}
           <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+            <HostingPlansGroup pathname={location.pathname} onNavigate={() => setSidebarOpen(false)} />
+            <div className="h-px bg-border/50 my-2" />
             {adminNavItems.map((item) => {
               const isActive = location.pathname === item.href;
               return (
