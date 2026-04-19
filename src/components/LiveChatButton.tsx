@@ -1,7 +1,6 @@
 import { useState, forwardRef } from "react";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { openChatwoot } from "@/components/ChatwootWidget";
 
 const ChatIcon = forwardRef<SVGSVGElement, { className?: string }>(({ className }, ref) => {
   return (
