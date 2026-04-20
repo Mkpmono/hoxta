@@ -61,9 +61,7 @@ export function LiveChatScript() {
       };
 
       if (w.$chatwoot?.toggle) {
-        bubbleStyle?.remove();
-        bubbleStyle = null;
-        w.$chatwoot.toggleBubbleVisibility?.("show");
+        w.$chatwoot.toggleBubbleVisibility?.("hide");
         w.$chatwoot.toggle("open");
         w.__hoxtaPendingChatwootOpen = false;
       }
