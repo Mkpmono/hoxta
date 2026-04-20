@@ -2,7 +2,7 @@ import { useState, forwardRef } from "react";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSupportSettings } from "@/hooks/useSupportSettings";
-import { isChatwootScript, openEmbeddedLiveChat } from "@/lib/liveChat";
+import { openEmbeddedLiveChat } from "@/lib/liveChat";
 
 const ChatIcon = forwardRef<SVGSVGElement, { className?: string }>(({ className }, ref) => {
   return (
@@ -35,9 +35,8 @@ export function LiveChatButton() {
   const emailEnabled = !!settings?.email_enabled && !!settings?.email_address;
   const liveChatEnabled = !!settings?.live_chat_enabled && !!settings?.live_chat_embed_script?.trim();
   const liveChatLabel = settings?.live_chat_label || "Live Chat";
-  const usesNativeChatwootBubble = liveChatEnabled && isChatwootScript(settings?.live_chat_embed_script || "");
 
-  if (usesNativeChatwootBubble || (!discordEnabled && !emailEnabled && !liveChatEnabled)) return null;
+  if (!discordEnabled && !emailEnabled && !liveChatEnabled) return null;
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
