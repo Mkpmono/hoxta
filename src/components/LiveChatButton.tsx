@@ -2,6 +2,7 @@ import { useState, forwardRef } from "react";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSupportSettings } from "@/hooks/useSupportSettings";
+import { openEmbeddedLiveChat } from "@/lib/liveChat";
 
 const ChatIcon = forwardRef<SVGSVGElement, { className?: string }>(({ className }, ref) => {
   return (
@@ -72,18 +73,7 @@ export function LiveChatButton() {
                 {liveChatEnabled && (
                   <button
                     onClick={() => {
-                      const w = window as unknown as {
-                        Tawk_API?: { maximize?: () => void };
-                        $crisp?: unknown[];
-                        tidioChatApi?: { open?: () => void };
-                        $chatwoot?: { toggle?: (s: string) => void };
-                        Intercom?: (cmd: string) => void;
-                      };
-                      if (w.Tawk_API?.maximize) w.Tawk_API.maximize();
-                      else if (Array.isArray(w.$crisp)) w.$crisp.push(["do", "chat:open"]);
-                      else if (w.tidioChatApi?.open) w.tidioChatApi.open();
-                      else if (w.$chatwoot?.toggle) w.$chatwoot.toggle("open");
-                      else if (w.Intercom) w.Intercom("show");
+                      openEmbeddedLiveChat(settings?.live_chat_embed_script || "");
                       setOpen(false);
                     }}
                     className="w-full flex items-center gap-3 p-3 rounded-xl bg-primary/10 hover:bg-primary/20 transition-colors group text-left"
