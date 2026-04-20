@@ -9,7 +9,11 @@ type LiveChatWindow = Window & typeof globalThis & {
   Tawk_API?: { maximize?: () => void };
   $crisp?: unknown[];
   tidioChatApi?: { open?: () => void };
-  $chatwoot?: { toggle?: (state?: "open" | "close") => void; popoutChatWindow?: () => void };
+  $chatwoot?: {
+    toggle?: (state?: "open" | "close") => void;
+    popoutChatWindow?: () => void;
+    toggleBubbleVisibility?: (state?: "hide" | "show") => void;
+  };
   Intercom?: (command: string) => void;
   __hoxtaPendingChatwootOpen?: boolean;
 };
@@ -62,7 +66,7 @@ export function openEmbeddedLiveChat(script: string) {
   }
 
   if (w.$chatwoot?.toggle) {
-    w.$chatwoot.toggle("open");
+    window.dispatchEvent(new CustomEvent("hoxta:open-live-chat"));
     return true;
   }
 
