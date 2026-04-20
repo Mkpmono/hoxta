@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useSupportSettings } from "@/hooks/useSupportSettings";
+import { isChatwootScript, normalizeLiveChatScript } from "@/lib/liveChat";
 
 /**
  * Injects the user-defined live chat embed script (Tawk.to, Crisp, Tidio, Chatwoot, etc.)
@@ -7,7 +8,7 @@ import { useSupportSettings } from "@/hooks/useSupportSettings";
  */
 export function LiveChatScript() {
   const { data } = useSupportSettings();
-  const script = data?.live_chat_embed_script?.trim() || "";
+  const script = normalizeLiveChatScript(data?.live_chat_embed_script?.trim() || "");
   const enabled = !!data?.live_chat_enabled && script.length > 0;
 
   useEffect(() => {
@@ -31,7 +32,34 @@ export function LiveChatScript() {
     });
     nodes.forEach((n) => container.appendChild(n));
     document.body.appendChild(container);
+
+    const onOpenLiveChat = () => {
+      const w = window as Window & typeof globalThis & {
+        $chatwoot?: { toggle?: (state?: "open" | "close") => void };
+        __hoxtaPendingChatwootOpen?: boolean;
+      };
+
+      if (w.$chatwoot?.toggle) {
+        w.$chatwoot.toggle("open");
+        w.__hoxtaPendingChatwootOpen = false;
+      }
+    };
+
+    const onChatwootReady = () => {
+      const w = window as Window & typeof globalThis & { __hoxtaPendingChatwootOpen?: boolean };
+      if (w.__hoxtaPendingChatwootOpen) onOpenLiveChat();
+    };
+
+    if (isChatwootScript(script)) {
+      window.addEventListener("hoxta:open-live-chat", onOpenLiveChat);
+      window.addEventListener("chatwoot:ready", onChatwootReady);
+    }
+
     return () => {
+      if (isChatwootScript(script)) {
+        window.removeEventListener("hoxta:open-live-chat", onOpenLiveChat);
+        window.removeEventListener("chatwoot:ready", onChatwootReady);
+      }
       container.remove();
     };
   }, [enabled, script]);
