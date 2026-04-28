@@ -98,6 +98,48 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_messages: {
+        Row: {
+          created_at: string
+          email: string
+          email_error: string | null
+          email_sent: boolean
+          id: string
+          ip_address: string | null
+          message: string
+          name: string
+          status: string
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          email_error?: string | null
+          email_sent?: boolean
+          id?: string
+          ip_address?: string | null
+          message: string
+          name: string
+          status?: string
+          subject?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          email_error?: string | null
+          email_sent?: boolean
+          id?: string
+          ip_address?: string | null
+          message?: string
+          name?: string
+          status?: string
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       custom_services: {
         Row: {
           category: string
@@ -157,6 +199,33 @@ export type Database = {
           sort_order?: number | null
           tags?: string[] | null
           translations?: Json | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      editable_pages: {
+        Row: {
+          content: Json
+          created_at: string
+          id: string
+          slug: string
+          translations: Json
+          updated_at: string
+        }
+        Insert: {
+          content?: Json
+          created_at?: string
+          id?: string
+          slug: string
+          translations?: Json
+          updated_at?: string
+        }
+        Update: {
+          content?: Json
+          created_at?: string
+          id?: string
+          slug?: string
+          translations?: Json
           updated_at?: string
         }
         Relationships: []
