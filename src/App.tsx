@@ -128,6 +128,10 @@ const App = () => (
             <Route path="/admin/hosting/teamspeak" element={<AdminProtectedRoute><TeamSpeakAdmin /></AdminProtectedRoute>} />
             <Route path="/admin/hosting/colocation" element={<AdminProtectedRoute><ColocationAdmin /></AdminProtectedRoute>} />
             <Route path="/admin/support" element={<AdminProtectedRoute><SupportSettingsAdmin /></AdminProtectedRoute>} />
+            <Route path="/admin/services" element={<AdminProtectedRoute><CustomServicesAdmin /></AdminProtectedRoute>} />
+
+            {/* Dynamic Custom Service pages */}
+            <Route path="/services/:slug" element={<CustomServicePage />} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
