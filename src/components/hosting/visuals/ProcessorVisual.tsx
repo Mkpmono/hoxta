@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
-import intelLogo from "@/assets/cpu/intel.png";
-import amdLogo from "@/assets/cpu/amd.png";
+import { IntelLogo, AmdLogo } from "../CpuLogos";
 
 export function ProcessorVisual() {
   const cores = Array.from({ length: 12 }, (_, i) => ({
@@ -16,8 +15,8 @@ export function ProcessorVisual() {
         {/* CPU selector */}
         <div className="grid grid-cols-2 gap-3">
           {[
-            { name: "Intel Xeon", model: "E-2388G", cores: "8C/16T", ghz: "3.2 GHz", logo: intelLogo, alt: "Intel" },
-            { name: "AMD EPYC", model: "9454", cores: "48C/96T", ghz: "2.75 GHz", logo: amdLogo, alt: "AMD" },
+            { name: "Intel Xeon", model: "E-2388G", cores: "8C/16T", ghz: "3.2 GHz", Logo: IntelLogo },
+            { name: "AMD EPYC", model: "9454", cores: "48C/96T", ghz: "2.75 GHz", Logo: AmdLogo },
           ].map((cpu, i) => (
             <motion.div
               key={cpu.name}
@@ -28,7 +27,7 @@ export function ProcessorVisual() {
               className={`rounded-xl border p-3 ${i === 0 ? "border-primary/30 bg-primary/5" : "border-border/40 bg-background/60"}`}
             >
               <div className="flex items-center gap-2 mb-1">
-                <img src={cpu.logo} alt={cpu.alt} className="h-4 w-auto object-contain opacity-90" draggable={false} />
+                <cpu.Logo className="h-4 w-auto text-primary opacity-90" />
                 <span className="text-xs font-semibold text-foreground">{cpu.name}</span>
               </div>
               <div className="text-[10px] text-muted-foreground">{cpu.model}</div>
