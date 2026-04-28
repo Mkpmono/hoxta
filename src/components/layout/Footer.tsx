@@ -32,6 +32,9 @@ const paymentMethods = [
 export const Footer = forwardRef<HTMLElement>(function Footer(_props, ref) {
   const { t } = useTranslation();
   const { data: supportSettings } = useSupportSettings();
+  const { termsUrl, termsLabel, privacyUrl, privacyLabel } = useSiteSettings();
+  const termsExternal = /^https?:\/\//i.test(termsUrl);
+  const privacyExternal = /^https?:\/\//i.test(privacyUrl);
   const year = new Date().getFullYear();
 
   return (
@@ -99,8 +102,16 @@ export const Footer = forwardRef<HTMLElement>(function Footer(_props, ref) {
             <div className="space-y-3 text-sm">
               <Link to="/knowledge-base" className="block text-muted-foreground transition-colors hover:text-primary">{t("footer.knowledgeBase")}</Link>
               <Link to="/status" className="block text-muted-foreground transition-colors hover:text-primary">{t("footer.serverStatus")}</Link>
-              <Link to="/terms" className="block text-muted-foreground transition-colors hover:text-primary">{t("footer.termsOfService")}</Link>
-              <Link to="/privacy" className="block text-muted-foreground transition-colors hover:text-primary">{t("footer.privacyPolicy")}</Link>
+              {termsExternal ? (
+                <a href={termsUrl} target="_blank" rel="noopener noreferrer" className="block text-muted-foreground transition-colors hover:text-primary">{termsLabel}</a>
+              ) : (
+                <Link to={termsUrl} className="block text-muted-foreground transition-colors hover:text-primary">{termsLabel}</Link>
+              )}
+              {privacyExternal ? (
+                <a href={privacyUrl} target="_blank" rel="noopener noreferrer" className="block text-muted-foreground transition-colors hover:text-primary">{privacyLabel}</a>
+              ) : (
+                <Link to={privacyUrl} className="block text-muted-foreground transition-colors hover:text-primary">{privacyLabel}</Link>
+              )}
             </div>
 
             <div className="mt-5 flex items-center gap-3">
