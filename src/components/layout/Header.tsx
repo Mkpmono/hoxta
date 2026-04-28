@@ -1,28 +1,38 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Globe, Server, Gamepad2, HardDrive, LifeBuoy, X, Menu } from "lucide-react";
+import { ChevronDown, Globe, Server, Gamepad2, HardDrive, LifeBuoy, X, Menu, Sparkles } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { HoxtaLogo } from "@/components/HoxtaLogo";
+import { useCustomServices } from "@/hooks/useCustomServices";
 
 interface DropdownItem {
   titleKey: string;
   subtitleKey: string;
   icon: React.ReactNode;
   href: string;
+  raw?: { title?: string; subtitle?: string };
 }
 
 interface MenuItemProps {
   labelKey: string;
+  groupKey?: string;
   items?: DropdownItem[];
   href?: string;
 }
 
-const menuItems: MenuItemProps[] = [
+function resolveLucideIcon(name?: string | null) {
+  const Icon = (name && (LucideIcons as any)[name]) || Sparkles;
+  return <Icon className="w-5 h-5" />;
+}
+
+const baseMenuItems: MenuItemProps[] = [
   { labelKey: "nav.home", href: "/" },
   {
     labelKey: "nav.web",
+    groupKey: "web",
     items: [
       { titleKey: "nav.webHosting", subtitleKey: "nav.webHostingDesc", icon: <Globe className="w-5 h-5" />, href: "/web-hosting" },
       { titleKey: "nav.resellerHosting", subtitleKey: "nav.resellerHostingDesc", icon: <Server className="w-5 h-5" />, href: "/reseller-hosting" },
@@ -31,6 +41,7 @@ const menuItems: MenuItemProps[] = [
   },
   {
     labelKey: "nav.games",
+    groupKey: "games",
     items: [
       { titleKey: "nav.allGames", subtitleKey: "nav.allGamesDesc", icon: <Gamepad2 className="w-5 h-5" />, href: "/game-servers" },
       { titleKey: "games.minecraft", subtitleKey: "games.minecraftDesc", icon: <Gamepad2 className="w-5 h-5" />, href: "/game-servers/minecraft" },
@@ -42,6 +53,7 @@ const menuItems: MenuItemProps[] = [
   },
   {
     labelKey: "nav.server",
+    groupKey: "server",
     items: [
       { titleKey: "nav.vpsHosting", subtitleKey: "nav.vpsHostingDesc", icon: <HardDrive className="w-5 h-5" />, href: "/vps" },
       { titleKey: "nav.dedicatedServer", subtitleKey: "nav.dedicatedServerDesc", icon: <Server className="w-5 h-5" />, href: "/dedicated" },
@@ -49,6 +61,7 @@ const menuItems: MenuItemProps[] = [
   },
   {
     labelKey: "nav.moreHosting",
+    groupKey: "moreHosting",
     items: [
       { titleKey: "nav.discordBot", subtitleKey: "nav.discordBotDesc", icon: <Server className="w-5 h-5" />, href: "/discord-bot" },
       { titleKey: "nav.teamspeak", subtitleKey: "nav.teamspeakDesc", icon: <Server className="w-5 h-5" />, href: "/teamspeak" },
@@ -57,6 +70,7 @@ const menuItems: MenuItemProps[] = [
   },
   {
     labelKey: "nav.helpInfo",
+    groupKey: "helpInfo",
     items: [
       { titleKey: "nav.aboutUs", subtitleKey: "nav.aboutUsDesc", icon: <LifeBuoy className="w-5 h-5" />, href: "/about" },
       { titleKey: "nav.contactUs", subtitleKey: "nav.contactUsDesc", icon: <LifeBuoy className="w-5 h-5" />, href: "/contact" },
@@ -73,6 +87,36 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const headerRef = useRef<HTMLElement>(null);
+  const { services: customServices } = useCustomServices({ onlyMenu: true });
+
+  const menuItems = useMemo<MenuItemProps[]>(() => {
+    if (!customServices.length) return baseMenuItems;
+    const byGroup = new Map<string, DropdownItem[]>();
+    const standalone: MenuItemProps[] = [];
+    for (const s of customServices) {
+      const item: DropdownItem = {
+        titleKey: s.menu_label || s.name,
+        subtitleKey: s.menu_description || s.short_description || "",
+        icon: resolveLucideIcon(s.menu_icon),
+        href: `/services/${s.slug}`,
+        raw: { title: s.menu_label || s.name, subtitle: s.menu_description || s.short_description || "" },
+      };
+      const grp = s.menu_group || "more";
+      if (grp === "more") {
+        standalone.push({ labelKey: s.menu_label || s.name, href: `/services/${s.slug}` });
+      } else {
+        if (!byGroup.has(grp)) byGroup.set(grp, []);
+        byGroup.get(grp)!.push(item);
+      }
+    }
+    const merged = baseMenuItems.map((mi) => {
+      if (mi.groupKey && byGroup.has(mi.groupKey) && mi.items) {
+        return { ...mi, items: [...mi.items, ...byGroup.get(mi.groupKey)!] };
+      }
+      return mi;
+    });
+    return [...merged, ...standalone];
+  }, [customServices]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -210,9 +254,9 @@ export function Header() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <h4 className="font-medium text-foreground text-sm group-hover:text-primary transition-colors">
-                            {t(item.titleKey)}
+                            {item.raw?.title ?? t(item.titleKey)}
                           </h4>
-                          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{t(item.subtitleKey)}</p>
+                          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{item.raw?.subtitle ?? t(item.subtitleKey)}</p>
                         </div>
                       </Link>
                     ))}

@@ -23,6 +23,7 @@ import {
   Mic,
   Package,
   MessageCircle,
+  Sparkles,
 } from "lucide-react";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 
@@ -42,6 +43,7 @@ const hostingItems = [
 ];
 
 const adminNavItems = [
+  { icon: Sparkles, label: "Custom Services", href: "/admin/services" },
   { icon: BookOpen, label: "Content (KB & Blog)", href: "/admin/content" },
   { icon: Gamepad2, label: "Game Servers", href: "/admin/games" },
   { icon: Languages, label: "Traduceri Site", href: "/admin/translations" },

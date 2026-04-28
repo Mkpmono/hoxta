@@ -98,6 +98,69 @@ export type Database = {
         }
         Relationships: []
       }
+      custom_services: {
+        Row: {
+          category: string
+          cover_image_url: string | null
+          created_at: string
+          id: string
+          is_published: boolean
+          menu_description: string | null
+          menu_group: string
+          menu_icon: string | null
+          menu_label: string | null
+          name: string
+          sections: Json
+          short_description: string | null
+          show_in_menu: boolean
+          slug: string
+          sort_order: number | null
+          tags: string[] | null
+          translations: Json | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          cover_image_url?: string | null
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          menu_description?: string | null
+          menu_group?: string
+          menu_icon?: string | null
+          menu_label?: string | null
+          name: string
+          sections?: Json
+          short_description?: string | null
+          show_in_menu?: boolean
+          slug: string
+          sort_order?: number | null
+          tags?: string[] | null
+          translations?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          cover_image_url?: string | null
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          menu_description?: string | null
+          menu_group?: string
+          menu_icon?: string | null
+          menu_label?: string | null
+          name?: string
+          sections?: Json
+          short_description?: string | null
+          show_in_menu?: boolean
+          slug?: string
+          sort_order?: number | null
+          tags?: string[] | null
+          translations?: Json | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       game_servers: {
         Row: {
           category: string
