@@ -143,7 +143,55 @@ export default function CustomServicesAdmin() {
           </button>
         </div>
 
-        {loading ? (
+        {/* Built-in services overview */}
+        <div className="mb-8">
+          <div className="flex items-center gap-2 mb-3">
+            <Lock className="w-4 h-4 text-muted-foreground" />
+            <h2 className="text-sm font-semibold text-foreground uppercase tracking-wide">
+              Servicii integrate (built-in)
+            </h2>
+          </div>
+          <p className="text-xs text-muted-foreground mb-3">
+            Acestea sunt paginile principale ale site-ului. Au admin dedicat pentru pachete, prețuri și conținut. Nu pot fi șterse de aici.
+          </p>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            {BUILT_IN_SERVICES.map((b) => {
+              const Icon = b.icon;
+              return (
+                <div
+                  key={b.page}
+                  className="flex items-center gap-3 p-3 rounded-lg bg-card/60 border border-border/60"
+                >
+                  <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                    <Icon className="w-4 h-4" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-medium text-foreground truncate">{b.name}</div>
+                    <div className="text-xs text-muted-foreground truncate">
+                      {b.page} · grup: {b.group}
+                    </div>
+                  </div>
+                  <Link
+                    to={b.admin}
+                    className="p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground"
+                    title="Deschide admin-ul acestui serviciu"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 mb-3">
+          <Plus className="w-4 h-4 text-muted-foreground" />
+          <h2 className="text-sm font-semibold text-foreground uppercase tracking-wide">
+            Servicii custom adăugate de tine
+          </h2>
+        </div>
+
+
           <div className="text-muted-foreground">Loading…</div>
         ) : services.length === 0 ? (
           <div className="p-12 rounded-xl border border-dashed border-border text-center text-muted-foreground">
