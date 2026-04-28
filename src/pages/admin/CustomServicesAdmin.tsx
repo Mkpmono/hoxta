@@ -80,6 +80,7 @@ export default function CustomServicesAdmin() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Partial<CustomService> | null>(null);
   const [saving, setSaving] = useState(false);
+  const [templatePickerOpen, setTemplatePickerOpen] = useState(false);
 
   const load = async () => {
     setLoading(true);
