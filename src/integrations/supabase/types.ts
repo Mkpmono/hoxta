@@ -421,6 +421,36 @@ export type Database = {
         }
         Relationships: []
       }
+      legal_pages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          slug: string
+          title: string
+          translations: Json
+          updated_at: string
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          id?: string
+          slug: string
+          title?: string
+          translations?: Json
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          slug?: string
+          title?: string
+          translations?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
       request_counts: {
         Row: {
           created_at: string
@@ -474,6 +504,54 @@ export type Database = {
           is_enabled?: boolean
           name?: string
           sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      site_settings: {
+        Row: {
+          control_panel_label: string
+          control_panel_label_translations: Json
+          control_panel_url: string
+          created_at: string
+          id: string
+          privacy_label: string
+          privacy_label_translations: Json
+          privacy_url: string
+          singleton: boolean
+          terms_label: string
+          terms_label_translations: Json
+          terms_url: string
+          updated_at: string
+        }
+        Insert: {
+          control_panel_label?: string
+          control_panel_label_translations?: Json
+          control_panel_url?: string
+          created_at?: string
+          id?: string
+          privacy_label?: string
+          privacy_label_translations?: Json
+          privacy_url?: string
+          singleton?: boolean
+          terms_label?: string
+          terms_label_translations?: Json
+          terms_url?: string
+          updated_at?: string
+        }
+        Update: {
+          control_panel_label?: string
+          control_panel_label_translations?: Json
+          control_panel_url?: string
+          created_at?: string
+          id?: string
+          privacy_label?: string
+          privacy_label_translations?: Json
+          privacy_url?: string
+          singleton?: boolean
+          terms_label?: string
+          terms_label_translations?: Json
+          terms_url?: string
           updated_at?: string
         }
         Relationships: []
