@@ -49,6 +49,8 @@ import DiscordBotAdmin from "./pages/admin/hosting/DiscordBotAdmin";
 import TeamSpeakAdmin from "./pages/admin/hosting/TeamSpeakAdmin";
 import ColocationAdmin from "./pages/admin/hosting/ColocationAdmin";
 import SupportSettingsAdmin from "./pages/admin/SupportSettingsAdmin";
+import CustomServicesAdmin from "./pages/admin/CustomServicesAdmin";
+import CustomServicePage from "./pages/CustomServicePage";
 
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { DiscountPopup } from "@/components/DiscountPopup";
