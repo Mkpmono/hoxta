@@ -39,7 +39,8 @@ export default function Contact() {
   const handleCardClick = (e: React.MouseEvent, url: string) => {
     if (url === "#live-chat" || url === "#") {
       e.preventDefault();
-      openLiveChat();
+      const script = normalizeLiveChatScript(support?.live_chat_embed_script || "");
+      if (script) openEmbeddedLiveChat(script);
     }
   };
 
