@@ -14,6 +14,7 @@ import { useSupportSettings } from "@/hooks/useSupportSettings";
 
 export default function Contact() {
   const c = useEditablePage("contact", DEFAULT_CONTACT);
+  const { data: support } = useSupportSettings();
   const [formData, setFormData] = useState({ name: "", email: "", subject: c.formSubjectOptions?.[0] || "", message: "" });
   const [submitting, setSubmitting] = useState(false);
 
