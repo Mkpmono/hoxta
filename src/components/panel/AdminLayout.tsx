@@ -23,6 +23,7 @@ import {
   Mic,
   Package,
   MessageCircle,
+  Sparkles,
 } from "lucide-react";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 
