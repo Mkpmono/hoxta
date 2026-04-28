@@ -13,18 +13,26 @@ interface DropdownItem {
   subtitleKey: string;
   icon: React.ReactNode;
   href: string;
+  raw?: { title?: string; subtitle?: string };
 }
 
 interface MenuItemProps {
   labelKey: string;
+  groupKey?: string;
   items?: DropdownItem[];
   href?: string;
 }
 
-const menuItems: MenuItemProps[] = [
+function resolveLucideIcon(name?: string | null) {
+  const Icon = (name && (LucideIcons as any)[name]) || Sparkles;
+  return <Icon className="w-5 h-5" />;
+}
+
+const baseMenuItems: MenuItemProps[] = [
   { labelKey: "nav.home", href: "/" },
   {
     labelKey: "nav.web",
+    groupKey: "web",
     items: [
       { titleKey: "nav.webHosting", subtitleKey: "nav.webHostingDesc", icon: <Globe className="w-5 h-5" />, href: "/web-hosting" },
       { titleKey: "nav.resellerHosting", subtitleKey: "nav.resellerHostingDesc", icon: <Server className="w-5 h-5" />, href: "/reseller-hosting" },
@@ -33,6 +41,7 @@ const menuItems: MenuItemProps[] = [
   },
   {
     labelKey: "nav.games",
+    groupKey: "games",
     items: [
       { titleKey: "nav.allGames", subtitleKey: "nav.allGamesDesc", icon: <Gamepad2 className="w-5 h-5" />, href: "/game-servers" },
       { titleKey: "games.minecraft", subtitleKey: "games.minecraftDesc", icon: <Gamepad2 className="w-5 h-5" />, href: "/game-servers/minecraft" },
@@ -44,6 +53,7 @@ const menuItems: MenuItemProps[] = [
   },
   {
     labelKey: "nav.server",
+    groupKey: "server",
     items: [
       { titleKey: "nav.vpsHosting", subtitleKey: "nav.vpsHostingDesc", icon: <HardDrive className="w-5 h-5" />, href: "/vps" },
       { titleKey: "nav.dedicatedServer", subtitleKey: "nav.dedicatedServerDesc", icon: <Server className="w-5 h-5" />, href: "/dedicated" },
@@ -51,6 +61,7 @@ const menuItems: MenuItemProps[] = [
   },
   {
     labelKey: "nav.moreHosting",
+    groupKey: "moreHosting",
     items: [
       { titleKey: "nav.discordBot", subtitleKey: "nav.discordBotDesc", icon: <Server className="w-5 h-5" />, href: "/discord-bot" },
       { titleKey: "nav.teamspeak", subtitleKey: "nav.teamspeakDesc", icon: <Server className="w-5 h-5" />, href: "/teamspeak" },
@@ -59,6 +70,7 @@ const menuItems: MenuItemProps[] = [
   },
   {
     labelKey: "nav.helpInfo",
+    groupKey: "helpInfo",
     items: [
       { titleKey: "nav.aboutUs", subtitleKey: "nav.aboutUsDesc", icon: <LifeBuoy className="w-5 h-5" />, href: "/about" },
       { titleKey: "nav.contactUs", subtitleKey: "nav.contactUsDesc", icon: <LifeBuoy className="w-5 h-5" />, href: "/contact" },
