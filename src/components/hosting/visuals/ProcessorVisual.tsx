@@ -1,156 +1,103 @@
 import { motion } from "framer-motion";
 import intelLogo from "@/assets/cpu/intel.png";
 import amdLogo from "@/assets/cpu/amd.png";
+import cpuHero from "@/assets/cpu/cpu-hero.jpg";
 
 /**
- * Professional CPU platform comparison.
- * Each card shows a stylized die layout (grid of cores) + key specs.
- * No fake live data — pure spec-driven visual.
+ * Premium CPU platform showcase.
+ * Real CPU photography as backdrop, with elegant glass spec panels overlaid.
  */
-
-interface PlatformCardProps {
-  logo: string;
-  name: string;
-  model: string;
-  cores: number;
-  threads: number;
-  ghz: string;
-  bestFor: string;
-  gridCols: number;
-  gridRows: number;
-  delay: number;
-}
-
-function PlatformCard({
-  logo,
-  name,
-  model,
-  cores,
-  threads,
-  ghz,
-  bestFor,
-  gridCols,
-  gridRows,
-  delay,
-}: PlatformCardProps) {
-  const totalCells = gridCols * gridRows;
+export function ProcessorVisual() {
+  const platforms = [
+    {
+      logo: intelLogo,
+      name: "Intel Xeon",
+      model: "E-2388G",
+      cores: "8",
+      threads: "16",
+      ghz: "3.2 GHz",
+      tag: "Single-thread",
+    },
+    {
+      logo: amdLogo,
+      name: "AMD EPYC",
+      model: "9454",
+      cores: "48",
+      threads: "96",
+      ghz: "2.75 GHz",
+      tag: "Multi-core",
+    },
+  ];
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay, duration: 0.4 }}
-      className="flex-1 rounded-xl border border-border/50 bg-background/40 p-4 flex gap-4"
-    >
-      {/* Stylized CPU die */}
-      <div className="shrink-0 relative">
-        <div className="w-[110px] h-[110px] rounded-lg bg-gradient-to-br from-muted/40 to-background border border-border/60 p-2 relative overflow-hidden">
-          {/* Substrate hint */}
-          <div className="absolute inset-0 opacity-30 [background-image:linear-gradient(45deg,transparent_46%,hsl(var(--border))_47%,hsl(var(--border))_53%,transparent_54%)] [background-size:8px_8px]" />
-          {/* Core grid */}
-          <div
-            className="relative w-full h-full grid gap-[2px]"
-            style={{
-              gridTemplateColumns: `repeat(${gridCols}, 1fr)`,
-              gridTemplateRows: `repeat(${gridRows}, 1fr)`,
-            }}
+    <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden border border-border/40 bg-card/60">
+      {/* Background photo */}
+      <img
+        src={cpuHero}
+        alt=""
+        loading="lazy"
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+      {/* Darkening gradient for legibility */}
+      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-background/30" />
+      <div className="absolute inset-0 bg-gradient-to-r from-background/40 via-transparent to-background/40" />
+
+      {/* Content */}
+      <div className="relative h-full flex flex-col justify-end p-5 gap-2.5">
+        {platforms.map((p, i) => (
+          <motion.div
+            key={p.name}
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.15 + i * 0.12, duration: 0.4 }}
+            className="rounded-xl border border-border/50 bg-background/70 backdrop-blur-md p-3 flex items-center gap-4"
           >
-            {Array.from({ length: totalCells }).map((_, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: delay + 0.2 + i * 0.008, duration: 0.15 }}
-                className="rounded-[1px] bg-primary/60"
+            {/* Logo + name */}
+            <div className="flex items-center gap-2.5 min-w-0 flex-1">
+              <img
+                src={p.logo}
+                alt={p.name}
+                className="h-5 w-auto object-contain [filter:brightness(0)_invert(1)] opacity-95 shrink-0"
               />
-            ))}
-          </div>
-          {/* Notch dot — like the orientation marker on a real CPU */}
-          <div className="absolute top-1.5 left-1.5 w-1 h-1 rounded-full bg-primary/80" />
-        </div>
-      </div>
-
-      {/* Info */}
-      <div className="flex-1 min-w-0 flex flex-col">
-        <div className="flex items-start justify-between gap-3 mb-2">
-          <div className="flex items-center gap-2 min-w-0">
-            <img
-              src={logo}
-              alt={name}
-              className="h-4 w-auto object-contain [filter:brightness(0)_invert(1)] opacity-90 shrink-0"
-            />
-            <div className="min-w-0">
-              <div className="text-sm font-semibold text-foreground leading-tight truncate">
-                {name}
-              </div>
-              <div className="text-[10px] text-muted-foreground leading-tight truncate">
-                {model}
+              <div className="min-w-0">
+                <div className="text-sm font-semibold text-foreground leading-tight">
+                  {p.name}
+                </div>
+                <div className="text-[10px] text-muted-foreground leading-tight">
+                  {p.model}
+                </div>
               </div>
             </div>
-          </div>
-          <span className="text-[10px] font-medium text-primary bg-primary/10 border border-primary/20 rounded-full px-2 py-0.5 whitespace-nowrap">
-            {bestFor}
-          </span>
-        </div>
 
-        {/* Specs */}
-        <div className="grid grid-cols-3 gap-2 mt-auto">
-          {[
-            { label: "Cores", value: cores },
-            { label: "Threads", value: threads },
-            { label: "Base", value: ghz },
-          ].map((s) => (
-            <div
-              key={s.label}
-              className="rounded-md bg-muted/30 border border-border/40 px-2 py-1.5"
-            >
-              <div className="text-[9px] uppercase tracking-wider text-muted-foreground leading-none mb-1">
-                {s.label}
-              </div>
-              <div className="text-sm font-bold text-foreground tabular-nums leading-none">
-                {s.value}
-              </div>
+            {/* Specs inline */}
+            <div className="flex items-center gap-4 shrink-0">
+              <Spec label="Cores" value={p.cores} />
+              <div className="w-px h-7 bg-border/50" />
+              <Spec label="Threads" value={p.threads} />
+              <div className="w-px h-7 bg-border/50" />
+              <Spec label="Base" value={p.ghz} />
             </div>
-          ))}
-        </div>
+
+            {/* Tag */}
+            <span className="hidden sm:inline-block text-[10px] font-medium text-primary bg-primary/10 border border-primary/25 rounded-full px-2.5 py-1 whitespace-nowrap shrink-0">
+              {p.tag}
+            </span>
+          </motion.div>
+        ))}
       </div>
-    </motion.div>
+    </div>
   );
 }
 
-export function ProcessorVisual() {
+function Spec({ label, value }: { label: string; value: string }) {
   return (
-    <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden border border-border/40 bg-card/60 backdrop-blur-sm p-5">
-      <div className="absolute -top-16 -right-16 w-48 h-48 bg-primary/10 rounded-full blur-3xl" />
-      <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-primary/5 rounded-full blur-3xl" />
-
-      <div className="relative h-full flex flex-col gap-3">
-        <PlatformCard
-          logo={intelLogo}
-          name="Intel Xeon"
-          model="E-2388G"
-          cores={8}
-          threads={16}
-          ghz="3.2 GHz"
-          bestFor="Single-thread"
-          gridCols={4}
-          gridRows={2}
-          delay={0.15}
-        />
-        <PlatformCard
-          logo={amdLogo}
-          name="AMD EPYC"
-          model="9454"
-          cores={48}
-          threads={96}
-          ghz="2.75 GHz"
-          bestFor="Multi-core"
-          gridCols={8}
-          gridRows={6}
-          delay={0.3}
-        />
+    <div className="text-center">
+      <div className="text-[9px] uppercase tracking-wider text-muted-foreground leading-none mb-1">
+        {label}
+      </div>
+      <div className="text-sm font-bold text-foreground tabular-nums leading-none">
+        {value}
       </div>
     </div>
   );
