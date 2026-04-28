@@ -744,3 +744,50 @@ function ListEditor<T extends Record<string, any>>({
     </div>
   );
 }
+
+function TemplatePicker({ onClose, onPick }: { onClose: () => void; onPick: (t: ServiceTemplate) => void }) {
+  return (
+    <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm overflow-y-auto" onClick={onClose}>
+      <div className="min-h-screen flex items-start justify-center p-4 py-10">
+        <div
+          className="w-full max-w-3xl bg-card border border-border rounded-2xl shadow-2xl"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex items-center justify-between p-5 border-b border-border">
+            <div>
+              <h2 className="text-xl font-bold text-foreground">Pornește de la o pagină existentă</h2>
+              <p className="text-xs text-muted-foreground mt-1">
+                Alege un template — toate secțiunile (hero, features, planuri, FAQ, CTA) vor fi pre-completate. Le poți edita liber după.
+              </p>
+            </div>
+            <button onClick={onClose} className="p-2 rounded hover:bg-muted text-muted-foreground">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+          <div className="p-5 grid sm:grid-cols-2 gap-3">
+            {SERVICE_TEMPLATES.map((t) => (
+              <button
+                key={t.key}
+                onClick={() => onPick(t)}
+                className="text-left p-4 rounded-xl bg-background/40 border border-border hover:border-primary/50 hover:bg-primary/5 transition-all group"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all">
+                    <Copy className="w-4 h-4" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-semibold text-foreground">{t.label}</div>
+                    <div className="text-xs text-muted-foreground mt-0.5">{t.description}</div>
+                    <div className="text-[10px] text-muted-foreground/70 mt-2 uppercase tracking-wide">
+                      grup: {t.group} · categorie: {t.category}
+                    </div>
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
