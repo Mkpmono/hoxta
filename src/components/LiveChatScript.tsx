@@ -35,21 +35,42 @@ export function LiveChatScript() {
     nodes.forEach((n) => container.appendChild(n));
     document.body.appendChild(container);
 
-    if (chatwoot) {
-      bubbleStyle = document.createElement("style");
-      bubbleStyle.id = "chatwoot-bubble-hide-style";
-      bubbleStyle.textContent = `
-        .woot-widget-bubble,
-        .woot--bubble-holder,
-        button[title="Open chat window"],
-        button[aria-label="Open chat window"] {
-          opacity: 0 !important;
-          visibility: hidden !important;
-          pointer-events: none !important;
-        }
-      `;
-      document.head.appendChild(bubbleStyle);
-    }
+    // Always hide the provider's default floating bubble — we expose our own FAB.
+    bubbleStyle = document.createElement("style");
+    bubbleStyle.id = "live-chat-bubble-hide-style";
+    bubbleStyle.textContent = `
+      /* Chatwoot */
+      .woot-widget-bubble,
+      .woot--bubble-holder,
+      button[title="Open chat window"],
+      button[aria-label="Open chat window"],
+      /* Tawk.to */
+      iframe[title*="chat" i][src*="tawk.to"],
+      #tawkchat-container,
+      .widget-visible iframe[src*="tawk.to"],
+      /* Crisp */
+      .crisp-client .cc-1brb6,
+      #crisp-chatbox > div > a[aria-label*="chat" i],
+      /* Tidio */
+      #tidio-chat,
+      #tidio-chat-iframe,
+      /* Intercom */
+      .intercom-lightweight-app-launcher,
+      .intercom-launcher,
+      .intercom-launcher-frame,
+      /* LiveChat */
+      #chat-widget-container,
+      #livechat-compact-container,
+      #livechat-eye-catcher,
+      /* ChatWave / generic embed bubble */
+      button[aria-label="Open chat" i],
+      button[aria-label="Open chat window" i] {
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+      }
+    `;
+    document.head.appendChild(bubbleStyle);
 
     const onOpenLiveChat = () => {
       const w = window as Window & typeof globalThis & {
