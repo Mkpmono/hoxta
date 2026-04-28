@@ -79,7 +79,16 @@ export function GlobalInfrastructure({ title, subtitle }: GlobalInfrastructurePr
 
           <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.3 }}
             className="glass-card p-6">
-            <h3 className="text-lg font-semibold text-foreground mb-4">{t("hosting.globalInfra.capabilities")}</h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-foreground">{t("hosting.globalInfra.capabilities")}</h3>
+              <Link to="/status" className="text-xs text-primary hover:underline flex items-center gap-1.5">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                </span>
+                Live status
+              </Link>
+            </div>
             <div className="grid grid-cols-2 gap-3">
               {networkHighlights.map((item, index) => (
                 <div key={index} className="flex items-center gap-2 text-sm text-muted-foreground">
