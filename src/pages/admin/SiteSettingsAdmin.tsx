@@ -220,7 +220,7 @@ export default function SiteSettingsAdmin() {
           label={s.privacy_label}
           setLabel={(v: string) => setS((p) => ({ ...p, privacy_label: v }))}
           translations={s.privacy_label_translations}
-          transKey="privacy_label_translations"
+          onTranslationChange={(lang, v) => updateTranslation("privacy_label_translations", lang, v)}
           urlHint="Internal route (/privacy) or full external URL"
         />
 
