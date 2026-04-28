@@ -1,10 +1,12 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Globe, Server, Gamepad2, HardDrive, LifeBuoy, X, Menu } from "lucide-react";
+import { ChevronDown, Globe, Server, Gamepad2, HardDrive, LifeBuoy, X, Menu, Sparkles } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { HoxtaLogo } from "@/components/HoxtaLogo";
+import { useCustomServices } from "@/hooks/useCustomServices";
 
 interface DropdownItem {
   titleKey: string;
