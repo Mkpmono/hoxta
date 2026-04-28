@@ -151,11 +151,11 @@ export function TrustSection() {
             role="region"
             aria-label="Testimonials carousel"
           >
-            <div className="flex">
+            <div className="flex -ml-5">
               {reviews.map((review, index) => (
                 <div
                   key={review.id}
-                  className="flex-shrink-0 w-full sm:w-1/2 lg:w-1/2 pl-5 first:pl-0"
+                  className="flex-shrink-0 w-full sm:w-1/2 lg:w-1/2 pl-5"
                 >
                   <ReviewCard 
                     review={review} 
