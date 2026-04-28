@@ -24,6 +24,8 @@ import {
   Package,
   MessageCircle,
   Sparkles,
+  Settings,
+  ScrollText,
 } from "lucide-react";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 
@@ -50,6 +52,8 @@ const adminNavItems = [
   { icon: Activity, label: "Status Monitors", href: "/admin/status" },
   { icon: ShieldCheck, label: "DDoS & Visitors", href: "/admin/visitors" },
   { icon: MessageCircle, label: "Chat & Support", href: "/admin/support" },
+  { icon: ScrollText, label: "Legal Pages", href: "/admin/legal" },
+  { icon: Settings, label: "Site Settings", href: "/admin/site-settings" },
 ];
 
 export function AdminLayout({ children }: AdminLayoutProps) {
