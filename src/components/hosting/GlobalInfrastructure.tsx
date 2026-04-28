@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import { MapPin, Zap, Globe, Shield, Server, Cpu, Network, RefreshCw, Activity } from "lucide-react";
 import { lazy, Suspense } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
+import { useLiveInfraStats } from "@/hooks/useLiveInfraStats";
 
 const Globe3D = lazy(() => import("./Globe3D").then(m => ({ default: m.Globe3D })));
 
@@ -12,15 +14,28 @@ interface GlobalInfrastructureProps {
 
 export function GlobalInfrastructure({ title, subtitle }: GlobalInfrastructureProps) {
   const { t } = useTranslation();
+  const live = useLiveInfraStats();
 
   const resolvedTitle = title || t("hosting.globalInfra.title");
   const resolvedSubtitle = subtitle || t("hosting.globalInfra.subtitle");
 
   const stats = [
-    { icon: MapPin, value: "6+", label: t("hosting.globalInfra.dataCenters") },
-    { icon: Zap, value: "<30ms", label: t("hosting.globalInfra.avgLatency") },
-    { icon: Globe, value: "99.99%", label: t("hosting.globalInfra.networkUptime") },
-    { icon: Shield, value: "10 Tbps", label: t("hosting.globalInfra.ddosProtection") },
+    { icon: MapPin, value: "UK · DE", label: "Locations" },
+    {
+      icon: Activity,
+      value: live.loading ? "—" : `${live.monitorsCount}`,
+      label: "Live monitors",
+    },
+    {
+      icon: Globe,
+      value: live.loading ? "—" : `${live.uptimePercent}%`,
+      label: "30-day uptime",
+    },
+    {
+      icon: Zap,
+      value: live.loading || !live.avgResponseMs ? "—" : `${live.avgResponseMs}ms`,
+      label: "Avg response",
+    },
   ];
 
   const networkHighlights = [
