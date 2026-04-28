@@ -280,6 +280,16 @@ export default function CustomServicesAdmin() {
           </div>
         )}
 
+        {templatePickerOpen && (
+          <TemplatePicker
+            onClose={() => setTemplatePickerOpen(false)}
+            onPick={(t) => {
+              setTemplatePickerOpen(false);
+              setEditing(fromTemplate(t));
+            }}
+          />
+        )}
+
         {editing && (
           <ServiceEditor
             service={editing}
