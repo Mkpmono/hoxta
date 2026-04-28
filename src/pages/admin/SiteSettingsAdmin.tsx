@@ -8,6 +8,65 @@ import { Save, Loader2, Globe, FileText } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { invalidateSiteSettingsCache } from "@/hooks/useSiteSettings";
 
+interface SectionProps {
+  title: string;
+  icon: React.ComponentType<{ className?: string }>;
+  url: string;
+  setUrl: (v: string) => void;
+  label: string;
+  setLabel: (v: string) => void;
+  translations: Record<string, string>;
+  onTranslationChange: (lang: string, value: string) => void;
+  urlHint: string;
+}
+
+function Section({
+  title,
+  icon: Icon,
+  url,
+  setUrl,
+  label,
+  setLabel,
+  translations,
+  onTranslationChange,
+  urlHint,
+}: SectionProps) {
+  return (
+    <div className="glass-card p-6 rounded-xl space-y-4">
+      <div className="flex items-center gap-2 mb-2">
+        <Icon className="w-5 h-5 text-primary" />
+        <h3 className="text-lg font-semibold text-foreground">{title}</h3>
+      </div>
+      <div className="grid md:grid-cols-2 gap-4">
+        <div>
+          <Label>URL / Link</Label>
+          <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder={urlHint} />
+          <p className="text-xs text-muted-foreground mt-1">{urlHint}</p>
+        </div>
+        <div>
+          <Label>Default label (fallback)</Label>
+          <Input value={label} onChange={(e) => setLabel(e.target.value)} />
+        </div>
+      </div>
+      <div>
+        <Label className="mb-2 block">Per-language labels</Label>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {LANGS.map((l) => (
+            <div key={l.code}>
+              <Label className="text-xs uppercase text-muted-foreground">{l.label}</Label>
+              <Input
+                value={translations[l.code] || ""}
+                onChange={(e) => onTranslationChange(l.code, e.target.value)}
+                placeholder={label}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const LANGS = [
   { code: "en", label: "English" },
   { code: "ro", label: "Română" },
@@ -119,51 +178,6 @@ export default function SiteSettingsAdmin() {
     );
   }
 
-  const Section = ({
-    title,
-    icon: Icon,
-    url,
-    setUrl,
-    label,
-    setLabel,
-    translations,
-    transKey,
-    urlHint,
-  }: any) => (
-    <div className="glass-card p-6 rounded-xl space-y-4">
-      <div className="flex items-center gap-2 mb-2">
-        <Icon className="w-5 h-5 text-primary" />
-        <h3 className="text-lg font-semibold text-foreground">{title}</h3>
-      </div>
-      <div className="grid md:grid-cols-2 gap-4">
-        <div>
-          <Label>URL / Link</Label>
-          <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder={urlHint} />
-          <p className="text-xs text-muted-foreground mt-1">{urlHint}</p>
-        </div>
-        <div>
-          <Label>Default label (fallback)</Label>
-          <Input value={label} onChange={(e) => setLabel(e.target.value)} />
-        </div>
-      </div>
-      <div>
-        <Label className="mb-2 block">Per-language labels</Label>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {LANGS.map((l) => (
-            <div key={l.code}>
-              <Label className="text-xs uppercase text-muted-foreground">{l.label}</Label>
-              <Input
-                value={translations[l.code] || ""}
-                onChange={(e) => updateTranslation(transKey, l.code, e.target.value)}
-                placeholder={label}
-              />
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-
   return (
     <AdminLayout>
       <div className="max-w-4xl mx-auto space-y-6">
@@ -182,7 +196,7 @@ export default function SiteSettingsAdmin() {
           label={s.control_panel_label}
           setLabel={(v: string) => setS((p) => ({ ...p, control_panel_label: v }))}
           translations={s.control_panel_label_translations}
-          transKey="control_panel_label_translations"
+          onTranslationChange={(lang, v) => updateTranslation("control_panel_label_translations", lang, v)}
           urlHint="Full external URL, e.g. https://billing.hoxta.com"
         />
 
@@ -194,7 +208,7 @@ export default function SiteSettingsAdmin() {
           label={s.terms_label}
           setLabel={(v: string) => setS((p) => ({ ...p, terms_label: v }))}
           translations={s.terms_label_translations}
-          transKey="terms_label_translations"
+          onTranslationChange={(lang, v) => updateTranslation("terms_label_translations", lang, v)}
           urlHint="Internal route (/terms) or full external URL"
         />
 
@@ -206,7 +220,7 @@ export default function SiteSettingsAdmin() {
           label={s.privacy_label}
           setLabel={(v: string) => setS((p) => ({ ...p, privacy_label: v }))}
           translations={s.privacy_label_translations}
-          transKey="privacy_label_translations"
+          onTranslationChange={(lang, v) => updateTranslation("privacy_label_translations", lang, v)}
           urlHint="Internal route (/privacy) or full external URL"
         />
 
