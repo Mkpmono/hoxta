@@ -9,6 +9,8 @@ type LiveChatWindow = Window & typeof globalThis & {
   Tawk_API?: { maximize?: () => void };
   $crisp?: unknown[];
   tidioChatApi?: { open?: () => void };
+  LiveChatWidget?: { call?: (method: string, ...args: unknown[]) => void };
+  LC_API?: { open_chat_window?: () => void; maximize_chat_window?: () => void };
   $chatwoot?: {
     toggle?: (state?: "open" | "close") => void;
     popoutChatWindow?: () => void;
@@ -49,6 +51,7 @@ function clickChatwootBubble() {
 
 export function openEmbeddedLiveChat(script: string) {
   const w = window as LiveChatWindow;
+  window.dispatchEvent(new CustomEvent("hoxta:live-chat-open-request"));
 
   if (w.Tawk_API?.maximize) {
     w.Tawk_API.maximize();
@@ -62,6 +65,17 @@ export function openEmbeddedLiveChat(script: string) {
 
   if (w.tidioChatApi?.open) {
     w.tidioChatApi.open();
+    return true;
+  }
+
+  if (w.LiveChatWidget?.call) {
+    w.LiveChatWidget.call("maximize");
+    return true;
+  }
+
+  if (w.LC_API?.open_chat_window || w.LC_API?.maximize_chat_window) {
+    w.LC_API.open_chat_window?.();
+    w.LC_API.maximize_chat_window?.();
     return true;
   }
 
