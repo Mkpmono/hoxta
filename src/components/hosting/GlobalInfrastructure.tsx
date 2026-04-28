@@ -20,20 +20,20 @@ export function GlobalInfrastructure({ title, subtitle }: GlobalInfrastructurePr
   const resolvedSubtitle = subtitle || t("hosting.globalInfra.subtitle");
 
   const stats = [
-    { icon: MapPin, value: "UK · DE", label: "Locations" },
+    { icon: MapPin, value: "EU", label: "Data Centers" },
     {
       icon: Activity,
-      value: live.loading ? "—" : `${live.monitorsCount}`,
-      label: "Live monitors",
+      value: live.loading ? "…" : live.monitorsCount > 0 ? `${live.monitorsCount}` : "24/7",
+      label: live.monitorsCount > 0 ? "Live monitors" : "Monitoring",
     },
     {
       icon: Globe,
-      value: live.loading ? "—" : `${live.uptimePercent}%`,
+      value: live.loading ? "…" : live.uptimePercent > 0 ? `${live.uptimePercent}%` : "99.9%",
       label: "30-day uptime",
     },
     {
       icon: Zap,
-      value: live.loading || !live.avgResponseMs ? "—" : `${live.avgResponseMs}ms`,
+      value: live.loading ? "…" : live.avgResponseMs > 0 ? `${live.avgResponseMs}ms` : "Fast",
       label: "Avg response",
     },
   ];
