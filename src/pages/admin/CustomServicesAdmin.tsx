@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Plus, Trash2, Save, ChevronDown, ChevronRight, Eye, EyeOff, Loader2, ExternalLink, Globe, Server, Cpu, HardDrive, Bot, Mic, Users, Gamepad2, Lock } from "lucide-react";
+import { Plus, Trash2, Save, ChevronDown, ChevronRight, Eye, EyeOff, Loader2, ExternalLink, Globe, Server, Cpu, HardDrive, Bot, Mic, Users, Gamepad2, Lock, Copy, X } from "lucide-react";
 import { AdminLayout } from "@/components/panel/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import type { CustomService, CustomServiceSections } from "@/hooks/useCustomServices";
+import { SERVICE_TEMPLATES, type ServiceTemplate } from "@/data/customServiceTemplates";
 
 const BUILT_IN_SERVICES = [
   { icon: Globe, name: "Web Hosting", page: "/web-hosting", admin: "/admin/hosting/web", group: "web" },
@@ -55,11 +56,31 @@ function emptyService(): Partial<CustomService> {
   };
 }
 
+function fromTemplate(t: ServiceTemplate): Partial<CustomService> {
+  return {
+    slug: "",
+    name: "",
+    menu_label: "",
+    menu_description: t.description,
+    menu_icon: t.icon,
+    menu_group: t.group,
+    category: t.category,
+    tags: [],
+    cover_image_url: "",
+    short_description: t.shortDescription,
+    sections: JSON.parse(JSON.stringify(t.sections)),
+    is_published: false,
+    show_in_menu: true,
+    sort_order: 100,
+  };
+}
+
 export default function CustomServicesAdmin() {
   const [services, setServices] = useState<CustomService[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Partial<CustomService> | null>(null);
   const [saving, setSaving] = useState(false);
+  const [templatePickerOpen, setTemplatePickerOpen] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -135,12 +156,21 @@ export default function CustomServicesAdmin() {
               Adaugă servicii noi care apar automat în meniu și au pagină dedicată la <code className="text-primary">/services/[slug]</code>
             </p>
           </div>
-          <button
-            onClick={() => setEditing(emptyService())}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 font-medium"
-          >
-            <Plus className="w-4 h-4" /> Serviciu nou
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setTemplatePickerOpen(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-card border border-border hover:border-primary/50 text-foreground font-medium"
+              title="Pornește de la o pagină existentă"
+            >
+              <Copy className="w-4 h-4" /> Duplică din...
+            </button>
+            <button
+              onClick={() => setEditing(emptyService())}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 font-medium"
+            >
+              <Plus className="w-4 h-4" /> Serviciu gol
+            </button>
+          </div>
         </div>
 
         {/* Built-in services overview */}
@@ -248,6 +278,16 @@ export default function CustomServicesAdmin() {
               </div>
             ))}
           </div>
+        )}
+
+        {templatePickerOpen && (
+          <TemplatePicker
+            onClose={() => setTemplatePickerOpen(false)}
+            onPick={(t) => {
+              setTemplatePickerOpen(false);
+              setEditing(fromTemplate(t));
+            }}
+          />
         )}
 
         {editing && (
@@ -701,6 +741,53 @@ function ListEditor<T extends Record<string, any>>({
         <Plus className="w-4 h-4 inline mr-1" />
         Adaugă
       </button>
+    </div>
+  );
+}
+
+function TemplatePicker({ onClose, onPick }: { onClose: () => void; onPick: (t: ServiceTemplate) => void }) {
+  return (
+    <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm overflow-y-auto" onClick={onClose}>
+      <div className="min-h-screen flex items-start justify-center p-4 py-10">
+        <div
+          className="w-full max-w-3xl bg-card border border-border rounded-2xl shadow-2xl"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex items-center justify-between p-5 border-b border-border">
+            <div>
+              <h2 className="text-xl font-bold text-foreground">Pornește de la o pagină existentă</h2>
+              <p className="text-xs text-muted-foreground mt-1">
+                Alege un template — toate secțiunile (hero, features, planuri, FAQ, CTA) vor fi pre-completate. Le poți edita liber după.
+              </p>
+            </div>
+            <button onClick={onClose} className="p-2 rounded hover:bg-muted text-muted-foreground">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+          <div className="p-5 grid sm:grid-cols-2 gap-3">
+            {SERVICE_TEMPLATES.map((t) => (
+              <button
+                key={t.key}
+                onClick={() => onPick(t)}
+                className="text-left p-4 rounded-xl bg-background/40 border border-border hover:border-primary/50 hover:bg-primary/5 transition-all group"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all">
+                    <Copy className="w-4 h-4" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-semibold text-foreground">{t.label}</div>
+                    <div className="text-xs text-muted-foreground mt-0.5">{t.description}</div>
+                    <div className="text-[10px] text-muted-foreground/70 mt-2 uppercase tracking-wide">
+                      grup: {t.group} · categorie: {t.category}
+                    </div>
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
