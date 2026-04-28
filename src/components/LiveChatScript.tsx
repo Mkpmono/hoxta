@@ -35,7 +35,7 @@ export function LiveChatScript() {
     nodes.forEach((n) => container.appendChild(n));
     document.body.appendChild(container);
 
-    // Always hide the provider's default floating bubble — we expose our own FAB.
+    // Hide only the provider's launcher bubble — keep the actual chat window usable.
     bubbleStyle = document.createElement("style");
     bubbleStyle.id = "live-chat-bubble-hide-style";
     bubbleStyle.textContent = `
@@ -45,21 +45,18 @@ export function LiveChatScript() {
       button[title="Open chat window"],
       button[aria-label="Open chat window"],
       /* Tawk.to */
-      iframe[title*="chat" i][src*="tawk.to"],
-      #tawkchat-container,
-      .widget-visible iframe[src*="tawk.to"],
+      body:not(.hoxta-live-chat-opening) iframe[title*="chat" i][src*="tawk.to"],
+      body:not(.hoxta-live-chat-opening) #tawkchat-container,
       /* Crisp */
       .crisp-client .cc-1brb6,
       #crisp-chatbox > div > a[aria-label*="chat" i],
       /* Tidio */
-      #tidio-chat,
-      #tidio-chat-iframe,
+      body:not(.hoxta-live-chat-opening) #tidio-chat-iframe,
       /* Intercom */
       .intercom-lightweight-app-launcher,
       .intercom-launcher,
       .intercom-launcher-frame,
       /* LiveChat */
-      #chat-widget-container,
       #livechat-compact-container,
       #livechat-eye-catcher,
       /* ChatWave / generic embed bubble */
@@ -71,6 +68,11 @@ export function LiveChatScript() {
       }
     `;
     document.head.appendChild(bubbleStyle);
+
+    const onOpenRequest = () => {
+      document.body.classList.add("hoxta-live-chat-opening");
+      window.setTimeout(() => document.body.classList.remove("hoxta-live-chat-opening"), 8_000);
+    };
 
     const onOpenLiveChat = () => {
       const w = window as Window & typeof globalThis & {
@@ -101,12 +103,14 @@ export function LiveChatScript() {
       window.addEventListener("hoxta:open-live-chat", onOpenLiveChat);
       window.addEventListener("chatwoot:ready", onChatwootReady);
     }
+    window.addEventListener("hoxta:live-chat-open-request", onOpenRequest);
 
     return () => {
       if (chatwoot) {
         window.removeEventListener("hoxta:open-live-chat", onOpenLiveChat);
         window.removeEventListener("chatwoot:ready", onChatwootReady);
       }
+      window.removeEventListener("hoxta:live-chat-open-request", onOpenRequest);
       bubbleStyle?.remove();
       container.remove();
     };
