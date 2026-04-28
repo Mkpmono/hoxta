@@ -87,6 +87,36 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const headerRef = useRef<HTMLElement>(null);
+  const { services: customServices } = useCustomServices({ onlyMenu: true });
+
+  const menuItems = useMemo<MenuItemProps[]>(() => {
+    if (!customServices.length) return baseMenuItems;
+    const byGroup = new Map<string, DropdownItem[]>();
+    const standalone: MenuItemProps[] = [];
+    for (const s of customServices) {
+      const item: DropdownItem = {
+        titleKey: s.menu_label || s.name,
+        subtitleKey: s.menu_description || s.short_description || "",
+        icon: resolveLucideIcon(s.menu_icon),
+        href: `/services/${s.slug}`,
+        raw: { title: s.menu_label || s.name, subtitle: s.menu_description || s.short_description || "" },
+      };
+      const grp = s.menu_group || "more";
+      if (grp === "more") {
+        standalone.push({ labelKey: s.menu_label || s.name, href: `/services/${s.slug}` });
+      } else {
+        if (!byGroup.has(grp)) byGroup.set(grp, []);
+        byGroup.get(grp)!.push(item);
+      }
+    }
+    const merged = baseMenuItems.map((mi) => {
+      if (mi.groupKey && byGroup.has(mi.groupKey) && mi.items) {
+        return { ...mi, items: [...mi.items, ...byGroup.get(mi.groupKey)!] };
+      }
+      return mi;
+    });
+    return [...merged, ...standalone];
+  }, [customServices]);
 
   useEffect(() => {
     const handleScroll = () => {
