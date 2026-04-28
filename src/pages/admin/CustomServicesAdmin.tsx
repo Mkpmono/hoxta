@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Plus, Trash2, Save, ChevronDown, ChevronRight, Eye, EyeOff, Loader2, ExternalLink, Globe, Server, Cpu, HardDrive, Bot, Mic, Users, Gamepad2, Lock } from "lucide-react";
+import { Plus, Trash2, Save, ChevronDown, ChevronRight, Eye, EyeOff, Loader2, ExternalLink, Globe, Server, Cpu, HardDrive, Bot, Mic, Users, Gamepad2, Lock, Copy, X } from "lucide-react";
 import { AdminLayout } from "@/components/panel/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import type { CustomService, CustomServiceSections } from "@/hooks/useCustomServices";
+import { SERVICE_TEMPLATES, type ServiceTemplate } from "@/data/customServiceTemplates";
 
 const BUILT_IN_SERVICES = [
   { icon: Globe, name: "Web Hosting", page: "/web-hosting", admin: "/admin/hosting/web", group: "web" },
