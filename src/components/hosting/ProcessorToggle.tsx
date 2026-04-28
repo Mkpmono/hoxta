@@ -38,13 +38,13 @@ export function ProcessorToggle({ selected, onChange }: ProcessorToggleProps) {
                 />
               )}
               <span className="relative z-10 flex items-center gap-3">
-                <span className="inline-flex items-center justify-center bg-white rounded-md px-2 py-1 shadow-sm">
-                  <img
-                    src={logo}
-                    alt={label}
-                    className="h-5 w-auto object-contain"
-                  />
-                </span>
+                <img
+                  src={logo}
+                  alt={label}
+                  className={`h-6 w-auto object-contain transition-opacity duration-200 [filter:brightness(0)_invert(1)] ${
+                    isActive ? "opacity-100" : "opacity-70"
+                  }`}
+                />
                 <span className="flex flex-col items-start leading-tight">
                   <span className="text-sm font-bold tracking-wide">{label}</span>
                   <span

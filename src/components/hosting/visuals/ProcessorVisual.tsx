@@ -28,9 +28,11 @@ export function ProcessorVisual() {
               className={`rounded-xl border p-3 ${i === 0 ? "border-primary/30 bg-primary/5" : "border-border/40 bg-background/60"}`}
             >
               <div className="flex items-center gap-2 mb-1">
-                <span className="inline-flex items-center justify-center bg-white rounded px-1.5 py-0.5">
-                  <img src={cpu.logo} alt={cpu.name} className="h-3 w-auto object-contain" />
-                </span>
+                <img
+                  src={cpu.logo}
+                  alt={cpu.name}
+                  className="h-4 w-auto object-contain [filter:brightness(0)_invert(1)] opacity-90"
+                />
                 <span className="text-xs font-semibold text-foreground">{cpu.name}</span>
               </div>
               <div className="text-[10px] text-muted-foreground">{cpu.model}</div>
