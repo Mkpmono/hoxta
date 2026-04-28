@@ -161,6 +161,33 @@ export type Database = {
         }
         Relationships: []
       }
+      editable_pages: {
+        Row: {
+          content: Json
+          created_at: string
+          id: string
+          slug: string
+          translations: Json
+          updated_at: string
+        }
+        Insert: {
+          content?: Json
+          created_at?: string
+          id?: string
+          slug: string
+          translations?: Json
+          updated_at?: string
+        }
+        Update: {
+          content?: Json
+          created_at?: string
+          id?: string
+          slug?: string
+          translations?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
       game_servers: {
         Row: {
           category: string
