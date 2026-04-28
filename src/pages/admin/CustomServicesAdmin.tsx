@@ -191,7 +191,7 @@ export default function CustomServicesAdmin() {
           </h2>
         </div>
 
-
+        {loading ? (
           <div className="text-muted-foreground">Loading…</div>
         ) : services.length === 0 ? (
           <div className="p-12 rounded-xl border border-dashed border-border text-center text-muted-foreground">
