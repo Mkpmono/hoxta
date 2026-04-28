@@ -4,8 +4,8 @@ import { CheckCircle, AlertTriangle, Globe, Lock, Fingerprint, ShieldCheck } fro
 import { HoxtaLogo } from "@/components/HoxtaLogo";
 
 const VERIFICATION_KEY = "hoxta_ddos_verified";
-// 24 hours: legitimate users won't see the challenge again for a full day
-const VERIFICATION_TTL_MS = 24 * 60 * 60 * 1000;
+// 5 hours: legitimate users won't see the challenge again for 5h
+const VERIFICATION_TTL_MS = 5 * 60 * 60 * 1000;
 
 interface CheckItem {
   label: string;
@@ -18,10 +18,26 @@ interface ClientInfo {
   isp?: string;
 }
 
-function isVerified(): boolean {
+function readPersisted(): string | null {
   try {
-    const raw = localStorage.getItem(VERIFICATION_KEY) || sessionStorage.getItem(VERIFICATION_KEY);
-    if (!raw) return false;
+    const ls = localStorage.getItem(VERIFICATION_KEY);
+    if (ls) return ls;
+  } catch { /* ignore */ }
+  try {
+    const ss = sessionStorage.getItem(VERIFICATION_KEY);
+    if (ss) return ss;
+  } catch { /* ignore */ }
+  try {
+    const m = document.cookie.match(/(?:^|; )hoxta_ddos_verified=([^;]*)/);
+    if (m) return decodeURIComponent(m[1]);
+  } catch { /* ignore */ }
+  return null;
+}
+
+function isVerified(): boolean {
+  const raw = readPersisted();
+  if (!raw) return false;
+  try {
     const { ts } = JSON.parse(raw);
     return Date.now() - ts < VERIFICATION_TTL_MS;
   } catch {
@@ -33,6 +49,11 @@ function markVerified() {
   const payload = JSON.stringify({ ts: Date.now() });
   try { localStorage.setItem(VERIFICATION_KEY, payload); } catch { /* ignore */ }
   try { sessionStorage.setItem(VERIFICATION_KEY, payload); } catch { /* ignore */ }
+  try {
+    const secure = location.protocol === "https:" ? "; Secure" : "";
+    const maxAge = Math.ceil(VERIFICATION_TTL_MS / 1000);
+    document.cookie = `${VERIFICATION_KEY}=${encodeURIComponent(payload)}; Max-Age=${maxAge}; Path=/; SameSite=Lax${secure}`;
+  } catch { /* ignore */ }
 }
 
 function getCanvasFingerprint(): string {
