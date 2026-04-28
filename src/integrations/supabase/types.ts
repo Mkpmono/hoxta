@@ -98,6 +98,48 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_messages: {
+        Row: {
+          created_at: string
+          email: string
+          email_error: string | null
+          email_sent: boolean
+          id: string
+          ip_address: string | null
+          message: string
+          name: string
+          status: string
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          email_error?: string | null
+          email_sent?: boolean
+          id?: string
+          ip_address?: string | null
+          message: string
+          name: string
+          status?: string
+          subject?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          email_error?: string | null
+          email_sent?: boolean
+          id?: string
+          ip_address?: string | null
+          message?: string
+          name?: string
+          status?: string
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       custom_services: {
         Row: {
           category: string
