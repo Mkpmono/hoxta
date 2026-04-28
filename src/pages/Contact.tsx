@@ -9,7 +9,8 @@ import { useEditablePage } from "@/hooks/useEditablePage";
 import { DEFAULT_CONTACT, PageIcon } from "@/data/editablePagesDefaults";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { openLiveChat } from "@/lib/liveChat";
+import { openEmbeddedLiveChat, normalizeLiveChatScript } from "@/lib/liveChat";
+import { useSupportSettings } from "@/hooks/useSupportSettings";
 
 export default function Contact() {
   const c = useEditablePage("contact", DEFAULT_CONTACT);
