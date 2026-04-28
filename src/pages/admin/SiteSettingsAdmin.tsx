@@ -208,7 +208,7 @@ export default function SiteSettingsAdmin() {
           label={s.terms_label}
           setLabel={(v: string) => setS((p) => ({ ...p, terms_label: v }))}
           translations={s.terms_label_translations}
-          transKey="terms_label_translations"
+          onTranslationChange={(lang, v) => updateTranslation("terms_label_translations", lang, v)}
           urlHint="Internal route (/terms) or full external URL"
         />
 
