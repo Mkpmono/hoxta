@@ -156,12 +156,21 @@ export default function CustomServicesAdmin() {
               Adaugă servicii noi care apar automat în meniu și au pagină dedicată la <code className="text-primary">/services/[slug]</code>
             </p>
           </div>
-          <button
-            onClick={() => setEditing(emptyService())}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 font-medium"
-          >
-            <Plus className="w-4 h-4" /> Serviciu nou
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setTemplatePickerOpen(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-card border border-border hover:border-primary/50 text-foreground font-medium"
+              title="Pornește de la o pagină existentă"
+            >
+              <Copy className="w-4 h-4" /> Duplică din...
+            </button>
+            <button
+              onClick={() => setEditing(emptyService())}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 font-medium"
+            >
+              <Plus className="w-4 h-4" /> Serviciu gol
+            </button>
+          </div>
         </div>
 
         {/* Built-in services overview */}
