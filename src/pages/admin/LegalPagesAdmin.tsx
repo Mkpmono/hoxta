@@ -82,10 +82,8 @@ export default function LegalPagesAdmin() {
 
   const autoTranslate = async () => {
     if (!active) return;
-    const targets = LANGS.filter((l) => l.code !== "en").map((l) => l.code);
     const result = await translateFields(
       { title: active.title, content: active.content },
-      targets,
       "en",
     );
     if (result) {
