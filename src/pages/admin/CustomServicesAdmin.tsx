@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Plus, Trash2, Save, ChevronDown, ChevronRight, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Plus, Trash2, Save, ChevronDown, ChevronRight, Eye, EyeOff, Loader2, ExternalLink, Globe, Server, Cpu, HardDrive, Bot, Mic, Users, Gamepad2, Lock } from "lucide-react";
 import { AdminLayout } from "@/components/panel/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
