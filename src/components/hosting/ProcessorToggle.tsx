@@ -1,4 +1,6 @@
 import { motion } from "framer-motion";
+import intelLogo from "@/assets/cpu/intel.png";
+import amdLogo from "@/assets/cpu/amd.png";
 
 type Processor = "intel" | "amd";
 
@@ -7,30 +9,9 @@ interface ProcessorToggleProps {
   onChange: (p: Processor) => void;
 }
 
-/* Intel logo SVG – simplified "arc + text" mark */
-function IntelLogo({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 80 32" className={className} fill="currentColor">
-      <path d="M5 16a11 11 0 0 1 11-11h0" stroke="currentColor" strokeWidth="3" fill="none" strokeLinecap="round"/>
-      <text x="18" y="22" fontSize="16" fontWeight="700" fontFamily="Arial, sans-serif" fill="currentColor">intel</text>
-      <circle cx="73" cy="7" r="2.5" fill="currentColor"/>
-    </svg>
-  );
-}
-
-/* AMD logo SVG – stylized arrow + text */
-function AmdLogo({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 80 32" className={className} fill="currentColor">
-      <text x="4" y="23" fontSize="18" fontWeight="800" fontFamily="Arial, sans-serif" letterSpacing="1" fill="currentColor">AMD</text>
-      <polygon points="68,4 80,16 68,28" fill="currentColor" opacity="0.8"/>
-    </svg>
-  );
-}
-
-const processors: { key: Processor; label: string; subtitle: string; Logo: typeof IntelLogo }[] = [
-  { key: "intel", label: "Intel Xeon", subtitle: "Enterprise Grade", Logo: IntelLogo },
-  { key: "amd", label: "AMD EPYC", subtitle: "High Performance", Logo: AmdLogo },
+const processors: { key: Processor; label: string; subtitle: string; logo: string; alt: string }[] = [
+  { key: "intel", label: "Intel Xeon", subtitle: "Enterprise Grade", logo: intelLogo, alt: "Intel" },
+  { key: "amd", label: "AMD EPYC", subtitle: "High Performance", logo: amdLogo, alt: "AMD" },
 ];
 
 export function ProcessorToggle({ selected, onChange }: ProcessorToggleProps) {
