@@ -52,6 +52,8 @@ import SupportSettingsAdmin from "./pages/admin/SupportSettingsAdmin";
 import CustomServicesAdmin from "./pages/admin/CustomServicesAdmin";
 import SiteSettingsAdmin from "./pages/admin/SiteSettingsAdmin";
 import LegalPagesAdmin from "./pages/admin/LegalPagesAdmin";
+import ContactAdmin from "./pages/admin/ContactAdmin";
+import AboutAdmin from "./pages/admin/AboutAdmin";
 import CustomServicePage from "./pages/CustomServicePage";
 
 import { ScrollToTop } from "@/components/ScrollToTop";
@@ -133,6 +135,8 @@ const App = () => (
             <Route path="/admin/services" element={<AdminProtectedRoute><CustomServicesAdmin /></AdminProtectedRoute>} />
             <Route path="/admin/site-settings" element={<AdminProtectedRoute><SiteSettingsAdmin /></AdminProtectedRoute>} />
             <Route path="/admin/legal" element={<AdminProtectedRoute><LegalPagesAdmin /></AdminProtectedRoute>} />
+            <Route path="/admin/contact" element={<AdminProtectedRoute><ContactAdmin /></AdminProtectedRoute>} />
+            <Route path="/admin/about" element={<AdminProtectedRoute><AboutAdmin /></AdminProtectedRoute>} />
 
             {/* Dynamic Custom Service pages */}
             <Route path="/services/:slug" element={<CustomServicePage />} />
