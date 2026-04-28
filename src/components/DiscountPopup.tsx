@@ -1,18 +1,18 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Copy, Check, Sparkles, Gift, ArrowRight } from "lucide-react";
+import { isDismissed, markDismissed } from "@/lib/persistentDismiss";
 
 const DISCOUNT_CODE = "HOXTA20";
 const STORAGE_KEY = "hoxta_discount_dismissed";
-const DISMISS_DURATION_MS = 3 * 60 * 60 * 1000; // 3 hours
+const DISMISS_DURATION_MS = 8 * 60 * 60 * 1000; // 8 hours
 
 export function DiscountPopup() {
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    const dismissedAt = localStorage.getItem(STORAGE_KEY);
-    if (dismissedAt && Date.now() - Number(dismissedAt) < DISMISS_DURATION_MS) return;
+    if (isDismissed(STORAGE_KEY, DISMISS_DURATION_MS)) return;
 
     const timer = setTimeout(() => setIsOpen(true), 4000);
     return () => clearTimeout(timer);
@@ -20,7 +20,7 @@ export function DiscountPopup() {
 
   const handleClose = () => {
     setIsOpen(false);
-    localStorage.setItem(STORAGE_KEY, String(Date.now()));
+    markDismissed(STORAGE_KEY, DISMISS_DURATION_MS);
   };
 
   const handleCopy = async () => {
