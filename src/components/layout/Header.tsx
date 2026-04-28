@@ -254,9 +254,9 @@ export function Header() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <h4 className="font-medium text-foreground text-sm group-hover:text-primary transition-colors">
-                            {t(item.titleKey)}
+                            {item.raw?.title ?? t(item.titleKey)}
                           </h4>
-                          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{t(item.subtitleKey)}</p>
+                          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{item.raw?.subtitle ?? t(item.subtitleKey)}</p>
                         </div>
                       </Link>
                     ))}
