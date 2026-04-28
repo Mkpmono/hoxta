@@ -26,6 +26,8 @@ import {
   Sparkles,
   Settings,
   ScrollText,
+  Mail,
+  Info,
 } from "lucide-react";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 
@@ -53,6 +55,8 @@ const adminNavItems = [
   { icon: ShieldCheck, label: "DDoS & Visitors", href: "/admin/visitors" },
   { icon: MessageCircle, label: "Chat & Support", href: "/admin/support" },
   { icon: ScrollText, label: "Legal Pages", href: "/admin/legal" },
+  { icon: Info, label: "Pagina About", href: "/admin/about" },
+  { icon: Mail, label: "Pagina Contact", href: "/admin/contact" },
   { icon: Settings, label: "Site Settings", href: "/admin/site-settings" },
 ];
 
