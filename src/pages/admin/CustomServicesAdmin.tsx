@@ -1,9 +1,22 @@
 import { useEffect, useState } from "react";
-import { Plus, Trash2, Save, ChevronDown, ChevronRight, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Plus, Trash2, Save, ChevronDown, ChevronRight, Eye, EyeOff, Loader2, ExternalLink, Globe, Server, Cpu, HardDrive, Bot, Mic, Users, Gamepad2, Lock } from "lucide-react";
 import { AdminLayout } from "@/components/panel/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import type { CustomService, CustomServiceSections } from "@/hooks/useCustomServices";
+
+const BUILT_IN_SERVICES = [
+  { icon: Globe, name: "Web Hosting", page: "/web-hosting", admin: "/admin/hosting/web", group: "web" },
+  { icon: Users, name: "Reseller Hosting", page: "/reseller-hosting", admin: "/admin/hosting/reseller", group: "web" },
+  { icon: Globe, name: "Domains", page: "/domains", admin: "/admin/hosting/domains", group: "web" },
+  { icon: Gamepad2, name: "Game Servers", page: "/game-servers", admin: "/admin/games", group: "games" },
+  { icon: Server, name: "VPS Hosting", page: "/vps", admin: "/admin/hosting/vps", group: "server" },
+  { icon: Cpu, name: "Dedicated Servers", page: "/dedicated", admin: "/admin/hosting/dedicated", group: "server" },
+  { icon: Bot, name: "Discord Bot", page: "/discord-bot", admin: "/admin/hosting/discord-bot", group: "moreHosting" },
+  { icon: Mic, name: "TeamSpeak", page: "/teamspeak", admin: "/admin/hosting/teamspeak", group: "moreHosting" },
+  { icon: HardDrive, name: "Colocation", page: "/colocation", admin: "/admin/hosting/colocation", group: "moreHosting" },
+];
 
 const MENU_GROUPS = [
   { value: "web", label: "Web Hosting" },
@@ -128,6 +141,54 @@ export default function CustomServicesAdmin() {
           >
             <Plus className="w-4 h-4" /> Serviciu nou
           </button>
+        </div>
+
+        {/* Built-in services overview */}
+        <div className="mb-8">
+          <div className="flex items-center gap-2 mb-3">
+            <Lock className="w-4 h-4 text-muted-foreground" />
+            <h2 className="text-sm font-semibold text-foreground uppercase tracking-wide">
+              Servicii integrate (built-in)
+            </h2>
+          </div>
+          <p className="text-xs text-muted-foreground mb-3">
+            Acestea sunt paginile principale ale site-ului. Au admin dedicat pentru pachete, prețuri și conținut. Nu pot fi șterse de aici.
+          </p>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            {BUILT_IN_SERVICES.map((b) => {
+              const Icon = b.icon;
+              return (
+                <div
+                  key={b.page}
+                  className="flex items-center gap-3 p-3 rounded-lg bg-card/60 border border-border/60"
+                >
+                  <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                    <Icon className="w-4 h-4" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-medium text-foreground truncate">{b.name}</div>
+                    <div className="text-xs text-muted-foreground truncate">
+                      {b.page} · grup: {b.group}
+                    </div>
+                  </div>
+                  <Link
+                    to={b.admin}
+                    className="p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground"
+                    title="Deschide admin-ul acestui serviciu"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 mb-3">
+          <Plus className="w-4 h-4 text-muted-foreground" />
+          <h2 className="text-sm font-semibold text-foreground uppercase tracking-wide">
+            Servicii custom adăugate de tine
+          </h2>
         </div>
 
         {loading ? (
