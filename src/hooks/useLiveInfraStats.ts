@@ -17,7 +17,7 @@ export interface LiveInfraStats {
 export function useLiveInfraStats() {
   const [stats, setStats] = useState<LiveInfraStats>({
     monitorsCount: 0,
-    uptimePercent: 100,
+    uptimePercent: 0,
     avgResponseMs: 0,
     allOperational: true,
     loading: true,
@@ -28,20 +28,30 @@ export function useLiveInfraStats() {
 
     async function load() {
       try {
-        const { data: monitors } = await supabase
+        const { data: monitors, error: mErr } = await supabase
           .from("status_monitors_public")
-          .select("id, is_active")
+          .select("id")
           .eq("is_active", true);
 
+        if (mErr) console.error("[useLiveInfraStats] monitors error:", mErr);
+
         const monitorIds = (monitors || []).map((m) => m.id!).filter(Boolean);
+
+        if (monitorIds.length === 0) {
+          if (!cancelled) setStats((s) => ({ ...s, loading: false }));
+          return;
+        }
+
         const since = new Date(Date.now() - 30 * 86400_000).toISOString();
 
-        const { data: checks } = await supabase
+        const { data: checks, error: cErr } = await supabase
           .from("status_checks")
           .select("status, response_time_ms")
           .in("monitor_id", monitorIds)
           .gte("checked_at", since)
           .limit(5000);
+
+        if (cErr) console.error("[useLiveInfraStats] checks error:", cErr);
 
         const list = checks || [];
         const total = list.length;
@@ -61,7 +71,8 @@ export function useLiveInfraStats() {
           allOperational: total === 0 || up / total > 0.99,
           loading: false,
         });
-      } catch {
+      } catch (e) {
+        console.error("[useLiveInfraStats] fatal:", e);
         if (!cancelled) setStats((s) => ({ ...s, loading: false }));
       }
     }
