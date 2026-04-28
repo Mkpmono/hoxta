@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { brand } from "@/config/brand";
 import { HoxtaLogo } from "@/components/HoxtaLogo";
 import { useSupportSettings } from "@/hooks/useSupportSettings";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { MapPin, Clock, MessageCircle, Twitter, Github, Youtube, Instagram } from "lucide-react";
 
 import visaSvg from "@/assets/payments/visa.svg";
@@ -31,6 +32,9 @@ const paymentMethods = [
 export const Footer = forwardRef<HTMLElement>(function Footer(_props, ref) {
   const { t } = useTranslation();
   const { data: supportSettings } = useSupportSettings();
+  const { termsUrl, termsLabel, privacyUrl, privacyLabel } = useSiteSettings();
+  const termsExternal = /^https?:\/\//i.test(termsUrl);
+  const privacyExternal = /^https?:\/\//i.test(privacyUrl);
   const year = new Date().getFullYear();
 
   return (
@@ -98,8 +102,16 @@ export const Footer = forwardRef<HTMLElement>(function Footer(_props, ref) {
             <div className="space-y-3 text-sm">
               <Link to="/knowledge-base" className="block text-muted-foreground transition-colors hover:text-primary">{t("footer.knowledgeBase")}</Link>
               <Link to="/status" className="block text-muted-foreground transition-colors hover:text-primary">{t("footer.serverStatus")}</Link>
-              <Link to="/terms" className="block text-muted-foreground transition-colors hover:text-primary">{t("footer.termsOfService")}</Link>
-              <Link to="/privacy" className="block text-muted-foreground transition-colors hover:text-primary">{t("footer.privacyPolicy")}</Link>
+              {termsExternal ? (
+                <a href={termsUrl} target="_blank" rel="noopener noreferrer" className="block text-muted-foreground transition-colors hover:text-primary">{termsLabel}</a>
+              ) : (
+                <Link to={termsUrl} className="block text-muted-foreground transition-colors hover:text-primary">{termsLabel}</Link>
+              )}
+              {privacyExternal ? (
+                <a href={privacyUrl} target="_blank" rel="noopener noreferrer" className="block text-muted-foreground transition-colors hover:text-primary">{privacyLabel}</a>
+              ) : (
+                <Link to={privacyUrl} className="block text-muted-foreground transition-colors hover:text-primary">{privacyLabel}</Link>
+              )}
             </div>
 
             <div className="mt-5 flex items-center gap-3">
@@ -154,8 +166,16 @@ export const Footer = forwardRef<HTMLElement>(function Footer(_props, ref) {
         <div className="mt-10 flex flex-col gap-4 border-t border-border/50 pt-6 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between">
           <p>{t("footer.copyright", { year })}</p>
           <div className="flex items-center gap-6">
-            <Link to="/terms" className="transition-colors hover:text-primary">{t("footer.terms")}</Link>
-            <Link to="/privacy" className="transition-colors hover:text-primary">{t("footer.privacy")}</Link>
+            {termsExternal ? (
+              <a href={termsUrl} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-primary">{termsLabel}</a>
+            ) : (
+              <Link to={termsUrl} className="transition-colors hover:text-primary">{termsLabel}</Link>
+            )}
+            {privacyExternal ? (
+              <a href={privacyUrl} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-primary">{privacyLabel}</a>
+            ) : (
+              <Link to={privacyUrl} className="transition-colors hover:text-primary">{privacyLabel}</Link>
+            )}
             <Link to="/status" className="transition-colors hover:text-primary">{t("footer.status")}</Link>
           </div>
         </div>

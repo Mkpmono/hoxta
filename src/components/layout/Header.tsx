@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { HoxtaLogo } from "@/components/HoxtaLogo";
 import { useCustomServices } from "@/hooks/useCustomServices";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 interface DropdownItem {
   titleKey: string;
@@ -88,6 +89,8 @@ export function Header() {
   const location = useLocation();
   const headerRef = useRef<HTMLElement>(null);
   const { services: customServices } = useCustomServices({ onlyMenu: true });
+  const { controlPanelUrl, controlPanelLabel } = useSiteSettings();
+  const isExternalCP = /^https?:\/\//i.test(controlPanelUrl);
 
   const menuItems = useMemo<MenuItemProps[]>(() => {
     if (!customServices.length) return baseMenuItems;
@@ -209,12 +212,12 @@ export function Header() {
             <LanguageSwitcher />
             
             <a
-              href="https://billing.hoxta.com"
-              target="_blank"
-              rel="noopener noreferrer"
+              href={controlPanelUrl}
+              target={isExternalCP ? "_blank" : undefined}
+              rel={isExternalCP ? "noopener noreferrer" : undefined}
               className="hidden md:flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 shadow-[0_0_20px_rgba(25,195,255,0.3)] hover:shadow-[0_0_30px_rgba(25,195,255,0.5)]"
             >
-              {t("nav.controlPanel")}
+              {controlPanelLabel}
             </a>
             
             {/* Mobile Menu Button */}
@@ -308,8 +311,13 @@ export function Header() {
                   )}
                 </div>
               ))}
-              <a href="https://billing.hoxta.com" target="_blank" rel="noopener noreferrer" className="block w-full btn-glow text-center mt-4">
-                {t("nav.controlPanel")}
+              <a
+                href={controlPanelUrl}
+                target={isExternalCP ? "_blank" : undefined}
+                rel={isExternalCP ? "noopener noreferrer" : undefined}
+                className="block w-full btn-glow text-center mt-4"
+              >
+                {controlPanelLabel}
               </a>
             </div>
           </motion.div>
