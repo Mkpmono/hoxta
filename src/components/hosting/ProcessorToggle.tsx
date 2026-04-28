@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { IntelLogo, AmdLogo } from "./CpuLogos";
+import intelLogo from "@/assets/cpu/intel.png";
+import amdLogo from "@/assets/cpu/amd.png";
 
 type Processor = "intel" | "amd";
 
@@ -9,15 +10,15 @@ interface ProcessorToggleProps {
 }
 
 const processors = [
-  { key: "intel" as const, label: "Intel Xeon", subtitle: "Enterprise Grade", Logo: IntelLogo },
-  { key: "amd" as const, label: "AMD EPYC", subtitle: "High Performance", Logo: AmdLogo },
+  { key: "intel" as const, label: "Intel Xeon", subtitle: "Enterprise Grade", logo: intelLogo },
+  { key: "amd" as const, label: "AMD EPYC", subtitle: "High Performance", logo: amdLogo },
 ];
 
 export function ProcessorToggle({ selected, onChange }: ProcessorToggleProps) {
   return (
     <div className="flex items-center justify-center mb-10">
       <div className="inline-flex rounded-2xl bg-card/80 backdrop-blur-sm border border-border/60 p-1.5 gap-1.5 shadow-lg">
-        {processors.map(({ key, label, subtitle, Logo }) => {
+        {processors.map(({ key, label, subtitle, logo }) => {
           const isActive = selected === key;
           return (
             <button
@@ -37,11 +38,13 @@ export function ProcessorToggle({ selected, onChange }: ProcessorToggleProps) {
                 />
               )}
               <span className="relative z-10 flex items-center gap-3">
-                <Logo
-                  className={`h-7 w-auto transition-opacity duration-200 ${
-                    isActive ? "opacity-100" : "opacity-60"
-                  }`}
-                />
+                <span className="inline-flex items-center justify-center bg-white rounded-md px-2 py-1 shadow-sm">
+                  <img
+                    src={logo}
+                    alt={label}
+                    className="h-5 w-auto object-contain"
+                  />
+                </span>
                 <span className="flex flex-col items-start leading-tight">
                   <span className="text-sm font-bold tracking-wide">{label}</span>
                   <span
