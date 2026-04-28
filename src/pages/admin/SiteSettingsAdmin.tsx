@@ -196,7 +196,7 @@ export default function SiteSettingsAdmin() {
           label={s.control_panel_label}
           setLabel={(v: string) => setS((p) => ({ ...p, control_panel_label: v }))}
           translations={s.control_panel_label_translations}
-          transKey="control_panel_label_translations"
+          onTranslationChange={(lang, v) => updateTranslation("control_panel_label_translations", lang, v)}
           urlHint="Full external URL, e.g. https://billing.hoxta.com"
         />
 
