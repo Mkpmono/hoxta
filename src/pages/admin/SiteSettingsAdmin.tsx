@@ -119,51 +119,6 @@ export default function SiteSettingsAdmin() {
     );
   }
 
-  const Section = ({
-    title,
-    icon: Icon,
-    url,
-    setUrl,
-    label,
-    setLabel,
-    translations,
-    transKey,
-    urlHint,
-  }: any) => (
-    <div className="glass-card p-6 rounded-xl space-y-4">
-      <div className="flex items-center gap-2 mb-2">
-        <Icon className="w-5 h-5 text-primary" />
-        <h3 className="text-lg font-semibold text-foreground">{title}</h3>
-      </div>
-      <div className="grid md:grid-cols-2 gap-4">
-        <div>
-          <Label>URL / Link</Label>
-          <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder={urlHint} />
-          <p className="text-xs text-muted-foreground mt-1">{urlHint}</p>
-        </div>
-        <div>
-          <Label>Default label (fallback)</Label>
-          <Input value={label} onChange={(e) => setLabel(e.target.value)} />
-        </div>
-      </div>
-      <div>
-        <Label className="mb-2 block">Per-language labels</Label>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {LANGS.map((l) => (
-            <div key={l.code}>
-              <Label className="text-xs uppercase text-muted-foreground">{l.label}</Label>
-              <Input
-                value={translations[l.code] || ""}
-                onChange={(e) => updateTranslation(transKey, l.code, e.target.value)}
-                placeholder={label}
-              />
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-
   return (
     <AdminLayout>
       <div className="max-w-4xl mx-auto space-y-6">
