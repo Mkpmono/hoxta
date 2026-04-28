@@ -6,6 +6,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import type { CustomService, CustomServiceSections } from "@/hooks/useCustomServices";
 
+const BUILT_IN_SERVICES = [
+  { icon: Globe, name: "Web Hosting", page: "/web-hosting", admin: "/admin/hosting/web", group: "web" },
+  { icon: Users, name: "Reseller Hosting", page: "/reseller-hosting", admin: "/admin/hosting/reseller", group: "web" },
+  { icon: Globe, name: "Domains", page: "/domains", admin: "/admin/hosting/domains", group: "web" },
+  { icon: Gamepad2, name: "Game Servers", page: "/game-servers", admin: "/admin/games", group: "games" },
+  { icon: Server, name: "VPS Hosting", page: "/vps", admin: "/admin/hosting/vps", group: "server" },
+  { icon: Cpu, name: "Dedicated Servers", page: "/dedicated", admin: "/admin/hosting/dedicated", group: "server" },
+  { icon: Bot, name: "Discord Bot", page: "/discord-bot", admin: "/admin/hosting/discord-bot", group: "moreHosting" },
+  { icon: Mic, name: "TeamSpeak", page: "/teamspeak", admin: "/admin/hosting/teamspeak", group: "moreHosting" },
+  { icon: HardDrive, name: "Colocation", page: "/colocation", admin: "/admin/hosting/colocation", group: "moreHosting" },
+];
+
 const MENU_GROUPS = [
   { value: "web", label: "Web Hosting" },
   { value: "games", label: "Game Servers" },
