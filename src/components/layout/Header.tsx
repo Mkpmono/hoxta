@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { HoxtaLogo } from "@/components/HoxtaLogo";
 import { useCustomServices } from "@/hooks/useCustomServices";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 interface DropdownItem {
   titleKey: string;
