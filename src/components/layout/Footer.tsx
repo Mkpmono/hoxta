@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { brand } from "@/config/brand";
 import { HoxtaLogo } from "@/components/HoxtaLogo";
 import { useSupportSettings } from "@/hooks/useSupportSettings";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { MapPin, Clock, MessageCircle, Twitter, Github, Youtube, Instagram } from "lucide-react";
 
 import visaSvg from "@/assets/payments/visa.svg";
