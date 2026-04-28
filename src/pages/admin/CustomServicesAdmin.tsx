@@ -56,6 +56,25 @@ function emptyService(): Partial<CustomService> {
   };
 }
 
+function fromTemplate(t: ServiceTemplate): Partial<CustomService> {
+  return {
+    slug: "",
+    name: "",
+    menu_label: "",
+    menu_description: t.description,
+    menu_icon: t.icon,
+    menu_group: t.group,
+    category: t.category,
+    tags: [],
+    cover_image_url: "",
+    short_description: t.shortDescription,
+    sections: JSON.parse(JSON.stringify(t.sections)),
+    is_published: false,
+    show_in_menu: true,
+    sort_order: 100,
+  };
+}
+
 export default function CustomServicesAdmin() {
   const [services, setServices] = useState<CustomService[]>([]);
   const [loading, setLoading] = useState(true);
