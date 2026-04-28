@@ -166,8 +166,16 @@ export const Footer = forwardRef<HTMLElement>(function Footer(_props, ref) {
         <div className="mt-10 flex flex-col gap-4 border-t border-border/50 pt-6 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between">
           <p>{t("footer.copyright", { year })}</p>
           <div className="flex items-center gap-6">
-            <Link to="/terms" className="transition-colors hover:text-primary">{t("footer.terms")}</Link>
-            <Link to="/privacy" className="transition-colors hover:text-primary">{t("footer.privacy")}</Link>
+            {termsExternal ? (
+              <a href={termsUrl} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-primary">{termsLabel}</a>
+            ) : (
+              <Link to={termsUrl} className="transition-colors hover:text-primary">{termsLabel}</Link>
+            )}
+            {privacyExternal ? (
+              <a href={privacyUrl} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-primary">{privacyLabel}</a>
+            ) : (
+              <Link to={privacyUrl} className="transition-colors hover:text-primary">{privacyLabel}</Link>
+            )}
             <Link to="/status" className="transition-colors hover:text-primary">{t("footer.status")}</Link>
           </div>
         </div>
