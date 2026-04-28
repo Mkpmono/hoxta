@@ -50,6 +50,8 @@ import TeamSpeakAdmin from "./pages/admin/hosting/TeamSpeakAdmin";
 import ColocationAdmin from "./pages/admin/hosting/ColocationAdmin";
 import SupportSettingsAdmin from "./pages/admin/SupportSettingsAdmin";
 import CustomServicesAdmin from "./pages/admin/CustomServicesAdmin";
+import SiteSettingsAdmin from "./pages/admin/SiteSettingsAdmin";
+import LegalPagesAdmin from "./pages/admin/LegalPagesAdmin";
 import CustomServicePage from "./pages/CustomServicePage";
 
 import { ScrollToTop } from "@/components/ScrollToTop";
@@ -129,6 +131,8 @@ const App = () => (
             <Route path="/admin/hosting/colocation" element={<AdminProtectedRoute><ColocationAdmin /></AdminProtectedRoute>} />
             <Route path="/admin/support" element={<AdminProtectedRoute><SupportSettingsAdmin /></AdminProtectedRoute>} />
             <Route path="/admin/services" element={<AdminProtectedRoute><CustomServicesAdmin /></AdminProtectedRoute>} />
+            <Route path="/admin/site-settings" element={<AdminProtectedRoute><SiteSettingsAdmin /></AdminProtectedRoute>} />
+            <Route path="/admin/legal" element={<AdminProtectedRoute><LegalPagesAdmin /></AdminProtectedRoute>} />
 
             {/* Dynamic Custom Service pages */}
             <Route path="/services/:slug" element={<CustomServicePage />} />
