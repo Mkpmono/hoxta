@@ -196,7 +196,14 @@ export default function Domains() {
                     {r.available && (
                       <div className="flex items-center gap-4">
                         <span className="text-primary font-bold text-lg">{r.price}<span className="text-muted-foreground text-sm font-normal">{t("pages.domains.perYear")}</span></span>
-                        <Button size="sm" className="shadow-[0_0_15px_rgba(25,195,255,0.2)]">
+                        <Button
+                          size="sm"
+                          className="shadow-[0_0_15px_rgba(25,195,255,0.2)]"
+                          onClick={() => {
+                            const url = r.registerUrl || `https://billing.hoxta.com/cart.php?a=add&domain=register&query=${encodeURIComponent(r.ext)}&period=1`;
+                            window.open(url, "_blank", "noopener,noreferrer");
+                          }}
+                        >
                           {t("pages.domains.register")} <ArrowRight className="w-4 h-4 ml-1" />
                         </Button>
                       </div>
