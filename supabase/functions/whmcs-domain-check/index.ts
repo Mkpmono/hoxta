@@ -97,8 +97,8 @@ async function checkAvailability(domain: string): Promise<boolean | null> {
 
 // ---------- Optional WHMCS pricing via PHP proxy ----------
 async function fetchPricing(): Promise<Record<string, { price: string; currency: string }>> {
-  const proxyBase = Deno.env.get("WHMCS_PROXY_URL"); // e.g. https://hoxta.com/api-backend
-  if (!proxyBase) return {};
+  // Default proxy: https://api.hoxta.com (PHP backend with WHMCS IP whitelisted)
+  const proxyBase = Deno.env.get("WHMCS_PROXY_URL") ?? "https://api.hoxta.com";
 
   try {
     const res = await fetch(`${proxyBase.replace(/\/$/, "")}/whmcs/tld_pricing.php`, {
