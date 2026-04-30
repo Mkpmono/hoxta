@@ -12,10 +12,17 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 
+interface DomainResult {
+  ext: string;
+  price: string;
+  available: boolean;
+  registerUrl?: string;
+}
+
 export default function Domains() {
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
-  const [results, setResults] = useState<{ ext: string; price: string; available: boolean }[] | null>(null);
+  const [results, setResults] = useState<DomainResult[] | null>(null);
   const [searching, setSearching] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [searchError, setSearchError] = useState<string | null>(null);
@@ -72,16 +79,23 @@ export default function Domains() {
     const domainsToCheck = extensions.map((ext) => `${baseName}${ext}`);
 
     try {
-      const { data, error } = await supabase.functions.invoke("domain-check", {
+      const { data, error } = await supabase.functions.invoke("whmcs-domain-check", {
         body: { domains: domainsToCheck },
       });
       if (error) throw error;
-      if (data.results) {
-        const priceMap: Record<string, string> = {};
-        popularTLDs.forEach((t) => { priceMap[t.ext] = t.price; });
+      if (data?.results) {
+        const fallbackPrices: Record<string, string> = {};
+        popularTLDs.forEach((t) => { fallbackPrices[t.ext] = t.price; });
         setResults(data.results.map((r: any) => {
           const ext = "." + r.domain.split(".").slice(1).join(".");
-          return { ext: r.domain, price: priceMap[ext] || "€9.99", available: r.status === "available" };
+          const currency = r.currency === "EUR" ? "€" : r.currency ? `${r.currency} ` : "€";
+          const price = r.price ? `${currency}${r.price}` : (fallbackPrices[ext] || "€9.99");
+          return {
+            ext: r.domain,
+            price,
+            available: !!r.available,
+            registerUrl: r.registerUrl,
+          };
         }));
       } else {
         setSearchError(t("pages.domains.searchError"));
@@ -182,7 +196,14 @@ export default function Domains() {
                     {r.available && (
                       <div className="flex items-center gap-4">
                         <span className="text-primary font-bold text-lg">{r.price}<span className="text-muted-foreground text-sm font-normal">{t("pages.domains.perYear")}</span></span>
-                        <Button size="sm" className="shadow-[0_0_15px_rgba(25,195,255,0.2)]">
+                        <Button
+                          size="sm"
+                          className="shadow-[0_0_15px_rgba(25,195,255,0.2)]"
+                          onClick={() => {
+                            const url = r.registerUrl || `https://billing.hoxta.com/cart.php?a=add&domain=register&query=${encodeURIComponent(r.ext)}&period=1`;
+                            window.open(url, "_blank", "noopener,noreferrer");
+                          }}
+                        >
                           {t("pages.domains.register")} <ArrowRight className="w-4 h-4 ml-1" />
                         </Button>
                       </div>
