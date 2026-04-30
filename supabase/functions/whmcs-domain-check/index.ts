@@ -16,13 +16,18 @@ interface DomainResult {
 }
 
 async function whmcsCall(action: string, extraParams: Record<string, string>) {
-  const url = Deno.env.get("WHMCS_API_URL");
+  const rawUrl = Deno.env.get("WHMCS_API_URL");
   const identifier = Deno.env.get("WHMCS_API_IDENTIFIER");
   const secret = Deno.env.get("WHMCS_API_SECRET");
 
-  if (!url || !identifier || !secret) {
+  if (!rawUrl || !identifier || !secret) {
     throw new Error("WHMCS credentials are not configured");
   }
+
+  // Auto-append /includes/api.php if user provided only the base URL
+  const url = /\/includes\/api\.php$/.test(rawUrl)
+    ? rawUrl
+    : rawUrl.replace(/\/$/, "") + "/includes/api.php";
 
   const body = new URLSearchParams({
     identifier,
@@ -38,10 +43,17 @@ async function whmcsCall(action: string, extraParams: Record<string, string>) {
     body,
   });
 
+  const text = await res.text();
   if (!res.ok) {
-    throw new Error(`WHMCS HTTP ${res.status}`);
+    throw new Error(`WHMCS HTTP ${res.status}: ${text.substring(0, 200)}`);
   }
-  return res.json();
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error(
+      `WHMCS returned non-JSON (likely wrong URL, got HTML). URL used: ${url}. First 200 chars: ${text.substring(0, 200)}`
+    );
+  }
 }
 
 Deno.serve(async (req) => {
