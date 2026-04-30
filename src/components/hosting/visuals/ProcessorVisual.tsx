@@ -1,189 +1,103 @@
 import { motion } from "framer-motion";
+import { Cpu, MemoryStick, HardDrive, Network } from "lucide-react";
 import intelLogo from "@/assets/cpu/intel.png";
 import amdLogo from "@/assets/cpu/amd.png";
 
 /**
- * Minimal CPU showcase — stylized chip illustrations with key specs.
- * Two platforms presented as silicon dies with pin grids and spec rails.
+ * Spec sheet card — matches the pricing card style:
+ * vertical list of rows with squircle icon, uppercase label, bold value lines.
  */
 export function ProcessorVisual() {
-  const platforms = [
+  const rows = [
     {
-      name: "Intel Xeon",
-      tier: "Scalable Gen 3",
-      logo: intelLogo,
-      stats: [
-        { label: "Up to", value: "24", unit: "Cores" },
-        { label: "Boost", value: "4.0", unit: "GHz" },
-        { label: "Cache", value: "35.75", unit: "MB" },
-      ],
+      icon: Cpu,
+      label: "Processor",
+      lines: ["Intel Xeon Gold 6248R", "24 cores – 48 threads"],
     },
     {
-      name: "AMD EPYC",
-      tier: "Milan 7003",
-      logo: amdLogo,
-      stats: [
-        { label: "Up to", value: "64", unit: "Cores" },
-        { label: "Boost", value: "4.1", unit: "GHz" },
-        { label: "Cache", value: "256", unit: "MB" },
-      ],
+      icon: MemoryStick,
+      label: "Memory",
+      lines: ["128GB DDR4 ECC", "2933 MHz Registered"],
+    },
+    {
+      icon: HardDrive,
+      label: "Storage",
+      lines: ["2x 2TB NVMe SSD", "Hardware RAID-1"],
+    },
+    {
+      icon: Network,
+      label: "Network",
+      lines: ["1 Gbps Port", "Unlimited bandwidth"],
     },
   ];
 
   return (
-    <div className="relative w-full rounded-2xl overflow-hidden border border-border/50 bg-card/40 backdrop-blur-md p-6 space-y-5">
-      {/* Ambient */}
-      <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-96 h-64 bg-primary/8 rounded-full blur-3xl pointer-events-none" />
+    <div className="relative w-full rounded-2xl border border-border/60 bg-card/50 backdrop-blur-md p-6 overflow-hidden">
+      {/* Ambient glow */}
+      <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
 
       {/* Header */}
-      <div className="relative flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_hsl(var(--primary))]" />
-          <span className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground font-medium">
-            Server-grade Silicon
-          </span>
+      <div className="relative flex items-start justify-between mb-5">
+        <div>
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border border-primary/30 bg-primary/10 mb-3">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+            <span className="text-[10px] font-semibold text-primary uppercase tracking-wider">
+              Reference Build
+            </span>
+          </div>
+          <h3 className="text-xl font-bold text-foreground leading-tight">
+            Intel Xeon &amp; AMD EPYC
+          </h3>
+          <p className="text-[11px] text-muted-foreground mt-0.5">
+            Server-grade silicon, deployed in &lt;1h
+          </p>
         </div>
-        <span className="text-[10px] text-muted-foreground/70 tabular-nums">
-          DDR4 ECC · PCIe 4.0
-        </span>
+        <div className="flex items-center gap-2 mt-1">
+          <img
+            src={intelLogo}
+            alt="Intel"
+            className="h-3 w-auto object-contain [filter:brightness(0)_invert(1)] opacity-70"
+          />
+          <span className="text-muted-foreground/40 text-xs">/</span>
+          <img
+            src={amdLogo}
+            alt="AMD"
+            className="h-3 w-auto object-contain [filter:brightness(0)_invert(1)] opacity-70"
+          />
+        </div>
       </div>
 
-      {/* Chip cards */}
-      <div className="relative space-y-3">
-        {platforms.map((p, idx) => (
-          <motion.div
-            key={p.name}
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: idx * 0.12, duration: 0.45 }}
-            className="group relative rounded-xl border border-border/50 bg-background/30 hover:bg-background/40 transition-colors overflow-hidden"
-          >
-            <div className="flex items-stretch">
-              {/* Chip illustration */}
-              <ChipIcon />
-
-              {/* Info */}
-              <div className="flex-1 px-4 py-4 flex flex-col justify-between min-w-0">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="text-sm font-semibold text-foreground truncate">
-                      {p.name}
-                    </div>
-                    <div className="text-[11px] text-muted-foreground tabular-nums mt-0.5">
-                      {p.tier}
-                    </div>
-                  </div>
-                  <img
-                    src={p.logo}
-                    alt={p.name}
-                    className="h-3.5 w-auto object-contain [filter:brightness(0)_invert(1)] opacity-70 group-hover:opacity-100 transition-opacity flex-shrink-0"
-                  />
+      {/* Spec rows */}
+      <div className="relative divide-y divide-border/40">
+        {rows.map((row, idx) => {
+          const Icon = row.icon;
+          return (
+            <motion.div
+              key={row.label}
+              initial={{ opacity: 0, x: -8 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: idx * 0.08, duration: 0.35 }}
+              className="flex items-start gap-4 py-3.5 first:pt-0 last:pb-0"
+            >
+              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
+                <Icon className="w-4 h-4 text-primary" strokeWidth={2} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-semibold mb-0.5">
+                  {row.label}
                 </div>
-
-                {/* Stats rail */}
-                <div className="grid grid-cols-3 gap-3 mt-3 pt-3 border-t border-border/40">
-                  {p.stats.map((s) => (
-                    <div key={s.label}>
-                      <div className="text-[9px] uppercase tracking-wider text-muted-foreground/80">
-                        {s.label}
-                      </div>
-                      <div className="flex items-baseline gap-1 mt-0.5">
-                        <span className="text-base font-semibold text-foreground tabular-nums leading-none">
-                          {s.value}
-                        </span>
-                        <span className="text-[10px] text-muted-foreground">
-                          {s.unit}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
+                <div className="text-sm font-semibold text-foreground leading-snug">
+                  {row.lines[0]}
+                </div>
+                <div className="text-[12px] text-muted-foreground leading-snug">
+                  {row.lines[1]}
                 </div>
               </div>
-            </div>
-
-            {/* Hover accent line */}
-            <div className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-primary/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-          </motion.div>
-        ))}
+            </motion.div>
+          );
+        })}
       </div>
-
-      {/* Footer chips */}
-      <div className="relative flex items-center justify-between text-[10px] text-muted-foreground/70 pt-1">
-        <div className="flex items-center gap-2">
-          <span className="px-2 py-0.5 rounded-md border border-border/50 bg-background/40">
-            ECC RAM
-          </span>
-          <span className="px-2 py-0.5 rounded-md border border-border/50 bg-background/40">
-            NVMe RAID
-          </span>
-          <span className="px-2 py-0.5 rounded-md border border-border/50 bg-background/40">
-            IPMI
-          </span>
-        </div>
-        <span className="tabular-nums">99.99% SLA</span>
-      </div>
-    </div>
-  );
-}
-
-/** Stylized CPU die — pure SVG, no images. */
-function ChipIcon() {
-  return (
-    <div className="relative w-24 flex-shrink-0 bg-gradient-to-br from-background/60 to-background/20 border-r border-border/50 flex items-center justify-center">
-      <svg
-        viewBox="0 0 80 80"
-        className="w-14 h-14 text-primary"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.2"
-      >
-        {/* Outer pins */}
-        {[20, 30, 40, 50, 60].map((p) => (
-          <g key={`pin-${p}`} opacity="0.5">
-            <line x1={p} y1="8" x2={p} y2="14" />
-            <line x1={p} y1="66" x2={p} y2="72" />
-            <line x1="8" y1={p} x2="14" y2={p} />
-            <line x1="66" y1={p} x2="72" y2={p} />
-          </g>
-        ))}
-        {/* Chip body */}
-        <rect
-          x="14"
-          y="14"
-          width="52"
-          height="52"
-          rx="3"
-          className="fill-primary/5"
-        />
-        {/* Inner die */}
-        <rect
-          x="22"
-          y="22"
-          width="36"
-          height="36"
-          rx="2"
-          className="fill-primary/10"
-          opacity="0.8"
-        />
-        {/* Die circuits */}
-        <g opacity="0.7">
-          <line x1="28" y1="30" x2="52" y2="30" />
-          <line x1="28" y1="40" x2="52" y2="40" />
-          <line x1="28" y1="50" x2="52" y2="50" />
-          <line x1="34" y1="22" x2="34" y2="58" />
-          <line x1="46" y1="22" x2="46" y2="58" />
-        </g>
-        {/* Center core */}
-        <rect
-          x="36"
-          y="36"
-          width="8"
-          height="8"
-          className="fill-primary"
-          opacity="0.9"
-        />
-      </svg>
     </div>
   );
 }
