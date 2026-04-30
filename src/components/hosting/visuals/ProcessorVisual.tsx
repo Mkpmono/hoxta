@@ -125,32 +125,76 @@ export function ProcessorVisual() {
 
 function ChipIcon() {
   return (
-    <div className="relative w-24 flex-shrink-0 bg-gradient-to-br from-background/60 to-background/20 border-r border-border/50 flex items-center justify-center">
-      <svg
-        viewBox="0 0 80 80"
-        className="w-14 h-14 text-primary"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.2"
-      >
-        {[20, 30, 40, 50, 60].map((p) => (
-          <g key={`pin-${p}`} opacity="0.5">
-            <line x1={p} y1="8" x2={p} y2="14" />
-            <line x1={p} y1="66" x2={p} y2="72" />
-            <line x1="8" y1={p} x2="14" y2={p} />
-            <line x1="66" y1={p} x2="72" y2={p} />
-          </g>
-        ))}
-        <rect x="14" y="14" width="52" height="52" rx="3" className="fill-primary/5" />
-        <rect x="22" y="22" width="36" height="36" rx="2" className="fill-primary/10" opacity="0.8" />
-        <g opacity="0.7">
-          <line x1="28" y1="30" x2="52" y2="30" />
-          <line x1="28" y1="40" x2="52" y2="40" />
-          <line x1="28" y1="50" x2="52" y2="50" />
-          <line x1="34" y1="22" x2="34" y2="58" />
-          <line x1="46" y1="22" x2="46" y2="58" />
+    <div className="relative w-24 flex-shrink-0 bg-gradient-to-br from-background/70 to-background/20 border-r border-border/50 flex items-center justify-center overflow-hidden">
+      {/* Ambient glow behind chip */}
+      <div className="absolute w-12 h-12 bg-primary/25 rounded-full blur-2xl" />
+
+      <svg viewBox="0 0 100 100" className="relative w-16 h-16" fill="none">
+        <defs>
+          <linearGradient id="chip-body" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="hsl(var(--foreground))" stopOpacity="0.2" />
+            <stop offset="100%" stopColor="hsl(var(--foreground))" stopOpacity="0.05" />
+          </linearGradient>
+          <linearGradient id="chip-die" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.4" />
+            <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.08" />
+          </linearGradient>
+        </defs>
+
+        {/* Pins on all four sides */}
+        <g stroke="hsl(var(--muted-foreground))" strokeWidth="1.6" strokeLinecap="round" opacity="0.55">
+          {[28, 38, 48, 58, 68].map((p) => (
+            <g key={p}>
+              <line x1={p} y1="10" x2={p} y2="20" />
+              <line x1={p} y1="80" x2={p} y2="90" />
+              <line x1="10" y1={p} x2="20" y2={p} />
+              <line x1="80" y1={p} x2="90" y2={p} />
+            </g>
+          ))}
         </g>
-        <rect x="36" y="36" width="8" height="8" className="fill-primary" opacity="0.9" />
+
+        {/* Chip substrate */}
+        <rect
+          x="20" y="20" width="60" height="60" rx="4"
+          fill="url(#chip-body)"
+          stroke="hsl(var(--border))"
+          strokeWidth="1"
+        />
+
+        {/* Notch indicator */}
+        <circle cx="26" cy="26" r="1.6" fill="hsl(var(--primary))" opacity="0.8" />
+
+        {/* Die / heatspreader */}
+        <rect
+          x="28" y="28" width="44" height="44" rx="2"
+          fill="url(#chip-die)"
+          stroke="hsl(var(--primary))"
+          strokeOpacity="0.45"
+          strokeWidth="0.8"
+        />
+
+        {/* Etched traces */}
+        <g stroke="hsl(var(--primary))" strokeWidth="0.6" opacity="0.5">
+          <line x1="34" y1="36" x2="66" y2="36" />
+          <line x1="34" y1="64" x2="66" y2="64" />
+          <line x1="36" y1="34" x2="36" y2="66" />
+          <line x1="64" y1="34" x2="64" y2="66" />
+        </g>
+
+        {/* 4-core grid */}
+        <g fill="hsl(var(--primary))">
+          <rect x="42" y="42" width="7" height="7" rx="0.5" opacity="0.95" />
+          <rect x="51" y="42" width="7" height="7" rx="0.5" opacity="0.7" />
+          <rect x="42" y="51" width="7" height="7" rx="0.5" opacity="0.7" />
+          <rect x="51" y="51" width="7" height="7" rx="0.5" opacity="0.95" />
+        </g>
+
+        {/* Top-edge highlight */}
+        <rect
+          x="28" y="28" width="44" height="14" rx="2"
+          fill="hsl(var(--foreground))"
+          opacity="0.05"
+        />
       </svg>
     </div>
   );
