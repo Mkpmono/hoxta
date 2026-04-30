@@ -86,8 +86,10 @@ Deno.serve(async (req) => {
 
         try {
           const whois = await whmcsCall("DomainWhois", { domain });
-          // WHMCS returns status: "available" or "unavailable"
-          const available = whois?.status === "available";
+          console.log(`[DomainWhois] ${domain} →`, JSON.stringify(whois));
+          // WHMCS DomainWhois returns status: "available" | "unavailable" | sometimes numeric / other
+          const statusStr = String(whois?.status ?? "").toLowerCase();
+          const available = statusStr === "available" || statusStr === "y";
           const result: DomainResult = { domain, available };
           if (available && tldPrice) {
             result.price = tldPrice.price;
