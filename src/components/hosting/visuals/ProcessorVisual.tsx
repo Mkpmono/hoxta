@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import intelLogo from "@/assets/cpu/intel.png";
 import amdLogo from "@/assets/cpu/amd.png";
+import chipPcb from "@/assets/cpu/chip-pcb.png";
 
 /**
  * Professional CPU platform showcase — two stacked cards (Intel + AMD)
