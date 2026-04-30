@@ -79,16 +79,23 @@ export default function Domains() {
     const domainsToCheck = extensions.map((ext) => `${baseName}${ext}`);
 
     try {
-      const { data, error } = await supabase.functions.invoke("domain-check", {
+      const { data, error } = await supabase.functions.invoke("whmcs-domain-check", {
         body: { domains: domainsToCheck },
       });
       if (error) throw error;
-      if (data.results) {
-        const priceMap: Record<string, string> = {};
-        popularTLDs.forEach((t) => { priceMap[t.ext] = t.price; });
+      if (data?.results) {
+        const fallbackPrices: Record<string, string> = {};
+        popularTLDs.forEach((t) => { fallbackPrices[t.ext] = t.price; });
         setResults(data.results.map((r: any) => {
           const ext = "." + r.domain.split(".").slice(1).join(".");
-          return { ext: r.domain, price: priceMap[ext] || "€9.99", available: r.status === "available" };
+          const currency = r.currency === "EUR" ? "€" : r.currency ? `${r.currency} ` : "€";
+          const price = r.price ? `${currency}${r.price}` : (fallbackPrices[ext] || "€9.99");
+          return {
+            ext: r.domain,
+            price,
+            available: !!r.available,
+            registerUrl: r.registerUrl,
+          };
         }));
       } else {
         setSearchError(t("pages.domains.searchError"));
