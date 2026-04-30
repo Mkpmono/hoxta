@@ -1,225 +1,189 @@
 import { motion } from "framer-motion";
-import { Cpu, Layers, Gauge, Zap } from "lucide-react";
 import intelLogo from "@/assets/cpu/intel.png";
 import amdLogo from "@/assets/cpu/amd.png";
 
 /**
- * Professional CPU comparison datasheet — dual-platform layout with
- * real-world specs, performance gauges, and workload benchmarks.
- * Themed with the dark glassmorphism aesthetic.
+ * Minimal CPU showcase — stylized chip illustrations with key specs.
+ * Two platforms presented as silicon dies with pin grids and spec rails.
  */
 export function ProcessorVisual() {
   const platforms = [
     {
       name: "Intel Xeon",
-      tier: "Gold 6248R",
+      tier: "Scalable Gen 3",
       logo: intelLogo,
-      specs: [
-        { label: "Cores", value: "24" },
-        { label: "Threads", value: "48" },
-        { label: "Base", value: "3.0 GHz" },
-        { label: "Boost", value: "4.0 GHz" },
+      stats: [
+        { label: "Up to", value: "24", unit: "Cores" },
+        { label: "Boost", value: "4.0", unit: "GHz" },
+        { label: "Cache", value: "35.75", unit: "MB" },
       ],
-      strength: "Single-thread",
-      score: 95,
     },
     {
       name: "AMD EPYC",
-      tier: "7443P",
+      tier: "Milan 7003",
       logo: amdLogo,
-      specs: [
-        { label: "Cores", value: "24" },
-        { label: "Threads", value: "48" },
-        { label: "Base", value: "2.85 GHz" },
-        { label: "Boost", value: "4.0 GHz" },
+      stats: [
+        { label: "Up to", value: "64", unit: "Cores" },
+        { label: "Boost", value: "4.1", unit: "GHz" },
+        { label: "Cache", value: "256", unit: "MB" },
       ],
-      strength: "Multi-thread",
-      score: 100,
     },
   ];
 
-  const workloads = [
-    { icon: Gauge, label: "Single-thread", intel: 95, amd: 78 },
-    { icon: Layers, label: "Multi-thread", intel: 72, amd: 100 },
-    { icon: Zap, label: "Virtualization", intel: 68, amd: 96 },
-  ];
-
   return (
-    <div className="relative w-full rounded-2xl overflow-hidden border border-border/50 bg-card/40 backdrop-blur-md">
-      {/* Ambient glows */}
-      <div className="absolute -top-32 -left-20 w-72 h-72 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-32 -right-20 w-72 h-72 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+    <div className="relative w-full rounded-2xl overflow-hidden border border-border/50 bg-card/40 backdrop-blur-md p-6 space-y-5">
+      {/* Ambient */}
+      <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-96 h-64 bg-primary/8 rounded-full blur-3xl pointer-events-none" />
 
       {/* Header */}
-      <div className="relative flex items-center justify-between px-5 py-3.5 border-b border-border/50 bg-background/30">
+      <div className="relative flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_hsl(var(--primary))]" />
-          <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-medium">
-            CPU Platform Comparison
+          <span className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground font-medium">
+            Server-grade Silicon
           </span>
         </div>
-        <div className="flex items-center gap-1.5">
-          <Cpu className="w-3 h-3 text-muted-foreground" />
-          <span className="text-[10px] text-muted-foreground tabular-nums">
-            v2026.04
-          </span>
-        </div>
+        <span className="text-[10px] text-muted-foreground/70 tabular-nums">
+          DDR4 ECC · PCIe 4.0
+        </span>
       </div>
 
-      {/* Platform cards */}
-      <div className="relative grid grid-cols-2 gap-px bg-border/40">
+      {/* Chip cards */}
+      <div className="relative space-y-3">
         {platforms.map((p, idx) => (
           <motion.div
             key={p.name}
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: idx * 0.1, duration: 0.4 }}
-            className="bg-card/60 p-5 space-y-4"
+            transition={{ delay: idx * 0.12, duration: 0.45 }}
+            className="group relative rounded-xl border border-border/50 bg-background/30 hover:bg-background/40 transition-colors overflow-hidden"
           >
-            {/* Logo + tier */}
-            <div className="flex items-start justify-between">
-              <div>
-                <img
-                  src={p.logo}
-                  alt={p.name}
-                  className="h-4 w-auto object-contain [filter:brightness(0)_invert(1)] opacity-90 mb-2"
-                />
-                <div className="text-sm font-semibold text-foreground">
-                  {p.name}
+            <div className="flex items-stretch">
+              {/* Chip illustration */}
+              <ChipIcon />
+
+              {/* Info */}
+              <div className="flex-1 px-4 py-4 flex flex-col justify-between min-w-0">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="text-sm font-semibold text-foreground truncate">
+                      {p.name}
+                    </div>
+                    <div className="text-[11px] text-muted-foreground tabular-nums mt-0.5">
+                      {p.tier}
+                    </div>
+                  </div>
+                  <img
+                    src={p.logo}
+                    alt={p.name}
+                    className="h-3.5 w-auto object-contain [filter:brightness(0)_invert(1)] opacity-70 group-hover:opacity-100 transition-opacity flex-shrink-0"
+                  />
                 </div>
-                <div className="text-[11px] text-muted-foreground tabular-nums">
-                  {p.tier}
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="text-[9px] uppercase tracking-wider text-muted-foreground">
-                  Best for
-                </div>
-                <div className="text-[11px] font-medium text-primary mt-0.5">
-                  {p.strength}
+
+                {/* Stats rail */}
+                <div className="grid grid-cols-3 gap-3 mt-3 pt-3 border-t border-border/40">
+                  {p.stats.map((s) => (
+                    <div key={s.label}>
+                      <div className="text-[9px] uppercase tracking-wider text-muted-foreground/80">
+                        {s.label}
+                      </div>
+                      <div className="flex items-baseline gap-1 mt-0.5">
+                        <span className="text-base font-semibold text-foreground tabular-nums leading-none">
+                          {s.value}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground">
+                          {s.unit}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
 
-            {/* Spec grid */}
-            <div className="grid grid-cols-4 gap-2">
-              {p.specs.map((s) => (
-                <div
-                  key={s.label}
-                  className="rounded-md bg-background/40 border border-border/40 px-2 py-1.5"
-                >
-                  <div className="text-[9px] uppercase tracking-wider text-muted-foreground">
-                    {s.label}
-                  </div>
-                  <div className="text-[11px] font-semibold text-foreground tabular-nums mt-0.5">
-                    {s.value}
-                  </div>
-                </div>
-              ))}
-            </div>
+            {/* Hover accent line */}
+            <div className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-primary/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           </motion.div>
         ))}
       </div>
 
-      {/* Workload benchmarks */}
-      <div className="relative px-5 py-4 space-y-3 bg-background/20 border-t border-border/50">
-        <div className="flex items-center justify-between mb-1">
-          <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-medium">
-            Workload Benchmarks
+      {/* Footer chips */}
+      <div className="relative flex items-center justify-between text-[10px] text-muted-foreground/70 pt-1">
+        <div className="flex items-center gap-2">
+          <span className="px-2 py-0.5 rounded-md border border-border/50 bg-background/40">
+            ECC RAM
           </span>
-          <div className="flex items-center gap-3 text-[9px] text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <span className="w-2 h-0.5 bg-primary" />
-              <span>Intel</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <span className="w-2 h-0.5 bg-primary/40" />
-              <span>AMD</span>
-            </div>
-          </div>
-        </div>
-
-        {workloads.map((w, idx) => {
-          const Icon = w.icon;
-          const intelWins = w.intel > w.amd;
-          return (
-            <motion.div
-              key={w.label}
-              initial={{ opacity: 0, x: -8 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 + idx * 0.08, duration: 0.4 }}
-              className="space-y-1.5"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Icon className="w-3 h-3 text-muted-foreground" />
-                  <span className="text-[11px] font-medium text-foreground">
-                    {w.label}
-                  </span>
-                </div>
-                <div className="flex items-center gap-3 text-[10px] tabular-nums">
-                  <span
-                    className={
-                      intelWins ? "text-primary font-semibold" : "text-muted-foreground"
-                    }
-                  >
-                    {w.intel}
-                  </span>
-                  <span className="text-border">/</span>
-                  <span
-                    className={
-                      !intelWins ? "text-primary font-semibold" : "text-muted-foreground"
-                    }
-                  >
-                    {w.amd}
-                  </span>
-                </div>
-              </div>
-
-              {/* Stacked bar */}
-              <div className="grid grid-cols-2 gap-1">
-                <div className="h-1 rounded-full bg-muted/30 overflow-hidden">
-                  <motion.div
-                    className="h-full rounded-full bg-primary"
-                    initial={{ width: 0 }}
-                    whileInView={{ width: `${w.intel}%` }}
-                    viewport={{ once: true }}
-                    transition={{
-                      delay: 0.4 + idx * 0.08,
-                      duration: 0.7,
-                      ease: [0.4, 0, 0.2, 1],
-                    }}
-                  />
-                </div>
-                <div className="h-1 rounded-full bg-muted/30 overflow-hidden">
-                  <motion.div
-                    className="h-full rounded-full bg-primary/40"
-                    initial={{ width: 0 }}
-                    whileInView={{ width: `${w.amd}%` }}
-                    viewport={{ once: true }}
-                    transition={{
-                      delay: 0.45 + idx * 0.08,
-                      duration: 0.7,
-                      ease: [0.4, 0, 0.2, 1],
-                    }}
-                  />
-                </div>
-              </div>
-            </motion.div>
-          );
-        })}
-
-        <div className="pt-2 mt-2 border-t border-border/40 flex items-center justify-between">
-          <span className="text-[9px] text-muted-foreground/70">
-            Relative performance index · higher = better
+          <span className="px-2 py-0.5 rounded-md border border-border/50 bg-background/40">
+            NVMe RAID
           </span>
-          <span className="text-[9px] text-muted-foreground/70 tabular-nums">
-            Source: public benchmarks
+          <span className="px-2 py-0.5 rounded-md border border-border/50 bg-background/40">
+            IPMI
           </span>
         </div>
+        <span className="tabular-nums">99.99% SLA</span>
       </div>
+    </div>
+  );
+}
+
+/** Stylized CPU die — pure SVG, no images. */
+function ChipIcon() {
+  return (
+    <div className="relative w-24 flex-shrink-0 bg-gradient-to-br from-background/60 to-background/20 border-r border-border/50 flex items-center justify-center">
+      <svg
+        viewBox="0 0 80 80"
+        className="w-14 h-14 text-primary"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.2"
+      >
+        {/* Outer pins */}
+        {[20, 30, 40, 50, 60].map((p) => (
+          <g key={`pin-${p}`} opacity="0.5">
+            <line x1={p} y1="8" x2={p} y2="14" />
+            <line x1={p} y1="66" x2={p} y2="72" />
+            <line x1="8" y1={p} x2="14" y2={p} />
+            <line x1="66" y1={p} x2="72" y2={p} />
+          </g>
+        ))}
+        {/* Chip body */}
+        <rect
+          x="14"
+          y="14"
+          width="52"
+          height="52"
+          rx="3"
+          className="fill-primary/5"
+        />
+        {/* Inner die */}
+        <rect
+          x="22"
+          y="22"
+          width="36"
+          height="36"
+          rx="2"
+          className="fill-primary/10"
+          opacity="0.8"
+        />
+        {/* Die circuits */}
+        <g opacity="0.7">
+          <line x1="28" y1="30" x2="52" y2="30" />
+          <line x1="28" y1="40" x2="52" y2="40" />
+          <line x1="28" y1="50" x2="52" y2="50" />
+          <line x1="34" y1="22" x2="34" y2="58" />
+          <line x1="46" y1="22" x2="46" y2="58" />
+        </g>
+        {/* Center core */}
+        <rect
+          x="36"
+          y="36"
+          width="8"
+          height="8"
+          className="fill-primary"
+          opacity="0.9"
+        />
+      </svg>
     </div>
   );
 }
