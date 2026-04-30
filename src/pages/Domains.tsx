@@ -12,10 +12,17 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 
+interface DomainResult {
+  ext: string;
+  price: string;
+  available: boolean;
+  registerUrl?: string;
+}
+
 export default function Domains() {
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
-  const [results, setResults] = useState<{ ext: string; price: string; available: boolean }[] | null>(null);
+  const [results, setResults] = useState<DomainResult[] | null>(null);
   const [searching, setSearching] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [searchError, setSearchError] = useState<string | null>(null);
