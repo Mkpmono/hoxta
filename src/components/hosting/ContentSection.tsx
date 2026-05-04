@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { LucideIcon, Check } from "lucide-react";
+import { LucideIcon, Check, Globe, Zap, Shield, Server, Cpu, TrendingUp, Settings, DollarSign } from "lucide-react";
 import { HostingVisual } from "./visuals/HostingVisual";
 import { PerformanceVisual } from "./visuals/PerformanceVisual";
 import { SecurityVisual } from "./visuals/SecurityVisual";
@@ -20,16 +20,28 @@ interface ContentSectionProps {
   children?: React.ReactNode;
 }
 
-function AnimatedIllustration({ title }: { title: string }) {
-  if (/performance|speed|fast/i.test(title)) return <PerformanceVisual />;
-  if (/security|protect|ssl/i.test(title)) return <SecurityVisual />;
-  if (/scale|grow|demand/i.test(title)) return <ScaleVisual />;
-  if (/root|access|control|manage/i.test(title)) return <ControlVisual />;
-  if (/profit|revenue|business|money/i.test(title)) return <ProfitVisual />;
-  if (/redundan|infrastructure|datacenter|uptime/i.test(title)) return <InfrastructureVisual />;
-  if (/processor|cpu|xeon|epyc|intel|amd/i.test(title)) return <ProcessorVisual />;
+function AnimatedIllustration({ title, icon }: { title: string; icon?: LucideIcon }) {
+  // Prefer icon-based mapping (works across all languages)
+  if (icon === Zap) return <PerformanceVisual />;
+  if (icon === Shield) return <SecurityVisual />;
+  if (icon === TrendingUp) return <ScaleVisual />;
+  if (icon === Settings) return <ControlVisual />;
+  if (icon === DollarSign) return <ProfitVisual />;
+  if (icon === Server) return <InfrastructureVisual />;
+  if (icon === Cpu) return <ProcessorVisual />;
+  if (icon === Globe) return <InfrastructureVisual />;
+  // Fallback to title regex (English)
+  if (/performance|speed|fast|prestat|vitez|schnell|rapide|veloc/i.test(title)) return <PerformanceVisual />;
+  if (/security|protect|ssl|beveilig|securit|sicher|sécurit|seguri/i.test(title)) return <SecurityVisual />;
+  if (/scale|grow|demand|schaal|skalier|escala/i.test(title)) return <ScaleVisual />;
+  if (/root|access|control|manage|controle|kontroll|contrôle|control/i.test(title)) return <ControlVisual />;
+  if (/profit|revenue|business|money|winst|gewinn|bénéfic|benefic/i.test(title)) return <ProfitVisual />;
+  if (/redundan|infrastructure|datacenter|uptime|infrastruct/i.test(title)) return <InfrastructureVisual />;
+  if (/processor|cpu|xeon|epyc|intel|amd|prozessor|processeur|procesador/i.test(title)) return <ProcessorVisual />;
+  if (/webhost|web host|hosting|what is|wat is|qu'est|que es|cos'è|was ist/i.test(title)) return <InfrastructureVisual />;
   return <HostingVisual />;
 }
+
 
 export function ContentSection({
   title,
@@ -103,7 +115,7 @@ export function ContentSection({
                 />
               </div>
             ) : (
-              <AnimatedIllustration title={title} />
+              <AnimatedIllustration title={title} icon={Icon} />
             )}
           </motion.div>
         </div>
