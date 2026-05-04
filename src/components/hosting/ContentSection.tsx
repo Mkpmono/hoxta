@@ -8,6 +8,7 @@ import { ControlVisual } from "./visuals/ControlVisual";
 import { ProfitVisual } from "./visuals/ProfitVisual";
 import { InfrastructureVisual } from "./visuals/InfrastructureVisual";
 import { ProcessorVisual } from "./visuals/ProcessorVisual";
+import { WebHostVisual } from "./visuals/WebHostVisual";
 
 interface ContentSectionProps {
   title: string;
