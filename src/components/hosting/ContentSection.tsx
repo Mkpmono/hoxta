@@ -8,6 +8,7 @@ import { ControlVisual } from "./visuals/ControlVisual";
 import { ProfitVisual } from "./visuals/ProfitVisual";
 import { InfrastructureVisual } from "./visuals/InfrastructureVisual";
 import { ProcessorVisual } from "./visuals/ProcessorVisual";
+import { WebHostVisual } from "./visuals/WebHostVisual";
 
 interface ContentSectionProps {
   title: string;
@@ -29,7 +30,7 @@ function AnimatedIllustration({ title, icon }: { title: string; icon?: LucideIco
   if (icon === DollarSign) return <ProfitVisual />;
   if (icon === Server) return <InfrastructureVisual />;
   if (icon === Cpu) return <ProcessorVisual />;
-  if (icon === Globe) return <InfrastructureVisual />;
+  if (icon === Globe) return <WebHostVisual />;
   // Fallback to title regex (English)
   if (/performance|speed|fast|prestat|vitez|schnell|rapide|veloc/i.test(title)) return <PerformanceVisual />;
   if (/security|protect|ssl|beveilig|securit|sicher|sécurit|seguri/i.test(title)) return <SecurityVisual />;
@@ -38,7 +39,7 @@ function AnimatedIllustration({ title, icon }: { title: string; icon?: LucideIco
   if (/profit|revenue|business|money|winst|gewinn|bénéfic|benefic/i.test(title)) return <ProfitVisual />;
   if (/redundan|infrastructure|datacenter|uptime|infrastruct/i.test(title)) return <InfrastructureVisual />;
   if (/processor|cpu|xeon|epyc|intel|amd|prozessor|processeur|procesador/i.test(title)) return <ProcessorVisual />;
-  if (/webhost|web host|hosting|what is|wat is|qu'est|que es|cos'è|was ist/i.test(title)) return <InfrastructureVisual />;
+  if (/webhost|web host|hosting|what is|wat is|qu'est|que es|cos'è|was ist/i.test(title)) return <WebHostVisual />;
   return <HostingVisual />;
 }
 
