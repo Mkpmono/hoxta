@@ -1,5 +1,7 @@
 import { getCorsHeaders, handleCors, createCorsResponse, createErrorResponse } from '../_shared/cors.ts';
 import { validateAmount, validateCurrency, validateText } from '../_shared/validation.ts';
+import { validateSession, getTokenFromRequest } from '../_shared/jwt.ts';
+import { getInvoice } from '../_shared/whmcs.ts';
 
 /**
  * Payment Processing Edge Function
@@ -9,9 +11,28 @@ import { validateAmount, validateCurrency, validateText } from '../_shared/valid
 const MOCK_MODE = !Deno.env.get('STRIPE_SECRET_KEY');
 const STRIPE_SECRET = Deno.env.get('STRIPE_SECRET_KEY');
 
+async function ensureInvoiceOwnership(invoiceId: unknown, clientId: number): Promise<boolean> {
+  if (invoiceId === undefined || invoiceId === null || invoiceId === '') return true;
+  const id = Number(invoiceId);
+  if (!Number.isFinite(id) || id <= 0) return false;
+  try {
+    const result = await getInvoice(id) as { userid?: number | string };
+    return Number(result.userid) === clientId;
+  } catch {
+    return false;
+  }
+}
+
 Deno.serve(async (req) => {
   const corsResponse = handleCors(req);
   if (corsResponse) return corsResponse;
+
+  // Require authenticated WHMCS session for ALL payment endpoints
+  const token = getTokenFromRequest(req);
+  const session = token ? await validateSession(token) : null;
+  if (!session) {
+    return createErrorResponse(req, 'Authentication required', 401);
+  }
 
   const url = new URL(req.url);
   const path = url.pathname.replace('/payments', '');
