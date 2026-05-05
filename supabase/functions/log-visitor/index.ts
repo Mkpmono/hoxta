@@ -266,13 +266,15 @@ Deno.serve(async (req) => {
 
     if (error) throw error;
 
-    // Auto-block ONLY if confirmed bot AND not a verified legitimate crawler
-    if (is_bot && cleanIp !== "Unknown" && cleanIp !== "Unable to detect") {
-      const isLegit = user_agent ? await verifyLegitimateBot(cleanIp, user_agent) : false;
+    // Auto-block ONLY if we have a Cloudflare-verified IP, the request is a confirmed bot,
+    // and it's not a verified legitimate crawler. This prevents attackers from spoofing
+    // X-Forwarded-For / X-Real-IP / body.ip_address to frame arbitrary IPs.
+    if (cfIp && is_bot) {
+      const isLegit = user_agent ? await verifyLegitimateBot(cfIp, user_agent) : false;
       if (!isLegit) {
         const reasons = Array.isArray(bot_reasons) ? bot_reasons.join(", ") : "bot-detected";
         await supabase.from("blocked_ips").upsert(
-          { ip_address: cleanIp, reason: `Auto-blocked: ${reasons}` },
+          { ip_address: cfIp, reason: `Auto-blocked: ${reasons}` },
           { onConflict: "ip_address" }
         );
       }
