@@ -14,6 +14,9 @@ const NAMES: Record<string, string> = {
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
+  const auth = await requireAdmin(req);
+  if (!auth.ok) return auth.response;
+
   try {
     const { content, sourceLang = "en" } = await req.json();
     if (!content || typeof content !== "object") {
