@@ -153,66 +153,25 @@ Deno.serve(async (req) => {
     }
 
     // POST /paypal - PayPal webhook
+    // Disabled until PayPal certificate-based webhook signature verification is implemented.
+    // Accepting unsigned webhooks would let anyone forge "payment captured" events.
     if (path === '/paypal' && req.method === 'POST') {
-      // PayPal webhooks require verification in production
-      const paypalTransmissionId = req.headers.get('paypal-transmission-id');
-      
-      if (!DEV_MODE && !paypalTransmissionId) {
-        return createErrorResponse(req, 'Invalid PayPal webhook', 401);
-      }
-
-      let body;
-      try {
-        body = await req.json();
-      } catch {
-        return createErrorResponse(req, 'Invalid JSON payload', 400);
-      }
-
-      if (!body.event_type) {
-        return createErrorResponse(req, 'Missing event_type', 400);
-      }
-
-      // Handle PayPal events
-      switch (body.event_type) {
-        case 'CHECKOUT.ORDER.APPROVED':
-          console.log('PayPal order approved:', body.resource?.id);
-          break;
-        case 'PAYMENT.CAPTURE.COMPLETED':
-          console.log('PayPal capture completed:', body.resource?.id);
-          break;
-        default:
-          console.log(`Unhandled PayPal event: ${body.event_type}`);
-      }
-
-      return createCorsResponse(req, { received: true });
+      console.warn('PayPal webhook called but signature verification not implemented — rejecting');
+      return createErrorResponse(req, 'PayPal webhook verification not implemented', 501);
     }
 
     // POST /crypto - Generic crypto webhook
+    // Disabled until provider-specific HMAC signature verification is implemented.
     if (path === '/crypto' && req.method === 'POST') {
-      let body;
-      try {
-        body = await req.json();
-      } catch {
-        return createErrorResponse(req, 'Invalid JSON payload', 400);
-      }
-
-      console.log('Crypto webhook received:', body.event || 'unknown event');
-
-      return createCorsResponse(req, { received: true });
+      console.warn('Crypto webhook called but signature verification not implemented — rejecting');
+      return createErrorResponse(req, 'Crypto webhook verification not implemented', 501);
     }
 
     // POST /paysafe - Paysafe webhook
+    // Disabled until Paysafe HMAC signature verification is implemented.
     if (path === '/paysafe' && req.method === 'POST') {
-      let body;
-      try {
-        body = await req.json();
-      } catch {
-        return createErrorResponse(req, 'Invalid JSON payload', 400);
-      }
-
-      console.log('Paysafe webhook received');
-
-      return createCorsResponse(req, { received: true });
+      console.warn('Paysafe webhook called but signature verification not implemented — rejecting');
+      return createErrorResponse(req, 'Paysafe webhook verification not implemented', 501);
     }
 
     return createErrorResponse(req, 'Not found', 404);
