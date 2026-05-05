@@ -21,6 +21,17 @@ function escapeHtml(s: string) {
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
+  // Server-side rate limit: 5 contact submissions per minute per IP
+  const callerIp = getClientIp(req);
+  if (callerIp) {
+    const { allowed } = await dbRateLimit(callerIp, 5, "contact");
+    if (!allowed) {
+      return new Response(JSON.stringify({ error: "Too many requests. Please try again in a minute." }), {
+        status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+  }
+
   try {
     const body = (await req.json()) as Body;
     const name = (body.name || "").trim().slice(0, 200);
