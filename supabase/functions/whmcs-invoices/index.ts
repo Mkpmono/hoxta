@@ -121,6 +121,13 @@ Deno.serve(async (req) => {
 
       const invoiceId = idValidation.sanitized as number;
 
+      // IDOR guard: ensure invoice belongs to the authenticated client before marking paid
+      const ownerCheck = await getInvoice(invoiceId);
+      const ownerId = Number((ownerCheck as { userid?: number | string }).userid);
+      if (!ownerId || ownerId !== session.clientId) {
+        return createErrorResponse(req, 'Not found', 404);
+      }
+
       const result = await addInvoicePayment(
         invoiceId, 
         txnValidation.sanitized as string, 
