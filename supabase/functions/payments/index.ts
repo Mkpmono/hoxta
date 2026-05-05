@@ -61,11 +61,14 @@ Deno.serve(async (req) => {
         return createErrorResponse(req, currencyValidation.error!, 400);
       }
 
-      // Validate optional invoice ID
+      // Validate optional invoice ID + ownership
       if (invoiceId) {
         const invoiceValidation = validateText(invoiceId, 'Invoice ID', { maxLength: 100 });
         if (!invoiceValidation.valid) {
           return createErrorResponse(req, invoiceValidation.error!, 400);
+        }
+        if (!(await ensureInvoiceOwnership(invoiceId, session.clientId))) {
+          return createErrorResponse(req, 'Invoice not found', 404);
         }
       }
 
