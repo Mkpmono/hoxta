@@ -256,9 +256,10 @@ Deno.serve(async (req) => {
         return createErrorResponse(req, amountValidation.error!, 400);
       }
 
-      if (MOCK_MODE) {
-        return createCorsResponse(req, {
-          cryptoInvoiceId: `CRYPTO-${Date.now()}`,
+      if (!(await ensureInvoiceOwnership(invoiceId, session.clientId))) {
+        return createErrorResponse(req, 'Invoice not found', 404);
+      }
+
           paymentAddress: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
           amount: amountValidation.sanitized,
           currency: 'BTC',
