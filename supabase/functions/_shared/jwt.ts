@@ -5,8 +5,11 @@
  * SECURITY: All JWT secrets are server-side only, never exposed to frontend
  */
 
-// Get JWT secret from environment (server-side only)
-const JWT_SECRET = Deno.env.get('JWT_SECRET') || 'dev-secret-change-in-production-' + Date.now();
+// Get JWT secret from environment (server-side only). Fail closed if missing.
+const JWT_SECRET = Deno.env.get('JWT_SECRET');
+if (!JWT_SECRET || JWT_SECRET.length < 32) {
+  throw new Error('JWT_SECRET environment variable is required and must be at least 32 characters');
+}
 const JWT_EXPIRY_DAYS = 7;
 const COOKIE_NAME = 'hoxta_session';
 
