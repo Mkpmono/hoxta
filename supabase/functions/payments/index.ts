@@ -133,6 +133,10 @@ Deno.serve(async (req) => {
         return createErrorResponse(req, piValidation.error!, 400);
       }
 
+      if (!(await ensureInvoiceOwnership(invoiceId, session.clientId))) {
+        return createErrorResponse(req, 'Invoice not found', 404);
+      }
+
       if (MOCK_MODE) {
         return createCorsResponse(req, {
           success: true,
