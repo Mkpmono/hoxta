@@ -297,6 +297,9 @@ Deno.serve(async (req) => {
         return createErrorResponse(req, 'Invoice not found', 404);
       }
 
+      if (MOCK_MODE) {
+        return createCorsResponse(req, {
+          sessionId: `PAYSAFE-${Date.now()}`,
           redirectUrl: `/checkout/pay?paysafe=mock&invoice=${invoiceId || 'unknown'}`,
           mockMode: true,
         });
