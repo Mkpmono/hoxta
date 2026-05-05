@@ -293,9 +293,10 @@ Deno.serve(async (req) => {
         return createErrorResponse(req, amountValidation.error!, 400);
       }
 
-      if (MOCK_MODE) {
-        return createCorsResponse(req, {
-          sessionId: `PAYSAFE-${Date.now()}`,
+      if (!(await ensureInvoiceOwnership(invoiceId, session.clientId))) {
+        return createErrorResponse(req, 'Invoice not found', 404);
+      }
+
           redirectUrl: `/checkout/pay?paysafe=mock&invoice=${invoiceId || 'unknown'}`,
           mockMode: true,
         });
