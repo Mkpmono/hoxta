@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { dbRateLimit, getClientIp } from "../_shared/auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -19,6 +20,17 @@ function escapeHtml(s: string) {
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+  // Server-side rate limit: 5 contact submissions per minute per IP
+  const callerIp = getClientIp(req);
+  if (callerIp) {
+    const { allowed } = await dbRateLimit(callerIp, 5, "contact");
+    if (!allowed) {
+      return new Response(JSON.stringify({ error: "Too many requests. Please try again in a minute." }), {
+        status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+  }
 
   try {
     const body = (await req.json()) as Body;

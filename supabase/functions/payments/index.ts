@@ -1,5 +1,7 @@
 import { getCorsHeaders, handleCors, createCorsResponse, createErrorResponse } from '../_shared/cors.ts';
 import { validateAmount, validateCurrency, validateText } from '../_shared/validation.ts';
+import { validateSession, getTokenFromRequest } from '../_shared/jwt.ts';
+import { getInvoice } from '../_shared/whmcs.ts';
 
 /**
  * Payment Processing Edge Function
@@ -9,9 +11,28 @@ import { validateAmount, validateCurrency, validateText } from '../_shared/valid
 const MOCK_MODE = !Deno.env.get('STRIPE_SECRET_KEY');
 const STRIPE_SECRET = Deno.env.get('STRIPE_SECRET_KEY');
 
+async function ensureInvoiceOwnership(invoiceId: unknown, clientId: number): Promise<boolean> {
+  if (invoiceId === undefined || invoiceId === null || invoiceId === '') return true;
+  const id = Number(invoiceId);
+  if (!Number.isFinite(id) || id <= 0) return false;
+  try {
+    const result = await getInvoice(id) as { userid?: number | string };
+    return Number(result.userid) === clientId;
+  } catch {
+    return false;
+  }
+}
+
 Deno.serve(async (req) => {
   const corsResponse = handleCors(req);
   if (corsResponse) return corsResponse;
+
+  // Require authenticated WHMCS session for ALL payment endpoints
+  const token = getTokenFromRequest(req);
+  const session = token ? await validateSession(token) : null;
+  if (!session) {
+    return createErrorResponse(req, 'Authentication required', 401);
+  }
 
   const url = new URL(req.url);
   const path = url.pathname.replace('/payments', '');
@@ -40,11 +61,14 @@ Deno.serve(async (req) => {
         return createErrorResponse(req, currencyValidation.error!, 400);
       }
 
-      // Validate optional invoice ID
+      // Validate optional invoice ID + ownership
       if (invoiceId) {
         const invoiceValidation = validateText(invoiceId, 'Invoice ID', { maxLength: 100 });
         if (!invoiceValidation.valid) {
           return createErrorResponse(req, invoiceValidation.error!, 400);
+        }
+        if (!(await ensureInvoiceOwnership(invoiceId, session.clientId))) {
+          return createErrorResponse(req, 'Invoice not found', 404);
         }
       }
 
@@ -109,6 +133,10 @@ Deno.serve(async (req) => {
         return createErrorResponse(req, piValidation.error!, 400);
       }
 
+      if (!(await ensureInvoiceOwnership(invoiceId, session.clientId))) {
+        return createErrorResponse(req, 'Invoice not found', 404);
+      }
+
       if (MOCK_MODE) {
         return createCorsResponse(req, {
           success: true,
@@ -162,6 +190,10 @@ Deno.serve(async (req) => {
         return createErrorResponse(req, currencyValidation.error!, 400);
       }
 
+      if (!(await ensureInvoiceOwnership(invoiceId, session.clientId))) {
+        return createErrorResponse(req, 'Invoice not found', 404);
+      }
+
       if (MOCK_MODE) {
         return createCorsResponse(req, {
           orderId: `PAYPAL-${Date.now()}`,
@@ -191,6 +223,10 @@ Deno.serve(async (req) => {
         return createErrorResponse(req, orderValidation.error!, 400);
       }
 
+      if (!(await ensureInvoiceOwnership(invoiceId, session.clientId))) {
+        return createErrorResponse(req, 'Invoice not found', 404);
+      }
+
       if (MOCK_MODE) {
         return createCorsResponse(req, {
           success: true,
@@ -218,6 +254,10 @@ Deno.serve(async (req) => {
       const amountValidation = validateAmount(amount);
       if (!amountValidation.valid) {
         return createErrorResponse(req, amountValidation.error!, 400);
+      }
+
+      if (!(await ensureInvoiceOwnership(invoiceId, session.clientId))) {
+        return createErrorResponse(req, 'Invoice not found', 404);
       }
 
       if (MOCK_MODE) {
@@ -251,6 +291,10 @@ Deno.serve(async (req) => {
       const amountValidation = validateAmount(amount);
       if (!amountValidation.valid) {
         return createErrorResponse(req, amountValidation.error!, 400);
+      }
+
+      if (!(await ensureInvoiceOwnership(invoiceId, session.clientId))) {
+        return createErrorResponse(req, 'Invoice not found', 404);
       }
 
       if (MOCK_MODE) {

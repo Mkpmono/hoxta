@@ -20,7 +20,7 @@ import {
   createLogoutCookie,
   getTokenFromRequest,
 } from '../_shared/jwt.ts';
-import { rateLimit } from '../_shared/rate-limit.ts';
+import { dbRateLimit, getClientIp } from '../_shared/auth.ts';
 
 Deno.serve(async (req) => {
   const corsResponse = handleCors(req);
@@ -52,8 +52,11 @@ Deno.serve(async (req) => {
   try {
     // POST /login
     if (path === '/login' && (req.method === 'POST' || bodyData)) {
-      const rateLimitResponse = rateLimit(req, 'auth');
-      if (rateLimitResponse) return rateLimitResponse;
+      const callerIp = getClientIp(req);
+      if (callerIp) {
+        const { allowed } = await dbRateLimit(callerIp, 10, 'auth-login');
+        if (!allowed) return createErrorResponse(req, 'Too many requests', 429);
+      }
 
       const body = bodyData;
       if (!body) {
@@ -113,8 +116,11 @@ Deno.serve(async (req) => {
 
     // POST /register
     if (path === '/register' && (req.method === 'POST' || bodyData)) {
-      const rateLimitResponse = rateLimit(req, 'auth');
-      if (rateLimitResponse) return rateLimitResponse;
+      const callerIp2 = getClientIp(req);
+      if (callerIp2) {
+        const { allowed } = await dbRateLimit(callerIp2, 5, 'auth-register');
+        if (!allowed) return createErrorResponse(req, 'Too many requests', 429);
+      }
 
       const body = bodyData;
       if (!body) {

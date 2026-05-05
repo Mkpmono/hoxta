@@ -156,8 +156,8 @@ Deno.serve(async (req) => {
 
       // Rate limit check + auto-block (called from client before sensitive actions)
       if (action === "rate-limit") {
-        const cfIp = req.headers.get("CF-Connecting-IP") || req.headers.get("X-Real-IP") || req.headers.get("X-Forwarded-For")?.split(",")[0]?.trim();
-        const ip = cfIp || url.searchParams.get("ip") || "";
+        // Trust ONLY Cloudflare's verified header to prevent IP spoofing
+        const ip = req.headers.get("CF-Connecting-IP") || "";
         const ua = url.searchParams.get("ua") || req.headers.get("user-agent") || "";
 
         if (!ip) {
@@ -246,7 +246,10 @@ Deno.serve(async (req) => {
     const { ip_address, country_code, isp, user_agent, is_bot, bot_reasons, canvas_fingerprint, ray_id, result } = body;
 
     // Prefer Cloudflare headers for real IP, then fallback to body
-    const cfIp = req.headers.get("CF-Connecting-IP") || req.headers.get("X-Real-IP") || req.headers.get("X-Forwarded-For")?.split(",")[0]?.trim();
+    // Trust ONLY Cloudflare's verified header to prevent IP-spoofing auto-block attacks.
+    // The client-supplied ip_address is only used for logging when no CF header is present,
+    // and auto-block decisions below are gated on the CF-verified IP.
+    const cfIp = req.headers.get("CF-Connecting-IP") || "";
     const cleanIp = cfIp || ip_address || "Unknown";
 
     const { error } = await supabase.from("visitor_logs").insert({
@@ -263,13 +266,15 @@ Deno.serve(async (req) => {
 
     if (error) throw error;
 
-    // Auto-block ONLY if confirmed bot AND not a verified legitimate crawler
-    if (is_bot && cleanIp !== "Unknown" && cleanIp !== "Unable to detect") {
-      const isLegit = user_agent ? await verifyLegitimateBot(cleanIp, user_agent) : false;
+    // Auto-block ONLY if we have a Cloudflare-verified IP, the request is a confirmed bot,
+    // and it's not a verified legitimate crawler. This prevents attackers from spoofing
+    // X-Forwarded-For / X-Real-IP / body.ip_address to frame arbitrary IPs.
+    if (cfIp && is_bot) {
+      const isLegit = user_agent ? await verifyLegitimateBot(cfIp, user_agent) : false;
       if (!isLegit) {
         const reasons = Array.isArray(bot_reasons) ? bot_reasons.join(", ") : "bot-detected";
         await supabase.from("blocked_ips").upsert(
-          { ip_address: cleanIp, reason: `Auto-blocked: ${reasons}` },
+          { ip_address: cfIp, reason: `Auto-blocked: ${reasons}` },
           { onConflict: "ip_address" }
         );
       }
