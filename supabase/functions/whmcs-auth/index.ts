@@ -20,7 +20,7 @@ import {
   createLogoutCookie,
   getTokenFromRequest,
 } from '../_shared/jwt.ts';
-import { rateLimit } from '../_shared/rate-limit.ts';
+import { dbRateLimit, getClientIp } from '../_shared/auth.ts';
 
 Deno.serve(async (req) => {
   const corsResponse = handleCors(req);
