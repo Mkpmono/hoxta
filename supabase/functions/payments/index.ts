@@ -190,6 +190,10 @@ Deno.serve(async (req) => {
         return createErrorResponse(req, currencyValidation.error!, 400);
       }
 
+      if (!(await ensureInvoiceOwnership(invoiceId, session.clientId))) {
+        return createErrorResponse(req, 'Invoice not found', 404);
+      }
+
       if (MOCK_MODE) {
         return createCorsResponse(req, {
           orderId: `PAYPAL-${Date.now()}`,
