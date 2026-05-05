@@ -116,8 +116,11 @@ Deno.serve(async (req) => {
 
     // POST /register
     if (path === '/register' && (req.method === 'POST' || bodyData)) {
-      const rateLimitResponse = rateLimit(req, 'auth');
-      if (rateLimitResponse) return rateLimitResponse;
+      const callerIp2 = getClientIp(req);
+      if (callerIp2) {
+        const { allowed } = await dbRateLimit(callerIp2, 5, 'auth-register');
+        if (!allowed) return createErrorResponse(req, 'Too many requests', 429);
+      }
 
       const body = bodyData;
       if (!body) {
