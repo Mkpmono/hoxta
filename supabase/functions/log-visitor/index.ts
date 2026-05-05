@@ -156,8 +156,8 @@ Deno.serve(async (req) => {
 
       // Rate limit check + auto-block (called from client before sensitive actions)
       if (action === "rate-limit") {
-        const cfIp = req.headers.get("CF-Connecting-IP") || req.headers.get("X-Real-IP") || req.headers.get("X-Forwarded-For")?.split(",")[0]?.trim();
-        const ip = cfIp || url.searchParams.get("ip") || "";
+        // Trust ONLY Cloudflare's verified header to prevent IP spoofing
+        const ip = req.headers.get("CF-Connecting-IP") || "";
         const ua = url.searchParams.get("ua") || req.headers.get("user-agent") || "";
 
         if (!ip) {
