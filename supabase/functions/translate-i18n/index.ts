@@ -41,6 +41,9 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const auth = await requireAdmin(req);
+  if (!auth.ok) return auth.response;
+
   try {
     const { chunk, targetLang, sourceLang, targetLangName } = await req.json();
     const srcLang = sourceLang || "en";
