@@ -121,6 +121,13 @@ Deno.serve(async (req) => {
         return createErrorResponse(req, messageValidation.error!, 400);
       }
 
+      // IDOR guard: ensure ticket belongs to the authenticated client
+      const ownerCheck = await getTicket(parseInt(ticketId));
+      const ownerId = Number((ownerCheck as { userid?: number | string; clientid?: number | string }).userid ?? (ownerCheck as { clientid?: number | string }).clientid);
+      if (!ownerId || ownerId !== session.clientId) {
+        return createErrorResponse(req, 'Not found', 404);
+      }
+
       const result = await addTicketReply(parseInt(ticketId), messageValidation.sanitized as string, session.clientId);
       
       if (result.result === 'success') {
